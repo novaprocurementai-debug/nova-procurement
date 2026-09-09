@@ -241,21 +241,36 @@
 
   <script>
 
-    function startSearch() {
+    async function startSearch() {
+  const input = document.querySelector('input[type="text"]');
+  const request = input.value.trim();
 
-      const input = document.querySelector("input");
+  if (!request) {
+    alert("Please tell NOVA what you want to buy.");
+    return;
+  }
 
-      if (input.value.trim() === "") {
-        alert("Please tell NOVA what you want to buy.");
-        return;
-      }
+  try {
+    const response = await fetch("/.netlify/functions/search", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ request })
+    });
 
-      alert(
-        "NOVA received your request:\n\n" +
-        input.value +
-        "\n\nAI procurement engine coming next."
-      );
+    const data = await response.json();
 
+    if (!response.ok) {
+      alert(data.error || "Something went wrong.");
+      return;
+    }
+
+    alert("NOVA received your request:\n\n" + data.request);
+
+  } catch (error) {
+    alert("NOVA could not connect to the server.");
+  }
     }
 
   </script>
