@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>NOVA — AI Procurement</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f8fa;
+      color: #111827;
+    }
+
+    header {
+      background: white;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 18px 6%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    nav a {
+      text-decoration: none;
+      color: #4b5563;
+      margin-left: 25px;
+      font-size: 14px;
+    }
+
+    .hero {
+      max-width: 1050px;
+      margin: 80px auto;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #eef2ff;
+      color: #4338ca;
+      padding: 8px 14px;
+      border-radius: 30px;
+      font-size: 13px;
+      margin-bottom: 25px;
+    }
+
+    h1 {
+      font-size: 52px;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .subtitle {
+      max-width: 700px;
+      margin: auto;
+      color: #6b7280;
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .search-box {
+      max-width: 800px;
+      margin: 40px auto 0;
+      background: white;
+      padding: 10px;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      display: flex;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+
+    .search-box input {
+      flex: 1;
+      border: none;
+      outline: none;
+      padding: 18px;
+      font-size: 16px;
+    }
+
+    .search-box button {
+      background: #111827;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      padding: 0 25px;
+      font-size: 15px;
+      cursor: pointer;
+    }
+
+    .features {
+      max-width: 1050px;
+      margin: 20px auto 80px;
+      padding: 20px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 16px;
+      padding: 28px;
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      color: #6b7280;
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 35px;
+      color: #9ca3af;
+      font-size: 13px;
+    }
+
+    @media (max-width: 700px) {
+      h1 {
+        font-size: 38px;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .search-box {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .search-box button {
+        padding: 15px;
+      }
+
+      nav {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo">NOVA</div>
+
+    <nav>
+      <a href="#">How it works</a>
+      <a href="#">Pricing</a>
+      <a href="#">Sign in</a>
+    </nav>
+  </header>
+
+  <main>
+
+    <section class="hero">
+
+      <div class="badge">
+        AI-Powered Global Procurement
+      </div>
+
+      <h1>
+        Find better suppliers.<br>
+        Buy smarter.
+      </h1>
+
+      <p class="subtitle">
+        Tell NOVA what you want to buy.
+        Our AI searches suppliers, compares prices,
+        analyzes offers and helps you find the best deal.
+      </p>
+
+      <div class="search-box">
+
+        <input
+          type="text"
+          placeholder="Example: 2,000 stainless steel bottles with my logo..."
+        >
+
+        <button onclick="startSearch()">
+          Search with NOVA
+        </button>
+
+      </div>
+
+    </section>
+
+    <section class="features">
+
+      <div class="card">
+        <h3>🔎 Smart Supplier Search</h3>
+        <p>
+          NOVA searches global suppliers and identifies
+          potential manufacturers for your requirements.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>📊 Compare Offers</h3>
+        <p>
+          Compare prices, minimum order quantities,
+          shipping and estimated delivery times.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>🤖 AI Analysis</h3>
+        <p>
+          NOVA analyzes supplier information and helps
+          you identify the strongest options.
+        </p>
+      </div>
+
+    </section>
+
+  </main>
+
+  <footer>
+    © 2026 NOVA Procurement AI. All rights reserved.
+  </footer>
+
+  <script>
+
+    function startSearch() {
+
+      const input = document.querySelector("input");
+
+      if (input.value.trim() === "") {
+        alert("Please tell NOVA what you want to buy.");
+        return;
+      }
+
+      alert(
+        "NOVA received your request:\n\n" +
+        input.value +
+        "\n\nAI procurement engine coming next."
+      );
+
+    }
+
+  </script>
+
+</body>
+</html>
