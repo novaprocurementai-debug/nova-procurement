@@ -266,7 +266,16 @@
       return;
     }
 
-    alert("NOVA received your request:\n\n" + data.request);
+    alert(
+  "NOVA DEAL SCORE: " + data.deal.score + "/100\n\n" +
+  "Recommendation: " + data.deal.recommendation + "\n" +
+  "Target Price: " + data.deal.targetPrice + "\n" +
+  "Estimated Landed Cost: " + data.deal.estimatedLandedCost + "\n" +
+  "MOQ: " + data.deal.moq + "\n" +
+  "Lead Time: " + data.deal.leadTime + "\n" +
+  "Risk: " + data.deal.risk + "\n" +
+  "Estimated Savings: " + data.deal.estimatedSavings
+);
 
   } catch (error) {
     alert("NOVA could not connect to the server.");
