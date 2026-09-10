@@ -266,22 +266,25 @@
       return;
     }
 
-const deal = data.deal;
+    const deal = data.deal;
 
-document.body.insertAdjacentHTML("beforeend", `
-<div style="max-width:700px;margin:40px auto;padding:30px;border-radius:20px;background:#f5f7fa;font-family:Arial">
-<h2>NOVA DEAL SCORE — ${deal.score}/100</h2>
-<h3>🏆 ${deal.recommendation}</h3>
-<p>💰 Target Price: ${deal.targetPrice}</p>
-<p>🚢 Landed Cost: ${deal.estimatedLandedCost}</p>
-<p>📦 MOQ: ${deal.moq}</p>
-<p>⏱ Lead Time: ${deal.leadTime}</p>
-<p>⚠️ Risk: ${deal.risk}</p>
-<p>💵 Estimated Savings: ${deal.estimatedSavings}</p>
-</div>
-`); 
+    document.body.insertAdjacentHTML("beforeend", `
+      <div style="max-width:700px;margin:40px auto;padding:30px;border-radius:20px;background:#f5f7fa;font-family:Arial">
+        <h2>NOVA DEAL SCORE — ${deal.score}/100</h2>
+        <h3>🏆 ${deal.recommendation}</h3>
+        <p>💰 Target Price: ${deal.targetPrice}</p>
+        <p>🚢 Landed Cost: ${deal.estimatedLandedCost}</p>
+        <p>📦 MOQ: ${deal.moq}</p>
+        <p>⏱ Lead Time: ${deal.leadTime}</p>
+        <p>⚠️ Risk: ${deal.risk}</p>
+        <p>💵 Estimated Savings: ${deal.estimatedSavings}</p>
+      </div>
+    `);
 
   } catch (error) {
+    alert("NOVA could not connect to the server.");
+  }
+}
     alert("NOVA could not connect to the server.");
   }
     }
