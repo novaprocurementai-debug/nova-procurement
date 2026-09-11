@@ -101,6 +101,11 @@
       cursor: pointer;
     }
 
+    .search-box button:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+
     .features {
       max-width: 1050px;
       margin: 20px auto 80px;
@@ -193,11 +198,12 @@
       <div class="search-box">
 
         <input
+          id="procurementInput"
           type="text"
           placeholder="Example: 2,000 stainless steel bottles with my logo..."
         >
 
-        <button onclick="startSearch()">
+        <button id="searchButton" onclick="startSearch()">
           Search with NOVA
         </button>
 
@@ -240,52 +246,72 @@
   </footer>
 
   <script>
-
     async function startSearch() {
-  const input = document.querySelector('input[type="text"]');
-  const request = input.value.trim();
 
-  if (!request) {
-    alert("Please tell NOVA what you want to buy.");
-    return;
-  }
+      const input = document.getElementById("procurementInput");
+      const button = document.getElementById("searchButton");
 
-  try {
-    const response = await fetch("/", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ request })
-    });
+      const request = input.value.trim();
 
-    const data = await response.json();
+      if (!request) {
+        alert("Please tell NOVA what you want to buy.");
+        input.focus();
+        return;
+      }
 
-    if (!response.ok) {
-      alert(data.error || "Something went wrong.");
-      return;
+      button.disabled = true;
+      button.textContent = "Searching...";
+
+      try {
+
+        const response = await fetch("/", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            request: request
+          })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Something went wrong.");
+        }
+
+        if (!data.deal) {
+          throw new Error("Invalid response from NOVA.");
+        }
+
+        alert(
+          "NOVA DEAL SCORE: " + data.deal.score + "/100\n\n" +
+          "Recommendation: " + data.deal.recommendation + "\n" +
+          "Target Price: " + data.deal.targetPrice + "\n" +
+          "Landed Cost: " + data.deal.estimatedLandedCost + "\n" +
+          "MOQ: " + data.deal.moq + "\n" +
+          "Lead Time: " + data.deal.leadTime + "\n" +
+          "Risk: " + data.deal.risk + "\n" +
+          "Estimated Savings: " + data.deal.estimatedSavings
+        );
+
+      } catch (error) {
+
+        console.error("NOVA Search Error:", error);
+
+        alert(
+          "NOVA could not connect to the server.\n\n" +
+          "Please try again."
+        );
+
+      } finally {
+
+        button.disabled = false;
+        button.textContent = "Search with NOVA";
+
+      }
     }
-
-    alert(
-      "NOVA DEAL SCORE: " + data.deal.score + "/100\n\n" +
-      "Recommendation: " + data.deal.recommendation + "\n" +
-      "Target Price: " + data.deal.targetPrice + "\n" +
-      "Landed Cost: " + data.deal.estimatedLandedCost + "\n" +
-      "MOQ: " + data.deal.moq + "\n" +
-      "Lead Time: " + data.deal.leadTime + "\n" +
-      "Risk: " + data.deal.risk + "\n" +
-      "Estimated Savings: " + data.deal.estimatedSavings
-    );
-
-  } catch (error) {
-    alert("NOVA could not connect to the server.");
-  }
-    }
-    alert("NOVA could not connect to the server.");
-  }
-    }
-
   </script>
 
 </body>
-  </html>
+          </html>
