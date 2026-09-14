@@ -3,6 +3,10 @@ export default {
 
     const url = new URL(request.url);
 
+    // =========================
+    // NOVA REAL SEARCH
+    // =========================
+
     if (
       request.method === "POST" &&
       (url.pathname === "/" || url.pathname === "/api/search")
@@ -16,198 +20,147 @@ export default {
           body.request?.trim();
 
         if (!procurementRequest) {
-
           return Response.json(
             {
               error: "Please enter what you want to buy."
             },
             { status: 400 }
           );
-
         }
 
-        const searchQuery =
-          `${procurementRequest} supplier manufacturer wholesale price MOQ`;
 
-        const instances = [
+        // -------------------------
+        // Search queries
+        // -------------------------
 
-          "https://priv.au",
-          "https://search.mdosch.de",
-          "https://searxng.website",
-          "https://search.inetol.net",
-          "https://search.serpensin.com",
-          "https://searx.tiekoetter.com",
-          "https://searx.linxx.net",
-          "https://search.yuri.llc",
-          "https://searxng.shreven.org",
-          "https://searxng.deggo.fyi",
-          "https://searx.oloke.xyz",
-          "https://search.mectov.my.id"
+        const queries = [
+
+          procurementRequest,
+
+          `${procurementRequest} supplier manufacturer wholesale`
 
         ];
 
 
-        const searches = instances.map(
-          async (instance) => {
+        let allResults = [];
 
-            try {
-
-              const searchUrl =
-                `${instance}/search?q=` +
-                encodeURIComponent(searchQuery) +
-                `&format=json&language=en&categories=general`;
+        let apiResponses = [];
 
 
-              const response =
-                await fetch(searchUrl, {
+        // -------------------------
+        // Search Yep
+        // -------------------------
 
-                  method: "GET",
+        for (const searchQuery of queries) {
 
-                  headers: {
-                    "Accept": "application/json",
-                    "User-Agent":
-                      "Mozilla/5.0 NOVA Procurement AI"
-                  }
+          const yepResponse = await fetch(
+            "https://platform.yep.com/api/search",
+            {
+              method: "POST",
 
-                });
+              headers: {
+                "Authorization":
+                  `Bearer ${env.YEP_API_KEY}`,
 
+                "Content-Type":
+                  "application/json",
 
-              if (!response.ok) {
+                "Accept":
+                  "application/json"
+              },
 
-                return {
-                  instance,
-                  success: false,
-                  results: []
-                };
+              body: JSON.stringify({
 
-              }
+                query: searchQuery,
 
+                type: "highlights",
 
-              const contentType =
-                response.headers.get(
-                  "content-type"
-                ) || "";
+                limit: 20,
 
+                language: ["en"]
 
-              if (
-                !contentType
-                  .toLowerCase()
-                  .includes("json")
-              ) {
-
-                return {
-                  instance,
-                  success: false,
-                  results: []
-                };
-
-              }
-
-
-              const data =
-                await response.json();
-
-
-              if (
-                !Array.isArray(
-                  data.results
-                )
-              ) {
-
-                return {
-                  instance,
-                  success: false,
-                  results: []
-                };
-
-              }
-
-
-              return {
-
-                instance,
-
-                success: true,
-
-                results:
-                  data.results
-
-              };
-
-            } catch (error) {
-
-              return {
-
-                instance,
-
-                success: false,
-
-                results: []
-
-              };
-
+              })
             }
-
-          }
-        );
-
-
-        const responses =
-          await Promise.all(searches);
-
-
-        let combinedResults = [];
-
-        let successfulSources = [];
-
-
-        for (
-          const response
-          of responses
-        ) {
-
-          if (!response.success) {
-            continue;
-          }
-
-
-          successfulSources.push(
-            response.instance
           );
 
 
-          for (
-            const item
-            of response.results
+          const yepData =
+            await yepResponse.json();
+
+
+          apiResponses.push({
+
+            query: searchQuery,
+
+            status:
+              yepResponse.status,
+
+            success:
+              yepData.success === true,
+
+            resultCount:
+              Array.isArray(yepData.results)
+                ? yepData.results.length
+                : 0,
+
+            error:
+              yepData.error || null
+
+          });
+
+
+          // API error
+          if (!yepResponse.ok) {
+
+            continue;
+
+          }
+
+
+          // Add results
+          if (
+            Array.isArray(
+              yepData.results
+            )
           ) {
 
-            combinedResults.push({
+            for (
+              const item
+              of yepData.results
+            ) {
 
-              title:
-                item.title ||
-                "Untitled result",
+              allResults.push({
 
-              url:
-                item.url ||
-                "",
+                title:
+                  item.title ||
+                  "Untitled result",
 
-              snippet:
-                item.content ||
-                item.snippet ||
-                item.description ||
-                "",
+                url:
+                  item.url ||
+                  "",
 
-              source:
-                response.instance
+                snippet:
+                  item.highlight ||
+                  item.snippet ||
+                  item.description ||
+                  item.content ||
+                  "",
 
-            });
+                source:
+                  "Yep Search API"
+
+              });
+
+            }
 
           }
 
         }
 
 
-        // Remove duplicate URLs
+        // -------------------------
+        // Remove duplicates
+        // -------------------------
 
         const unique =
           new Map();
@@ -215,7 +168,7 @@ export default {
 
         for (
           const item
-          of combinedResults
+          of allResults
         ) {
 
           if (!item.url) {
@@ -240,23 +193,12 @@ export default {
         const results =
           Array.from(
             unique.values()
-          ).slice(0, 50);
+          ).slice(0, 40);
 
 
-        /*
-          IMPORTANT:
-
-          We return results in TWO places.
-
-          1. data.results
-             for the new NOVA page.
-
-          2. data.yep_response.results
-             for the old NOVA page.
-
-          This makes both versions work.
-        */
-
+        // -------------------------
+        // Return results
+        // -------------------------
 
         return Response.json({
 
@@ -265,36 +207,39 @@ export default {
           request:
             procurementRequest,
 
-          query:
-            searchQuery,
-
           source:
-            "NOVA Multi-Source Web Search",
-
-          sourcesChecked:
-            instances.length,
-
-          successfulSources:
-            successfulSources.length,
-
-          successfulSourceList:
-            successfulSources,
+            "Yep Search API",
 
           resultCount:
             results.length,
 
           results:
+
             results,
+
+
+          // Compatibility with
+          // your old index.html
 
           yep_response: {
 
             success: true,
 
-            query:
-              searchQuery,
-
             results:
               results
+
+          },
+
+
+          // Diagnostic information
+
+          diagnostics: {
+
+            searches:
+              apiResponses,
+
+            totalResults:
+              results.length
 
           }
 
@@ -306,6 +251,7 @@ export default {
         return Response.json(
 
           {
+
             success: false,
 
             error:
@@ -313,6 +259,8 @@ export default {
 
             details:
               error.message,
+
+            results: [],
 
             yep_response: {
               results: []
@@ -331,7 +279,9 @@ export default {
     }
 
 
-    // Website files
+    // =========================
+    // WEBSITE
+    // =========================
 
     if (env?.ASSETS) {
 
