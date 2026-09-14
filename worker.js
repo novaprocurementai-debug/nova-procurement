@@ -8,45 +8,95 @@ export default {
     ) {
       try {
         const body = await request.json();
+
         const procurementRequest = body.request?.trim();
 
         if (!procurementRequest) {
           return Response.json(
-            { error: "Please enter what you want to buy." },
+            {
+              error: "Please enter what you want to buy."
+            },
             { status: 400 }
           );
         }
 
-        const yepResponse = await fetch(
-          "https://platform.yep.com/api/search",
-          {
-            method: "POST",
-            headers: {
-              "Authorization": `Bearer ${env.YEP_API_KEY}`,
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              query: procurementRequest,
-              type: "basic",
-              limit: 10,
-              language: ["en"]
-            })
-          }
-        );
+        // NOVA creates a supplier-focused search query
+        const searchQuery =
+          `${procurementRequest} supplier manufacturer wholesale`;
 
-        const yepData = await yepResponse.json();
+        // SearXNG public search engine
+        const searchUrl =
+          "https://searx.tiekoetter.com/search?q=" +
+          encodeURIComponent(searchQuery) +
+          "&format=json&language=en&categories=general";
+
+        const searchResponse = await fetch(searchUrl, {
+          method: "GET",
+          headers: {
+            "Accept": "application/json",
+            "User-Agent": "NOVA Procurement AI"
+          }
+        });
+
+        if (!searchResponse.ok) {
+          return Response.json(
+            {
+              success: false,
+              error: "Search engine failed",
+              status: searchResponse.status
+            },
+            { status: 502 }
+          );
+        }
+
+        const searchData = await searchResponse.json();
+
+        const rawResults = Array.isArray(searchData.results)
+          ? searchData.results
+          : [];
+
+        const results = rawResults
+          .slice(0, 20)
+          .map((item) => {
+            return {
+              title:
+                item.title ||
+                "Untitled result",
+
+              url:
+                item.url ||
+                "",
+
+              snippet:
+                item.content ||
+                item.snippet ||
+                "",
+
+              engine:
+                item.engine ||
+                "Web search"
+            };
+          });
 
         return Response.json({
-          nova: true,
+          success: true,
+
           request: procurementRequest,
-          yep_status: yepResponse.status,
-          yep_response: yepData
+
+          query: searchQuery,
+
+          source: "SearXNG web search",
+
+          resultCount: results.length,
+
+          results: results
         });
 
       } catch (error) {
         return Response.json(
           {
-            error: "NOVA ERROR",
+            success: false,
+            error: "NOVA search error",
             details: error.message
           },
           { status: 500 }
@@ -58,6 +108,9 @@ export default {
       return env.ASSETS.fetch(request);
     }
 
-    return new Response("NOVA Procurement AI");
+    return new Response(
+      "NOVA Procurement AI",
+      { status: 200 }
+    );
   }
 };
