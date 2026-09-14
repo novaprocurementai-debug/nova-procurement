@@ -17,31 +17,31 @@
     }
 
     h1 {
-      font-size: 38px;
+      font-size: 40px;
       margin-bottom: 5px;
     }
 
     .subtitle {
       color: #667085;
-      margin-bottom: 30px;
       font-size: 18px;
+      margin-bottom: 30px;
     }
 
     textarea {
       width: 100%;
-      min-height: 120px;
+      min-height: 130px;
       padding: 15px;
+      box-sizing: border-box;
       border: 1px solid #ccd3df;
       border-radius: 10px;
       font-size: 16px;
-      box-sizing: border-box;
-      resize: vertical;
       background: white;
+      resize: vertical;
     }
 
     button {
       margin-top: 12px;
-      padding: 13px 22px;
+      padding: 14px 24px;
       border: 0;
       border-radius: 9px;
       background: #111827;
@@ -52,12 +52,19 @@
 
     button:disabled {
       opacity: 0.6;
-      cursor: wait;
     }
 
     #status {
       margin-top: 20px;
       font-weight: bold;
+    }
+
+    .info {
+      background: white;
+      border: 1px solid #e1e6ef;
+      border-radius: 12px;
+      padding: 15px;
+      margin-top: 15px;
     }
 
     .result {
@@ -70,16 +77,11 @@
 
     .result h3 {
       margin-top: 0;
-      margin-bottom: 10px;
     }
 
     .result a {
       color: #2563eb;
       word-break: break-all;
-    }
-
-    .url {
-      margin: 8px 0;
     }
 
     .snippet {
@@ -88,9 +90,9 @@
       margin-top: 10px;
     }
 
-    .meta {
+    .source {
       color: #667085;
-      font-size: 14px;
+      font-size: 13px;
       margin-top: 10px;
     }
 
@@ -128,212 +130,284 @@
 
   <div id="results"></div>
 
-  <script>
-    async function startSearch() {
+<script>
 
-      const input = document.getElementById("procurementInput");
-      const button = document.getElementById("searchButton");
-      const status = document.getElementById("status");
-      const resultsBox = document.getElementById("results");
+async function startSearch() {
 
-      const request = input.value.trim();
+  const input =
+    document.getElementById("procurementInput");
 
-      if (!request) {
-        status.textContent = "Please enter what you want to buy.";
-        return;
-      }
+  const button =
+    document.getElementById("searchButton");
 
-      button.disabled = true;
+  const status =
+    document.getElementById("status");
 
-      status.textContent = "NOVA is searching real web results...";
+  const resultsBox =
+    document.getElementById("results");
 
-      resultsBox.innerHTML = "";
+  const request =
+    input.value.trim();
 
-      try {
+  if (!request) {
+    status.textContent =
+      "Please enter what you want to buy.";
+    return;
+  }
 
-        const response = await fetch("/", {
-          method: "POST",
+  button.disabled = true;
 
-          headers: {
-            "Content-Type": "application/json"
-          },
+  status.textContent =
+    "NOVA is searching real web results...";
 
-          body: JSON.stringify({
-            request: request
-          })
-        });
+  resultsBox.innerHTML = "";
 
-        const data = await response.json();
+  try {
 
-        /*
-         * worker.js now returns:
-         *
-         * {
-         *   nova: true,
-         *   request: "...",
-         *   yep_status: 200,
-         *   yep_response: {
-         *      results: [...]
-         *   }
-         * }
-         */
+    const response = await fetch("/api/search", {
 
-        if (!response.ok) {
+      method: "POST",
 
-          const details =
-            data.details
-              ? JSON.stringify(data.details, null, 2)
-              : "";
+      headers: {
+        "Content-Type": "application/json"
+      },
 
-          throw new Error(
-            (data.error || "Search failed") +
-            (details ? "\n\n" + details : "")
-          );
-        }
+      body: JSON.stringify({
+        request: request
+      })
 
-        const yepResponse = data.yep_response || {};
+    });
 
-        const rawResults =
-          Array.isArray(yepResponse.results)
-            ? yepResponse.results
-            : [];
 
-        if (rawResults.length === 0) {
+    const data =
+      await response.json();
 
-          status.textContent =
-            "Yep returned 0 search results.";
 
-          resultsBox.innerHTML = `
-            <div class="error">
-              NOVA connected to Yep successfully, but Yep returned no results.
+    if (!response.ok) {
 
-              <br><br>
+      throw new Error(
+        data.error ||
+        "Search failed"
+      );
 
-              HTTP status: ${escapeHtml(
-                String(data.yep_status || "")
-              )}
+    }
 
-              <br><br>
 
-              Query:
-              ${escapeHtml(
-                String(yepResponse.query || request)
-              )}
-            </div>
-          `;
+    /*
+      IMPORTANT:
+      The new Worker returns results
+      directly inside data.results
+    */
 
-          return;
-        }
+    const rawResults =
+      Array.isArray(data.results)
+        ? data.results
+        : [];
 
-        status.textContent =
-          "NOVA found " +
-          rawResults.length +
-          " real web results.";
 
-        resultsBox.innerHTML =
-          rawResults.map((item, index) => {
+    if (rawResults.length === 0) {
 
-            const title =
-              item.title ||
-              item.name ||
-              "Untitled result";
+      status.textContent =
+        "NOVA did not find results.";
 
-            const url =
-              item.url ||
-              item.link ||
-              "";
+      resultsBox.innerHTML = `
 
-            const snippet =
-              item.snippet ||
-              item.description ||
-              item.content ||
-              item.text ||
-              "";
+        <div class="error">
 
-            return `
-              <div class="result">
+          NOVA connected to the search system,
+          but no usable results were returned.
 
-                <h3>
-                  ${index + 1}.
-                  ${escapeHtml(title)}
-                </h3>
+          <br><br>
 
-                ${
-                  url
-                    ? `
-                      <div class="url">
-                        <a
-                          href="${escapeAttribute(url)}"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          ${escapeHtml(url)}
-                        </a>
-                      </div>
-                    `
-                    : ""
-                }
+          Sources checked:
+          ${escapeHtml(
+            String(data.sourcesChecked || 0)
+          )}
 
-                ${
-                  snippet
-                    ? `
-                      <div class="snippet">
-                        ${escapeHtml(snippet)}
-                      </div>
-                    `
-                    : ""
-                }
+          <br>
 
-                <div class="meta">
-                  Real web result from Yep
+          Successful sources:
+          ${escapeHtml(
+            String(data.successfulSources || 0)
+          )}
+
+          <br><br>
+
+          Query:
+          ${escapeHtml(
+            String(data.query || request)
+          )}
+
+        </div>
+
+      `;
+
+      return;
+
+    }
+
+
+    status.textContent =
+      "NOVA found " +
+      rawResults.length +
+      " real web results.";
+
+
+    resultsBox.innerHTML = `
+
+      <div class="info">
+
+        <strong>
+          NOVA Search
+        </strong>
+
+        <br><br>
+
+        Sources checked:
+        ${escapeHtml(
+          String(data.sourcesChecked || 0)
+        )}
+
+        <br>
+
+        Successful sources:
+        ${escapeHtml(
+          String(data.successfulSources || 0)
+        )}
+
+        <br>
+
+        Results:
+        ${escapeHtml(
+          String(rawResults.length)
+        )}
+
+      </div>
+
+    `;
+
+
+    rawResults.forEach(
+      (item, index) => {
+
+        const title =
+          item.title ||
+          "Untitled result";
+
+        const url =
+          item.url ||
+          "";
+
+        const snippet =
+          item.snippet ||
+          item.content ||
+          item.description ||
+          "";
+
+        const source =
+          item.source ||
+          "Web search";
+
+
+        resultsBox.innerHTML += `
+
+          <div class="result">
+
+            <h3>
+              ${index + 1}.
+              ${escapeHtml(title)}
+            </h3>
+
+            ${
+              url
+              ? `
+                <div>
+                  <a
+                    href="${escapeAttribute(url)}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    Open supplier / website
+                  </a>
                 </div>
+              `
+              : ""
+            }
 
-              </div>
-            `;
+            ${
+              snippet
+              ? `
+                <div class="snippet">
+                  ${escapeHtml(snippet)}
+                </div>
+              `
+              : ""
+            }
 
-          }).join("");
+            <div class="source">
+              Source:
+              ${escapeHtml(source)}
+            </div>
 
-      } catch (error) {
-
-        status.textContent = "Search error.";
-
-        resultsBox.innerHTML = `
-          <div class="error">
-            ${escapeHtml(error.message)}
           </div>
+
         `;
 
-      } finally {
-
-        button.disabled = false;
-
       }
-    }
+    );
 
 
-    function escapeHtml(text) {
+  } catch (error) {
 
-      return String(text)
+    status.textContent =
+      "Search error.";
 
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-    }
+    resultsBox.innerHTML = `
+
+      <div class="error">
+
+        ${escapeHtml(
+          error.message
+        )}
+
+      </div>
+
+    `;
+
+  } finally {
+
+    button.disabled = false;
+
+  }
+
+}
 
 
-    function escapeAttribute(text) {
+function escapeHtml(text) {
 
-      return String(text)
+  return String(text)
 
-        .replace(/&/g, "&amp;")
-        .replace(/"/g, "&quot;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;");
-    }
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
-  </script>
+}
+
+
+function escapeAttribute(text) {
+
+  return String(text)
+
+    .replace(/&/g, "&amp;")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+
+}
+
+</script>
 
 </body>
-</html>
+  </html>
