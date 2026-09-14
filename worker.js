@@ -2,6 +2,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
+    // NOVA real search API
     if (
       request.method === "POST" &&
       (url.pathname === "/" || url.pathname === "/api/search")
@@ -12,15 +13,16 @@ export default {
 
         if (!procurementRequest) {
           return Response.json(
-            { error: "Please enter what you want to buy." },
+            {
+              error: "Please enter what you want to buy."
+            },
             { status: 400 }
           );
         }
 
-        // تحسين طلب البحث ليبحث عن موردين وأسعار حقيقية
+        // البحث المباشر أولاً، مع كلمات تساعد على إيجاد الموردين
         const query =
-          `${procurementRequest} supplier manufacturer wholesale price MOQ ` +
-          `"minimum order quantity" shipping quotation`;
+          `${procurementRequest} supplier wholesale manufacturer`;
 
         const yepResponse = await fetch(
           "https://platform.yep.com/api/search",
@@ -31,8 +33,8 @@ export default {
               "Content-Type": "application/json"
             },
             body: JSON.stringify({
-              query,
-              type: "highlights",
+              query: query,
+              type: "basic",
               limit: 20,
               language: ["en"]
             })
@@ -41,61 +43,63 @@ export default {
 
         const yepData = await yepResponse.json();
 
+        // إذا كان Yep أعاد خطأ
         if (!yepResponse.ok) {
           return Response.json(
             {
+              success: false,
               error: "Yep search failed",
+              status: yepResponse.status,
               details: yepData
             },
             { status: yepResponse.status }
           );
         }
 
-        const results = (yepData.results || []).map((item) => {
-          const text = [
-            item.title || "",
-            item.snippet || "",
-            item.description || "",
-            item.highlight || ""
-          ].join(" ");
+        const rawResults = Array.isArray(yepData.results)
+          ? yepData.results
+          : [];
 
-          const priceMatch = text.match(
-            /(?:US?\$|USD|\$)\s?[\d,.]+(?:\s*[-–]\s*[\d,.]+)?/i
-          );
-
-          const moqMatch = text.match(
-            /(?:MOQ|minimum order quantity|minimum order)\D{0,20}([\d,]+)/i
-          );
-
-          const leadMatch = text.match(
-            /(\d+\s*(?:-|–|to)\s*\d+\s*days|\d+\s*days)/i
-          );
-
+        // تحويل نتائج Yep إلى نتائج NOVA
+        const results = rawResults.map((item) => {
           return {
-            title: item.title || "Untitled supplier result",
-            url: item.url || "",
+            title:
+              item.title ||
+              item.name ||
+              "Untitled supplier result",
+
+            url:
+              item.url ||
+              item.link ||
+              "",
+
             snippet:
               item.snippet ||
               item.description ||
-              item.highlight ||
-              "",
-            price: priceMatch ? priceMatch[0] : null,
-            moq: moqMatch ? moqMatch[1] : null,
-            leadTime: leadMatch ? leadMatch[1] : null
+              item.content ||
+              item.text ||
+              ""
           };
         });
 
         return Response.json({
           success: true,
+
           request: procurementRequest,
-          query,
+
+          query: query,
+
           source: "Yep real web search",
-          results
+
+          yepResultCount: rawResults.length,
+
+          results: results
         });
 
       } catch (error) {
         return Response.json(
           {
+            success: false,
             error: "NOVA search error",
             details: error.message
           },
@@ -104,10 +108,14 @@ export default {
       }
     }
 
+    // ملفات الموقع
     if (env?.ASSETS) {
       return env.ASSETS.fetch(request);
     }
 
-    return new Response("NOVA Procurement AI", { status: 200 });
+    return new Response(
+      "NOVA Procurement AI",
+      { status: 200 }
+    );
   }
 };
