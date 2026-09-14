@@ -8,7 +8,6 @@ export default {
     ) {
       try {
         const body = await request.json();
-
         const procurementRequest = body.request?.trim();
 
         if (!procurementRequest) {
@@ -20,77 +19,97 @@ export default {
           );
         }
 
-        // NOVA creates a supplier-focused search query
         const searchQuery =
           `${procurementRequest} supplier manufacturer wholesale`;
 
-        // SearXNG public search engine
-        const searchUrl =
-          "https://searx.tiekoetter.com/search?q=" +
-          encodeURIComponent(searchQuery) +
-          "&format=json&language=en&categories=general";
+        // NOVA tries several SearXNG instances
+        const instances = [
+          "https://searx.tiekoetter.com",
+          "https://searxng.site",
+          "https://baresearch.org"
+        ];
 
-        const searchResponse = await fetch(searchUrl, {
-          method: "GET",
-          headers: {
-            "Accept": "application/json",
-            "User-Agent": "NOVA Procurement AI"
+        let lastError = null;
+
+        for (const instance of instances) {
+          try {
+            const searchUrl =
+              `${instance}/search?q=` +
+              encodeURIComponent(searchQuery) +
+              `&format=json&language=en&categories=general`;
+
+            const searchResponse = await fetch(searchUrl, {
+              method: "GET",
+              headers: {
+                "Accept": "application/json",
+                "User-Agent": "Mozilla/5.0 NOVA Procurement AI"
+              }
+            });
+
+            if (!searchResponse.ok) {
+              lastError =
+                `${instance} returned HTTP ${searchResponse.status}`;
+              continue;
+            }
+
+            const searchData = await searchResponse.json();
+
+            const rawResults = Array.isArray(searchData.results)
+              ? searchData.results
+              : [];
+
+            if (rawResults.length === 0) {
+              lastError =
+                `${instance} returned 0 results`;
+              continue;
+            }
+
+            const results = rawResults
+              .slice(0, 20)
+              .map((item) => {
+                return {
+                  title:
+                    item.title ||
+                    "Untitled result",
+
+                  url:
+                    item.url ||
+                    "",
+
+                  snippet:
+                    item.content ||
+                    item.snippet ||
+                    "",
+
+                  engine:
+                    item.engine ||
+                    "Web search"
+                };
+              });
+
+            return Response.json({
+              success: true,
+              request: procurementRequest,
+              query: searchQuery,
+              source: "SearXNG real web search",
+              searchEngine: instance,
+              resultCount: results.length,
+              results: results
+            });
+          } catch (error) {
+            lastError =
+              `${instance}: ${error.message}`;
           }
-        });
-
-        if (!searchResponse.ok) {
-          return Response.json(
-            {
-              success: false,
-              error: "Search engine failed",
-              status: searchResponse.status
-            },
-            { status: 502 }
-          );
         }
 
-        const searchData = await searchResponse.json();
-
-        const rawResults = Array.isArray(searchData.results)
-          ? searchData.results
-          : [];
-
-        const results = rawResults
-          .slice(0, 20)
-          .map((item) => {
-            return {
-              title:
-                item.title ||
-                "Untitled result",
-
-              url:
-                item.url ||
-                "",
-
-              snippet:
-                item.content ||
-                item.snippet ||
-                "",
-
-              engine:
-                item.engine ||
-                "Web search"
-            };
-          });
-
-        return Response.json({
-          success: true,
-
-          request: procurementRequest,
-
-          query: searchQuery,
-
-          source: "SearXNG web search",
-
-          resultCount: results.length,
-
-          results: results
-        });
+        return Response.json(
+          {
+            success: false,
+            error: "All search engines failed",
+            details: lastError
+          },
+          { status: 502 }
+        );
 
       } catch (error) {
         return Response.json(
