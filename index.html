@@ -3,352 +3,114 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NOVA — AI Procurement Agent</title>
-
+<title>NOVA — AI Purchasing Agent</title>
 <style>
-body{
-font-family:Arial,sans-serif;
-background:#f4f6f8;
-margin:0;
-padding:20px;
-color:#111
-}
+body{font-family:Arial;background:#f4f6f8;margin:0;padding:20px;color:#111}
 main{max-width:1100px;margin:auto}
-textarea,input,select{
-width:100%;
-box-sizing:border-box;
-padding:12px;
-margin:6px 0;
-border:1px solid #ddd;
-border-radius:8px
-}
+textarea,input{width:100%;box-sizing:border-box;padding:12px;margin:6px 0;border:1px solid #ddd;border-radius:8px}
 textarea{height:100px}
-button{
-padding:11px 16px;
-border:0;
-border-radius:8px;
-background:#111;
-color:white;
-cursor:pointer;
-margin:5px
-}
+button{padding:11px 16px;border:0;border-radius:8px;background:#111;color:white;margin:5px;cursor:pointer}
 .quote{background:#06c}
+.card{background:white;padding:18px;margin:15px 0;border-radius:12px;box-shadow:0 2px 8px #ddd}
 .small{font-size:13px;color:#666}
-.card{
-background:white;
-padding:18px;
-margin:15px 0;
-border-radius:12px;
-box-shadow:0 2px 8px #ddd
-}
-table{
-width:100%;
-border-collapse:collapse;
-background:white;
-margin-top:15px
-}
-th,td{
-padding:11px;
-border-bottom:1px solid #eee;
-text-align:left
-}
+.score{font-size:18px;font-weight:bold}
+.status{padding:7px 10px;border-radius:20px;background:#eee;font-size:13px}
+table{width:100%;border-collapse:collapse;background:white;margin-top:15px}
+th,td{padding:10px;border-bottom:1px solid #eee;text-align:left}
 th{background:#111;color:white}
 a{color:#06c}
-.status{
-display:inline-block;
-padding:7px 10px;
-border-radius:20px;
-background:#eee;
-font-size:13px
-}
-.score{
-font-size:18px;
-font-weight:bold
-}
-@media(max-width:700px){
-table{font-size:12px}
-th,td{padding:7px}
-}
+@media(max-width:700px){table{font-size:12px}th,td{padding:7px}}
 </style>
 </head>
-
 <body>
-
 <main>
-
 <h1>🧠 NOVA</h1>
 <p><b>Your AI Purchasing Agent</b></p>
 
-<textarea id="req"
-placeholder="Example: I need 1,000 stainless steel water bottles, 500ml, with my logo, delivered to Dubai.">
-</textarea>
-
-<button onclick="search()">🔎 Search with Nova</button>
-
+<textarea id="req" placeholder="Example: I need 1,000 stainless steel water bottles, 500ml, with my logo, delivered to Dubai."></textarea>
+<button onclick="search()">🔎 Search with NOVA</button>
 <div id="status"></div>
-
 <div id="results"></div>
-
 <div id="workspace"></div>
-
 </main>
 
 <script>
-
-let currentProduct="";
-let selectedSupplier=null;
-let suppliers=[];
-
-
-/* SEARCH */
+let suppliers=[],selected=null,current="";
 
 async function search(){
-
-currentProduct=document.getElementById("req").value.trim();
-
-if(!currentProduct)return;
-
-document.getElementById("status").innerHTML=
-"🔎 NOVA is searching suppliers...";
-
-document.getElementById("results").innerHTML="";
-document.getElementById("workspace").innerHTML="";
-
+current=document.getElementById("req").value.trim();
+if(!current)return;
+status("🔎 NOVA is searching...");
+results.innerHTML="";
+workspace.innerHTML="";
 try{
-
-const r=await fetch("/api/search",{
-method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
-body:JSON.stringify({
-request:currentProduct
-})
-});
-
-const data=await r.json();
-
-if(!data.results || !data.results.length){
-
-document.getElementById("status").innerHTML=
-"❌ No suppliers found.";
-
-return;
+const r=await fetch("/api/search",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({request:current})});
+const d=await r.json();
+if(!d.results?.length){status("❌ No suppliers found.");return}
+suppliers=d.results;
+status("✅ "+suppliers.length+" suppliers found");
+render();
+}catch(e){status("❌ Search error.")}
 }
 
-suppliers=data.results;
+function status(x){document.getElementById("status").innerHTML=x}
 
-document.getElementById("status").innerHTML=
-"✅ "+suppliers.length+" suppliers found";
-
-renderComparison();
-
-}catch(e){
-
-document.getElementById("status").innerHTML=
-"❌ Search error.";
-
-}
-
-}
-
-
-/* COMPARISON */
-
-function renderComparison(){
-
+function render(){
 let rows="";
-
 suppliers.forEach((x,i)=>{
-
-let score=calculateScore(x);
-
-rows+=`
-
-<tr>
-
+rows+=`<tr>
 <td>${i+1}</td>
-
-<td>
-<b>${escapeHTML(x.title||"Supplier")}</b>
-<br>
-<a href="${x.url||"#"}" target="_blank">
-View supplier
-</a>
-</td>
-
+<td><b>${esc(x.title)}</b><br><a href="${x.url}" target="_blank">View supplier</a></td>
 <td>${x.price||"Not found"}</td>
-
 <td>${x.moq||"Not found"}</td>
-
 <td>${x.leadTime||"Not found"}</td>
-
-<td>
-<span class="score">${score}/100</span>
-</td>
-
-<td>
-
-<button
-class="quote"
-onclick="selectSupplier(${i})">
-Select
-</button>
-
-</td>
-
-</tr>
-
-`;
-
+<td><span class="score">${x.dealScore||50}/100</span></td>
+<td><button class="quote" onclick="select(${i})">Select</button></td>
+</tr>`;
 });
-
-document.getElementById("results").innerHTML=`
-
-<h2>Supplier Comparison</h2>
-
-<p class="small">
-NOVA shows available supplier information from web sources.
-Always verify final price, shipping and terms with the supplier.
-</p>
-
-<table>
-
-<thead>
-
-<tr>
-<th>#</th>
-<th>Supplier</th>
-<th>Price</th>
-<th>MOQ</th>
-<th>Lead Time</th>
-<th>Score</th>
-<th>Action</th>
-</tr>
-
-</thead>
-
-<tbody>
-${rows}
-</tbody>
-
-</table>
-`;
-
+results.innerHTML=`<h2>Supplier Comparison</h2>
+<p class="small">Verify final price, shipping and terms with the supplier.</p>
+<table><thead><tr><th>#</th><th>Supplier</th><th>Price</th><th>MOQ</th><th>Lead</th><th>Score</th><th>Action</th></tr></thead>
+<tbody>${rows}</tbody></table>`;
 }
 
-
-/* SCORE */
-
-function calculateScore(x){
-
-let score=50;
-
-if(x.price)score+=20;
-if(x.moq)score+=15;
-if(x.leadTime)score+=15;
-
-return Math.min(score,100);
-
-}
-
-
-/* SELECT SUPPLIER */
-
-function selectSupplier(index){
-
-selectedSupplier=suppliers[index];
-
-document.getElementById("workspace").innerHTML=`
-
-<div class="card">
-
+function select(i){
+selected=suppliers[i];
+workspace.innerHTML=`<div class="card">
 <h2>🛒 Purchase Workspace</h2>
-
-<h3>${escapeHTML(selectedSupplier.title||"Supplier")}</h3>
-
-<p>Product:</p>
-<b>${escapeHTML(currentProduct)}</b>
-
-<hr>
-
-<p>Price: ${selectedSupplier.price||"Not found"}</p>
-
-<p>MOQ: ${selectedSupplier.moq||"Not found"}</p>
-
-<p>Lead Time: ${selectedSupplier.leadTime||"Not found"}</p>
-
-<p>
-<a href="${selectedSupplier.url||"#"}"
-target="_blank">
-🔗 Open Supplier
-</a>
-</p>
-
-<hr>
+<h3>${esc(selected.title)}</h3>
+<p><b>Product:</b> ${esc(current)}</p>
+<p>Price: ${selected.price||"Not found"}</p>
+<p>MOQ: ${selected.moq||"Not found"}</p>
+<p>Lead Time: ${selected.leadTime||"Not found"}</p>
+<p><a href="${selected.url}" target="_blank">🔗 Open Supplier</a></p>
 
 <h3>RFQ Status</h3>
-
-<select id="rfqStatus"
-onchange="saveStatus(this.value)">
-
-<option>Not Contacted</option>
-<option>RFQ Ready</option>
-<option>Sent</option>
-<option>Replied</option>
-<option>Negotiating</option>
-<option>Won</option>
-<option>Lost</option>
-
+<select id="rfqStatus">
+<option>Not Contacted</option><option>RFQ Ready</option><option>Sent</option>
+<option>Replied</option><option>Negotiating</option><option>Won</option><option>Lost</option>
 </select>
 
 <br>
-
-<button onclick="generateRFQ()">
-📩 Generate RFQ
-</button>
-
-<button onclick="saveWorkspace()">
-💾 Save Purchase
-</button>
-
+<button class="quote" onclick="rfq()">📩 Generate RFQ</button>
 <div id="rfqBox"></div>
 
-</div>
-
-`;
-
-window.scrollTo({
-top:document.body.scrollHeight,
-behavior:"smooth"
-});
-
+<h3>🤖 Negotiation Assistant</h3>
+<input id="offer" placeholder="Supplier price, e.g. $2.80">
+<button onclick="negotiate()">Analyze Offer</button>
+<div id="negotiation"></div>
+</div>`;
 }
 
+function rfq(){
+document.getElementById("rfqBox").innerHTML=`<textarea style="height:280px">REQUEST FOR QUOTATION
 
-/* RFQ */
-
-function generateRFQ(){
-
-if(!selectedSupplier)return;
-
-const text=
-`REQUEST FOR QUOTATION
-
-Product:
-${currentProduct}
-
-Supplier:
-${selectedSupplier.title}
-
-Quantity:
-Please confirm.
+Product: ${current}
 
 Please provide:
-
 1. Unit price
 2. MOQ
-3. Shipping cost
+3. Shipping cost to Dubai
 4. Delivery time
 5. Payment terms
 6. Sample availability
@@ -357,71 +119,25 @@ Please provide:
 
 Please provide your best quotation.
 
-Thank you.
-
-Supplier:
-${selectedSupplier.url}`;
-
-document.getElementById("rfqBox").innerHTML=`
-
-<h3>RFQ Ready</h3>
-
-<textarea style="height:320px">${text}</textarea>
-
-<p class="small">
-Copy this RFQ and send it to the supplier.
-</p>
-
-`;
-
+Thank you.</textarea>`;
+document.getElementById("rfqStatus").value="RFQ Ready";
 }
 
-
-/* STATUS */
-
-function saveStatus(status){
-
-if(!selectedSupplier)return;
-
-selectedSupplier.rfqStatus=status;
-
+function negotiate(){
+let p=document.getElementById("offer").value.trim();
+if(!p){negotiation.innerHTML="Enter the supplier's price.";return}
+negotiation.innerHTML=`<div class="card">
+<b>🤖 NOVA Analysis</b>
+<p>Supplier offer: <b>${esc(p)}</b></p>
+<p>Suggested action: Ask for a better price, lower MOQ, and shipping confirmation.</p>
+<p><b>Suggested message:</b></p>
+<textarea>Thank you for your quotation. We are interested in this order. Please provide your best possible price, confirm the MOQ, shipping cost and delivery time. If the price is improved, we can proceed quickly.</textarea>
+</div>`;
 }
 
-
-/* SAVE */
-
-function saveWorkspace(){
-
-if(!selectedSupplier)return;
-
-localStorage.setItem(
-"NOVA_PURCHASE",
-JSON.stringify({
-product:currentProduct,
-supplier:selectedSupplier,
-savedAt:new Date().toISOString()
-})
-);
-
-alert("✅ Purchase saved in this browser.");
-
+function esc(x){
+return String(x||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 }
-
-
-/* SECURITY */
-
-function escapeHTML(text){
-
-return String(text)
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
-
-}
-
 </script>
-
 </body>
 </html>
