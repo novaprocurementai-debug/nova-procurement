@@ -117,15 +117,18 @@ function extractQuantity(text) {
 
   const patterns = [
     /\b(\d+(?:\.\d+)?)\s*(?:pcs|pieces|units|unit|items|bottles|sets)\b/i,
-    /\b(\d+(?:\.\d+)?)\s*(?:kg|tons|ton)\b/i,
     /\bquantity\s*[:=]?\s*(\d+(?:\.\d+)?)/i
   ];
 
   for (const p of patterns) {
     const m = s.match(p);
+
     if (m) {
       const n = Number(m[1]);
-      if (Number.isFinite(n) && n > 0) return n;
+
+      if (Number.isFinite(n) && n > 0) {
+        return n;
+      }
     }
   }
 
@@ -148,7 +151,7 @@ function parsePrice(text) {
 
     /(\d+(?:\.\d+)?)\s*(?:-|–|—|to)\s*(\d+(?:\.\d+)?)\s*USD/i,
 
-    /(?:price|unit price|price per piece|price\/pc|price\/piece)[^$0-9]{0,30}(?:US\$|\$|USD)?\s*(\d+(?:\.\d+)?)/i,
+    /(?:price|unit price|price per piece|price\/pc|price\/piece)[^$0-9]{0,40}(?:US\$|\$|USD)?\s*(\d+(?:\.\d+)?)/i,
 
     /(?:US\$|\$)\s*(\d+(?:\.\d+)?)\s*(?:\/\s*(?:pc|pcs|piece|unit))?/i,
 
@@ -157,6 +160,7 @@ function parsePrice(text) {
 
   for (const p of patterns) {
     const m = s.match(p);
+
     if (!m) continue;
 
     if (m[2]) {
@@ -216,6 +220,7 @@ function parseMOQ(text) {
 
   for (const p of patterns) {
     const m = s.match(p);
+
     if (!m) continue;
 
     const n = Number(m[1]);
@@ -243,8 +248,8 @@ function parseLeadTime(text) {
     /(\d+)\s*[-–—]\s*(\d+)\s*days?/i,
     /(\d+)\s*to\s*(\d+)\s*days?/i,
     /within\s*(\d+)\s*days?/i,
-    /production\s*time[^0-9]{0,20}(\d+)\s*days?/i,
-    /lead\s*time[^0-9]{0,20}(\d+)\s*days?/i
+    /production\s*time[^0-9]{0,30}(\d+)\s*days?/i,
+    /lead\s*time[^0-9]{0,30}(\d+)\s*days?/i
   ];
 
   for (const p of patterns) {
@@ -271,24 +276,12 @@ function supplierSignals(title, url, snippet) {
 
   let score = 0;
 
-  if (/manufacturer|factory|manufacturer-direct|factory-direct/.test(text)) {
-    score += 30;
-  }
-
+  if (/manufacturer|factory/.test(text)) score += 30;
   if (/\boem\b/.test(text)) score += 15;
   if (/\bodm\b/.test(text)) score += 10;
-
-  if (/wholesale|bulk|bulk order/.test(text)) {
-    score += 15;
-  }
-
-  if (/supplier|exporter/.test(text)) {
-    score += 10;
-  }
-
-  if (/custom|private label|custom logo|logo printing/.test(text)) {
-    score += 10;
-  }
+  if (/wholesale|bulk/.test(text)) score += 15;
+  if (/supplier|exporter/.test(text)) score += 10;
+  if (/custom|private label|logo/.test(text)) score += 10;
 
   return Math.min(score, 100);
 }
@@ -329,9 +322,7 @@ function pageTypeScore(title, url, snippet) {
     "article",
     "comparison",
     "definition",
-    "wikipedia",
-    "gift ideas",
-    "promotional gifts"
+    "wikipedia"
   ];
 
   for (const word of good) {
@@ -356,7 +347,6 @@ function evidenceScore(data) {
   if (data.moq !== null) score += 25;
   if (data.leadTime !== null) score += 15;
   if (data.shippingMentioned) score += 10;
-
   if (data.supplierSignal >= 20) score += 10;
   if (data.supplierSignal >= 40) score += 10;
 
@@ -368,57 +358,90 @@ function evidenceScore(data) {
 ========================= */
 
 function dealScore(data, requestedQuantity) {
-  let score = 0;
+  let score = 10;
 
-  /* Supplier quality */
-  score += Math.min(data.supplierSignal * 0.30, 30);
+  score += Math.min(
+    data.supplierSignal * 0.30,
+    30
+  );
 
-  /* Commercial evidence */
-  if (data.unitPrice !== null) score += 20;
-  if (data.moq !== null) score += 15;
-  if (data.leadTime !== null) score += 10;
-  if (data.shippingMentioned) score += 5;
+  if (data.unitPrice !== null) {
+    score += 20;
 
-  /* MOQ fit */
-  if (data.moq !== null && requestedQuantity) {
-    if (data.moq <= requestedQuantity) {
-      score += 10;
-    } else if (data.moq <= requestedQuantity * 2) {
-      score += 4;
-    } else {
-      score -= 15;
+    if (data.unitPrice <= 2) score += 5;
+    else if (data.unitPrice <= 5) score += 3;
+  }
+
+  if (data.moq !== null) {
+    score += 15;
+
+    if (requestedQuantity) {
+      if (data.moq <= requestedQuantity) {
+        score += 10;
+      } else if (
+        data.moq <= requestedQuantity * 2
+      ) {
+        score += 4;
+      } else {
+        score -= 15;
+      }
     }
   }
 
-  /* Price reasonableness */
-  if (data.unitPrice !== null) {
-    if (data.unitPrice <= 2) score += 5;
-    else if (data.unitPrice <= 5) score += 3;
-    else if (data.unitPrice > 100) score -= 5;
+  if (data.leadTime) {
+    score += 10;
+
+    const nums =
+      data.leadTime
+        .match(/\d+/g)
+        ?.map(Number) || [];
+
+    if (nums.length) {
+      const maxDays =
+        Math.max(...nums);
+
+      if (maxDays <= 30) score += 3;
+      else if (maxDays > 90) score -= 5;
+    }
   }
 
-  /* Page quality */
+  if (data.shippingMentioned) {
+    score += 5;
+  }
+
   score += Math.max(
-    -15,
-    Math.min(10, data.pageTypeScore * 0.15)
+    -10,
+    Math.min(
+      10,
+      data.pageTypeScore * 0.10
+    )
   );
 
   return Math.max(
     0,
-    Math.min(100, Math.round(score))
+    Math.min(
+      100,
+      Math.round(score)
+    )
   );
 }
 
 /* =========================
-   SEARCH
+   SEARCH SUPPLIERS
 ========================= */
 
-async function searchSuppliers(requestText, env) {
+async function searchSuppliers(
+  requestText,
+  env
+) {
   if (!env.YEP_API_KEY) {
-    throw new Error("YEP_API_KEY is missing");
+    throw new Error(
+      "YEP_API_KEY is missing"
+    );
   }
 
-  const requestedQuantity = extractQuantity(requestText);
+  const requestedQuantity =
+    extractQuantity(requestText);
 
   const searchQuery = `
     ${requestText}
@@ -435,10 +458,14 @@ async function searchSuppliers(requestText, env) {
     "https://platform.yep.com/api/search",
     {
       method: "POST",
+
       headers: {
-        "Authorization": `Bearer ${env.YEP_API_KEY}`,
-        "Content-Type": "application/json"
+        "Authorization":
+          `Bearer ${env.YEP_API_KEY}`,
+        "Content-Type":
+          "application/json"
       },
+
       body: JSON.stringify({
         query: searchQuery,
         type: "highlights",
@@ -450,158 +477,208 @@ async function searchSuppliers(requestText, env) {
   );
 
   if (!response.ok) {
-    const errorText = await response.text();
+    const errorText =
+      await response.text();
 
     throw new Error(
       `Yep Search error ${response.status}: ${errorText}`
     );
   }
 
-  const data = await response.json();
+  const data =
+    await response.json();
 
-  const rawResults = Array.isArray(data.results)
-    ? data.results
-    : [];
+  const rawResults =
+    Array.isArray(data.results)
+      ? data.results
+      : [];
 
-  const results = rawResults
-    .map((r) => {
-      const title = String(r.title || "");
-      const url = String(r.url || "");
+  const results =
+    rawResults
+      .map((r) => {
+        const title =
+          String(r.title || "");
 
-      const snippet = String(
-        r.snippet ||
-        r.description ||
-        r.highlight ||
-        ""
-      );
+        const url =
+          String(r.url || "");
 
-      const combined = `${title} ${snippet}`;
+        const snippet =
+          String(
+            r.snippet ||
+            r.description ||
+            r.highlight ||
+            ""
+          );
 
-      const price = parsePrice(combined);
-      const moq = parseMOQ(combined);
-      const leadTime = parseLeadTime(combined);
+        const combined =
+          `${title} ${snippet}`;
 
-      const shippingMentioned =
-        /\bshipping\b|\bfreight\b|\bdelivery\b|\bFOB\b|\bCIF\b|\bDDP\b/i
-          .test(combined);
+        const price =
+          parsePrice(combined);
 
-      const supplierSignal =
-        supplierSignals(
+        const moq =
+          parseMOQ(combined);
+
+        const leadTime =
+          parseLeadTime(combined);
+
+        const shippingMentioned =
+          /\bshipping\b|\bfreight\b|\bdelivery\b|\bFOB\b|\bCIF\b|\bDDP\b/i
+            .test(combined);
+
+        const supplierSignal =
+          supplierSignals(
+            title,
+            url,
+            snippet
+          );
+
+        const pageScore =
+          pageTypeScore(
+            title,
+            url,
+            snippet
+          );
+
+        const evidence =
+          evidenceScore({
+            unitPrice:
+              price.unitPrice,
+            moq,
+            leadTime,
+            shippingMentioned,
+            supplierSignal
+          });
+
+        const deal =
+          dealScore(
+            {
+              unitPrice:
+                price.unitPrice,
+              moq,
+              leadTime,
+              shippingMentioned,
+              supplierSignal,
+              pageTypeScore:
+                pageScore
+            },
+            requestedQuantity
+          );
+
+        return {
           title,
           url,
-          snippet
-        );
+          snippet,
 
-      const pageScore =
-        pageTypeScore(
-          title,
-          url,
-          snippet
-        );
+          priceText:
+            price.text,
 
-      const evidence = evidenceScore({
-        unitPrice: price.unitPrice,
-        moq,
-        leadTime,
-        shippingMentioned,
-        supplierSignal
-      });
+          unitPrice:
+            price.unitPrice,
 
-      const deal = dealScore(
-        {
-          unitPrice: price.unitPrice,
           moq,
           leadTime,
+
           shippingMentioned,
+
           supplierSignal,
-          pageTypeScore: pageScore
-        },
-        requestedQuantity
-      );
 
-      return {
-        title,
-        url,
-        snippet,
+          evidenceScore:
+            evidence,
 
-        priceText: price.text,
-        unitPrice: price.unitPrice,
+          dealScore:
+            deal,
 
-        moq,
-        leadTime,
+          requestedQuantity,
 
-        shippingMentioned,
+          productCost:
+            price.unitPrice !== null &&
+            requestedQuantity
+              ? Number(
+                  (
+                    price.unitPrice *
+                    requestedQuantity
+                  ).toFixed(2)
+                )
+              : null
+        };
+      })
 
-        supplierSignal,
+      /* Keep real supplier-looking pages */
+      .filter((r) => {
+        if (!r.url) return false;
 
-        evidenceScore: evidence,
-        dealScore: deal,
+        if (r.supplierSignal >= 8) {
+          return true;
+        }
 
-        requestedQuantity,
+        if (
+          r.unitPrice !== null &&
+          r.pageTypeScore > -20
+        ) {
+          return true;
+        }
 
-        productCost:
-          price.unitPrice !== null &&
-          requestedQuantity
-            ? Number(
-                (
-                  price.unitPrice *
-                  requestedQuantity
-                ).toFixed(2)
-              )
-            : null
-      };
-    })
+        return false;
+      })
 
-    /* Must have a supplier signal */
-    .filter((r) =>
-      r.url &&
-      r.supplierSignal >= 15
-    )
+      /* Remove obvious non-commercial pages */
+      .filter((r) =>
+        r.pageTypeScore > -40
+      )
 
-    /* Remove obvious non-supplier pages */
-    .filter((r) =>
-      r.pageTypeScore > -25
-    )
+      .sort((a, b) => {
+        if (
+          b.dealScore !==
+          a.dealScore
+        ) {
+          return (
+            b.dealScore -
+            a.dealScore
+          );
+        }
 
-    .sort((a, b) => {
-      if (b.dealScore !== a.dealScore) {
-        return b.dealScore - a.dealScore;
-      }
-
-      return b.evidenceScore - a.evidenceScore;
-    });
+        return (
+          b.evidenceScore -
+          a.evidenceScore
+        );
+      });
 
   /* =========================
      REMOVE DUPLICATE DOMAINS
   ========================= */
 
-  const seen = new Set();
+  const seen =
+    new Set();
 
-  const unique = results.filter((r) => {
-    try {
-      const domain = new URL(r.url)
-        .hostname
-        .replace(/^www\./, "")
-        .toLowerCase();
+  const unique =
+    results.filter((r) => {
+      try {
+        const domain =
+          new URL(r.url)
+            .hostname
+            .replace(/^www\./, "")
+            .toLowerCase();
 
-      if (seen.has(domain)) {
-        return false;
+        if (seen.has(domain)) {
+          return false;
+        }
+
+        seen.add(domain);
+
+        return true;
+      } catch {
+        return true;
       }
-
-      seen.add(domain);
-      return true;
-
-    } catch {
-      return true;
-    }
-  });
+    });
 
   return {
     success: true,
     query: requestText,
     requestedQuantity,
     total: unique.length,
-    results: unique.slice(0, 50)
+    results:
+      unique.slice(0, 50)
   };
 }
 
@@ -609,16 +686,24 @@ async function searchSuppliers(requestText, env) {
    AI NEGOTIATION
 ========================= */
 
-async function negotiate(body, env) {
+async function negotiate(
+  body,
+  env
+) {
   if (!env.AI) {
     throw new Error(
       "Workers AI binding AI is missing"
     );
   }
 
-  const supplier = body.supplier || "";
-  const offer = body.offer || "";
-  const reply = body.reply || "";
+  const supplier =
+    body.supplier || "";
+
+  const offer =
+    body.offer || "";
+
+  const reply =
+    body.reply || "";
 
   const prompt = `
 You are NOVA, an evidence-first AI procurement analyst.
@@ -627,15 +712,14 @@ Analyze ONLY information explicitly provided.
 
 IMPORTANT:
 - NEVER invent facts.
-- NEVER invent a price.
+- NEVER invent price.
 - NEVER invent MOQ.
 - NEVER assume customization is included.
 - NEVER assume shipping destination.
 - NEVER assume taxes or customs.
 - NEVER call a price competitive without evidence.
-- If information is missing, write NOT STATED.
+- Missing information must say NOT STATED.
 - Quantity is NOT MOQ.
-- Do not convert assumptions into facts.
 
 Supplier:
 ${supplier}
@@ -646,7 +730,7 @@ ${offer}
 Supplier reply:
 ${reply}
 
-Return exactly these sections:
+Return exactly:
 
 VERIFIED OFFER
 
@@ -661,22 +745,23 @@ COUNTER-OFFER
 MESSAGE TO SUPPLIER
 `;
 
-  const result = await env.AI.run(
-    MODEL,
-    {
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a strict procurement analyst. Evidence first. Never fabricate."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ]
-    }
-  );
+  const result =
+    await env.AI.run(
+      MODEL,
+      {
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a strict procurement analyst. Evidence first. Never fabricate."
+          },
+          {
+            role: "user",
+            content: prompt
+          }
+        ]
+      }
+    );
 
   return (
     result.response ||
@@ -689,12 +774,18 @@ MESSAGE TO SUPPLIER
 ========================= */
 
 export default {
-  async fetch(request, env) {
+  async fetch(
+    request,
+    env
+  ) {
     try {
       await ensureDB(env);
 
-      const url = new URL(request.url);
-      const path = url.pathname;
+      const url =
+        new URL(request.url);
+
+      const path =
+        url.pathname;
 
       /* STATIC */
       if (
@@ -702,14 +793,17 @@ export default {
         !path.startsWith("/api/")
       ) {
         if (env.ASSETS) {
-          return env.ASSETS.fetch(request);
+          return env.ASSETS.fetch(
+            request
+          );
         }
 
         return new Response(
           "NOVA Procurement AI",
           {
             headers: {
-              "content-type": "text/plain"
+              "content-type":
+                "text/plain"
             }
           }
         );
@@ -720,13 +814,15 @@ export default {
         request.method === "POST" &&
         path === "/api/search"
       ) {
-        const body = await request.json();
+        const body =
+          await request.json();
 
         if (!body.request) {
           return json(
             {
               success: false,
-              error: "Request is required"
+              error:
+                "Request is required"
             },
             400
           );
@@ -746,19 +842,25 @@ export default {
         request.method === "POST" &&
         path === "/api/signup"
       ) {
-        const body = await request.json();
+        const body =
+          await request.json();
 
-        const email = String(
-          body.email || ""
-        )
-          .trim()
-          .toLowerCase();
+        const email =
+          String(
+            body.email || ""
+          )
+            .trim()
+            .toLowerCase();
 
-        const password = String(
-          body.password || ""
-        );
+        const password =
+          String(
+            body.password || ""
+          );
 
-        if (!email || !password) {
+        if (
+          !email ||
+          !password
+        ) {
           return json(
             {
               success: false,
@@ -769,7 +871,9 @@ export default {
           );
         }
 
-        if (password.length < 6) {
+        if (
+          password.length < 6
+        ) {
           return json(
             {
               success: false,
@@ -808,9 +912,6 @@ export default {
             salt
           );
 
-        const createdAt =
-          new Date().toISOString();
-
         const result =
           await env.DB
             .prepare(`
@@ -822,7 +923,7 @@ export default {
               email,
               hash,
               salt,
-              createdAt
+              new Date().toISOString()
             )
             .run();
 
@@ -876,12 +977,16 @@ export default {
           await request.json();
 
         const email =
-          String(body.email || "")
+          String(
+            body.email || ""
+          )
             .trim()
             .toLowerCase();
 
         const password =
-          String(body.password || "");
+          String(
+            body.password || ""
+          );
 
         const user =
           await env.DB
@@ -911,7 +1016,8 @@ export default {
           );
 
         if (
-          hash !== user.password_hash
+          hash !==
+          user.password_hash
         ) {
           return json(
             {
@@ -972,7 +1078,10 @@ export default {
             "nova_session"
           );
 
-        if (token && env.DB) {
+        if (
+          token &&
+          env.DB
+        ) {
           await env.DB
             .prepare(
               "DELETE FROM sessions WHERE token = ?"
@@ -1004,12 +1113,13 @@ export default {
 
         return json({
           success: true,
-          loggedIn: !!user,
+          loggedIn:
+            !!user,
           user
         });
       }
 
-      /* PURCHASES GET */
+      /* PURCHASES */
       if (
         request.method === "GET" &&
         path === "/api/purchases"
@@ -1024,7 +1134,8 @@ export default {
           return json(
             {
               success: false,
-              error: "Not logged in"
+              error:
+                "Not logged in"
             },
             401
           );
@@ -1048,7 +1159,7 @@ export default {
         });
       }
 
-      /* PURCHASE SAVE */
+      /* SAVE PURCHASE */
       if (
         request.method === "POST" &&
         path === "/api/purchases"
@@ -1063,7 +1174,8 @@ export default {
           return json(
             {
               success: false,
-              error: "Not logged in"
+              error:
+                "Not logged in"
             },
             401
           );
@@ -1073,28 +1185,36 @@ export default {
           await request.json();
 
         const quantity =
-          Number(body.quantity || 0);
+          Number(
+            body.quantity || 0
+          );
 
         const unitPrice =
           body.unitPrice === null ||
           body.unitPrice === undefined ||
           body.unitPrice === ""
             ? null
-            : Number(body.unitPrice);
+            : Number(
+                body.unitPrice
+              );
 
         const shipping =
           body.shippingCost === null ||
           body.shippingCost === undefined ||
           body.shippingCost === ""
             ? null
-            : Number(body.shippingCost);
+            : Number(
+                body.shippingCost
+              );
 
         const landed =
           body.landedCost === null ||
           body.landedCost === undefined ||
           body.landedCost === ""
             ? null
-            : Number(body.landedCost);
+            : Number(
+                body.landedCost
+              );
 
         const result =
           await env.DB
@@ -1153,7 +1273,10 @@ export default {
             env
           );
 
-        if (user && env.DB) {
+        if (
+          user &&
+          env.DB
+        ) {
           await env.DB
             .prepare(`
               INSERT INTO negotiations
@@ -1170,7 +1293,8 @@ export default {
             `)
             .bind(
               user.id,
-              body.purchaseId || null,
+              body.purchaseId ||
+                null,
               body.supplier || "",
               body.offer || "",
               body.reply || "",
