@@ -7,12 +7,8 @@ export default {
         const body = await request.json();
         const requestText = (body.request || "").trim();
 
-        if (!requestText) {
-          return Response.json(
-            { error: "Enter what you want to buy." },
-            { status: 400 }
-          );
-        }
+        if (!requestText)
+          return Response.json({ error: "Enter what you want to buy." }, { status: 400 });
 
         const r = await fetch("https://platform.yep.com/api/search", {
           method: "POST",
@@ -30,19 +26,13 @@ export default {
 
         const data = await r.json();
 
-        if (!Array.isArray(data.results)) {
-          return Response.json({
-            success: false,
-            error: "No search results",
-            results: []
-          });
-        }
+        if (!Array.isArray(data.results))
+          return Response.json({ success: false, results: [] });
 
         const results = data.results
           .filter(x => x.url)
           .map(x => {
-            const text =
-              `${x.title || ""} ${x.snippet || ""} ${x.description || ""}`;
+            const text = `${x.title || ""} ${x.snippet || ""} ${x.description || ""}`;
 
             const price =
               text.match(/(?:US\$|USD|\$)\s?[\d,.]+(?:\s*[-–]\s*[\d,.]+)?/i)?.[0] || null;
@@ -50,8 +40,13 @@ export default {
             const moq =
               text.match(/(?:MOQ|minimum order(?: quantity)?)[^\d]{0,20}([\d,]+)/i)?.[1] || null;
 
-            const lead =
+            const leadTime =
               text.match(/\b\d+\s*(?:-|–|to)\s*\d+\s*days\b/i)?.[0] || null;
+
+            let score = 50;
+            if (price) score += 20;
+            if (moq) score += 15;
+            if (leadTime) score += 15;
 
             return {
               title: x.title || "Supplier",
@@ -59,9 +54,12 @@ export default {
               snippet: x.snippet || x.description || "",
               price,
               moq,
-              leadTime: lead
+              leadTime,
+              dealScore: score
             };
           });
+
+        results.sort((a, b) => b.dealScore - a.dealScore);
 
         return Response.json({
           success: true,
