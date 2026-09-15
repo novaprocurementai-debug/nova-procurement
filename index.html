@@ -1,413 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>NOVA — AI Procurement</title>
-
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 30px 20px;
-      background: #f7f9fc;
-      color: #172033;
-    }
-
-    h1 {
-      font-size: 40px;
-      margin-bottom: 5px;
-    }
-
-    .subtitle {
-      color: #667085;
-      font-size: 18px;
-      margin-bottom: 30px;
-    }
-
-    textarea {
-      width: 100%;
-      min-height: 130px;
-      padding: 15px;
-      box-sizing: border-box;
-      border: 1px solid #ccd3df;
-      border-radius: 10px;
-      font-size: 16px;
-      background: white;
-      resize: vertical;
-    }
-
-    button {
-      margin-top: 12px;
-      padding: 14px 24px;
-      border: 0;
-      border-radius: 9px;
-      background: #111827;
-      color: white;
-      font-size: 16px;
-      cursor: pointer;
-    }
-
-    button:disabled {
-      opacity: 0.6;
-    }
-
-    #status {
-      margin-top: 20px;
-      font-weight: bold;
-    }
-
-    .info {
-      background: white;
-      border: 1px solid #e1e6ef;
-      border-radius: 12px;
-      padding: 15px;
-      margin-top: 15px;
-    }
-
-    .result {
-      background: white;
-      border: 1px solid #e1e6ef;
-      border-radius: 12px;
-      padding: 18px;
-      margin-top: 15px;
-    }
-
-    .result h3 {
-      margin-top: 0;
-    }
-
-    .result a {
-      color: #2563eb;
-      word-break: break-all;
-    }
-
-    .snippet {
-      color: #4b5563;
-      line-height: 1.5;
-      margin-top: 10px;
-    }
-
-    .source {
-      color: #667085;
-      font-size: 13px;
-      margin-top: 10px;
-    }
-
-    .error {
-      background: #fff1f2;
-      border: 1px solid #fecdd3;
-      color: #9f1239;
-      padding: 15px;
-      border-radius: 10px;
-      margin-top: 15px;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NOVA — AI Procurement</title>
+<style>
+body{font-family:Arial;margin:0;background:#f5f7fa;color:#111}
+main{max-width:900px;margin:auto;padding:25px}
+textarea{width:100%;height:100px;padding:12px;font-size:16px;box-sizing:border-box}
+button{margin-top:10px;padding:14px 25px;background:#111;color:white;border:0;border-radius:8px;font-size:16px}
+.card{background:white;padding:18px;margin-top:15px;border-radius:12px;box-shadow:0 2px 8px #ddd}
+.score{font-size:22px;font-weight:bold}
+a{color:#06c}
+</style>
 </head>
-
 <body>
+<main>
+<h1>🧠 NOVA</h1>
+<p>Your AI Purchasing Agent</p>
 
-  <h1>NOVA</h1>
+<textarea id="req" placeholder="What do you want to buy?"></textarea>
+<button onclick="search()">Search with Nova</button>
 
-  <div class="subtitle">
-    Your AI Purchasing Agent
-  </div>
-
-  <textarea
-    id="procurementInput"
-    placeholder="Example: I need 1000 stainless steel water bottles with my logo, wholesale price, delivered to Dubai">
-  </textarea>
-
-  <button id="searchButton" onclick="startSearch()">
-    Search with Nova
-  </button>
-
-  <div id="status"></div>
-
-  <div id="results"></div>
+<div id="status"></div>
+<div id="results"></div>
+</main>
 
 <script>
+async function search(){
+ const req=document.getElementById("req").value.trim();
+ const status=document.getElementById("status");
+ const results=document.getElementById("results");
 
-async function startSearch() {
+ if(!req)return;
 
-  const input =
-    document.getElementById("procurementInput");
+ status.innerHTML="<p>🔎 NOVA is searching...</p>";
+ results.innerHTML="";
 
-  const button =
-    document.getElementById("searchButton");
+ try{
+  const r=await fetch("/api/search",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({request:req})
+  });
 
-  const status =
-    document.getElementById("status");
+  const data=await r.json();
 
-  const resultsBox =
-    document.getElementById("results");
-
-  const request =
-    input.value.trim();
-
-  if (!request) {
-    status.textContent =
-      "Please enter what you want to buy.";
-    return;
+  if(!data.results?.length){
+   status.innerHTML="<p>❌ No results found.</p>";
+   return;
   }
 
-  button.disabled = true;
-
-  status.textContent =
-    "NOVA is searching real web results...";
-
-  resultsBox.innerHTML = "";
-
-  try {
-
-    const response = await fetch("/api/search", {
-
-      method: "POST",
-
-      headers: {
-        "Content-Type": "application/json"
-      },
-
-      body: JSON.stringify({
-        request: request
-      })
-
-    });
-
-
-    const data =
-      await response.json();
-
-
-    if (!response.ok) {
-
-      throw new Error(
-        data.error ||
-        "Search failed"
-      );
-
-    }
-
-
-    /*
-      IMPORTANT:
-      The new Worker returns results
-      directly inside data.results
-    */
-
-    const rawResults =
-      Array.isArray(data.results)
-        ? data.results
-        : [];
-
-
-    if (rawResults.length === 0) {
-
-      status.textContent =
-        "NOVA did not find results.";
-
-      resultsBox.innerHTML = `
-
-        <div class="error">
-
-          NOVA connected to the search system,
-          but no usable results were returned.
-
-          <br><br>
-
-          Sources checked:
-          ${escapeHtml(
-            String(data.sourcesChecked || 0)
-          )}
-
-          <br>
-
-          Successful sources:
-          ${escapeHtml(
-            String(data.successfulSources || 0)
-          )}
-
-          <br><br>
-
-          Query:
-          ${escapeHtml(
-            String(data.query || request)
-          )}
-
-        </div>
-
-      `;
-
-      return;
-
-    }
-
-
-    status.textContent =
-      "NOVA found " +
-      rawResults.length +
-      " real web results.";
-
-
-    resultsBox.innerHTML = `
-
-      <div class="info">
-
-        <strong>
-          NOVA Search
-        </strong>
-
-        <br><br>
-
-        Sources checked:
-        ${escapeHtml(
-          String(data.sourcesChecked || 0)
-        )}
-
-        <br>
-
-        Successful sources:
-        ${escapeHtml(
-          String(data.successfulSources || 0)
-        )}
-
-        <br>
-
-        Results:
-        ${escapeHtml(
-          String(rawResults.length)
-        )}
-
-      </div>
-
-    `;
-
-
-    rawResults.forEach(
-      (item, index) => {
-
-        const title =
-          item.title ||
-          "Untitled result";
-
-        const url =
-          item.url ||
-          "";
-
-        const snippet =
-          item.snippet ||
-          item.content ||
-          item.description ||
-          "";
-
-        const source =
-          item.source ||
-          "Web search";
-
-
-        resultsBox.innerHTML += `
-
-          <div class="result">
-
-            <h3>
-              ${index + 1}.
-              ${escapeHtml(title)}
-            </h3>
-
-            ${
-              url
-              ? `
-                <div>
-                  <a
-                    href="${escapeAttribute(url)}"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    Open supplier / website
-                  </a>
-                </div>
-              `
-              : ""
-            }
-
-            ${
-              snippet
-              ? `
-                <div class="snippet">
-                  ${escapeHtml(snippet)}
-                </div>
-              `
-              : ""
-            }
-
-            <div class="source">
-              Source:
-              ${escapeHtml(source)}
-            </div>
-
-          </div>
-
-        `;
-
-      }
-    );
-
-
-  } catch (error) {
-
-    status.textContent =
-      "Search error.";
-
-    resultsBox.innerHTML = `
-
-      <div class="error">
-
-        ${escapeHtml(
-          error.message
-        )}
-
-      </div>
-
-    `;
-
-  } finally {
-
-    button.disabled = false;
-
-  }
-
+  status.innerHTML=`<p>✅ ${data.results.length} suppliers found</p>`;
+
+  results.innerHTML=data.results.map((x,i)=>`
+   <div class="card">
+    <div class="score">⭐ Deal Score: ${x.dealScore}/100</div>
+    <h2>${i+1}. ${x.title}</h2>
+    <p>💰 <b>Price:</b> ${x.price||"Not found"}</p>
+    <p>📦 <b>MOQ:</b> ${x.moq||"Not found"}</p>
+    <p>⏱️ <b>Lead Time:</b> ${x.leadTime||"Not found"}</p>
+    <p>${x.snippet||""}</p>
+    <a href="${x.url}" target="_blank">🔗 View Supplier</a>
+   </div>
+  `).join("");
+
+ }catch(e){
+  status.innerHTML="<p>❌ Search error</p>";
+ }
 }
-
-
-function escapeHtml(text) {
-
-  return String(text)
-
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
-
-}
-
-
-function escapeAttribute(text) {
-
-  return String(text)
-
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-
-}
-
 </script>
-
 </body>
-  </html>
+</html>
