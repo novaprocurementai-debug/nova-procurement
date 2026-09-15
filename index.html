@@ -4,83 +4,264 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NOVA — AI Procurement</title>
+
 <style>
-body{font-family:Arial;background:#f5f7fa;margin:0;padding:20px}
-main{max-width:900px;margin:auto}
-textarea,input{width:100%;box-sizing:border-box;padding:12px;margin:6px 0}
+body{
+  font-family:Arial,sans-serif;
+  background:#f4f6f8;
+  margin:0;
+  padding:20px;
+  color:#111;
+}
+main{max-width:1000px;margin:auto}
+textarea,input{
+  width:100%;
+  box-sizing:border-box;
+  padding:12px;
+  margin:6px 0;
+  border:1px solid #ddd;
+  border-radius:8px;
+}
 textarea{height:100px}
-button{padding:12px 18px;border:0;border-radius:8px;background:#111;color:white;margin:6px 0}
-.card{background:white;padding:16px;margin:12px 0;border-radius:10px}
+button{
+  padding:12px 18px;
+  border:0;
+  border-radius:8px;
+  background:#111;
+  color:white;
+  cursor:pointer;
+  margin:6px 0;
+}
 .quote{background:#06c}
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+  margin-top:15px;
+  border-radius:10px;
+  overflow:hidden;
+}
+th,td{
+  padding:12px;
+  border-bottom:1px solid #eee;
+  text-align:left;
+}
+th{background:#111;color:white}
+a{color:#06c}
+.card{
+  background:white;
+  padding:16px;
+  margin:15px 0;
+  border-radius:10px;
+  box-shadow:0 2px 8px #ddd;
+}
+@media(max-width:700px){
+  table{font-size:13px}
+  th,td{padding:8px}
+}
 </style>
 </head>
+
 <body>
 <main>
+
 <h1>🧠 NOVA</h1>
 <p>Your AI Purchasing Agent</p>
+
 <textarea id="req" placeholder="What do you want to buy?"></textarea>
-<button onclick="search()">Search with Nova</button>
+
+<button onclick="search()">🔎 Search with Nova</button>
+
 <div id="status"></div>
 <div id="results"></div>
+
 </main>
 
 <script>
+
 async function search(){
+
 const req=document.getElementById("req").value.trim();
+
 if(!req)return;
-status.innerHTML="🔎 Searching...";
-results.innerHTML="";
+
+document.getElementById("status").innerHTML=
+"🔎 NOVA is searching suppliers...";
+
+document.getElementById("results").innerHTML="";
+
 try{
-const r=await fetch("/api/search",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({request:req})});
-const d=await r.json();
-if(!d.results?.length){status.innerHTML="❌ No results";return}
-status.innerHTML="✅ "+d.results.length+" suppliers found";
-results.innerHTML=d.results.map((x,i)=>`
-<div class="card">
-<h3>${i+1}. ${x.title}</h3>
-<p>💰 Price: ${x.price||"Not found"}</p>
-<p>📦 MOQ: ${x.moq||"Not found"}</p>
-<p>⏱️ Lead Time: ${x.leadTime||"Not found"}</p>
-<p>${x.snippet||""}</p>
-<a href="${x.url}" target="_blank">🔗 View Supplier</a><br>
-<button class="quote" onclick="quote('${encodeURIComponent(x.title)}','${encodeURIComponent(x.url)}')">📩 Request Quote</button>
-</div>`).join("");
-}catch(e){status.innerHTML="❌ Error"}
+
+const r=await fetch("/api/search",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({request:req})
+});
+
+const data=await r.json();
+
+if(!data.results || !data.results.length){
+
+document.getElementById("status").innerHTML=
+"❌ No suppliers found.";
+
+return;
 }
 
-function quote(t,u){
+document.getElementById("status").innerHTML=
+"✅ "+data.results.length+" suppliers found";
+
+let rows="";
+
+data.results.forEach((x,i)=>{
+
+rows+=`
+
+<tr>
+
+<td><b>${i+1}</b></td>
+
+<td>
+<b>${x.title || "Supplier"}</b>
+<br>
+<a href="${x.url || "#"}" target="_blank">
+View supplier
+</a>
+</td>
+
+<td>${x.price || "Not found"}</td>
+
+<td>${x.moq || "Not found"}</td>
+
+<td>${x.leadTime || "Not found"}</td>
+
+<td>
+<button class="quote"
+onclick="quote('${encodeURIComponent(x.title || "Supplier")}','${encodeURIComponent(x.url || "")}')">
+Request Quote
+</button>
+</td>
+
+</tr>
+
+`;
+
+});
+
+document.getElementById("results").innerHTML=`
+
+<h2>Supplier Comparison</h2>
+
+<table>
+
+<thead>
+<tr>
+<th>#</th>
+<th>Supplier</th>
+<th>Price</th>
+<th>MOQ</th>
+<th>Lead Time</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+${rows}
+</tbody>
+
+</table>
+
+`;
+
+}catch(e){
+
+document.getElementById("status").innerHTML=
+"❌ Search error.";
+
+}
+
+}
+
+
+function quote(title,url){
+
 const product=document.getElementById("req").value;
-results.innerHTML=`
+
+document.getElementById("results").innerHTML+=`
+
 <div class="card">
+
 <h2>📩 Request Quote</h2>
-<p><b>Supplier:</b> ${decodeURIComponent(t)}</p>
-<input id="name" placeholder="Your name">
-<input id="email" placeholder="Your email">
-<input id="qty" placeholder="Quantity">
-<textarea id="message" placeholder="Additional requirements"></textarea>
-<button onclick="prepare()">Generate RFQ</button>
+
+<p><b>Supplier:</b> ${decodeURIComponent(title)}</p>
+
+<input id="customerName" placeholder="Your name">
+
+<input id="customerEmail" placeholder="Your email">
+
+<input id="quantity" placeholder="Quantity">
+
+<textarea id="requirements"
+placeholder="Additional requirements"></textarea>
+
+<button onclick="generateRFQ()">
+Generate RFQ
+</button>
+
 <div id="rfq"></div>
-</div>`;
+
+</div>
+
+`;
+
 window.scrollTo(0,document.body.scrollHeight);
+
 }
 
-function prepare(){
+
+function generateRFQ(){
+
 const product=document.getElementById("req").value;
-const text=`REQUEST FOR QUOTATION
+
+const text=
+`REQUEST FOR QUOTATION
 
 Product: ${product}
 
-Quantity: ${qty.value}
+Quantity: ${document.getElementById("quantity").value}
 
-Customer: ${name.value}
-Email: ${email.value}
+Customer:
+${document.getElementById("customerName").value}
 
-Additional requirements:
-${message.value}
+Email:
+${document.getElementById("customerEmail").value}
 
-Please provide unit price, MOQ, shipping cost, lead time and payment terms.`;
-rfq.innerHTML=`<textarea style="height:250px">${text}</textarea><p>✅ RFQ ready — copy and send to the supplier.</p>`;
+Requirements:
+${document.getElementById("requirements").value}
+
+Please provide:
+
+• Unit price
+• MOQ
+• Shipping cost
+• Lead time
+• Payment terms
+• Sample availability
+• Customization options`;
+
+document.getElementById("rfq").innerHTML=`
+
+<h3>RFQ Ready</h3>
+
+<textarea style="height:280px">${text}</textarea>
+
+<p>✅ Copy this RFQ and send it to the supplier.</p>
+
+`;
+
 }
+
 </script>
+
 </body>
 </html>
