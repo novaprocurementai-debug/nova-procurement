@@ -2,18 +2,13 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    /* REAL SUPPLIER SEARCH */
     if (request.method === "POST" && url.pathname === "/api/search") {
       try {
         const body = await request.json();
         const requestText = (body.request || "").trim();
 
-        if (!requestText) {
-          return Response.json(
-            { error: "Enter what you want to buy." },
-            { status: 400 }
-          );
-        }
+        if (!requestText)
+          return Response.json({ error: "Enter what you want to buy." }, { status: 400 });
 
         const r = await fetch("https://platform.yep.com/api/search", {
           method: "POST",
@@ -31,50 +26,31 @@ export default {
 
         const data = await r.json();
 
-        if (!Array.isArray(data.results)) {
-          return Response.json({
-            success: false,
-            results: []
-          });
-        }
+        if (!Array.isArray(data.results))
+          return Response.json({ success: false, results: [] });
 
-        const results = data.results
-          .filter(x => x.url)
-          .map(x => {
-            const text =
-              `${x.title || ""} ${x.snippet || ""} ${x.description || ""}`;
+        const results = data.results.filter(x => x.url).map(x => {
+          const text = `${x.title || ""} ${x.snippet || ""} ${x.description || ""}`;
 
-            const price =
-              text.match(
-                /(?:US\$|USD|\$)\s?[\d,.]+(?:\s*[-–]\s*[\d,.]+)?/i
-              )?.[0] || null;
+          const price = text.match(/(?:US\$|USD|\$)\s?[\d,.]+(?:\s*[-–]\s*[\d,.]+)?/i)?.[0] || null;
+          const moq = text.match(/(?:MOQ|minimum order(?: quantity)?)[^\d]{0,20}([\d,]+)/i)?.[1] || null;
+          const leadTime = text.match(/\b\d+\s*(?:-|–|to)\s*\d+\s*days\b/i)?.[0] || null;
 
-            const moq =
-              text.match(
-                /(?:MOQ|minimum order(?: quantity)?)[^\d]{0,20}([\d,]+)/i
-              )?.[1] || null;
+          let score = 50;
+          if (price) score += 20;
+          if (moq) score += 15;
+          if (leadTime) score += 15;
 
-            const leadTime =
-              text.match(
-                /\b\d+\s*(?:-|–|to)\s*\d+\s*days\b/i
-              )?.[0] || null;
-
-            let score = 50;
-
-            if (price) score += 20;
-            if (moq) score += 15;
-            if (leadTime) score += 15;
-
-            return {
-              title: x.title || "Supplier",
-              url: x.url,
-              snippet: x.snippet || x.description || "",
-              price,
-              moq,
-              leadTime,
-              dealScore: score
-            };
-          });
+          return {
+            title: x.title || "Supplier",
+            url: x.url,
+            snippet: x.snippet || x.description || "",
+            price,
+            moq,
+            leadTime,
+            dealScore: score
+          };
+        });
 
         results.sort((a, b) => b.dealScore - a.dealScore);
 
@@ -87,54 +63,74 @@ export default {
 
       } catch (e) {
         return Response.json(
-          {
-            success: false,
-            error: e.message,
-            results: []
-          },
+          { success: false, error: e.message, results: [] },
           { status: 500 }
         );
       }
     }
 
-    /* REAL AI NEGOTIATION */
     if (request.method === "POST" && url.pathname === "/api/negotiate") {
       try {
         const body = await request.json();
 
-        const product = body.product || "";
-        const supplier = body.supplier || "";
-        const offer = body.offer || "";
-        const reply = body.supplierReply || "";
-
         const prompt = `
-You are NOVA, an AI procurement negotiation agent.
+You are NOVA, a professional procurement AI.
 
-Buyer product:
-${product}
+BUYER REQUEST:
+${body.product || ""}
 
-Supplier:
-${supplier}
+SUPPLIER:
+${body.supplier || ""}
 
-Supplier offer:
-${offer}
+SUPPLIER OFFER:
+${body.offer || ""}
 
-Supplier reply:
-${reply}
+FULL SUPPLIER REPLY:
+${body.supplierReply || ""}
 
-Analyze the supplier's response.
+IMPORTANT:
+Read the supplier reply carefully.
+Do NOT call information "missing" if it is explicitly stated anywhere in the reply.
+Extract exact facts before giving advice.
+Never invent numbers.
 
-Return a concise procurement analysis with:
+Analyze these fields separately:
 
-1. Offer assessment
-2. Missing information
-3. Negotiation leverage
-4. Recommended target
-5. Recommended counter-offer
-6. Professional message to send to the supplier
+- Unit price
+- Quantity
+- MOQ
+- Shipping cost
+- Destination
+- Production time
+- Delivery time
+- Payment terms
+- Customization/logo cost
+- Certifications
+- Warranty
+- Other fees
 
-Do not invent prices, shipping costs, MOQ, delivery dates, or facts that are not provided.
-Clearly say when information is unknown.
+Then provide:
+
+1. VERIFIED OFFER
+List only facts actually stated by the supplier.
+
+2. MISSING INFORMATION
+List only information that is genuinely absent.
+
+3. DEAL ANALYSIS
+Explain whether the offer looks attractive, but do not claim it is the cheapest unless there is evidence.
+
+4. NEGOTIATION TARGET
+Suggest a reasonable negotiation approach.
+If there is not enough information for a numeric target, say so.
+
+5. COUNTER-OFFER
+Give a practical proposed counter-offer.
+
+6. MESSAGE TO SUPPLIER
+Write a professional message ready to send.
+
+Be concise and factual.
 `;
 
         const ai = await env.AI.run(
@@ -143,8 +139,7 @@ Clearly say when information is unknown.
             messages: [
               {
                 role: "system",
-                content:
-                  "You are a professional global procurement negotiation assistant."
+                content: "You are NOVA, an evidence-first global procurement negotiation agent. Accuracy is more important than guessing."
               },
               {
                 role: "user",
@@ -160,19 +155,15 @@ Clearly say when information is unknown.
         });
 
       } catch (e) {
-        return Response.json(
-          {
-            success: false,
-            error: e.message
-          },
-          { status: 500 }
-        );
+        return Response.json({
+          success: false,
+          error: e.message
+        }, { status: 500 });
       }
     }
 
-    if (env.ASSETS) {
+    if (env.ASSETS)
       return env.ASSETS.fetch(request);
-    }
 
     return new Response("NOVA Procurement AI");
   }
