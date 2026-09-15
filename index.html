@@ -5,101 +5,81 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>NOVA — AI Procurement</title>
 <style>
-body{font-family:Arial;margin:0;background:#f5f7fa;color:#111}
-main{max-width:900px;margin:auto;padding:25px}
-textarea{width:100%;height:100px;padding:12px;font-size:16px;box-sizing:border-box}
-button{margin-top:10px;padding:12px 18px;background:#111;color:white;border:0;border-radius:8px;font-size:15px}
-.card{background:white;padding:18px;margin-top:15px;border-radius:12px;box-shadow:0 2px 8px #ddd}
-a{color:#06c}
-.quote{background:#0b57d0}
+body{font-family:Arial;background:#f5f7fa;margin:0;padding:20px}
+main{max-width:900px;margin:auto}
+textarea,input{width:100%;box-sizing:border-box;padding:12px;margin:6px 0}
+textarea{height:100px}
+button{padding:12px 18px;border:0;border-radius:8px;background:#111;color:white;margin:6px 0}
+.card{background:white;padding:16px;margin:12px 0;border-radius:10px}
+.quote{background:#06c}
 </style>
 </head>
 <body>
 <main>
 <h1>🧠 NOVA</h1>
 <p>Your AI Purchasing Agent</p>
-
 <textarea id="req" placeholder="What do you want to buy?"></textarea>
 <button onclick="search()">Search with Nova</button>
-
 <div id="status"></div>
 <div id="results"></div>
 </main>
 
 <script>
 async function search(){
- const req=document.getElementById("req").value.trim();
- if(!req)return;
-
- status.innerHTML="<p>🔎 NOVA is searching...</p>";
- results.innerHTML="";
-
- try{
-  const r=await fetch("/api/search",{
-   method:"POST",
-   headers:{"Content-Type":"application/json"},
-   body:JSON.stringify({request:req})
-  });
-  const data=await r.json();
-
-  if(!data.results?.length){
-   status.innerHTML="<p>❌ No results found.</p>";
-   return;
-  }
-
-  status.innerHTML=`<p>✅ ${data.results.length} suppliers found</p>`;
-
-  results.innerHTML=data.results.map((x,i)=>`
-   <div class="card">
-    <h2>${i+1}. ${x.title}</h2>
-    <p>💰 <b>Price:</b> ${x.price||"Not found"}</p>
-    <p>📦 <b>MOQ:</b> ${x.moq||"Not found"}</p>
-    <p>⏱️ <b>Lead Time:</b> ${x.leadTime||"Not found"}</p>
-    <p>${x.snippet||""}</p>
-
-    <a href="${x.url}" target="_blank">🔗 View Supplier</a>
-
-    <br>
-    <button class="quote"
-      onclick="requestQuote(${JSON.stringify(x.title)},${JSON.stringify(x.url)})">
-      📩 Request Quote
-    </button>
-   </div>
-  `).join("");
-
- }catch(e){
-  status.innerHTML="<p>❌ Search error</p>";
- }
+const req=document.getElementById("req").value.trim();
+if(!req)return;
+status.innerHTML="🔎 Searching...";
+results.innerHTML="";
+try{
+const r=await fetch("/api/search",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({request:req})});
+const d=await r.json();
+if(!d.results?.length){status.innerHTML="❌ No results";return}
+status.innerHTML="✅ "+d.results.length+" suppliers found";
+results.innerHTML=d.results.map((x,i)=>`
+<div class="card">
+<h3>${i+1}. ${x.title}</h3>
+<p>💰 Price: ${x.price||"Not found"}</p>
+<p>📦 MOQ: ${x.moq||"Not found"}</p>
+<p>⏱️ Lead Time: ${x.leadTime||"Not found"}</p>
+<p>${x.snippet||""}</p>
+<a href="${x.url}" target="_blank">🔗 View Supplier</a><br>
+<button class="quote" onclick="quote('${encodeURIComponent(x.title)}','${encodeURIComponent(x.url)}')">📩 Request Quote</button>
+</div>`).join("");
+}catch(e){status.innerHTML="❌ Error"}
 }
 
-function requestQuote(title,url){
- const product=document.getElementById("req").value.trim();
+function quote(t,u){
+const product=document.getElementById("req").value;
+results.innerHTML=`
+<div class="card">
+<h2>📩 Request Quote</h2>
+<p><b>Supplier:</b> ${decodeURIComponent(t)}</p>
+<input id="name" placeholder="Your name">
+<input id="email" placeholder="Your email">
+<input id="qty" placeholder="Quantity">
+<textarea id="message" placeholder="Additional requirements"></textarea>
+<button onclick="prepare()">Generate RFQ</button>
+<div id="rfq"></div>
+</div>`;
+window.scrollTo(0,document.body.scrollHeight);
+}
 
- const subject=encodeURIComponent("Request for Quotation - "+product);
-
- const body=encodeURIComponent(
-`Hello,
-
-I am interested in purchasing:
+function prepare(){
+const product=document.getElementById("req").value;
+const text=`REQUEST FOR QUOTATION
 
 Product: ${product}
 
-Supplier found:
-${title}
-${url}
+Quantity: ${qty.value}
 
-Please provide:
-- Unit price
-- MOQ
-- Shipping cost
-- Lead time
-- Payment terms
-- Sample availability
+Customer: ${name.value}
+Email: ${email.value}
 
-Thank you.`
- );
+Additional requirements:
+${message.value}
 
- window.location.href=`mailto:?subject=${subject}&body=${body}`;
+Please provide unit price, MOQ, shipping cost, lead time and payment terms.`;
+rfq.innerHTML=`<textarea style="height:250px">${text}</textarea><p>✅ RFQ ready — copy and send to the supplier.</p>`;
 }
 </script>
 </body>
