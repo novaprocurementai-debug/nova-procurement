@@ -1,493 +1,628 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NOVA — AI Purchasing Agent</title>
+<title>NOVA — AI Procurement</title>
 
 <style>
-body{
-font-family:Arial;
-background:#f4f6f8;
-margin:0;
-padding:20px;
-color:#111
-}
-
-main{
-max-width:1100px;
-margin:auto
-}
-
-textarea,input{
-width:100%;
-box-sizing:border-box;
-padding:12px;
-margin:6px 0;
-border:1px solid #ddd;
-border-radius:8px
-}
-
-textarea{
-height:100px
-}
-
-button{
-padding:11px 16px;
-border:0;
-border-radius:8px;
-background:#111;
-color:white;
-margin:5px;
-cursor:pointer
-}
-
-.quote{
-background:#06c
-}
-
-.card{
-background:white;
-padding:18px;
-margin:15px 0;
-border-radius:12px;
-box-shadow:0 2px 8px #ddd
-}
-
-.small{
-font-size:13px;
-color:#666
-}
-
-.score{
-font-size:18px;
-font-weight:bold
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-background:white;
-margin-top:15px
-}
-
-th,td{
-padding:10px;
-border-bottom:1px solid #eee;
-text-align:left
-}
-
-th{
-background:#111;
-color:white
-}
-
-a{
-color:#06c
-}
-
-.ai{
-background:#eef7ff;
-border-left:5px solid #06c;
-padding:15px;
-margin-top:15px;
-white-space:pre-wrap
-}
-
-@media(max-width:700px){
-table{
-font-size:12px
-}
-
-th,td{
-padding:7px
-}
-}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;color:#172033}
+header{background:#101828;color:white;padding:22px;text-align:center}
+header h1{margin:0;font-size:30px}
+header p{margin:7px 0 0;color:#b9c3d4}
+main{max-width:1050px;margin:25px auto;padding:0 15px}
+.card{background:white;border-radius:14px;padding:20px;margin-bottom:18px;box-shadow:0 3px 15px #00000010}
+h2{margin-top:0}
+input,textarea,button{width:100%;padding:12px;border-radius:9px;border:1px solid #ccd3df;font-size:15px}
+textarea{min-height:120px;resize:vertical}
+button{background:#155eef;color:white;border:0;font-weight:bold;cursor:pointer;margin-top:10px}
+button.secondary{background:#344054}
+button.green{background:#039855}
+button.red{background:#d92d20}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hidden{display:none}
+.status{padding:10px;border-radius:8px;background:#eef4ff;margin-top:10px}
+table{width:100%;border-collapse:collapse;margin-top:15px}
+th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;font-size:14px}
+.score{font-weight:bold}
+.result{border:1px solid #e4e7ec;border-radius:10px;padding:14px;margin-top:12px}
+pre{white-space:pre-wrap;line-height:1.5;background:#f8fafc;padding:15px;border-radius:10px}
+small{color:#667085}
+@media(max-width:700px){.row{grid-template-columns:1fr}table{display:block;overflow-x:auto}}
 </style>
 </head>
 
 <body>
 
+<header>
+<h1>NOVA</h1>
+<p>Your AI Purchasing Agent</p>
+</header>
+
 <main>
 
-<h1>🧠 NOVA</h1>
+<!-- ACCOUNT -->
+<section class="card">
+<h2>Account</h2>
 
-<p><b>Your AI Purchasing Agent</b></p>
+<div id="loggedOut">
+<div class="row">
+<input id="email" type="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password (8+ characters)">
+</div>
+<div class="row">
+<button onclick="signup()">Create Account</button>
+<button class="secondary" onclick="login()">Login</button>
+</div>
+</div>
 
-<textarea
-id="req"
-placeholder="Example: I need 1,000 stainless steel water bottles, 500ml, with my logo, delivered to Dubai.">
-</textarea>
+<div id="loggedIn" class="hidden">
+<div id="userInfo"></div>
+<button class="red" onclick="logout()">Logout</button>
+</div>
 
-<button onclick="search()">
-🔎 Search with NOVA
-</button>
+<div id="accountStatus"></div>
+</section>
 
-<div id="status"></div>
 
+<!-- SEARCH -->
+<section class="card">
+<h2>Search with NOVA</h2>
+
+<textarea id="request" placeholder="Example: I need 1000 stainless steel water bottles with my logo"></textarea>
+
+<div class="row">
+<input id="quantity" type="number" placeholder="Quantity">
+<button onclick="searchSuppliers()">Search Suppliers</button>
+</div>
+
+<div id="searchStatus"></div>
 <div id="results"></div>
+</section>
 
-<div id="workspace"></div>
+
+<!-- PURCHASE WORKSPACE -->
+<section id="workspace" class="card hidden">
+<h2>Purchase Workspace</h2>
+
+<div class="row">
+<input id="wsProduct" placeholder="Product">
+<input id="wsSupplier" placeholder="Supplier">
+</div>
+
+<div class="row">
+<input id="wsQuantity" type="number" placeholder="Quantity">
+<input id="wsUnitPrice" type="number" step="0.01" placeholder="Unit price">
+</div>
+
+<div class="row">
+<input id="wsShipping" type="number" step="0.01" placeholder="Shipping cost">
+<input id="wsLanded" type="number" step="0.01" placeholder="Landed cost">
+</div>
+
+<input id="wsUrl" placeholder="Supplier URL">
+
+<div id="costStatus"></div>
+
+<button class="green" onclick="calculateCost()">Calculate Landed Cost</button>
+<button onclick="savePurchase()">Save Purchase</button>
+
+<div id="saveStatus"></div>
+</section>
+
+
+<!-- NEGOTIATION -->
+<section class="card">
+<h2>NOVA AI Negotiation</h2>
+
+<input id="supplierName" placeholder="Supplier name">
+
+<input id="supplierOffer" placeholder="Supplier offer">
+
+<textarea id="supplierReply" placeholder="Paste the supplier's complete reply here"></textarea>
+
+<button onclick="analyzeNegotiation()">Analyze & Negotiate</button>
+
+<div id="aiStatus"></div>
+<div id="aiResult"></div>
+</section>
+
+
+<!-- DASHBOARD -->
+<section class="card">
+<h2>My Procurement Dashboard</h2>
+
+<button class="secondary" onclick="loadPurchases()">Refresh History</button>
+
+<div id="history"></div>
+</section>
 
 </main>
 
+
 <script>
 
-let suppliers=[];
-let selected=null;
-let current="";
+let selectedSupplier=null;
+let selectedScore=null;
 
 
-async function search(){
+/* =========================
+ACCOUNT
+========================= */
 
-current=document.getElementById("req").value.trim();
+async function signup(){
 
-if(!current)return;
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value;
 
-status("🔎 NOVA is searching suppliers...");
+setStatus("accountStatus","Creating account...");
 
-results.innerHTML="";
-workspace.innerHTML="";
+const r=await fetch("/api/signup",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({email,password})
+});
 
-try{
+const data=await r.json();
+
+if(data.success){
+
+setStatus("accountStatus","Account created successfully.");
+updateAccount();
+
+}else{
+
+setStatus("accountStatus",data.error||"Signup failed.");
+
+}
+}
+
+
+async function login(){
+
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value;
+
+setStatus("accountStatus","Logging in...");
+
+const r=await fetch("/api/login",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({email,password})
+});
+
+const data=await r.json();
+
+if(data.success){
+
+setStatus("accountStatus","Logged in.");
+updateAccount();
+
+}else{
+
+setStatus("accountStatus",data.error||"Login failed.");
+
+}
+}
+
+
+async function logout(){
+
+await fetch("/api/logout",{method:"POST"});
+
+updateAccount();
+
+}
+
+
+async function updateAccount(){
+
+const r=await fetch("/api/me");
+const data=await r.json();
+
+if(data.loggedIn){
+
+document.getElementById("loggedOut").classList.add("hidden");
+document.getElementById("loggedIn").classList.remove("hidden");
+
+document.getElementById("userInfo").innerHTML=
+"<b>Logged in as:</b> "+data.user.email;
+
+loadPurchases();
+
+}else{
+
+document.getElementById("loggedOut").classList.remove("hidden");
+document.getElementById("loggedIn").classList.add("hidden");
+
+}
+
+}
+
+
+/* =========================
+SEARCH
+========================= */
+
+async function searchSuppliers(){
+
+const request=document.getElementById("request").value.trim();
+const quantity=document.getElementById("quantity").value;
+
+if(!request){
+
+setStatus("searchStatus","Enter what you want to buy.");
+
+return;
+
+}
+
+setStatus("searchStatus","NOVA is searching suppliers...");
+
+document.getElementById("results").innerHTML="";
 
 const r=await fetch("/api/search",{
 method:"POST",
-headers:{
-"Content-Type":"application/json"
-},
+headers:{"Content-Type":"application/json"},
 body:JSON.stringify({
-request:current
+request,
+quantity:Number(quantity)||null
 })
 });
 
-const d=await r.json();
+const data=await r.json();
 
-if(!d.results?.length){
+if(!data.success){
 
-status("❌ No suppliers found.");
+setStatus("searchStatus",data.error||"Search failed.");
 
 return;
-}
-
-suppliers=d.results;
-
-status("✅ "+suppliers.length+" suppliers found");
-
-render();
-
-}catch(e){
-
-status("❌ Search error.");
 
 }
 
-}
+setStatus(
+"searchStatus",
+"Found "+data.result_count+" supplier results."
+);
 
+const box=document.getElementById("results");
 
-function status(x){
+data.results.forEach((x,i)=>{
 
-document.getElementById("status").innerHTML=x;
+const div=document.createElement("div");
 
-}
+div.className="result";
 
+div.innerHTML=`
 
-function render(){
+<b>${escapeHtml(x.title)}</b>
 
-let rows="";
+<p>${escapeHtml(x.snippet||"")}</p>
 
-suppliers.forEach((x,i)=>{
+<table>
+<tr><td>Deal Score</td><td class="score">${x.dealScore}/100</td></tr>
+<tr><td>Price</td><td>${escapeHtml(x.price||"Not verified")}</td></tr>
+<tr><td>MOQ</td><td>${escapeHtml(x.moq||"Not verified")}</td></tr>
+<tr><td>Lead time</td><td>${escapeHtml(x.leadTime||"Not verified")}</td></tr>
+<tr><td>Product cost</td><td>${x.productCost!==null?"$"+x.productCost:"Not calculated"}</td></tr>
+<tr><td>Landed cost</td><td>${escapeHtml(x.landedCostStatus)}</td></tr>
+</table>
 
-rows+=`
+<a href="${escapeAttr(x.url)}" target="_blank">Open Supplier</a>
 
-<tr>
-
-<td>${i+1}</td>
-
-<td>
-<b>${esc(x.title)}</b>
-<br>
-<a href="${x.url}" target="_blank">
-View supplier
-</a>
-</td>
-
-<td>${x.price||"Not found"}</td>
-
-<td>${x.moq||"Not found"}</td>
-
-<td>${x.leadTime||"Not found"}</td>
-
-<td>
-<span class="score">
-${x.dealScore||50}/100
-</span>
-</td>
-
-<td>
-
-<button
-class="quote"
-onclick="selectSupplier(${i})">
-Select
-</button>
-
-</td>
-
-</tr>
+<button onclick="selectSupplier(${i})">Select</button>
 
 `;
+
+box.appendChild(div);
 
 });
 
-results.innerHTML=`
-
-<h2>Supplier Comparison</h2>
-
-<p class="small">
-NOVA shows supplier information found on web sources.
-Always verify final price, shipping and terms with the supplier.
-</p>
-
-<table>
-
-<thead>
-
-<tr>
-<th>#</th>
-<th>Supplier</th>
-<th>Price</th>
-<th>MOQ</th>
-<th>Lead</th>
-<th>Score</th>
-<th>Action</th>
-</tr>
-
-</thead>
-
-<tbody>
-
-${rows}
-
-</tbody>
-
-</table>
-
-`;
+window.searchResults=data.results;
 
 }
 
 
 function selectSupplier(i){
 
-selected=suppliers[i];
+selectedSupplier=window.searchResults[i];
 
-workspace.innerHTML=`
+selectedScore=selectedSupplier.dealScore;
 
-<div class="card">
+document.getElementById("workspace").classList.remove("hidden");
 
-<h2>🛒 Purchase Workspace</h2>
+document.getElementById("wsProduct").value=
+document.getElementById("request").value;
 
-<h3>${esc(selected.title)}</h3>
+document.getElementById("wsSupplier").value=
+selectedSupplier.title;
 
-<p>
-<b>Product:</b>
-${esc(current)}
-</p>
+document.getElementById("wsQuantity").value=
+selectedSupplier.quantity||"";
 
-<p>
-<b>Price:</b>
-${selected.price||"Not found"}
-</p>
+document.getElementById("wsUnitPrice").value=
+selectedSupplier.unitPrice||"";
 
-<p>
-<b>MOQ:</b>
-${selected.moq||"Not found"}
-</p>
+document.getElementById("wsUrl").value=
+selectedSupplier.url||"";
 
-<p>
-<b>Lead Time:</b>
-${selected.leadTime||"Not found"}
-</p>
+calculateCost();
 
-<p>
-<a href="${selected.url}" target="_blank">
-🔗 Open Supplier
-</a>
-</p>
-
-<hr>
-
-<h3>📩 RFQ</h3>
-
-<button
-class="quote"
-onclick="generateRFQ()">
-Generate RFQ
-</button>
-
-<div id="rfqBox"></div>
-
-<hr>
-
-<h3>📥 Supplier Reply</h3>
-
-<textarea
-id="supplierReply"
-placeholder="Paste the supplier's reply here...">
-</textarea>
-
-<input
-id="supplierOffer"
-placeholder="Supplier offer, e.g. $2.80 per unit">
-
-<button
-class="quote"
-onclick="analyzeSupplier()">
-🤖 Analyze & Negotiate
-</button>
-
-<div id="aiResult"></div>
-
-</div>
-
-`;
-
-window.scrollTo({
-top:document.body.scrollHeight,
-behavior:"smooth"
-});
+document.getElementById("workspace")
+.scrollIntoView({behavior:"smooth"});
 
 }
 
 
-function generateRFQ(){
+/* =========================
+LANDED COST
+========================= */
 
-const text=
+function calculateCost(){
 
-`REQUEST FOR QUOTATION
+const q=Number(document.getElementById("wsQuantity").value);
+const price=Number(document.getElementById("wsUnitPrice").value);
+const shipping=Number(document.getElementById("wsShipping").value)||0;
 
-Product:
-${current}
+if(!q || !price){
 
-Please provide:
-
-1. Unit price
-2. MOQ
-3. Shipping cost to Dubai
-4. Delivery time
-5. Payment terms
-6. Sample availability
-7. Customization options
-8. Packaging options
-
-Please provide your best quotation.
-
-Thank you.`;
-
-document.getElementById("rfqBox").innerHTML=`
-
-<textarea style="height:280px">
-${text}
-</textarea>
-
-<p class="small">
-Copy this RFQ and send it to the supplier.
-</p>
-
-`;
-
-}
-
-
-async function analyzeSupplier(){
-
-const reply=
-document.getElementById("supplierReply").value.trim();
-
-const offer=
-document.getElementById("supplierOffer").value.trim();
-
-if(!reply && !offer){
-
-document.getElementById("aiResult").innerHTML=
-"❌ Enter the supplier's reply or offer.";
+setStatus(
+"costStatus",
+"Need verified quantity and unit price."
+);
 
 return;
 
 }
 
-document.getElementById("aiResult").innerHTML=
-"🤖 NOVA AI is analyzing the supplier...";
+const productCost=q*price;
+const landed=productCost+shipping;
 
-try{
+document.getElementById("wsLanded").value=
+landed.toFixed(2);
 
-const r=await fetch("/api/negotiate",{
+setStatus(
+"costStatus",
+"Product cost: $"+productCost.toFixed(2)+
+" | Landed cost currently: $"+landed.toFixed(2)+
+" (customs/taxes not included unless entered)."
+);
 
+}
+
+
+/* =========================
+SAVE PURCHASE
+========================= */
+
+async function savePurchase(){
+
+const product=document.getElementById("wsProduct").value;
+const supplier=document.getElementById("wsSupplier").value;
+
+if(!product||!supplier){
+
+setStatus("saveStatus","Select a supplier first.");
+
+return;
+
+}
+
+const r=await fetch("/api/purchases",{
 method:"POST",
-
-headers:{
-"Content-Type":"application/json"
-},
-
+headers:{"Content-Type":"application/json"},
 body:JSON.stringify({
 
-product:current,
+product,
 
-supplier:selected.title,
+supplier,
 
-offer:offer,
+supplierUrl:
+document.getElementById("wsUrl").value,
 
+quantity:
+Number(document.getElementById("wsQuantity").value)||null,
+
+unitPrice:
+Number(document.getElementById("wsUnitPrice").value)||null,
+
+shippingCost:
+Number(document.getElementById("wsShipping").value)||null,
+
+landedCost:
+Number(document.getElementById("wsLanded").value)||null,
+
+dealScore:
+selectedScore||null
+
+})
+});
+
+const data=await r.json();
+
+if(data.success){
+
+setStatus(
+"saveStatus",
+"Purchase saved successfully."
+);
+
+loadPurchases();
+
+}else{
+
+setStatus(
+"saveStatus",
+data.error||"Login required."
+);
+
+}
+
+}
+
+
+/* =========================
+AI NEGOTIATION
+========================= */
+
+async function analyzeNegotiation(){
+
+const product=document.getElementById("wsProduct").value ||
+document.getElementById("request").value;
+
+const supplier=document.getElementById("supplierName").value ||
+document.getElementById("wsSupplier").value;
+
+const offer=document.getElementById("supplierOffer").value;
+
+const reply=document.getElementById("supplierReply").value;
+
+if(!reply){
+
+setStatus("aiStatus","Paste the supplier reply first.");
+
+return;
+
+}
+
+setStatus("aiStatus","NOVA AI is analyzing...");
+
+document.getElementById("aiResult").innerHTML="";
+
+const r=await fetch("/api/negotiate",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+
+product,
+supplier,
+offer,
 supplierReply:reply
 
 })
-
 });
 
-const d=await r.json();
+const data=await r.json();
 
-if(!d.success){
+if(data.success){
+
+setStatus("aiStatus","Analysis complete.");
 
 document.getElementById("aiResult").innerHTML=
-"❌ AI error: "+esc(d.error);
+"<pre>"+escapeHtml(data.analysis)+"</pre>";
+
+}else{
+
+setStatus(
+"aiStatus",
+data.error||"AI analysis failed."
+);
+
+}
+
+}
+
+
+/* =========================
+HISTORY
+========================= */
+
+async function loadPurchases(){
+
+const r=await fetch("/api/purchases");
+
+const data=await r.json();
+
+const box=document.getElementById("history");
+
+if(!data.success){
+
+box.innerHTML="<small>Login to see your saved procurement history.</small>";
 
 return;
 
 }
 
-document.getElementById("aiResult").innerHTML=`
+if(!data.purchases.length){
 
-<div class="ai">
+box.innerHTML="<small>No purchases saved yet.</small>";
 
-<b>🤖 NOVA AI Negotiation Analysis</b>
+return;
 
-<br><br>
+}
 
-${esc(d.analysis)}
+box.innerHTML="";
 
-</div>
+data.purchases.forEach(p=>{
+
+const div=document.createElement("div");
+
+div.className="result";
+
+div.innerHTML=`
+
+<b>${escapeHtml(p.product)}</b>
+
+<p>Supplier: ${escapeHtml(p.supplier||"")}</p>
+
+<p>
+Quantity: ${p.quantity||"—"}
+&nbsp; | &nbsp;
+Unit price: ${p.unit_price!==null?"$"+p.unit_price:"—"}
+&nbsp; | &nbsp;
+Landed: ${p.landed_cost!==null?"$"+p.landed_cost:"—"}
+</p>
+
+<p>Deal Score: ${p.deal_score!==null?p.deal_score+"/100":"—"}</p>
+
+<small>${escapeHtml(p.created_at)}</small>
 
 `;
 
-}catch(e){
+box.appendChild(div);
 
-document.getElementById("aiResult").innerHTML=
-"❌ Connection error.";
-
-}
+});
 
 }
 
 
-function esc(x){
+/* =========================
+HELPERS
+========================= */
 
-return String(x||"")
+function setStatus(id,text){
+
+document.getElementById(id).innerHTML=
+"<div class='status'>"+escapeHtml(text)+"</div>";
+
+}
+
+
+function escapeHtml(value){
+
+return String(value??"")
 .replace(/&/g,"&amp;")
 .replace(/</g,"&lt;")
 .replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;");
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
 
 }
+
+
+function escapeAttr(value){
+
+return String(value??"")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+/* START */
+
+updateAccount();
 
 </script>
 
