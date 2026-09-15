@@ -1,416 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>NOVA — Your AI Purchasing Agent</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NOVA — Your AI Purchasing Agent</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
-
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f7fb;
-      color: #172033;
-    }
-
-    header {
-      background: #ffffff;
-      border-bottom: 1px solid #e5e7eb;
-      padding: 22px 18px;
-    }
-
-    .header-inner {
-      max-width: 1100px;
-      margin: auto;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 28px;
-    }
-
-    .tagline {
-      margin-top: 5px;
-      color: #667085;
-      font-size: 15px;
-    }
-
-    main {
-      max-width: 1100px;
-      margin: 25px auto;
-      padding: 0 18px 50px;
-    }
-
-    .card {
-      background: white;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      padding: 20px;
-      margin-bottom: 20px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-    }
-
-    h2 {
-      margin-top: 0;
-      font-size: 20px;
-    }
-
-    label {
-      display: block;
-      margin-top: 12px;
-      margin-bottom: 6px;
-      font-weight: 600;
-      font-size: 14px;
-    }
-
-    input,
-    textarea {
-      width: 100%;
-      padding: 12px;
-      border: 1px solid #d0d5dd;
-      border-radius: 9px;
-      font-size: 15px;
-      font-family: inherit;
-    }
-
-    textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    button {
-      margin-top: 12px;
-      padding: 12px 18px;
-      border: 0;
-      border-radius: 9px;
-      background: #111827;
-      color: white;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    button:hover {
-      opacity: 0.9;
-    }
-
-    button.secondary {
-      background: #667085;
-    }
-
-    button.success {
-      background: #087443;
-    }
-
-    .status {
-      margin-top: 12px;
-      padding: 10px;
-      border-radius: 8px;
-      background: #f2f4f7;
-      color: #344054;
-      display: none;
-    }
-
-    .results-header {
-      margin-bottom: 15px;
-      font-weight: 700;
-    }
-
-    .result {
-      border: 1px solid #e4e7ec;
-      border-radius: 12px;
-      padding: 17px;
-      margin-bottom: 14px;
-      background: #fff;
-    }
-
-    .result h3 {
-      margin: 0 0 8px;
-      font-size: 17px;
-      line-height: 1.4;
-    }
-
-    .result h3 a {
-      color: #111827;
-      text-decoration: none;
-    }
-
-    .result h3 a:hover {
-      text-decoration: underline;
-    }
-
-    .snippet {
-      color: #667085;
-      font-size: 14px;
-      line-height: 1.5;
-      margin-bottom: 12px;
-    }
-
-    .metrics {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      margin: 12px 0;
-    }
-
-    .metric {
-      background: #f8fafc;
-      border-radius: 8px;
-      padding: 10px;
-    }
-
-    .metric-title {
-      font-size: 11px;
-      color: #667085;
-      margin-bottom: 4px;
-    }
-
-    .metric-value {
-      font-weight: 700;
-      font-size: 14px;
-    }
-
-    .score {
-      font-size: 20px;
-      font-weight: 800;
-    }
-
-    .score-label {
-      font-size: 11px;
-      color: #667085;
-    }
-
-    .buttons {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .buttons button {
-      margin-top: 5px;
-    }
-
-    .selected {
-      border: 2px solid #111827;
-    }
-
-    .workspace-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    .workspace-grid .full {
-      grid-column: 1 / -1;
-    }
-
-    .hidden {
-      display: none;
-    }
-
-    .purchase-item {
-      border: 1px solid #e4e7ec;
-      padding: 12px;
-      border-radius: 9px;
-      margin-bottom: 8px;
-    }
-
-    .success-text {
-      color: #087443;
-      font-weight: 700;
-    }
-
-    .error-text {
-      color: #b42318;
-      font-weight: 700;
-    }
-
-    @media (max-width: 700px) {
-      .metrics {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .workspace-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .workspace-grid .full {
-        grid-column: auto;
-      }
-    }
-  </style>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;color:#172033}
+header{background:#fff;border-bottom:1px solid #e5e7eb;padding:22px 18px}
+.header-inner,main{max-width:1100px;margin:auto}
+h1{margin:0;font-size:28px}
+.tagline{margin-top:5px;color:#667085;font-size:15px}
+main{padding:25px 18px 50px}
+.card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+h2{margin-top:0;font-size:20px}
+label{display:block;margin-top:12px;margin-bottom:6px;font-weight:600;font-size:14px}
+input,textarea{width:100%;padding:12px;border:1px solid #d0d5dd;border-radius:9px;font-size:15px;font-family:inherit}
+textarea{min-height:100px;resize:vertical}
+button{margin-top:12px;padding:12px 18px;border:0;border-radius:9px;background:#111827;color:#fff;font-weight:700;cursor:pointer}
+button:hover{opacity:.9}
+button.secondary{background:#667085}
+button.success{background:#087443}
+.status{margin-top:12px;padding:10px;border-radius:8px;background:#f2f4f7;color:#344054;display:none}
+.results-header{margin-bottom:15px;font-weight:700}
+.result{border:1px solid #e4e7ec;border-radius:12px;padding:17px;margin-bottom:14px;background:#fff}
+.result h3{margin:0 0 8px;font-size:17px;line-height:1.4}
+.result h3 a{color:#111827;text-decoration:none}
+.result h3 a:hover{text-decoration:underline}
+.snippet{color:#667085;font-size:14px;line-height:1.5;margin-bottom:12px}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
+.metric{background:#f8fafc;border-radius:8px;padding:10px}
+.metric-title{font-size:11px;color:#667085;margin-bottom:4px}
+.metric-value{font-weight:700;font-size:14px}
+.score{font-size:20px}
+.buttons{display:flex;gap:8px;flex-wrap:wrap}
+.buttons button{margin-top:5px}
+.selected{border:2px solid #111827}
+.workspace-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.workspace-grid .full{grid-column:1/-1}
+.hidden{display:none}
+.purchase-item{border:1px solid #e4e7ec;padding:12px;border-radius:9px;margin-bottom:8px}
+.success-text{color:#087443;font-weight:700}
+.error-text{color:#b42318;font-weight:700}
+@media(max-width:700px){
+.metrics{grid-template-columns:repeat(2,1fr)}
+.workspace-grid{grid-template-columns:1fr}
+.workspace-grid .full{grid-column:auto}
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <div class="header-inner">
-    <h1>NOVA</h1>
-    <div class="tagline">Your AI Purchasing Agent</div>
-  </div>
+<div class="header-inner">
+<h1>NOVA</h1>
+<div class="tagline">Your AI Purchasing Agent</div>
+</div>
 </header>
 
 <main>
 
-  <!-- ACCOUNT -->
-  <section class="card">
-    <h2>Account</h2>
+<section class="card">
+<h2>Account</h2>
 
-    <label>Email</label>
-    <input id="email" type="email" placeholder="your@email.com">
+<label>Email</label>
+<input id="email" type="email" placeholder="your@email.com">
 
-    <label>Password (8+ characters)</label>
-    <input id="password" type="password" placeholder="Password">
+<label>Password</label>
+<input id="password" type="password" placeholder="Password">
 
-    <div class="buttons">
-      <button onclick="signup()">Create Account</button>
-      <button class="secondary" onclick="login()">Login</button>
-      <button class="secondary" onclick="logout()">Logout</button>
-    </div>
+<div class="buttons">
+<button onclick="signup()">Create Account</button>
+<button class="secondary" onclick="login()">Login</button>
+<button class="secondary" onclick="logout()">Logout</button>
+</div>
 
-    <div id="accountStatus" class="status"></div>
-  </section>
-
-
-  <!-- SEARCH -->
-  <section class="card">
-    <h2>Search with NOVA</h2>
-
-    <label>What do you need?</label>
-
-    <textarea id="request">1000 stainless steel water bottles with logo</textarea>
-
-    <label>Quantity</label>
-
-    <input
-      id="quantity"
-      type="number"
-      value="1000"
-      min="1"
-    >
-
-    <button onclick="searchSuppliers()">
-      Search Suppliers
-    </button>
-
-    <div id="searchStatus" class="status"></div>
-
-    <div id="resultsHeader" class="results-header"></div>
-
-    <div id="results"></div>
-  </section>
+<div id="accountStatus" class="status"></div>
+</section>
 
 
-  <!-- PURCHASE WORKSPACE -->
-  <section id="purchaseWorkspace" class="card hidden">
+<section class="card">
+<h2>Search with NOVA</h2>
 
-    <h2>Purchase Workspace</h2>
+<label>What do you need?</label>
+<textarea id="request">1000 stainless steel water bottles with logo</textarea>
 
-    <div class="workspace-grid">
+<label>Quantity</label>
+<input id="quantity" type="number" value="1000" min="1">
 
-      <div>
-        <label>Product</label>
-        <input id="purchaseProduct">
-      </div>
+<button onclick="searchSuppliers()">Search Suppliers</button>
 
-      <div>
-        <label>Supplier</label>
-        <input id="purchaseSupplier">
-      </div>
-
-      <div>
-        <label>Quantity</label>
-        <input id="purchaseQuantity" type="number">
-      </div>
-
-      <div>
-        <label>Unit Price ($)</label>
-        <input id="purchaseUnitPrice" type="number" step="0.01">
-      </div>
-
-      <div>
-        <label>Shipping Cost ($)</label>
-        <input id="shippingCost" type="number" step="0.01">
-      </div>
-
-      <div>
-        <label>Landed Cost ($)</label>
-        <input id="landedCost" type="number" step="0.01" readonly>
-      </div>
-
-      <div class="full">
-        <label>Supplier URL</label>
-        <input id="supplierUrl">
-      </div>
-
-    </div>
-
-    <button onclick="calculateLandedCost()">
-      Calculate Landed Cost
-    </button>
-
-    <button class="success" onclick="savePurchase()">
-      Save Purchase
-    </button>
-
-    <div id="purchaseStatus" class="status"></div>
-
-  </section>
+<div id="searchStatus" class="status"></div>
+<div id="resultsHeader" class="results-header"></div>
+<div id="results"></div>
+</section>
 
 
-  <!-- AI NEGOTIATION -->
-  <section class="card">
+<section id="purchaseWorkspace" class="card hidden">
 
-    <h2>NOVA AI Negotiation</h2>
+<h2>Purchase Workspace</h2>
 
-    <label>Supplier name</label>
-    <input id="negSupplier" placeholder="Supplier name">
+<div class="workspace-grid">
 
-    <label>Supplier offer</label>
-    <textarea
-      id="negOffer"
-      placeholder="Example: 1000 bottles at $3 each, shipping $300"
-    ></textarea>
+<div>
+<label>Product</label>
+<input id="purchaseProduct">
+</div>
 
-    <label>Paste the supplier's complete reply here</label>
-    <textarea
-      id="negReply"
-      placeholder="Paste the complete supplier reply..."
-    ></textarea>
+<div>
+<label>Supplier</label>
+<input id="purchaseSupplier">
+</div>
 
-    <button onclick="negotiate()">
-      Analyze & Negotiate
-    </button>
+<div>
+<label>Quantity</label>
+<input id="purchaseQuantity" type="number">
+</div>
 
-    <div id="negStatus" class="status"></div>
+<div>
+<label>Unit Price ($)</label>
+<input id="purchaseUnitPrice" type="number" step="0.01">
+</div>
 
-    <div
-      id="negResult"
-      style="
-        white-space:pre-wrap;
-        margin-top:15px;
-        line-height:1.6;
-      "
-    ></div>
+<div>
+<label>Shipping Cost ($)</label>
+<input id="shippingCost" type="number" step="0.01">
+</div>
 
-  </section>
+<div>
+<label>Landed Cost ($)</label>
+<input id="landedCost" type="number" step="0.01" readonly>
+</div>
+
+<div class="full">
+<label>Supplier URL</label>
+<input id="supplierUrl">
+</div>
+
+</div>
+
+<button onclick="calculateLandedCost()">Calculate Landed Cost</button>
+<button class="success" onclick="savePurchase()">Save Purchase</button>
+
+<div id="purchaseStatus" class="status"></div>
+</section>
 
 
-  <!-- DASHBOARD -->
-  <section class="card">
+<section class="card">
 
-    <h2>My Procurement Dashboard</h2>
+<h2>NOVA AI Negotiation</h2>
 
-    <button onclick="loadPurchases()">
-      Refresh History
-    </button>
+<label>Supplier name</label>
+<input id="negSupplier" placeholder="Supplier name">
 
-    <div id="purchaseHistory" style="margin-top:15px;"></div>
+<label>Supplier offer</label>
+<textarea id="negOffer" placeholder="Example: 1000 bottles at $3 each, shipping $300"></textarea>
 
-  </section>
+<label>Paste the supplier's complete reply here</label>
+<textarea id="negReply" placeholder="Paste the complete supplier reply..."></textarea>
+
+<button onclick="negotiate()">Analyze & Negotiate</button>
+
+<div id="negStatus" class="status"></div>
+
+<div id="negResult" style="white-space:pre-wrap;margin-top:15px;line-height:1.6"></div>
+
+</section>
+
+
+<section class="card">
+
+<h2>My Procurement Dashboard</h2>
+
+<button onclick="loadPurchases()">Refresh History</button>
+
+<div id="purchaseHistory" style="margin-top:15px"></div>
+
+</section>
 
 </main>
 
@@ -420,969 +188,642 @@
 const API = "";
 
 
-/* ---------------- STATUS ---------------- */
+/* STATUS */
 
-function showStatus(id, message, type = "") {
+function showStatus(id,message,type=""){
+const el=document.getElementById(id);
+el.style.display="block";
+el.className="status";
 
-  const el = document.getElementById(id);
+if(type==="success") el.classList.add("success-text");
+if(type==="error") el.classList.add("error-text");
 
-  el.style.display = "block";
-  el.className = "status";
-
-  if (type === "success") {
-    el.classList.add("success-text");
-  }
-
-  if (type === "error") {
-    el.classList.add("error-text");
-  }
-
-  el.textContent = message;
+el.textContent=message;
 }
 
 
-/* ---------------- ACCOUNT ---------------- */
+/* ACCOUNT */
 
-async function signup() {
+async function signup(){
 
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value;
 
-  if (!email || !password) {
-    showStatus(
-      "accountStatus",
-      "Enter email and password.",
-      "error"
-    );
-    return;
-  }
+if(!email||!password){
+showStatus("accountStatus","Enter email and password.","error");
+return;
+}
 
-  try {
+try{
 
-    const res = await fetch(API + "/api/signup", {
+const res=await fetch(API+"/api/signup",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({email,password})
+});
 
-      method: "POST",
+const data=await res.json();
 
-      headers: {
-        "Content-Type": "application/json"
-      },
+if(!res.ok||!data.success){
+showStatus("accountStatus",data.error||"Signup failed.","error");
+return;
+}
 
-      body: JSON.stringify({
-        email,
-        password
-      })
+showStatus("accountStatus","Account created successfully.","success");
 
-    });
-
-    const data = await res.json();
-
-    if (!res.ok || !data.success) {
-
-      showStatus(
-        "accountStatus",
-        data.error || "Signup failed.",
-        "error"
-      );
-
-      return;
-    }
-
-    showStatus(
-      "accountStatus",
-      "Account created successfully.",
-      "success"
-    );
-
-  } catch (error) {
-
-    showStatus(
-      "accountStatus",
-      error.message,
-      "error"
-    );
-  }
+}catch(error){
+showStatus("accountStatus",error.message,"error");
+}
 }
 
 
-async function login() {
+async function login(){
 
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value;
 
-  if (!email || !password) {
+if(!email||!password){
+showStatus("accountStatus","Enter email and password.","error");
+return;
+}
 
-    showStatus(
-      "accountStatus",
-      "Enter email and password.",
-      "error"
-    );
+try{
 
-    return;
-  }
+const res=await fetch(API+"/api/login",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({email,password})
+});
 
-  try {
+const data=await res.json();
 
-    const res = await fetch(API + "/api/login", {
+if(!res.ok||!data.success){
+showStatus("accountStatus",data.error||"Login failed.","error");
+return;
+}
 
-      method: "POST",
+showStatus("accountStatus","Logged in successfully.","success");
+loadPurchases();
 
-      headers: {
-        "Content-Type": "application/json"
-      },
-
-      body: JSON.stringify({
-        email,
-        password
-      })
-
-    });
-
-    const data = await res.json();
-
-    if (!res.ok || !data.success) {
-
-      showStatus(
-        "accountStatus",
-        data.error || "Login failed.",
-        "error"
-      );
-
-      return;
-    }
-
-    showStatus(
-      "accountStatus",
-      "Logged in successfully.",
-      "success"
-    );
-
-    loadPurchases();
-
-  } catch (error) {
-
-    showStatus(
-      "accountStatus",
-      error.message,
-      "error"
-    );
-  }
+}catch(error){
+showStatus("accountStatus",error.message,"error");
+}
 }
 
 
-async function logout() {
+async function logout(){
 
-  try {
+try{
 
-    await fetch(API + "/api/logout", {
-      method: "POST"
-    });
+const res=await fetch(API+"/api/logout");
+const data=await res.json();
 
-    showStatus(
-      "accountStatus",
-      "Logged out.",
-      "success"
-    );
+showStatus("accountStatus","Logged out.","success");
 
-  } catch (error) {
-
-    showStatus(
-      "accountStatus",
-      error.message,
-      "error"
-    );
-  }
+}catch(error){
+showStatus("accountStatus",error.message,"error");
+}
 }
 
 
-/* ---------------- SEARCH ---------------- */
+/* SEARCH */
 
-async function searchSuppliers() {
+async function searchSuppliers(){
 
-  const request =
-    document.getElementById("request").value.trim();
+const request=document.getElementById("request").value.trim();
+const quantity=Number(document.getElementById("quantity").value||0);
 
-  const quantity =
-    Number(document.getElementById("quantity").value || 0);
+if(!request){
+showStatus("searchStatus","Enter what you need.","error");
+return;
+}
 
-  if (!request) {
+showStatus("searchStatus","NOVA is searching suppliers...");
+document.getElementById("results").innerHTML="";
+document.getElementById("resultsHeader").textContent="";
 
-    showStatus(
-      "searchStatus",
-      "Enter what you need.",
-      "error"
-    );
+try{
 
-    return;
-  }
+const res=await fetch(API+"/api/search",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({request,quantity})
+});
 
-  showStatus(
-    "searchStatus",
-    "NOVA is searching suppliers..."
-  );
+const data=await res.json();
 
-  document.getElementById("results").innerHTML = "";
-  document.getElementById("resultsHeader").textContent = "";
+/*
+FIX:
+Worker returns ok:true, not success:true.
+*/
 
-  try {
+if(!res.ok||data.ok!==true){
 
-    const res = await fetch(API + "/api/search", {
+let message=data.error||"Search failed.";
 
-      method: "POST",
+if(data.request_id){
+message+=" Request ID: "+data.request_id;
+}
 
-      headers: {
-        "Content-Type": "application/json"
-      },
+showStatus("searchStatus",message,"error");
+return;
+}
 
-      body: JSON.stringify({
-        request,
-        quantity
-      })
+const results=Array.isArray(data.results)?data.results:[];
 
-    });
+document.getElementById("resultsHeader").textContent=
+`Found ${results.length} supplier results.`;
 
-    const data = await res.json();
+showStatus(
+"searchStatus",
+"Search completed successfully.",
+"success"
+);
 
-    if (!res.ok || !data.success) {
+if(!results.length){
 
-      showStatus(
-        "searchStatus",
-        data.error || "Search failed.",
-        "error"
-      );
+document.getElementById("results").innerHTML=
+"<p>No supplier results were returned by Yep.</p>";
 
-      return;
-    }
+return;
+}
 
-    const results = Array.isArray(data.results)
-      ? data.results
-      : [];
+renderResults(results);
 
-    /*
-      FIX:
-      Worker returns "total".
-      If total is missing, use results.length.
-      Never display undefined.
-    */
+}catch(error){
 
-    const count =
-      Number.isFinite(Number(data.total))
-        ? Number(data.total)
-        : results.length;
+showStatus(
+"searchStatus",
+"Search error: "+error.message,
+"error"
+);
 
-    document.getElementById(
-      "resultsHeader"
-    ).textContent =
-      `Found ${count} supplier results.`;
-
-    showStatus(
-      "searchStatus",
-      "Search completed successfully.",
-      "success"
-    );
-
-    if (!results.length) {
-
-      document.getElementById(
-        "results"
-      ).innerHTML =
-        "<p>No suitable supplier results found.</p>";
-
-      return;
-    }
-
-    renderResults(results);
-
-  } catch (error) {
-
-    showStatus(
-      "searchStatus",
-      error.message,
-      "error"
-    );
-  }
+}
 }
 
 
-/* ---------------- RESULTS ---------------- */
+/* RESULTS */
 
-function renderResults(results) {
+function renderResults(results){
 
-  const container =
-    document.getElementById("results");
+const container=document.getElementById("results");
+container.innerHTML="";
+window.novaResults=results;
 
-  container.innerHTML = "";
+results.forEach((supplier,index)=>{
 
-  results.forEach((supplier, index) => {
+const div=document.createElement("div");
+div.className="result";
 
-    const div =
-      document.createElement("div");
+const title=supplier.title||"Supplier";
+const url=supplier.url||"#";
+const snippet=supplier.snippet||"No description available.";
 
-    div.className = "result";
+const score=supplier.dealScore??0;
+const evidence=supplier.evidence??0;
 
-    const title =
-      supplier.title || "Supplier";
+const price=
+supplier.price!==null&&supplier.price!==undefined
+?"$"+Number(supplier.price).toFixed(2)
+:"Not verified";
 
-    const url =
-      supplier.url || "#";
+const moq=
+supplier.moq!==null&&supplier.moq!==undefined
+?Number(supplier.moq).toLocaleString()
+:"Not verified";
 
-    const snippet =
-      supplier.snippet || "No description available.";
+const lead=supplier.leadTime||"Not verified";
 
-    const dealScore =
-      supplier.dealScore ??
-      supplier.score ??
-      0;
+const productCost=
+supplier.productCost!==null&&supplier.productCost!==undefined
+?"$"+Number(supplier.productCost).toFixed(2)
+:"Not calculated";
 
-    const evidenceScore =
-      supplier.evidenceScore ??
-      0;
+div.innerHTML=`
 
-    const price =
-      supplier.priceText ||
-      (
-        supplier.unitPrice !== null &&
-        supplier.unitPrice !== undefined
-          ? "$" + Number(supplier.unitPrice).toFixed(2)
-          : "Not verified"
-      );
+<h3>
+<a href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">
+${escapeHTML(title)}
+</a>
+</h3>
 
-    const moq =
-      supplier.moq !== null &&
-      supplier.moq !== undefined &&
-      supplier.moq !== ""
-        ? Number(supplier.moq).toLocaleString()
-        : "Not verified";
+<div class="snippet">
+${escapeHTML(snippet)}
+</div>
 
-    const lead =
-      supplier.leadTime ||
-      "Not verified";
+<div class="metrics">
 
-    const productCost =
-      supplier.productCost !== null &&
-      supplier.productCost !== undefined
-        ? "$" + Number(supplier.productCost).toFixed(2)
-        : "Not calculated";
+<div class="metric">
+<div class="metric-title">Deal Score</div>
+<div class="metric-value score">${escapeHTML(String(score))}/100</div>
+</div>
 
-    const shipping =
-      supplier.shippingMentioned
-        ? "Mentioned"
-        : "Not verified";
+<div class="metric">
+<div class="metric-title">Evidence</div>
+<div class="metric-value">${escapeHTML(String(evidence))}/50</div>
+</div>
 
-    div.innerHTML = `
+<div class="metric">
+<div class="metric-title">Price</div>
+<div class="metric-value">${escapeHTML(price)}</div>
+</div>
 
-      <h3>
-        <a
-          href="${escapeHTML(url)}"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          ${escapeHTML(title)}
-        </a>
-      </h3>
+<div class="metric">
+<div class="metric-title">MOQ</div>
+<div class="metric-value">${escapeHTML(moq)}</div>
+</div>
 
-      <div class="snippet">
-        ${escapeHTML(snippet)}
-      </div>
+<div class="metric">
+<div class="metric-title">Lead time</div>
+<div class="metric-value">${escapeHTML(lead)}</div>
+</div>
 
-      <div class="metrics">
+<div class="metric">
+<div class="metric-title">Product cost</div>
+<div class="metric-value">${escapeHTML(productCost)}</div>
+</div>
 
-        <div class="metric">
-          <div class="metric-title">
-            Deal Score
-          </div>
+</div>
 
-          <div class="metric-value score">
-            ${escapeHTML(String(dealScore))}/100
-          </div>
-        </div>
+<div class="buttons">
 
-        <div class="metric">
-          <div class="metric-title">
-            Evidence
-          </div>
+<button onclick="openSupplier(${index})">
+Open Supplier
+</button>
 
-          <div class="metric-value">
-            ${escapeHTML(String(evidenceScore))}/100
-          </div>
-        </div>
+<button class="success" onclick="selectSupplier(${index})">
+Select
+</button>
 
-        <div class="metric">
-          <div class="metric-title">
-            Price
-          </div>
+</div>
+`;
 
-          <div class="metric-value">
-            ${escapeHTML(price)}
-          </div>
-        </div>
+container.appendChild(div);
 
-        <div class="metric">
-          <div class="metric-title">
-            MOQ
-          </div>
-
-          <div class="metric-value">
-            ${escapeHTML(moq)}
-          </div>
-        </div>
-
-        <div class="metric">
-          <div class="metric-title">
-            Lead time
-          </div>
-
-          <div class="metric-value">
-            ${escapeHTML(lead)}
-          </div>
-        </div>
-
-        <div class="metric">
-          <div class="metric-title">
-            Product cost
-          </div>
-
-          <div class="metric-value">
-            ${escapeHTML(productCost)}
-          </div>
-        </div>
-
-        <div class="metric">
-          <div class="metric-title">
-            Shipping
-          </div>
-
-          <div class="metric-value">
-            ${escapeHTML(shipping)}
-          </div>
-        </div>
-
-      </div>
-
-      <div class="buttons">
-
-        <button
-          onclick="openSupplier(${index})"
-        >
-          Open Supplier
-        </button>
-
-        <button
-          class="success"
-          onclick="selectSupplier(${index})"
-        >
-          Select
-        </button>
-
-      </div>
-
-    `;
-
-    container.appendChild(div);
-
-    supplier._novaIndex = index;
-
-  });
-
-  window.novaResults = results;
+});
 }
 
 
-/* ---------------- OPEN SUPPLIER ---------------- */
+/* OPEN */
 
-function openSupplier(index) {
+function openSupplier(index){
 
-  const supplier =
-    window.novaResults?.[index];
+const supplier=window.novaResults?.[index];
 
-  if (!supplier?.url) return;
-
-  window.open(
-    supplier.url,
-    "_blank",
-    "noopener,noreferrer"
-  );
+if(supplier?.url){
+window.open(supplier.url,"_blank","noopener,noreferrer");
+}
 }
 
 
-/* ---------------- SELECT SUPPLIER ---------------- */
+/* SELECT */
 
-function selectSupplier(index) {
+function selectSupplier(index){
 
-  const supplier =
-    window.novaResults?.[index];
+const supplier=window.novaResults?.[index];
 
-  if (!supplier) return;
+if(!supplier)return;
 
-  document
-    .querySelectorAll(".result")
-    .forEach(el => {
-      el.classList.remove("selected");
-    });
+document.querySelectorAll(".result").forEach(el=>{
+el.classList.remove("selected");
+});
 
-  const resultCards =
-    document.querySelectorAll(".result");
+const cards=document.querySelectorAll(".result");
 
-  if (resultCards[index]) {
-    resultCards[index].classList.add("selected");
-  }
+if(cards[index])cards[index].classList.add("selected");
 
-  document
-    .getElementById("purchaseWorkspace")
-    .classList.remove("hidden");
+document.getElementById("purchaseWorkspace").classList.remove("hidden");
 
-  document.getElementById(
-    "purchaseProduct"
-  ).value =
-    document.getElementById("request").value;
+document.getElementById("purchaseProduct").value=
+document.getElementById("request").value;
 
-  document.getElementById(
-    "purchaseSupplier"
-  ).value =
-    supplier.title || "";
+document.getElementById("purchaseSupplier").value=
+supplier.title||"";
 
-  document.getElementById(
-    "purchaseQuantity"
-  ).value =
-    document.getElementById("quantity").value;
+document.getElementById("purchaseQuantity").value=
+document.getElementById("quantity").value;
 
-  document.getElementById(
-    "purchaseUnitPrice"
-  ).value =
-    supplier.unitPrice ?? "";
+document.getElementById("purchaseUnitPrice").value=
+supplier.price??"";
 
-  document.getElementById(
-    "supplierUrl"
-  ).value =
-    supplier.url || "";
+document.getElementById("supplierUrl").value=
+supplier.url||"";
 
-  document.getElementById(
-    "shippingCost"
-  ).value = "";
+document.getElementById("shippingCost").value="";
+document.getElementById("landedCost").value="";
 
-  document.getElementById(
-    "landedCost"
-  ).value = "";
-
-  document
-    .getElementById("purchaseWorkspace")
-    .scrollIntoView({
-      behavior: "smooth"
-    });
+document.getElementById("purchaseWorkspace").scrollIntoView({
+behavior:"smooth"
+});
 }
 
 
-/* ---------------- LANDED COST ---------------- */
+/* LANDED COST */
 
-function calculateLandedCost() {
+function calculateLandedCost(){
 
-  const quantity =
-    Number(
-      document.getElementById(
-        "purchaseQuantity"
-      ).value || 0
-    );
+const quantity=Number(
+document.getElementById("purchaseQuantity").value||0
+);
 
-  const unitPrice =
-    Number(
-      document.getElementById(
-        "purchaseUnitPrice"
-      ).value || 0
-    );
+const unitPrice=Number(
+document.getElementById("purchaseUnitPrice").value||0
+);
 
-  const shipping =
-    Number(
-      document.getElementById(
-        "shippingCost"
-      ).value || 0
-    );
+const shipping=Number(
+document.getElementById("shippingCost").value||0
+);
 
-  if (!quantity || !unitPrice) {
+if(!quantity||!unitPrice){
 
-    showStatus(
-      "purchaseStatus",
-      "Enter quantity and unit price.",
-      "error"
-    );
+showStatus(
+"purchaseStatus",
+"Enter quantity and unit price.",
+"error"
+);
 
-    return;
-  }
+return;
+}
 
-  const productCost =
-    quantity * unitPrice;
+const landed=(quantity*unitPrice)+shipping;
 
-  const landed =
-    productCost + shipping;
+document.getElementById("landedCost").value=
+landed.toFixed(2);
 
-  document.getElementById(
-    "landedCost"
-  ).value =
-    landed.toFixed(2);
-
-  showStatus(
-    "purchaseStatus",
-    `Landed cost calculated: $${landed.toFixed(2)}`
-  );
+showStatus(
+"purchaseStatus",
+`Landed cost calculated: $${landed.toFixed(2)}`,
+"success"
+);
 }
 
 
-/* ---------------- SAVE PURCHASE ---------------- */
+/* SAVE */
 
-async function savePurchase() {
+async function savePurchase(){
 
-  const product =
-    document.getElementById(
-      "purchaseProduct"
-    ).value;
+try{
 
-  const supplier =
-    document.getElementById(
-      "purchaseSupplier"
-    ).value;
+const res=await fetch(API+"/api/purchases",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
 
-  const quantity =
-    Number(
-      document.getElementById(
-        "purchaseQuantity"
-      ).value || 0
-    );
+product:document.getElementById("purchaseProduct").value,
 
-  const unitPrice =
-    document.getElementById(
-      "purchaseUnitPrice"
-    ).value;
+supplier:document.getElementById("purchaseSupplier").value,
 
-  const shippingCost =
-    document.getElementById(
-      "shippingCost"
-    ).value;
+quantity:Number(
+document.getElementById("purchaseQuantity").value||0
+),
 
-  const landedCost =
-    document.getElementById(
-      "landedCost"
-    ).value;
+unitPrice:Number(
+document.getElementById("purchaseUnitPrice").value||0
+),
 
-  const supplierUrl =
-    document.getElementById(
-      "supplierUrl"
-    ).value;
+shipping:Number(
+document.getElementById("shippingCost").value||0
+),
 
-  try {
+landedCost:Number(
+document.getElementById("landedCost").value||0
+),
 
-    const res = await fetch(
-      API + "/api/purchases",
-      {
-        method: "POST",
+supplierUrl:
+document.getElementById("supplierUrl").value
 
-        headers: {
-          "Content-Type": "application/json"
-        },
+})
+});
 
-        body: JSON.stringify({
+const data=await res.json();
 
-          product,
-          supplier,
-          quantity,
+if(!res.ok||!data.success){
 
-          unitPrice:
-            unitPrice === ""
-              ? null
-              : Number(unitPrice),
+showStatus(
+"purchaseStatus",
+data.error||"Could not save purchase.",
+"error"
+);
 
-          shippingCost:
-            shippingCost === ""
-              ? null
-              : Number(shippingCost),
+return;
+}
 
-          landedCost:
-            landedCost === ""
-              ? null
-              : Number(landedCost),
+showStatus(
+"purchaseStatus",
+"Purchase saved successfully.",
+"success"
+);
 
-          supplierUrl
+loadPurchases();
 
-        })
-      }
-    );
+}catch(error){
 
-    const data = await res.json();
+showStatus(
+"purchaseStatus",
+error.message,
+"error"
+);
 
-    if (!res.ok || !data.success) {
-
-      showStatus(
-        "purchaseStatus",
-        data.error || "Could not save purchase.",
-        "error"
-      );
-
-      return;
-    }
-
-    showStatus(
-      "purchaseStatus",
-      "Purchase saved successfully.",
-      "success"
-    );
-
-    loadPurchases();
-
-  } catch (error) {
-
-    showStatus(
-      "purchaseStatus",
-      error.message,
-      "error"
-    );
-  }
+}
 }
 
 
-/* ---------------- NEGOTIATION ---------------- */
+/* NEGOTIATION */
 
-async function negotiate() {
+async function negotiate(){
 
-  const supplier =
-    document.getElementById(
-      "negSupplier"
-    ).value.trim();
+const supplier=
+document.getElementById("negSupplier").value.trim();
 
-  const offer =
-    document.getElementById(
-      "negOffer"
-    ).value.trim();
+const offer=
+document.getElementById("negOffer").value.trim();
 
-  const reply =
-    document.getElementById(
-      "negReply"
-    ).value.trim();
+const reply=
+document.getElementById("negReply").value.trim();
 
-  if (!supplier || !offer || !reply) {
+if(!supplier||!offer||!reply){
 
-    showStatus(
-      "negStatus",
-      "Enter supplier, offer and complete reply.",
-      "error"
-    );
+showStatus(
+"negStatus",
+"Enter supplier, offer and complete reply.",
+"error"
+);
 
-    return;
-  }
+return;
+}
 
-  showStatus(
-    "negStatus",
-    "NOVA AI is analyzing the offer..."
-  );
+showStatus(
+"negStatus",
+"NOVA AI is analyzing the offer..."
+);
 
-  document.getElementById(
-    "negResult"
-  ).textContent = "";
+document.getElementById("negResult").textContent="";
 
-  try {
+try{
 
-    const res = await fetch(
-      API + "/api/negotiate",
-      {
-        method: "POST",
+const res=await fetch(API+"/api/negotiate",{
+method:"POST",
+headers:{"Content-Type":"application/json"},
+body:JSON.stringify({
+supplier,
+offer:offer+"\nSupplier reply:\n"+reply
+})
+});
 
-        headers: {
-          "Content-Type": "application/json"
-        },
+const data=await res.json();
 
-        body: JSON.stringify({
+if(!res.ok||!data.success){
 
-          supplier,
-          offer,
-          reply
+showStatus(
+"negStatus",
+data.error||"Negotiation analysis failed.",
+"error"
+);
 
-        })
-      }
-    );
+return;
+}
 
-    const data = await res.json();
+showStatus(
+"negStatus",
+"Analysis complete.",
+"success"
+);
 
-    if (!res.ok || !data.success) {
+document.getElementById("negResult").textContent=
+data.result||"No analysis returned.";
 
-      showStatus(
-        "negStatus",
-        data.error || "Negotiation analysis failed.",
-        "error"
-      );
+}catch(error){
 
-      return;
-    }
+showStatus(
+"negStatus",
+error.message,
+"error"
+);
 
-    showStatus(
-      "negStatus",
-      "Analysis complete.",
-      "success"
-    );
-
-    document.getElementById(
-      "negResult"
-    ).textContent =
-      data.analysis || "No analysis returned.";
-
-  } catch (error) {
-
-    showStatus(
-      "negStatus",
-      error.message,
-      "error"
-    );
-  }
+}
 }
 
 
-/* ---------------- DASHBOARD ---------------- */
+/* DASHBOARD */
 
-async function loadPurchases() {
+async function loadPurchases(){
 
-  const container =
-    document.getElementById(
-      "purchaseHistory"
-    );
+const container=document.getElementById("purchaseHistory");
 
-  try {
+try{
 
-    const res =
-      await fetch(
-        API + "/api/purchases"
-      );
+const res=await fetch(API+"/api/purchases");
+const data=await res.json();
 
-    const data =
-      await res.json();
+if(!res.ok){
 
-    if (!res.ok || !data.success) {
+container.innerHTML=
+`<p>${escapeHTML(data.error||"Please login first.")}</p>`;
 
-      container.innerHTML =
-        `<p>${escapeHTML(
-          data.error || "Please login first."
-        )}</p>`;
+return;
+}
 
-      return;
-    }
+const purchases=
+Array.isArray(data.purchases)?data.purchases:[];
 
-    const purchases =
-      Array.isArray(data.purchases)
-        ? data.purchases
-        : [];
+if(!purchases.length){
 
-    if (!purchases.length) {
+container.innerHTML=
+"<p>No saved purchases yet.</p>";
 
-      container.innerHTML =
-        "<p>No saved purchases yet.</p>";
+return;
+}
 
-      return;
-    }
+container.innerHTML="";
 
-    container.innerHTML = "";
+purchases.forEach(p=>{
 
-    purchases.forEach(p => {
+const div=document.createElement("div");
+div.className="purchase-item";
 
-      const div =
-        document.createElement(
-          "div"
-        );
+div.innerHTML=`
 
-      div.className =
-        "purchase-item";
+<strong>
+${escapeHTML(p.product||"Product")}
+</strong>
 
-      div.innerHTML = `
+<br>
 
-        <strong>
-          ${escapeHTML(
-            p.product || "Product"
-          )}
-        </strong>
+Supplier:
+${escapeHTML(p.supplier||"Not stated")}
 
-        <br>
+<br>
 
-        Supplier:
-        ${escapeHTML(
-          p.supplier || "Not stated"
-        )}
+Quantity:
+${escapeHTML(String(p.quantity||""))}
 
-        <br>
+<br>
 
-        Quantity:
-        ${escapeHTML(
-          String(p.quantity || "")
-        )}
+Unit price:
+${p.unit_price!=null
+?"$"+Number(p.unit_price).toFixed(2)
+:"Not stated"}
 
-        <br>
+<br>
 
-        Unit price:
-        ${p.unit_price != null
-          ? "$" + Number(
-              p.unit_price
-            ).toFixed(2)
-          : "Not stated"}
+Landed cost:
+${p.landed_cost!=null
+?"$"+Number(p.landed_cost).toFixed(2)
+:"Not calculated"}
 
-        <br>
+`;
 
-        Landed cost:
-        ${p.landed_cost != null
-          ? "$" + Number(
-              p.landed_cost
-            ).toFixed(2)
-          : "Not calculated"}
+container.appendChild(div);
 
-      `;
+});
 
-      container.appendChild(div);
+}catch(error){
 
-    });
+container.innerHTML=
+`<p>${escapeHTML(error.message)}</p>`;
 
-  } catch (error) {
-
-    container.innerHTML =
-      `<p>${escapeHTML(
-        error.message
-      )}</p>`;
-  }
+}
 }
 
 
-/* ---------------- SECURITY ---------------- */
+/* SECURITY */
 
-function escapeHTML(value) {
+function escapeHTML(value){
 
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+return String(value)
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
 
 }
 
 
-/* ---------------- STARTUP ---------------- */
+/* START */
 
-async function checkLogin() {
+async function checkLogin(){
 
-  try {
+try{
 
-    const res =
-      await fetch(
-        API + "/api/me"
-      );
+const res=await fetch(API+"/api/me");
+const data=await res.json();
 
-    const data =
-      await res.json();
+if(data.loggedIn){
 
-    if (data.loggedIn) {
+showStatus(
+"accountStatus",
+"You are logged in.",
+"success"
+);
 
-      showStatus(
-        "accountStatus",
-        "You are logged in.",
-        "success"
-      );
+loadPurchases();
 
-      loadPurchases();
-    }
+}
 
-  } catch (error) {
-    console.log(error);
-  }
+}catch(error){
+console.log(error);
+}
 }
 
 checkLogin();
@@ -1390,4 +831,7 @@ checkLogin();
 </script>
 
 </body>
-        </html>
+</html>
+
+
+
