@@ -1,630 +1,1393 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NOVA — AI Procurement</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NOVA — Your AI Purchasing Agent</title>
 
-<style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;color:#172033}
-header{background:#101828;color:white;padding:22px;text-align:center}
-header h1{margin:0;font-size:30px}
-header p{margin:7px 0 0;color:#b9c3d4}
-main{max-width:1050px;margin:25px auto;padding:0 15px}
-.card{background:white;border-radius:14px;padding:20px;margin-bottom:18px;box-shadow:0 3px 15px #00000010}
-h2{margin-top:0}
-input,textarea,button{width:100%;padding:12px;border-radius:9px;border:1px solid #ccd3df;font-size:15px}
-textarea{min-height:120px;resize:vertical}
-button{background:#155eef;color:white;border:0;font-weight:bold;cursor:pointer;margin-top:10px}
-button.secondary{background:#344054}
-button.green{background:#039855}
-button.red{background:#d92d20}
-.row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.hidden{display:none}
-.status{padding:10px;border-radius:8px;background:#eef4ff;margin-top:10px}
-table{width:100%;border-collapse:collapse;margin-top:15px}
-th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;font-size:14px}
-.score{font-weight:bold}
-.result{border:1px solid #e4e7ec;border-radius:10px;padding:14px;margin-top:12px}
-pre{white-space:pre-wrap;line-height:1.5;background:#f8fafc;padding:15px;border-radius:10px}
-small{color:#667085}
-@media(max-width:700px){.row{grid-template-columns:1fr}table{display:block;overflow-x:auto}}
-</style>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f5f7fb;
+      color: #172033;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid #e5e7eb;
+      padding: 22px 18px;
+    }
+
+    .header-inner {
+      max-width: 1100px;
+      margin: auto;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .tagline {
+      margin-top: 5px;
+      color: #667085;
+      font-size: 15px;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 25px auto;
+      padding: 0 18px 50px;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+
+    h2 {
+      margin-top: 0;
+      font-size: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 12px;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #d0d5dd;
+      border-radius: 9px;
+      font-size: 15px;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 100px;
+      resize: vertical;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 12px 18px;
+      border: 0;
+      border-radius: 9px;
+      background: #111827;
+      color: white;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    button.secondary {
+      background: #667085;
+    }
+
+    button.success {
+      background: #087443;
+    }
+
+    .status {
+      margin-top: 12px;
+      padding: 10px;
+      border-radius: 8px;
+      background: #f2f4f7;
+      color: #344054;
+      display: none;
+    }
+
+    .results-header {
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .result {
+      border: 1px solid #e4e7ec;
+      border-radius: 12px;
+      padding: 17px;
+      margin-bottom: 14px;
+      background: #fff;
+    }
+
+    .result h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      line-height: 1.4;
+    }
+
+    .result h3 a {
+      color: #111827;
+      text-decoration: none;
+    }
+
+    .result h3 a:hover {
+      text-decoration: underline;
+    }
+
+    .snippet {
+      color: #667085;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 12px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin: 12px 0;
+    }
+
+    .metric {
+      background: #f8fafc;
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .metric-title {
+      font-size: 11px;
+      color: #667085;
+      margin-bottom: 4px;
+    }
+
+    .metric-value {
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .score {
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .score-label {
+      font-size: 11px;
+      color: #667085;
+    }
+
+    .buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .buttons button {
+      margin-top: 5px;
+    }
+
+    .selected {
+      border: 2px solid #111827;
+    }
+
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .workspace-grid .full {
+      grid-column: 1 / -1;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .purchase-item {
+      border: 1px solid #e4e7ec;
+      padding: 12px;
+      border-radius: 9px;
+      margin-bottom: 8px;
+    }
+
+    .success-text {
+      color: #087443;
+      font-weight: 700;
+    }
+
+    .error-text {
+      color: #b42318;
+      font-weight: 700;
+    }
+
+    @media (max-width: 700px) {
+      .metrics {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .workspace-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .workspace-grid .full {
+        grid-column: auto;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
 <header>
-<h1>NOVA</h1>
-<p>Your AI Purchasing Agent</p>
+  <div class="header-inner">
+    <h1>NOVA</h1>
+    <div class="tagline">Your AI Purchasing Agent</div>
+  </div>
 </header>
 
 <main>
 
-<!-- ACCOUNT -->
-<section class="card">
-<h2>Account</h2>
+  <!-- ACCOUNT -->
+  <section class="card">
+    <h2>Account</h2>
 
-<div id="loggedOut">
-<div class="row">
-<input id="email" type="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password (8+ characters)">
-</div>
-<div class="row">
-<button onclick="signup()">Create Account</button>
-<button class="secondary" onclick="login()">Login</button>
-</div>
-</div>
+    <label>Email</label>
+    <input id="email" type="email" placeholder="your@email.com">
 
-<div id="loggedIn" class="hidden">
-<div id="userInfo"></div>
-<button class="red" onclick="logout()">Logout</button>
-</div>
+    <label>Password (8+ characters)</label>
+    <input id="password" type="password" placeholder="Password">
 
-<div id="accountStatus"></div>
-</section>
+    <div class="buttons">
+      <button onclick="signup()">Create Account</button>
+      <button class="secondary" onclick="login()">Login</button>
+      <button class="secondary" onclick="logout()">Logout</button>
+    </div>
+
+    <div id="accountStatus" class="status"></div>
+  </section>
 
 
-<!-- SEARCH -->
-<section class="card">
-<h2>Search with NOVA</h2>
+  <!-- SEARCH -->
+  <section class="card">
+    <h2>Search with NOVA</h2>
 
-<textarea id="request" placeholder="Example: I need 1000 stainless steel water bottles with my logo"></textarea>
+    <label>What do you need?</label>
 
-<div class="row">
-<input id="quantity" type="number" placeholder="Quantity">
-<button onclick="searchSuppliers()">Search Suppliers</button>
-</div>
+    <textarea id="request">1000 stainless steel water bottles with logo</textarea>
 
-<div id="searchStatus"></div>
-<div id="results"></div>
-</section>
+    <label>Quantity</label>
 
+    <input
+      id="quantity"
+      type="number"
+      value="1000"
+      min="1"
+    >
 
-<!-- PURCHASE WORKSPACE -->
-<section id="workspace" class="card hidden">
-<h2>Purchase Workspace</h2>
+    <button onclick="searchSuppliers()">
+      Search Suppliers
+    </button>
 
-<div class="row">
-<input id="wsProduct" placeholder="Product">
-<input id="wsSupplier" placeholder="Supplier">
-</div>
+    <div id="searchStatus" class="status"></div>
 
-<div class="row">
-<input id="wsQuantity" type="number" placeholder="Quantity">
-<input id="wsUnitPrice" type="number" step="0.01" placeholder="Unit price">
-</div>
+    <div id="resultsHeader" class="results-header"></div>
 
-<div class="row">
-<input id="wsShipping" type="number" step="0.01" placeholder="Shipping cost">
-<input id="wsLanded" type="number" step="0.01" placeholder="Landed cost">
-</div>
-
-<input id="wsUrl" placeholder="Supplier URL">
-
-<div id="costStatus"></div>
-
-<button class="green" onclick="calculateCost()">Calculate Landed Cost</button>
-<button onclick="savePurchase()">Save Purchase</button>
-
-<div id="saveStatus"></div>
-</section>
+    <div id="results"></div>
+  </section>
 
 
-<!-- NEGOTIATION -->
-<section class="card">
-<h2>NOVA AI Negotiation</h2>
+  <!-- PURCHASE WORKSPACE -->
+  <section id="purchaseWorkspace" class="card hidden">
 
-<input id="supplierName" placeholder="Supplier name">
+    <h2>Purchase Workspace</h2>
 
-<input id="supplierOffer" placeholder="Supplier offer">
+    <div class="workspace-grid">
 
-<textarea id="supplierReply" placeholder="Paste the supplier's complete reply here"></textarea>
+      <div>
+        <label>Product</label>
+        <input id="purchaseProduct">
+      </div>
 
-<button onclick="analyzeNegotiation()">Analyze & Negotiate</button>
+      <div>
+        <label>Supplier</label>
+        <input id="purchaseSupplier">
+      </div>
 
-<div id="aiStatus"></div>
-<div id="aiResult"></div>
-</section>
+      <div>
+        <label>Quantity</label>
+        <input id="purchaseQuantity" type="number">
+      </div>
+
+      <div>
+        <label>Unit Price ($)</label>
+        <input id="purchaseUnitPrice" type="number" step="0.01">
+      </div>
+
+      <div>
+        <label>Shipping Cost ($)</label>
+        <input id="shippingCost" type="number" step="0.01">
+      </div>
+
+      <div>
+        <label>Landed Cost ($)</label>
+        <input id="landedCost" type="number" step="0.01" readonly>
+      </div>
+
+      <div class="full">
+        <label>Supplier URL</label>
+        <input id="supplierUrl">
+      </div>
+
+    </div>
+
+    <button onclick="calculateLandedCost()">
+      Calculate Landed Cost
+    </button>
+
+    <button class="success" onclick="savePurchase()">
+      Save Purchase
+    </button>
+
+    <div id="purchaseStatus" class="status"></div>
+
+  </section>
 
 
-<!-- DASHBOARD -->
-<section class="card">
-<h2>My Procurement Dashboard</h2>
+  <!-- AI NEGOTIATION -->
+  <section class="card">
 
-<button class="secondary" onclick="loadPurchases()">Refresh History</button>
+    <h2>NOVA AI Negotiation</h2>
 
-<div id="history"></div>
-</section>
+    <label>Supplier name</label>
+    <input id="negSupplier" placeholder="Supplier name">
+
+    <label>Supplier offer</label>
+    <textarea
+      id="negOffer"
+      placeholder="Example: 1000 bottles at $3 each, shipping $300"
+    ></textarea>
+
+    <label>Paste the supplier's complete reply here</label>
+    <textarea
+      id="negReply"
+      placeholder="Paste the complete supplier reply..."
+    ></textarea>
+
+    <button onclick="negotiate()">
+      Analyze & Negotiate
+    </button>
+
+    <div id="negStatus" class="status"></div>
+
+    <div
+      id="negResult"
+      style="
+        white-space:pre-wrap;
+        margin-top:15px;
+        line-height:1.6;
+      "
+    ></div>
+
+  </section>
+
+
+  <!-- DASHBOARD -->
+  <section class="card">
+
+    <h2>My Procurement Dashboard</h2>
+
+    <button onclick="loadPurchases()">
+      Refresh History
+    </button>
+
+    <div id="purchaseHistory" style="margin-top:15px;"></div>
+
+  </section>
 
 </main>
 
 
 <script>
 
-let selectedSupplier=null;
-let selectedScore=null;
+const API = "";
 
 
-/* =========================
-ACCOUNT
-========================= */
+/* ---------------- STATUS ---------------- */
 
-async function signup(){
+function showStatus(id, message, type = "") {
 
-const email=document.getElementById("email").value.trim();
-const password=document.getElementById("password").value;
+  const el = document.getElementById(id);
 
-setStatus("accountStatus","Creating account...");
+  el.style.display = "block";
+  el.className = "status";
 
-const r=await fetch("/api/signup",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({email,password})
-});
+  if (type === "success") {
+    el.classList.add("success-text");
+  }
 
-const data=await r.json();
+  if (type === "error") {
+    el.classList.add("error-text");
+  }
 
-if(data.success){
-
-setStatus("accountStatus","Account created successfully.");
-updateAccount();
-
-}else{
-
-setStatus("accountStatus",data.error||"Signup failed.");
-
-}
+  el.textContent = message;
 }
 
 
-async function login(){
+/* ---------------- ACCOUNT ---------------- */
 
-const email=document.getElementById("email").value.trim();
-const password=document.getElementById("password").value;
+async function signup() {
 
-setStatus("accountStatus","Logging in...");
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
 
-const r=await fetch("/api/login",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({email,password})
-});
+  if (!email || !password) {
+    showStatus(
+      "accountStatus",
+      "Enter email and password.",
+      "error"
+    );
+    return;
+  }
 
-const data=await r.json();
+  try {
 
-if(data.success){
+    const res = await fetch(API + "/api/signup", {
 
-setStatus("accountStatus","Logged in.");
-updateAccount();
+      method: "POST",
 
-}else{
+      headers: {
+        "Content-Type": "application/json"
+      },
 
-setStatus("accountStatus",data.error||"Login failed.");
+      body: JSON.stringify({
+        email,
+        password
+      })
 
-}
-}
+    });
 
+    const data = await res.json();
 
-async function logout(){
+    if (!res.ok || !data.success) {
 
-await fetch("/api/logout",{method:"POST"});
+      showStatus(
+        "accountStatus",
+        data.error || "Signup failed.",
+        "error"
+      );
 
-updateAccount();
+      return;
+    }
 
-}
+    showStatus(
+      "accountStatus",
+      "Account created successfully.",
+      "success"
+    );
 
+  } catch (error) {
 
-async function updateAccount(){
-
-const r=await fetch("/api/me");
-const data=await r.json();
-
-if(data.loggedIn){
-
-document.getElementById("loggedOut").classList.add("hidden");
-document.getElementById("loggedIn").classList.remove("hidden");
-
-document.getElementById("userInfo").innerHTML=
-"<b>Logged in as:</b> "+data.user.email;
-
-loadPurchases();
-
-}else{
-
-document.getElementById("loggedOut").classList.remove("hidden");
-document.getElementById("loggedIn").classList.add("hidden");
-
-}
-
-}
-
-
-/* =========================
-SEARCH
-========================= */
-
-async function searchSuppliers(){
-
-const request=document.getElementById("request").value.trim();
-const quantity=document.getElementById("quantity").value;
-
-if(!request){
-
-setStatus("searchStatus","Enter what you want to buy.");
-
-return;
-
-}
-
-setStatus("searchStatus","NOVA is searching suppliers...");
-
-document.getElementById("results").innerHTML="";
-
-const r=await fetch("/api/search",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-request,
-quantity:Number(quantity)||null
-})
-});
-
-const data=await r.json();
-
-if(!data.success){
-
-setStatus("searchStatus",data.error||"Search failed.");
-
-return;
-
-}
-
-setStatus(
-"searchStatus",
-"Found "+data.result_count+" supplier results."
-);
-
-const box=document.getElementById("results");
-
-data.results.forEach((x,i)=>{
-
-const div=document.createElement("div");
-
-div.className="result";
-
-div.innerHTML=`
-
-<b>${escapeHtml(x.title)}</b>
-
-<p>${escapeHtml(x.snippet||"")}</p>
-
-<table>
-<tr><td>Deal Score</td><td class="score">${x.dealScore}/100</td></tr>
-<tr><td>Price</td><td>${escapeHtml(x.price||"Not verified")}</td></tr>
-<tr><td>MOQ</td><td>${escapeHtml(x.moq||"Not verified")}</td></tr>
-<tr><td>Lead time</td><td>${escapeHtml(x.leadTime||"Not verified")}</td></tr>
-<tr><td>Product cost</td><td>${x.productCost!==null?"$"+x.productCost:"Not calculated"}</td></tr>
-<tr><td>Landed cost</td><td>${escapeHtml(x.landedCostStatus)}</td></tr>
-</table>
-
-<a href="${escapeAttr(x.url)}" target="_blank">Open Supplier</a>
-
-<button onclick="selectSupplier(${i})">Select</button>
-
-`;
-
-box.appendChild(div);
-
-});
-
-window.searchResults=data.results;
-
+    showStatus(
+      "accountStatus",
+      error.message,
+      "error"
+    );
+  }
 }
 
 
-function selectSupplier(i){
+async function login() {
 
-selectedSupplier=window.searchResults[i];
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
 
-selectedScore=selectedSupplier.dealScore;
+  if (!email || !password) {
 
-document.getElementById("workspace").classList.remove("hidden");
+    showStatus(
+      "accountStatus",
+      "Enter email and password.",
+      "error"
+    );
 
-document.getElementById("wsProduct").value=
-document.getElementById("request").value;
+    return;
+  }
 
-document.getElementById("wsSupplier").value=
-selectedSupplier.title;
+  try {
 
-document.getElementById("wsQuantity").value=
-selectedSupplier.quantity||"";
+    const res = await fetch(API + "/api/login", {
 
-document.getElementById("wsUnitPrice").value=
-selectedSupplier.unitPrice||"";
+      method: "POST",
 
-document.getElementById("wsUrl").value=
-selectedSupplier.url||"";
+      headers: {
+        "Content-Type": "application/json"
+      },
 
-calculateCost();
+      body: JSON.stringify({
+        email,
+        password
+      })
 
-document.getElementById("workspace")
-.scrollIntoView({behavior:"smooth"});
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+
+      showStatus(
+        "accountStatus",
+        data.error || "Login failed.",
+        "error"
+      );
+
+      return;
+    }
+
+    showStatus(
+      "accountStatus",
+      "Logged in successfully.",
+      "success"
+    );
+
+    loadPurchases();
+
+  } catch (error) {
+
+    showStatus(
+      "accountStatus",
+      error.message,
+      "error"
+    );
+  }
+}
+
+
+async function logout() {
+
+  try {
+
+    await fetch(API + "/api/logout", {
+      method: "POST"
+    });
+
+    showStatus(
+      "accountStatus",
+      "Logged out.",
+      "success"
+    );
+
+  } catch (error) {
+
+    showStatus(
+      "accountStatus",
+      error.message,
+      "error"
+    );
+  }
+}
+
+
+/* ---------------- SEARCH ---------------- */
+
+async function searchSuppliers() {
+
+  const request =
+    document.getElementById("request").value.trim();
+
+  const quantity =
+    Number(document.getElementById("quantity").value || 0);
+
+  if (!request) {
+
+    showStatus(
+      "searchStatus",
+      "Enter what you need.",
+      "error"
+    );
+
+    return;
+  }
+
+  showStatus(
+    "searchStatus",
+    "NOVA is searching suppliers..."
+  );
+
+  document.getElementById("results").innerHTML = "";
+  document.getElementById("resultsHeader").textContent = "";
+
+  try {
+
+    const res = await fetch(API + "/api/search", {
+
+      method: "POST",
+
+      headers: {
+        "Content-Type": "application/json"
+      },
+
+      body: JSON.stringify({
+        request,
+        quantity
+      })
+
+    });
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+
+      showStatus(
+        "searchStatus",
+        data.error || "Search failed.",
+        "error"
+      );
+
+      return;
+    }
+
+    const results = Array.isArray(data.results)
+      ? data.results
+      : [];
+
+    /*
+      FIX:
+      Worker returns "total".
+      If total is missing, use results.length.
+      Never display undefined.
+    */
+
+    const count =
+      Number.isFinite(Number(data.total))
+        ? Number(data.total)
+        : results.length;
+
+    document.getElementById(
+      "resultsHeader"
+    ).textContent =
+      `Found ${count} supplier results.`;
+
+    showStatus(
+      "searchStatus",
+      "Search completed successfully.",
+      "success"
+    );
+
+    if (!results.length) {
+
+      document.getElementById(
+        "results"
+      ).innerHTML =
+        "<p>No suitable supplier results found.</p>";
+
+      return;
+    }
+
+    renderResults(results);
+
+  } catch (error) {
+
+    showStatus(
+      "searchStatus",
+      error.message,
+      "error"
+    );
+  }
+}
+
+
+/* ---------------- RESULTS ---------------- */
+
+function renderResults(results) {
+
+  const container =
+    document.getElementById("results");
+
+  container.innerHTML = "";
+
+  results.forEach((supplier, index) => {
+
+    const div =
+      document.createElement("div");
+
+    div.className = "result";
+
+    const title =
+      supplier.title || "Supplier";
+
+    const url =
+      supplier.url || "#";
+
+    const snippet =
+      supplier.snippet || "No description available.";
+
+    const dealScore =
+      supplier.dealScore ??
+      supplier.score ??
+      0;
+
+    const evidenceScore =
+      supplier.evidenceScore ??
+      0;
+
+    const price =
+      supplier.priceText ||
+      (
+        supplier.unitPrice !== null &&
+        supplier.unitPrice !== undefined
+          ? "$" + Number(supplier.unitPrice).toFixed(2)
+          : "Not verified"
+      );
+
+    const moq =
+      supplier.moq !== null &&
+      supplier.moq !== undefined &&
+      supplier.moq !== ""
+        ? Number(supplier.moq).toLocaleString()
+        : "Not verified";
+
+    const lead =
+      supplier.leadTime ||
+      "Not verified";
+
+    const productCost =
+      supplier.productCost !== null &&
+      supplier.productCost !== undefined
+        ? "$" + Number(supplier.productCost).toFixed(2)
+        : "Not calculated";
+
+    const shipping =
+      supplier.shippingMentioned
+        ? "Mentioned"
+        : "Not verified";
+
+    div.innerHTML = `
+
+      <h3>
+        <a
+          href="${escapeHTML(url)}"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          ${escapeHTML(title)}
+        </a>
+      </h3>
+
+      <div class="snippet">
+        ${escapeHTML(snippet)}
+      </div>
+
+      <div class="metrics">
+
+        <div class="metric">
+          <div class="metric-title">
+            Deal Score
+          </div>
+
+          <div class="metric-value score">
+            ${escapeHTML(String(dealScore))}/100
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-title">
+            Evidence
+          </div>
+
+          <div class="metric-value">
+            ${escapeHTML(String(evidenceScore))}/100
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-title">
+            Price
+          </div>
+
+          <div class="metric-value">
+            ${escapeHTML(price)}
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-title">
+            MOQ
+          </div>
+
+          <div class="metric-value">
+            ${escapeHTML(moq)}
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-title">
+            Lead time
+          </div>
+
+          <div class="metric-value">
+            ${escapeHTML(lead)}
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-title">
+            Product cost
+          </div>
+
+          <div class="metric-value">
+            ${escapeHTML(productCost)}
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-title">
+            Shipping
+          </div>
+
+          <div class="metric-value">
+            ${escapeHTML(shipping)}
+          </div>
+        </div>
+
+      </div>
+
+      <div class="buttons">
+
+        <button
+          onclick="openSupplier(${index})"
+        >
+          Open Supplier
+        </button>
+
+        <button
+          class="success"
+          onclick="selectSupplier(${index})"
+        >
+          Select
+        </button>
+
+      </div>
+
+    `;
+
+    container.appendChild(div);
+
+    supplier._novaIndex = index;
+
+  });
+
+  window.novaResults = results;
+}
+
+
+/* ---------------- OPEN SUPPLIER ---------------- */
+
+function openSupplier(index) {
+
+  const supplier =
+    window.novaResults?.[index];
+
+  if (!supplier?.url) return;
+
+  window.open(
+    supplier.url,
+    "_blank",
+    "noopener,noreferrer"
+  );
+}
+
+
+/* ---------------- SELECT SUPPLIER ---------------- */
+
+function selectSupplier(index) {
+
+  const supplier =
+    window.novaResults?.[index];
+
+  if (!supplier) return;
+
+  document
+    .querySelectorAll(".result")
+    .forEach(el => {
+      el.classList.remove("selected");
+    });
+
+  const resultCards =
+    document.querySelectorAll(".result");
+
+  if (resultCards[index]) {
+    resultCards[index].classList.add("selected");
+  }
+
+  document
+    .getElementById("purchaseWorkspace")
+    .classList.remove("hidden");
+
+  document.getElementById(
+    "purchaseProduct"
+  ).value =
+    document.getElementById("request").value;
+
+  document.getElementById(
+    "purchaseSupplier"
+  ).value =
+    supplier.title || "";
+
+  document.getElementById(
+    "purchaseQuantity"
+  ).value =
+    document.getElementById("quantity").value;
+
+  document.getElementById(
+    "purchaseUnitPrice"
+  ).value =
+    supplier.unitPrice ?? "";
+
+  document.getElementById(
+    "supplierUrl"
+  ).value =
+    supplier.url || "";
+
+  document.getElementById(
+    "shippingCost"
+  ).value = "";
+
+  document.getElementById(
+    "landedCost"
+  ).value = "";
+
+  document
+    .getElementById("purchaseWorkspace")
+    .scrollIntoView({
+      behavior: "smooth"
+    });
+}
+
+
+/* ---------------- LANDED COST ---------------- */
+
+function calculateLandedCost() {
+
+  const quantity =
+    Number(
+      document.getElementById(
+        "purchaseQuantity"
+      ).value || 0
+    );
+
+  const unitPrice =
+    Number(
+      document.getElementById(
+        "purchaseUnitPrice"
+      ).value || 0
+    );
+
+  const shipping =
+    Number(
+      document.getElementById(
+        "shippingCost"
+      ).value || 0
+    );
+
+  if (!quantity || !unitPrice) {
+
+    showStatus(
+      "purchaseStatus",
+      "Enter quantity and unit price.",
+      "error"
+    );
+
+    return;
+  }
+
+  const productCost =
+    quantity * unitPrice;
+
+  const landed =
+    productCost + shipping;
+
+  document.getElementById(
+    "landedCost"
+  ).value =
+    landed.toFixed(2);
+
+  showStatus(
+    "purchaseStatus",
+    `Landed cost calculated: $${landed.toFixed(2)}`
+  );
+}
+
+
+/* ---------------- SAVE PURCHASE ---------------- */
+
+async function savePurchase() {
+
+  const product =
+    document.getElementById(
+      "purchaseProduct"
+    ).value;
+
+  const supplier =
+    document.getElementById(
+      "purchaseSupplier"
+    ).value;
+
+  const quantity =
+    Number(
+      document.getElementById(
+        "purchaseQuantity"
+      ).value || 0
+    );
+
+  const unitPrice =
+    document.getElementById(
+      "purchaseUnitPrice"
+    ).value;
+
+  const shippingCost =
+    document.getElementById(
+      "shippingCost"
+    ).value;
+
+  const landedCost =
+    document.getElementById(
+      "landedCost"
+    ).value;
+
+  const supplierUrl =
+    document.getElementById(
+      "supplierUrl"
+    ).value;
+
+  try {
+
+    const res = await fetch(
+      API + "/api/purchases",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+          product,
+          supplier,
+          quantity,
+
+          unitPrice:
+            unitPrice === ""
+              ? null
+              : Number(unitPrice),
+
+          shippingCost:
+            shippingCost === ""
+              ? null
+              : Number(shippingCost),
+
+          landedCost:
+            landedCost === ""
+              ? null
+              : Number(landedCost),
+
+          supplierUrl
+
+        })
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+
+      showStatus(
+        "purchaseStatus",
+        data.error || "Could not save purchase.",
+        "error"
+      );
+
+      return;
+    }
+
+    showStatus(
+      "purchaseStatus",
+      "Purchase saved successfully.",
+      "success"
+    );
+
+    loadPurchases();
+
+  } catch (error) {
+
+    showStatus(
+      "purchaseStatus",
+      error.message,
+      "error"
+    );
+  }
+}
+
+
+/* ---------------- NEGOTIATION ---------------- */
+
+async function negotiate() {
+
+  const supplier =
+    document.getElementById(
+      "negSupplier"
+    ).value.trim();
+
+  const offer =
+    document.getElementById(
+      "negOffer"
+    ).value.trim();
+
+  const reply =
+    document.getElementById(
+      "negReply"
+    ).value.trim();
+
+  if (!supplier || !offer || !reply) {
+
+    showStatus(
+      "negStatus",
+      "Enter supplier, offer and complete reply.",
+      "error"
+    );
+
+    return;
+  }
+
+  showStatus(
+    "negStatus",
+    "NOVA AI is analyzing the offer..."
+  );
+
+  document.getElementById(
+    "negResult"
+  ).textContent = "";
+
+  try {
+
+    const res = await fetch(
+      API + "/api/negotiate",
+      {
+        method: "POST",
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+
+          supplier,
+          offer,
+          reply
+
+        })
+      }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok || !data.success) {
+
+      showStatus(
+        "negStatus",
+        data.error || "Negotiation analysis failed.",
+        "error"
+      );
+
+      return;
+    }
+
+    showStatus(
+      "negStatus",
+      "Analysis complete.",
+      "success"
+    );
+
+    document.getElementById(
+      "negResult"
+    ).textContent =
+      data.analysis || "No analysis returned.";
+
+  } catch (error) {
+
+    showStatus(
+      "negStatus",
+      error.message,
+      "error"
+    );
+  }
+}
+
+
+/* ---------------- DASHBOARD ---------------- */
+
+async function loadPurchases() {
+
+  const container =
+    document.getElementById(
+      "purchaseHistory"
+    );
+
+  try {
+
+    const res =
+      await fetch(
+        API + "/api/purchases"
+      );
+
+    const data =
+      await res.json();
+
+    if (!res.ok || !data.success) {
+
+      container.innerHTML =
+        `<p>${escapeHTML(
+          data.error || "Please login first."
+        )}</p>`;
+
+      return;
+    }
+
+    const purchases =
+      Array.isArray(data.purchases)
+        ? data.purchases
+        : [];
+
+    if (!purchases.length) {
+
+      container.innerHTML =
+        "<p>No saved purchases yet.</p>";
+
+      return;
+    }
+
+    container.innerHTML = "";
+
+    purchases.forEach(p => {
+
+      const div =
+        document.createElement(
+          "div"
+        );
+
+      div.className =
+        "purchase-item";
+
+      div.innerHTML = `
+
+        <strong>
+          ${escapeHTML(
+            p.product || "Product"
+          )}
+        </strong>
+
+        <br>
+
+        Supplier:
+        ${escapeHTML(
+          p.supplier || "Not stated"
+        )}
+
+        <br>
+
+        Quantity:
+        ${escapeHTML(
+          String(p.quantity || "")
+        )}
+
+        <br>
+
+        Unit price:
+        ${p.unit_price != null
+          ? "$" + Number(
+              p.unit_price
+            ).toFixed(2)
+          : "Not stated"}
+
+        <br>
+
+        Landed cost:
+        ${p.landed_cost != null
+          ? "$" + Number(
+              p.landed_cost
+            ).toFixed(2)
+          : "Not calculated"}
+
+      `;
+
+      container.appendChild(div);
+
+    });
+
+  } catch (error) {
+
+    container.innerHTML =
+      `<p>${escapeHTML(
+        error.message
+      )}</p>`;
+  }
+}
+
+
+/* ---------------- SECURITY ---------------- */
+
+function escapeHTML(value) {
+
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
 }
 
 
-/* =========================
-LANDED COST
-========================= */
+/* ---------------- STARTUP ---------------- */
 
-function calculateCost(){
+async function checkLogin() {
 
-const q=Number(document.getElementById("wsQuantity").value);
-const price=Number(document.getElementById("wsUnitPrice").value);
-const shipping=Number(document.getElementById("wsShipping").value)||0;
+  try {
 
-if(!q || !price){
+    const res =
+      await fetch(
+        API + "/api/me"
+      );
 
-setStatus(
-"costStatus",
-"Need verified quantity and unit price."
-);
+    const data =
+      await res.json();
 
-return;
+    if (data.loggedIn) {
 
+      showStatus(
+        "accountStatus",
+        "You are logged in.",
+        "success"
+      );
+
+      loadPurchases();
+    }
+
+  } catch (error) {
+    console.log(error);
+  }
 }
 
-const productCost=q*price;
-const landed=productCost+shipping;
-
-document.getElementById("wsLanded").value=
-landed.toFixed(2);
-
-setStatus(
-"costStatus",
-"Product cost: $"+productCost.toFixed(2)+
-" | Landed cost currently: $"+landed.toFixed(2)+
-" (customs/taxes not included unless entered)."
-);
-
-}
-
-
-/* =========================
-SAVE PURCHASE
-========================= */
-
-async function savePurchase(){
-
-const product=document.getElementById("wsProduct").value;
-const supplier=document.getElementById("wsSupplier").value;
-
-if(!product||!supplier){
-
-setStatus("saveStatus","Select a supplier first.");
-
-return;
-
-}
-
-const r=await fetch("/api/purchases",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-
-product,
-
-supplier,
-
-supplierUrl:
-document.getElementById("wsUrl").value,
-
-quantity:
-Number(document.getElementById("wsQuantity").value)||null,
-
-unitPrice:
-Number(document.getElementById("wsUnitPrice").value)||null,
-
-shippingCost:
-Number(document.getElementById("wsShipping").value)||null,
-
-landedCost:
-Number(document.getElementById("wsLanded").value)||null,
-
-dealScore:
-selectedScore||null
-
-})
-});
-
-const data=await r.json();
-
-if(data.success){
-
-setStatus(
-"saveStatus",
-"Purchase saved successfully."
-);
-
-loadPurchases();
-
-}else{
-
-setStatus(
-"saveStatus",
-data.error||"Login required."
-);
-
-}
-
-}
-
-
-/* =========================
-AI NEGOTIATION
-========================= */
-
-async function analyzeNegotiation(){
-
-const product=document.getElementById("wsProduct").value ||
-document.getElementById("request").value;
-
-const supplier=document.getElementById("supplierName").value ||
-document.getElementById("wsSupplier").value;
-
-const offer=document.getElementById("supplierOffer").value;
-
-const reply=document.getElementById("supplierReply").value;
-
-if(!reply){
-
-setStatus("aiStatus","Paste the supplier reply first.");
-
-return;
-
-}
-
-setStatus("aiStatus","NOVA AI is analyzing...");
-
-document.getElementById("aiResult").innerHTML="";
-
-const r=await fetch("/api/negotiate",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({
-
-product,
-supplier,
-offer,
-supplierReply:reply
-
-})
-});
-
-const data=await r.json();
-
-if(data.success){
-
-setStatus("aiStatus","Analysis complete.");
-
-document.getElementById("aiResult").innerHTML=
-"<pre>"+escapeHtml(data.analysis)+"</pre>";
-
-}else{
-
-setStatus(
-"aiStatus",
-data.error||"AI analysis failed."
-);
-
-}
-
-}
-
-
-/* =========================
-HISTORY
-========================= */
-
-async function loadPurchases(){
-
-const r=await fetch("/api/purchases");
-
-const data=await r.json();
-
-const box=document.getElementById("history");
-
-if(!data.success){
-
-box.innerHTML="<small>Login to see your saved procurement history.</small>";
-
-return;
-
-}
-
-if(!data.purchases.length){
-
-box.innerHTML="<small>No purchases saved yet.</small>";
-
-return;
-
-}
-
-box.innerHTML="";
-
-data.purchases.forEach(p=>{
-
-const div=document.createElement("div");
-
-div.className="result";
-
-div.innerHTML=`
-
-<b>${escapeHtml(p.product)}</b>
-
-<p>Supplier: ${escapeHtml(p.supplier||"")}</p>
-
-<p>
-Quantity: ${p.quantity||"—"}
-&nbsp; | &nbsp;
-Unit price: ${p.unit_price!==null?"$"+p.unit_price:"—"}
-&nbsp; | &nbsp;
-Landed: ${p.landed_cost!==null?"$"+p.landed_cost:"—"}
-</p>
-
-<p>Deal Score: ${p.deal_score!==null?p.deal_score+"/100":"—"}</p>
-
-<small>${escapeHtml(p.created_at)}</small>
-
-`;
-
-box.appendChild(div);
-
-});
-
-}
-
-
-/* =========================
-HELPERS
-========================= */
-
-function setStatus(id,text){
-
-document.getElementById(id).innerHTML=
-"<div class='status'>"+escapeHtml(text)+"</div>";
-
-}
-
-
-function escapeHtml(value){
-
-return String(value??"")
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
-
-}
-
-
-function escapeAttr(value){
-
-return String(value??"")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
-
-}
-
-
-/* START */
-
-updateAccount();
+checkLogin();
 
 </script>
 
 </body>
-  </html>
+        </html>
