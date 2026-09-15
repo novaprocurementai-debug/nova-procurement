@@ -8,10 +8,10 @@
 body{font-family:Arial;margin:0;background:#f5f7fa;color:#111}
 main{max-width:900px;margin:auto;padding:25px}
 textarea{width:100%;height:100px;padding:12px;font-size:16px;box-sizing:border-box}
-button{margin-top:10px;padding:14px 25px;background:#111;color:white;border:0;border-radius:8px;font-size:16px}
+button{margin-top:10px;padding:12px 18px;background:#111;color:white;border:0;border-radius:8px;font-size:15px}
 .card{background:white;padding:18px;margin-top:15px;border-radius:12px;box-shadow:0 2px 8px #ddd}
-.score{font-size:22px;font-weight:bold}
 a{color:#06c}
+.quote{background:#0b57d0}
 </style>
 </head>
 <body>
@@ -29,9 +29,6 @@ a{color:#06c}
 <script>
 async function search(){
  const req=document.getElementById("req").value.trim();
- const status=document.getElementById("status");
- const results=document.getElementById("results");
-
  if(!req)return;
 
  status.innerHTML="<p>🔎 NOVA is searching...</p>";
@@ -43,7 +40,6 @@ async function search(){
    headers:{"Content-Type":"application/json"},
    body:JSON.stringify({request:req})
   });
-
   const data=await r.json();
 
   if(!data.results?.length){
@@ -55,19 +51,55 @@ async function search(){
 
   results.innerHTML=data.results.map((x,i)=>`
    <div class="card">
-    <div class="score">⭐ Deal Score: ${x.dealScore}/100</div>
     <h2>${i+1}. ${x.title}</h2>
     <p>💰 <b>Price:</b> ${x.price||"Not found"}</p>
     <p>📦 <b>MOQ:</b> ${x.moq||"Not found"}</p>
     <p>⏱️ <b>Lead Time:</b> ${x.leadTime||"Not found"}</p>
     <p>${x.snippet||""}</p>
+
     <a href="${x.url}" target="_blank">🔗 View Supplier</a>
+
+    <br>
+    <button class="quote"
+      onclick="requestQuote(${JSON.stringify(x.title)},${JSON.stringify(x.url)})">
+      📩 Request Quote
+    </button>
    </div>
   `).join("");
 
  }catch(e){
   status.innerHTML="<p>❌ Search error</p>";
  }
+}
+
+function requestQuote(title,url){
+ const product=document.getElementById("req").value.trim();
+
+ const subject=encodeURIComponent("Request for Quotation - "+product);
+
+ const body=encodeURIComponent(
+`Hello,
+
+I am interested in purchasing:
+
+Product: ${product}
+
+Supplier found:
+${title}
+${url}
+
+Please provide:
+- Unit price
+- MOQ
+- Shipping cost
+- Lead time
+- Payment terms
+- Sample availability
+
+Thank you.`
+ );
+
+ window.location.href=`mailto:?subject=${subject}&body=${body}`;
 }
 </script>
 </body>
