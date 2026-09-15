@@ -1,27 +1,20 @@
 const MODEL = "@cf/meta/llama-3.1-8b-instruct-fast";
 
-function json(data, status = 200, extra = {}) {
+function json(data, status = 200) {
   return new Response(JSON.stringify(data), {
     status,
-    headers: {
-      "content-type": "application/json; charset=UTF-8",
-      ...extra
-    }
+    headers: { "Content-Type": "application/json" }
   });
 }
 
 function cookieValue(request, name) {
   const cookie = request.headers.get("Cookie") || "";
-  const match = cookie.match(
-    new RegExp("(?:^|;\\s*)" + name.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "=([^;]*)")
-  );
-  return match ? decodeURIComponent(match[1]) : null;
+  const match = cookie.match(new RegExp("(^|;\\s*)" + name + "=([^;]*)"));
+  return match ? decodeURIComponent(match[2]) : null;
 }
 
-function randomToken(bytes = 32) {
-  const arr = new Uint8Array(bytes);
-  crypto.getRandomValues(arr);
-  return [...arr].map(x => x.toString(16).padStart(2, "0")).join("");
+function randomToken() {
+  return crypto.randomUUID() + crypto.randomUUID();
 }
 
 async function sha256(text) {
@@ -33,71 +26,67 @@ async function sha256(text) {
 }
 
 async function passwordHash(password, salt) {
-  return sha256(`${salt}:${password}`);
+  return sha256(salt + ":" + password);
 }
 
-async function ensureDB(env) {
-  if (!env.DB) return;
-
-  await env.DB.batch([
-    env.DB.prepare(`
+async function ensureDB(db) {
+  await db.batch([
+    db.prepare(`
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         email TEXT UNIQUE NOT NULL,
         password_hash TEXT NOT NULL,
-        password_salt TEXT NOT NULL,
-        created_at TEXT NOT NULL
+        salt TEXT NOT NULL,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
     `),
-    env.DB.prepare(`
+    db.prepare(`
       CREATE TABLE IF NOT EXISTS sessions (
         token TEXT PRIMARY KEY,
         user_id INTEGER NOT NULL,
-        expires_at TEXT NOT NULL
+        expires_at INTEGER NOT NULL
       )
     `),
-    env.DB.prepare(`
+    db.prepare(`
       CREATE TABLE IF NOT EXISTS purchases (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER NOT NULL,
         product TEXT,
         supplier TEXT,
-        quantity INTEGER,
+        quantity REAL,
         unit_price REAL,
-        shipping_cost REAL,
+        shipping REAL,
         landed_cost REAL,
         supplier_url TEXT,
-        created_at TEXT NOT NULL
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
     `),
-    env.DB.prepare(`
+    db.prepare(`
       CREATE TABLE IF NOT EXISTS negotiations (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
-        purchase_id INTEGER,
         supplier TEXT,
         offer TEXT,
-        reply TEXT,
-        analysis TEXT,
-        created_at TEXT NOT NULL
+        result TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
     `)
   ]);
 }
 
-async function currentUser(request, env) {
-  if (!env.DB) return null;
-
+async function currentUser(request, db) {
   const token = cookieValue(request, "nova_session");
   if (!token) return null;
 
-  return await env.DB.prepare(`
+  const row = await db.prepare(`
     SELECT users.id, users.email
     FROM sessions
     JOIN users ON users.id = sessions.user_id
     WHERE sessions.token = ?
       AND sessions.expires_at > ?
-  `).bind(token, new Date().toISOString()).first();
+  `).bind(token, Date.now()).first();
+
+  return row || null;
 }
 
 function sessionCookie(token) {
@@ -105,370 +94,122 @@ function sessionCookie(token) {
 }
 
 function clearSessionCookie() {
-  return `nova_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`;
+  return "nova_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0";
 }
-
-/* =========================
-   QUANTITY
-========================= */
 
 function extractQuantity(text) {
-  const s = String(text || "").replace(/,/g, "");
+  const match = String(text || "").match(
+    /(\d[\d,]*(?:\.\d+)?)\s*(?:pcs|pieces|units|unit|bottles|kg|tons|ton|items)?/i
+  );
 
-  const patterns = [
-    /\b(\d+(?:\.\d+)?)\s*(?:pcs|pieces|units|unit|items|bottles|sets)\b/i,
-    /\bquantity\s*[:=]?\s*(\d+(?:\.\d+)?)/i
-  ];
+  if (!match) return null;
 
-  for (const p of patterns) {
-    const m = s.match(p);
-
-    if (m) {
-      const n = Number(m[1]);
-
-      if (Number.isFinite(n) && n > 0) {
-        return n;
-      }
-    }
-  }
-
-  return null;
+  const value = Number(match[1].replace(/,/g, ""));
+  return Number.isFinite(value) ? value : null;
 }
-
-/* =========================
-   PRICE
-========================= */
 
 function parsePrice(text) {
-  const s = String(text || "")
-    .replace(/\u00a0/g, " ")
-    .replace(/,/g, "");
+  const match = String(text || "").match(
+    /\$\s?(\d+(?:\.\d+)?)/ 
+  );
 
-  const patterns = [
-    /(?:US\$|\$)\s*(\d+(?:\.\d+)?)\s*(?:-|–|—|to)\s*(?:US\$|\$)?\s*(\d+(?:\.\d+)?)/i,
-
-    /USD\s*(\d+(?:\.\d+)?)\s*(?:-|–|—|to)\s*(?:USD\s*)?(\d+(?:\.\d+)?)/i,
-
-    /(\d+(?:\.\d+)?)\s*(?:-|–|—|to)\s*(\d+(?:\.\d+)?)\s*USD/i,
-
-    /(?:price|unit price|price per piece|price\/pc|price\/piece)[^$0-9]{0,40}(?:US\$|\$|USD)?\s*(\d+(?:\.\d+)?)/i,
-
-    /(?:US\$|\$)\s*(\d+(?:\.\d+)?)\s*(?:\/\s*(?:pc|pcs|piece|unit))?/i,
-
-    /(\d+(?:\.\d+)?)\s*USD\s*(?:\/\s*(?:pc|pcs|piece|unit))?/i
-  ];
-
-  for (const p of patterns) {
-    const m = s.match(p);
-
-    if (!m) continue;
-
-    if (m[2]) {
-      const a = Number(m[1]);
-      const b = Number(m[2]);
-
-      if (
-        Number.isFinite(a) &&
-        Number.isFinite(b) &&
-        a > 0 &&
-        b >= a &&
-        b < 100000
-      ) {
-        return {
-          text: `$${a.toFixed(2)} - $${b.toFixed(2)}`,
-          unitPrice: (a + b) / 2
-        };
-      }
-    }
-
-    const value = Number(m[1]);
-
-    if (
-      Number.isFinite(value) &&
-      value > 0 &&
-      value < 100000
-    ) {
-      return {
-        text: `$${value.toFixed(2)}`,
-        unitPrice: value
-      };
-    }
-  }
-
-  return {
-    text: null,
-    unitPrice: null
-  };
+  return match ? Number(match[1]) : null;
 }
-
-/* =========================
-   MOQ
-========================= */
 
 function parseMOQ(text) {
-  const s = String(text || "")
-    .replace(/\u00a0/g, " ")
-    .replace(/,/g, "");
+  const match = String(text || "").match(
+    /(?:MOQ|minimum order quantity|min(?:imum)? order)\D{0,20}([\d,]+)/i
+  );
 
-  const patterns = [
-    /(?:MOQ|minimum order quantity|minimum order|minimum quantity|minimum qty)\s*(?:is|:|-)?\s*(\d{1,8})/i,
-
-    /(?:MOQ|minimum order quantity|minimum order)[^0-9]{0,50}(\d{1,8})\s*(?:pcs|pieces|units)?/i,
-
-    /(\d{1,8})\s*(?:pcs|pieces|units)\s*(?:MOQ|minimum order)/i
-  ];
-
-  for (const p of patterns) {
-    const m = s.match(p);
-
-    if (!m) continue;
-
-    const n = Number(m[1]);
-
-    if (
-      Number.isInteger(n) &&
-      n > 0 &&
-      n <= 10000000
-    ) {
-      return n;
-    }
-  }
-
-  return null;
+  return match ? Number(match[1].replace(/,/g, "")) : null;
 }
-
-/* =========================
-   LEAD TIME
-========================= */
 
 function parseLeadTime(text) {
-  const s = String(text || "");
+  const match = String(text || "").match(
+    /(\d+(?:\s*-\s*\d+)?)\s*(?:days|day|weeks|week)/i
+  );
 
-  const patterns = [
-    /(\d+)\s*[-–—]\s*(\d+)\s*days?/i,
-    /(\d+)\s*to\s*(\d+)\s*days?/i,
-    /within\s*(\d+)\s*days?/i,
-    /production\s*time[^0-9]{0,30}(\d+)\s*days?/i,
-    /lead\s*time[^0-9]{0,30}(\d+)\s*days?/i
-  ];
-
-  for (const p of patterns) {
-    const m = s.match(p);
-
-    if (!m) continue;
-
-    if (m[2]) {
-      return `${m[1]}-${m[2]} days`;
-    }
-
-    return `${m[1]} days`;
-  }
-
-  return null;
+  return match ? match[0] : null;
 }
 
-/* =========================
-   SUPPLIER SIGNAL
-========================= */
-
-function supplierSignals(title, url, snippet) {
-  const text = `${title} ${url} ${snippet}`.toLowerCase();
+function supplierSignals(text) {
+  const s = String(text || "").toLowerCase();
 
   let score = 0;
 
-  if (/manufacturer|factory/.test(text)) score += 30;
-  if (/\boem\b/.test(text)) score += 15;
-  if (/\bodm\b/.test(text)) score += 10;
-  if (/wholesale|bulk/.test(text)) score += 15;
-  if (/supplier|exporter/.test(text)) score += 10;
-  if (/custom|private label|logo/.test(text)) score += 10;
-
-  return Math.min(score, 100);
-}
-
-/* =========================
-   PAGE QUALITY
-========================= */
-
-function pageTypeScore(title, url, snippet) {
-  const text = `${title} ${url} ${snippet}`.toLowerCase();
-
-  let score = 0;
-
-  const good = [
+  const words = [
     "manufacturer",
     "factory",
     "supplier",
     "wholesale",
-    "bulk",
+    "wholesaler",
     "oem",
     "odm",
     "exporter",
+    "bulk",
     "custom",
-    "private label"
+    "private label",
+    "direct factory"
   ];
 
-  const bad = [
-    "amazon",
-    "walmart",
-    "etsy",
-    "ebay",
-    "best buy",
-    "retail",
-    "review",
-    "reviews",
-    "blog",
-    "guide",
-    "article",
-    "comparison",
-    "definition",
-    "wikipedia"
-  ];
-
-  for (const word of good) {
-    if (text.includes(word)) score += 7;
-  }
-
-  for (const word of bad) {
-    if (text.includes(word)) score -= 20;
+  for (const word of words) {
+    if (s.includes(word)) score += 1;
   }
 
   return score;
 }
 
-/* =========================
-   EVIDENCE
-========================= */
+function evidenceScore(text) {
+  const s = String(text || "").toLowerCase();
 
-function evidenceScore(data) {
   let score = 0;
 
-  if (data.unitPrice !== null) score += 30;
-  if (data.moq !== null) score += 25;
-  if (data.leadTime !== null) score += 15;
-  if (data.shippingMentioned) score += 10;
-  if (data.supplierSignal >= 20) score += 10;
-  if (data.supplierSignal >= 40) score += 10;
+  if (s.includes("$")) score += 10;
+  if (s.includes("moq")) score += 10;
+  if (s.includes("minimum order")) score += 10;
+  if (s.includes("shipping")) score += 5;
+  if (s.includes("lead time")) score += 5;
+  if (s.includes("oem")) score += 5;
+  if (s.includes("odm")) score += 5;
+  if (s.includes("manufacturer")) score += 5;
+  if (s.includes("factory")) score += 5;
 
-  return Math.min(score, 100);
+  return Math.min(score, 50);
 }
 
-/* =========================
-   DEAL SCORE
-========================= */
+function dealScore({ supplierSignal, evidence, price, moq }) {
+  let score = 50;
 
-function dealScore(data, requestedQuantity) {
-  let score = 10;
+  score += supplierSignal * 3;
+  score += evidence;
 
-  score += Math.min(
-    data.supplierSignal * 0.30,
-    30
-  );
+  if (price !== null) score += 10;
+  if (moq !== null) score += 5;
 
-  if (data.unitPrice !== null) {
-    score += 20;
-
-    if (data.unitPrice <= 2) score += 5;
-    else if (data.unitPrice <= 5) score += 3;
-  }
-
-  if (data.moq !== null) {
-    score += 15;
-
-    if (requestedQuantity) {
-      if (data.moq <= requestedQuantity) {
-        score += 10;
-      } else if (
-        data.moq <= requestedQuantity * 2
-      ) {
-        score += 4;
-      } else {
-        score -= 15;
-      }
-    }
-  }
-
-  if (data.leadTime) {
-    score += 10;
-
-    const nums =
-      data.leadTime
-        .match(/\d+/g)
-        ?.map(Number) || [];
-
-    if (nums.length) {
-      const maxDays =
-        Math.max(...nums);
-
-      if (maxDays <= 30) score += 3;
-      else if (maxDays > 90) score -= 5;
-    }
-  }
-
-  if (data.shippingMentioned) {
-    score += 5;
-  }
-
-  score += Math.max(
-    -10,
-    Math.min(
-      10,
-      data.pageTypeScore * 0.10
-    )
-  );
-
-  return Math.max(
-    0,
-    Math.min(
-      100,
-      Math.round(score)
-    )
-  );
+  return Math.min(100, Math.max(1, score));
 }
 
-/* =========================
-   SEARCH SUPPLIERS
-========================= */
-
-async function searchSuppliers(
-  requestText,
-  env
-) {
-  if (!env.YEP_API_KEY) {
-    throw new Error(
-      "YEP_API_KEY is missing"
-    );
-  }
-
-  const requestedQuantity =
-    extractQuantity(requestText);
-
+async function searchSuppliers(requestText, env) {
   const searchQuery = `
     ${requestText}
-    manufacturer factory supplier wholesale exporter
-    OEM ODM bulk custom logo private label
+    manufacturer supplier factory wholesale
+    OEM ODM exporter bulk custom logo
     MOQ minimum order quantity
-    unit price USD per piece quotation
+    unit price USD quotation
     production lead time shipping
-  `
-    .replace(/\s+/g, " ")
-    .trim();
+  `.replace(/\s+/g, " ").trim();
 
   const response = await fetch(
     "https://platform.yep.com/api/search",
     {
       method: "POST",
-
       headers: {
-        "Authorization":
-          `Bearer ${env.YEP_API_KEY}`,
-        "Content-Type":
-          "application/json"
+        "Authorization": `Bearer ${env.YEP_API_KEY}`,
+        "Content-Type": "application/json"
       },
-
       body: JSON.stringify({
         query: searchQuery,
-        type: "highlights",
+        type: "basic",
         limit: 50,
         language: ["en"],
         location: "US"
@@ -476,858 +217,424 @@ async function searchSuppliers(
     }
   );
 
-  if (!response.ok) {
-    const errorText =
-      await response.text();
+  const data = await response.json();
 
-    throw new Error(
-      `Yep Search error ${response.status}: ${errorText}`
-    );
+  if (!response.ok) {
+    return {
+      results: [],
+      total: 0,
+      error: data
+    };
   }
 
-  const data =
-    await response.json();
+  const rawResults = Array.isArray(data.results)
+    ? data.results
+    : [];
 
-  const rawResults =
-    Array.isArray(data.results)
-      ? data.results
-      : [];
+  const results = rawResults
+    .map((r, index) => {
+      const title =
+        r.title ||
+        r.name ||
+        `Supplier Result ${index + 1}`;
 
-  const results =
-    rawResults
-      .map((r) => {
-        const title =
-          String(r.title || "");
+      const url =
+        r.url ||
+        r.link ||
+        "";
 
-        const url =
-          String(r.url || "");
+      const snippet =
+        r.snippet ||
+        r.description ||
+        r.text ||
+        "";
 
-        const snippet =
-          String(
-            r.snippet ||
-            r.description ||
-            r.highlight ||
-            ""
-          );
+      const combined = `${title} ${snippet}`;
 
-        const combined =
-          `${title} ${snippet}`;
+      const price = parsePrice(combined);
+      const moq = parseMOQ(combined);
+      const leadTime = parseLeadTime(combined);
+      const supplierSignal = supplierSignals(combined);
+      const evidence = evidenceScore(combined);
 
-        const price =
-          parsePrice(combined);
-
-        const moq =
-          parseMOQ(combined);
-
-        const leadTime =
-          parseLeadTime(combined);
-
-        const shippingMentioned =
-          /\bshipping\b|\bfreight\b|\bdelivery\b|\bFOB\b|\bCIF\b|\bDDP\b/i
-            .test(combined);
-
-        const supplierSignal =
-          supplierSignals(
-            title,
-            url,
-            snippet
-          );
-
-        const pageScore =
-          pageTypeScore(
-            title,
-            url,
-            snippet
-          );
-
-        const evidence =
-          evidenceScore({
-            unitPrice:
-              price.unitPrice,
-            moq,
-            leadTime,
-            shippingMentioned,
-            supplierSignal
-          });
-
-        const deal =
-          dealScore(
-            {
-              unitPrice:
-                price.unitPrice,
-              moq,
-              leadTime,
-              shippingMentioned,
-              supplierSignal,
-              pageTypeScore:
-                pageScore
-            },
-            requestedQuantity
-          );
-
-        return {
-          title,
-          url,
-          snippet,
-
-          priceText:
-            price.text,
-
-          unitPrice:
-            price.unitPrice,
-
-          moq,
-          leadTime,
-
-          shippingMentioned,
-
+      return {
+        title,
+        url,
+        snippet,
+        price,
+        moq,
+        leadTime,
+        shipping: null,
+        supplierSignal,
+        evidence,
+        dealScore: dealScore({
           supplierSignal,
-
-          evidenceScore:
-            evidence,
-
-          dealScore:
-            deal,
-
-          requestedQuantity,
-
-          productCost:
-            price.unitPrice !== null &&
-            requestedQuantity
-              ? Number(
-                  (
-                    price.unitPrice *
-                    requestedQuantity
-                  ).toFixed(2)
-                )
-              : null
-        };
-      })
-
-      /* Keep real supplier-looking pages */
-      .filter((r) => {
-        if (!r.url) return false;
-
-        if (r.supplierSignal >= 8) {
-          return true;
-        }
-
-        if (
-          r.unitPrice !== null &&
-          r.pageTypeScore > -20
-        ) {
-          return true;
-        }
-
-        return false;
-      })
-
-      /* Remove obvious non-commercial pages */
-      .filter((r) =>
-        r.pageTypeScore > -40
-      )
-
-      .sort((a, b) => {
-        if (
-          b.dealScore !==
-          a.dealScore
-        ) {
-          return (
-            b.dealScore -
-            a.dealScore
-          );
-        }
-
-        return (
-          b.evidenceScore -
-          a.evidenceScore
-        );
-      });
-
-  /* =========================
-     REMOVE DUPLICATE DOMAINS
-  ========================= */
-
-  const seen =
-    new Set();
-
-  const unique =
-    results.filter((r) => {
-      try {
-        const domain =
-          new URL(r.url)
-            .hostname
-            .replace(/^www\./, "")
-            .toLowerCase();
-
-        if (seen.has(domain)) {
-          return false;
-        }
-
-        seen.add(domain);
-
-        return true;
-      } catch {
-        return true;
-      }
-    });
+          evidence,
+          price,
+          moq
+        }),
+        productCost: price
+      };
+    })
+    .filter(r => r.url);
 
   return {
-    success: true,
-    query: requestText,
-    requestedQuantity,
-    total: unique.length,
-    results:
-      unique.slice(0, 50)
+    results,
+    total: results.length,
+    query: data.query || searchQuery,
+    yepSuccess: data.success ?? true
   };
 }
 
-/* =========================
-   AI NEGOTIATION
-========================= */
-
-async function negotiate(
-  body,
-  env
-) {
-  if (!env.AI) {
-    throw new Error(
-      "Workers AI binding AI is missing"
-    );
-  }
-
-  const supplier =
-    body.supplier || "";
-
-  const offer =
-    body.offer || "";
-
-  const reply =
-    body.reply || "";
-
+async function negotiate(supplier, offer, env) {
   const prompt = `
-You are NOVA, an evidence-first AI procurement analyst.
+You are NOVA, an AI procurement negotiation agent.
 
-Analyze ONLY information explicitly provided.
+Supplier: ${supplier}
+Current supplier offer: ${offer}
 
-IMPORTANT:
-- NEVER invent facts.
-- NEVER invent price.
-- NEVER invent MOQ.
-- NEVER assume customization is included.
-- NEVER assume shipping destination.
-- NEVER assume taxes or customs.
-- NEVER call a price competitive without evidence.
-- Missing information must say NOT STATED.
-- Quantity is NOT MOQ.
+Create a professional negotiation strategy.
 
-Supplier:
-${supplier}
+Return:
+1. Target price
+2. Suggested counteroffer
+3. Negotiation message
+4. MOQ strategy
+5. Shipping strategy
+6. Payment strategy
+7. Main risks
+8. Final recommendation
 
-Initial offer:
-${offer}
-
-Supplier reply:
-${reply}
-
-Return exactly:
-
-VERIFIED OFFER
-
-NOT STATED
-
-DEAL ANALYSIS
-
-NEGOTIATION TARGET
-
-COUNTER-OFFER
-
-MESSAGE TO SUPPLIER
+Do not invent facts about the supplier.
 `;
 
-  const result =
-    await env.AI.run(
-      MODEL,
+  const result = await env.AI.run(MODEL, {
+    messages: [
       {
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a strict procurement analyst. Evidence first. Never fabricate."
-          },
-          {
-            role: "user",
-            content: prompt
-          }
-        ]
+        role: "system",
+        content: "You are NOVA, an expert procurement and sourcing AI."
+      },
+      {
+        role: "user",
+        content: prompt
       }
-    );
+    ],
+    max_tokens: 1000
+  });
 
-  return (
-    result.response ||
-    JSON.stringify(result)
-  );
+  return result.response || "No negotiation response generated.";
 }
 
-/* =========================
-   MAIN WORKER
-========================= */
-
 export default {
-  async fetch(
-    request,
-    env
-  ) {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+    const path = url.pathname;
+
     try {
-      await ensureDB(env);
+      if (env.DB) {
+        await ensureDB(env.DB);
+      }
 
-      const url =
-        new URL(request.url);
+      // SIGNUP
+      if (path === "/api/signup" && request.method === "POST") {
+        const body = await request.json();
 
-      const path =
-        url.pathname;
+        const email = String(body.email || "").trim().toLowerCase();
+        const password = String(body.password || "");
 
-      /* STATIC */
-      if (
-        request.method === "GET" &&
-        !path.startsWith("/api/")
-      ) {
-        if (env.ASSETS) {
-          return env.ASSETS.fetch(
-            request
-          );
+        if (!email || !password) {
+          return json({
+            error: "Email and password are required."
+          }, 400);
         }
+
+        if (password.length < 6) {
+          return json({
+            error: "Password must be at least 6 characters."
+          }, 400);
+        }
+
+        const exists = await env.DB
+          .prepare("SELECT id FROM users WHERE email = ?")
+          .bind(email)
+          .first();
+
+        if (exists) {
+          return json({
+            error: "Account already exists."
+          }, 409);
+        }
+
+        const salt = randomToken();
+        const hash = await passwordHash(password, salt);
+
+        const result = await env.DB
+          .prepare(`
+            INSERT INTO users (email, password_hash, salt)
+            VALUES (?, ?, ?)
+          `)
+          .bind(email, hash, salt)
+          .run();
+
+        const userId = result.meta.last_row_id;
+
+        const token = randomToken();
+
+        await env.DB
+          .prepare(`
+            INSERT INTO sessions (token, user_id, expires_at)
+            VALUES (?, ?, ?)
+          `)
+          .bind(token, userId, Date.now() + 604800000)
+          .run();
 
         return new Response(
-          "NOVA Procurement AI",
+          JSON.stringify({
+            success: true,
+            email
+          }),
           {
             headers: {
-              "content-type":
-                "text/plain"
+              "Content-Type": "application/json",
+              "Set-Cookie": sessionCookie(token)
             }
           }
         );
       }
 
-      /* SEARCH */
-      if (
-        request.method === "POST" &&
-        path === "/api/search"
-      ) {
-        const body =
-          await request.json();
+      // LOGIN
+      if (path === "/api/login" && request.method === "POST") {
+        const body = await request.json();
 
-        if (!body.request) {
-          return json(
-            {
-              success: false,
-              error:
-                "Request is required"
-            },
-            400
-          );
-        }
+        const email = String(body.email || "").trim().toLowerCase();
+        const password = String(body.password || "");
 
-        const result =
-          await searchSuppliers(
-            body.request,
-            env
-          );
-
-        return json(result);
-      }
-
-      /* SIGNUP */
-      if (
-        request.method === "POST" &&
-        path === "/api/signup"
-      ) {
-        const body =
-          await request.json();
-
-        const email =
-          String(
-            body.email || ""
-          )
-            .trim()
-            .toLowerCase();
-
-        const password =
-          String(
-            body.password || ""
-          );
-
-        if (
-          !email ||
-          !password
-        ) {
-          return json(
-            {
-              success: false,
-              error:
-                "Email and password are required"
-            },
-            400
-          );
-        }
-
-        if (
-          password.length < 6
-        ) {
-          return json(
-            {
-              success: false,
-              error:
-                "Password must be at least 6 characters"
-            },
-            400
-          );
-        }
-
-        const existing =
-          await env.DB
-            .prepare(
-              "SELECT id FROM users WHERE email = ?"
-            )
-            .bind(email)
-            .first();
-
-        if (existing) {
-          return json(
-            {
-              success: false,
-              error:
-                "Account already exists"
-            },
-            409
-          );
-        }
-
-        const salt =
-          randomToken(16);
-
-        const hash =
-          await passwordHash(
-            password,
-            salt
-          );
-
-        const result =
-          await env.DB
-            .prepare(`
-              INSERT INTO users
-              (email, password_hash, password_salt, created_at)
-              VALUES (?, ?, ?, ?)
-            `)
-            .bind(
-              email,
-              hash,
-              salt,
-              new Date().toISOString()
-            )
-            .run();
-
-        const userId =
-          result.meta.last_row_id;
-
-        const token =
-          randomToken(32);
-
-        const expires =
-          new Date(
-            Date.now() +
-            7 * 24 * 60 * 60 * 1000
-          ).toISOString();
-
-        await env.DB
+        const user = await env.DB
           .prepare(`
-            INSERT INTO sessions
-            (token, user_id, expires_at)
-            VALUES (?, ?, ?)
+            SELECT id, email, password_hash, salt
+            FROM users
+            WHERE email = ?
           `)
-          .bind(
-            token,
-            userId,
-            expires
-          )
-          .run();
-
-        return json(
-          {
-            success: true,
-            user: {
-              id: userId,
-              email
-            }
-          },
-          200,
-          {
-            "Set-Cookie":
-              sessionCookie(token)
-          }
-        );
-      }
-
-      /* LOGIN */
-      if (
-        request.method === "POST" &&
-        path === "/api/login"
-      ) {
-        const body =
-          await request.json();
-
-        const email =
-          String(
-            body.email || ""
-          )
-            .trim()
-            .toLowerCase();
-
-        const password =
-          String(
-            body.password || ""
-          );
-
-        const user =
-          await env.DB
-            .prepare(`
-              SELECT *
-              FROM users
-              WHERE email = ?
-            `)
-            .bind(email)
-            .first();
+          .bind(email)
+          .first();
 
         if (!user) {
-          return json(
-            {
-              success: false,
-              error:
-                "Invalid email or password"
-            },
-            401
-          );
+          return json({
+            error: "Invalid email or password."
+          }, 401);
         }
 
-        const hash =
-          await passwordHash(
-            password,
-            user.password_salt
-          );
+        const hash = await passwordHash(password, user.salt);
 
-        if (
-          hash !==
-          user.password_hash
-        ) {
-          return json(
-            {
-              success: false,
-              error:
-                "Invalid email or password"
-            },
-            401
-          );
+        if (hash !== user.password_hash) {
+          return json({
+            error: "Invalid email or password."
+          }, 401);
         }
 
-        const token =
-          randomToken(32);
-
-        const expires =
-          new Date(
-            Date.now() +
-            7 * 24 * 60 * 60 * 1000
-          ).toISOString();
+        const token = randomToken();
 
         await env.DB
           .prepare(`
-            INSERT INTO sessions
-            (token, user_id, expires_at)
+            INSERT INTO sessions (token, user_id, expires_at)
             VALUES (?, ?, ?)
           `)
-          .bind(
-            token,
-            user.id,
-            expires
-          )
+          .bind(token, user.id, Date.now() + 604800000)
           .run();
 
-        return json(
-          {
+        return new Response(
+          JSON.stringify({
             success: true,
-            user: {
-              id: user.id,
-              email: user.email
-            }
-          },
-          200,
+            email: user.email
+          }),
           {
-            "Set-Cookie":
-              sessionCookie(token)
+            headers: {
+              "Content-Type": "application/json",
+              "Set-Cookie": sessionCookie(token)
+            }
           }
         );
       }
 
-      /* LOGOUT */
-      if (
-        request.method === "POST" &&
-        path === "/api/logout"
-      ) {
-        const token =
-          cookieValue(
-            request,
-            "nova_session"
-          );
+      // LOGOUT
+      if (path === "/api/logout") {
+        const token = cookieValue(request, "nova_session");
 
-        if (
-          token &&
-          env.DB
-        ) {
+        if (token && env.DB) {
           await env.DB
-            .prepare(
-              "DELETE FROM sessions WHERE token = ?"
-            )
+            .prepare("DELETE FROM sessions WHERE token = ?")
             .bind(token)
             .run();
         }
 
-        return json(
-          { success: true },
-          200,
+        return new Response(
+          JSON.stringify({ success: true }),
           {
-            "Set-Cookie":
-              clearSessionCookie()
+            headers: {
+              "Content-Type": "application/json",
+              "Set-Cookie": clearSessionCookie()
+            }
           }
         );
       }
 
-      /* ME */
-      if (
-        request.method === "GET" &&
-        path === "/api/me"
-      ) {
-        const user =
-          await currentUser(
-            request,
-            env
-          );
+      // CURRENT USER
+      if (path === "/api/me") {
+        const user = await currentUser(request, env.DB);
 
         return json({
-          success: true,
-          loggedIn:
-            !!user,
-          user
+          loggedIn: !!user,
+          user: user || null
         });
       }
 
-      /* PURCHASES */
-      if (
-        request.method === "GET" &&
-        path === "/api/purchases"
-      ) {
-        const user =
-          await currentUser(
-            request,
-            env
-          );
+      // SEARCH
+      if (path === "/api/search" && request.method === "POST") {
+        const body = await request.json();
 
-        if (!user) {
-          return json(
-            {
-              success: false,
-              error:
-                "Not logged in"
-            },
-            401
-          );
+        const requestText =
+          String(body.request || "").trim();
+
+        if (!requestText) {
+          return json({
+            error: "Please enter a procurement request."
+          }, 400);
         }
-
-        const rows =
-          await env.DB
-            .prepare(`
-              SELECT *
-              FROM purchases
-              WHERE user_id = ?
-              ORDER BY id DESC
-            `)
-            .bind(user.id)
-            .all();
-
-        return json({
-          success: true,
-          purchases:
-            rows.results || []
-        });
-      }
-
-      /* SAVE PURCHASE */
-      if (
-        request.method === "POST" &&
-        path === "/api/purchases"
-      ) {
-        const user =
-          await currentUser(
-            request,
-            env
-          );
-
-        if (!user) {
-          return json(
-            {
-              success: false,
-              error:
-                "Not logged in"
-            },
-            401
-          );
-        }
-
-        const body =
-          await request.json();
-
-        const quantity =
-          Number(
-            body.quantity || 0
-          );
-
-        const unitPrice =
-          body.unitPrice === null ||
-          body.unitPrice === undefined ||
-          body.unitPrice === ""
-            ? null
-            : Number(
-                body.unitPrice
-              );
-
-        const shipping =
-          body.shippingCost === null ||
-          body.shippingCost === undefined ||
-          body.shippingCost === ""
-            ? null
-            : Number(
-                body.shippingCost
-              );
-
-        const landed =
-          body.landedCost === null ||
-          body.landedCost === undefined ||
-          body.landedCost === ""
-            ? null
-            : Number(
-                body.landedCost
-              );
 
         const result =
-          await env.DB
-            .prepare(`
-              INSERT INTO purchases
-              (
-                user_id,
-                product,
-                supplier,
-                quantity,
-                unit_price,
-                shipping_cost,
-                landed_cost,
-                supplier_url,
-                created_at
-              )
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            `)
-            .bind(
-              user.id,
-              body.product || "",
-              body.supplier || "",
-              quantity || null,
-              unitPrice,
+          await searchSuppliers(requestText, env);
+
+        return json(result);
+      }
+
+      // SAVE PURCHASE
+      if (
+        path === "/api/purchases" &&
+        request.method === "POST"
+      ) {
+        const user = await currentUser(request, env.DB);
+
+        if (!user) {
+          return json({
+            error: "Please login first."
+          }, 401);
+        }
+
+        const body = await request.json();
+
+        await env.DB
+          .prepare(`
+            INSERT INTO purchases
+            (
+              user_id,
+              product,
+              supplier,
+              quantity,
+              unit_price,
               shipping,
-              landed,
-              body.supplierUrl || "",
-              new Date().toISOString()
+              landed_cost,
+              supplier_url
             )
-            .run();
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+          `)
+          .bind(
+            user.id,
+            body.product || "",
+            body.supplier || "",
+            Number(body.quantity) || 0,
+            Number(body.unitPrice) || 0,
+            Number(body.shipping) || 0,
+            Number(body.landedCost) || 0,
+            body.supplierUrl || ""
+          )
+          .run();
 
         return json({
-          success: true,
-          purchaseId:
-            result.meta.last_row_id
+          success: true
         });
       }
 
-      /* NEGOTIATION */
+      // GET PURCHASES
       if (
-        request.method === "POST" &&
-        path === "/api/negotiate"
+        path === "/api/purchases" &&
+        request.method === "GET"
       ) {
+        const user = await currentUser(request, env.DB);
+
+        if (!user) {
+          return json({
+            error: "Please login first."
+          }, 401);
+        }
+
+        const rows = await env.DB
+          .prepare(`
+            SELECT *
+            FROM purchases
+            WHERE user_id = ?
+            ORDER BY id DESC
+          `)
+          .bind(user.id)
+          .all();
+
+        return json({
+          purchases: rows.results || []
+        });
+      }
+
+      // AI NEGOTIATION
+      if (
+        path === "/api/negotiate" &&
+        request.method === "POST"
+      ) {
+        const body = await request.json();
+
+        const supplier =
+          String(body.supplier || "").trim();
+
+        const offer =
+          String(body.offer || "").trim();
+
+        if (!supplier || !offer) {
+          return json({
+            error: "Supplier and offer are required."
+          }, 400);
+        }
+
+        const result =
+          await negotiate(supplier, offer, env);
+
         const user =
-          await currentUser(
-            request,
-            env
-          );
+          await currentUser(request, env.DB);
 
-        const body =
-          await request.json();
-
-        const analysis =
-          await negotiate(
-            body,
-            env
-          );
-
-        if (
-          user &&
-          env.DB
-        ) {
+        if (user) {
           await env.DB
             .prepare(`
               INSERT INTO negotiations
-              (
-                user_id,
-                purchase_id,
-                supplier,
-                offer,
-                reply,
-                analysis,
-                created_at
-              )
-              VALUES (?, ?, ?, ?, ?, ?, ?)
+              (user_id, supplier, offer, result)
+              VALUES (?, ?, ?, ?)
             `)
             .bind(
               user.id,
-              body.purchaseId ||
-                null,
-              body.supplier || "",
-              body.offer || "",
-              body.reply || "",
-              analysis,
-              new Date().toISOString()
+              supplier,
+              offer,
+              result
             )
             .run();
         }
 
         return json({
           success: true,
-          analysis
+          result
         });
       }
 
-      return json(
-        {
-          success: false,
-          error: "Not found"
-        },
-        404
-      );
+      return env.ASSETS.fetch(request);
 
     } catch (error) {
-      return json(
-        {
-          success: false,
-          error:
-            error?.message ||
-            String(error)
-        },
-        500
-      );
+      return json({
+        error: error.message || "Server error."
+      }, 500);
     }
   }
 };
