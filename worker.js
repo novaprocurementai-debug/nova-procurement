@@ -1,6 +1,11 @@
 const MODEL="@cf/meta/llama-3.1-8b-instruct-fast";
 const TARGET_NETWORK=20000000;
-const REGIONS=[["US","North America"],["CA","North America"],["CN","China"],["IN","India"],["JP","Japan"],["KR","South Korea"],["DE","Europe"],["GB","Europe"],["FR","Europe"],["IT","Europe"]];
+
+const REGIONS=[
+["US","North America"],["CA","North America"],["CN","China"],
+["IN","India"],["JP","Japan"],["KR","South Korea"],
+["DE","Europe"],["GB","Europe"],["FR","Europe"],["IT","Europe"]
+];
 
 function json(data,status=200,headers={}){return new Response(JSON.stringify(data),{status,headers:{"Content-Type":"application/json;charset=UTF-8",...headers}})}
 function cookieValue(req,name){const c=req.headers.get("Cookie")||"";const m=c.match(new RegExp("(^|;\\s*)"+name+"=([^;]*)"));return m?decodeURIComponent(m[2]):null}
@@ -28,17 +33,27 @@ const tables=[
 for(const sql of tables){try{await db.prepare(sql).run()}catch{}}
 
 const migrations={
-suppliers:[["price","REAL"],["currency","TEXT"],["moq","REAL"],["lead_time","TEXT"],["shipping","TEXT"],["incoterm","TEXT"],["certifications","TEXT"],["oem_odm","TEXT"],["confidence","INTEGER DEFAULT 0"],["verified","INTEGER DEFAULT 0"],["verification","TEXT"]],
+suppliers:[
+["price","REAL"],["currency","TEXT"],["moq","REAL"],["lead_time","TEXT"],
+["shipping","TEXT"],["incoterm","TEXT"],["certifications","TEXT"],
+["oem_odm","TEXT"],["confidence","INTEGER DEFAULT 0"],
+["verified","INTEGER DEFAULT 0"],["verification","TEXT"]
+],
 flash_deals:[["expires_at","TEXT"]],
-bids:[["supplier_url","TEXT"],["unit_price","REAL"],["currency","TEXT"],["moq","REAL"],["lead_time","TEXT"],["shipping","REAL"],["incoterm","TEXT"],["payment_terms","TEXT"],["notes","TEXT"]]
+bids:[
+["supplier_url","TEXT"],["unit_price","REAL"],["currency","TEXT"],
+["moq","REAL"],["lead_time","TEXT"],["shipping","REAL"],
+["incoterm","TEXT"],["payment_terms","TEXT"],["notes","TEXT"]
+]
 };
 
 for(const [table,cols] of Object.entries(migrations)){
 let existing=new Set();
 try{
 const info=await db.prepare(`PRAGMA table_info(${table})`).all();
-existing=new Set((info.results||[]).map(x=>x.name))
+existing=new Set((info.results||[]).map(x=>x.name));
 }catch{}
+
 for(const [name,type] of cols){
 if(!existing.has(name)){
 try{await db.prepare(`ALTER TABLE ${table} ADD COLUMN ${name} ${type}`).run()}catch{}
@@ -51,20 +66,30 @@ async function currentUser(req,db){
 if(!db)return null;
 const t=cookieValue(req,"nova_session");
 if(!t)return null;
-return db.prepare(`SELECT users.id,users.email FROM sessions JOIN users ON users.id=sessions.user_id WHERE sessions.token=? AND sessions.expires_at>?`).bind(t,Date.now()).first()
+
+return db.prepare(`
+SELECT users.id,users.email
+FROM sessions
+JOIN users ON users.id=sessions.user_id
+WHERE sessions.token=?
+AND sessions.expires_at>?
+`).bind(t,Date.now()).first();
 }
 
 function cleanText(t){
-return String(t||"").replace(/\s+/g," ").trim().slice(0,50000)
+return String(t||"")
+.replace(/\s+/g," ")
+.trim()
+.slice(0,50000);
 }
 
 function num(v){
 const n=Number(String(v).replace(/,/g,""));
-return Number.isFinite(n)?n:null
+return Number.isFinite(n)?n:null;
 }
 
 /* =========================
-   IMPROVED EXTRACTION
+   PRICE
 ========================= */
 
 function parsePrice(t){
@@ -72,19 +97,25 @@ const s=cleanText(t);
 
 const patterns=[
 /(?:unit\s+price|price|starting\s+price|from)\s*(?:is|:|=|from|starting\s+from)?\s*(?:US\$|USD|\$)\s*([\d,]+(?:\.\d+)?)/i,
-/(?:US\$|USD|\$)\s*([\d,]+(?:\.\d+)?)(?:\s*(?:-|to)\s*(?:US\$|USD|\$)?\s*[\d,]+(?:\.\d+)?)?\s*(?:per|\/)?\s*(?:piece|pc|pcs|unit)?/i,
+/(?:US\$|USD|\$)\s*([\d,]+(?:\.\d+)?)\s*(?:per|\/)?\s*(?:piece|pc|pcs|unit)?/i,
 /([\d,]+(?:\.\d+)?)\s*(?:USD|US\$)\s*(?:per|\/)?\s*(?:piece|pc|pcs|unit)?/i
 ];
 
 for(const re of patterns){
 const m=s.match(re);
 if(!m)continue;
+
 const n=num(m[1]);
+
 if(n!==null&&n>0&&n<100000)return n;
 }
 
-return null
+return null;
 }
+
+/* =========================
+   MOQ
+========================= */
 
 function parseMOQ(t){
 const s=cleanText(t);
@@ -98,19 +129,1836 @@ const patterns=[
 
 for(const re of patterns){
 const m=s.match(re);
+
 if(m){
 const n=num(m[1]);
 if(n!==null&&n>0)return n;
 }
 }
 
-return null
+return null;
 }
+
+/* =========================
+   LEAD TIME
+========================= */
 
 function parseLead(t){
 const s=cleanText(t);
 
 const patterns=[
-/lead\s*time\s*(?:is|:|=|-)?\s*(\d+(?:\s*-\s*\d+)?\s*-?\s*(?:days?|weeks?|months?))/i,
-/production\s*time\s*(?:is|:|=|-)?\s*(\d+(?:\s*-\s*\d+)?\s*-?\s*(?:days?|weeks?|months?))/i,
-/(\d+(?:\s*-\
+/(?:lead\s*time|lead-time|production\s*time|production-time)\s*(?:is|:|=|-)?\s*(\d+(?:\s*-\s*\d+)?\s*-?\s*(?:days?|weeks?|months?))/i,
+/(\d+(?:\s*-\s*\d+)?\s*-?\s*(?:days?|weeks?|months?))\s*(?:lead\s*time|lead-time|production\s*time|production|lead)/i
+];
+
+for(const re of patterns){
+const m=s.match(re);
+
+if(m){
+return m[1]
+.replace(/\s+/g," ")
+.trim();
+}
+}
+
+return null;
+}
+
+/* =========================
+   SHIPPING / INCOTERM
+========================= */
+
+function parseIncoterm(t){
+const s=cleanText(t).toUpperCase();
+
+for(const x of [
+"EXW","FOB","CIF","CFR","DDP","DAP","FCA",
+"CPT","CIP","DPU"
+]){
+if(new RegExp("\\b"+x+"\\b").test(s))return x;
+}
+
+return null;
+}
+
+function parseShipping(t){
+const s=cleanText(t);
+
+for(const re of [
+/(?:shipping|freight)\s*(?:cost|fee|price|charge)?\s*[:\-=]?\s*(?:USD|US\$|\$)\s*([\d,]+(?:\.\d+)?)/i,
+/(?:shipping|freight)[^$]{0,30}(?:USD|US\$|\$)\s*([\d,]+(?:\.\d+)?)/i
+]){
+const m=s.match(re);
+
+if(m){
+const n=num(m[1]);
+if(n!==null)return n;
+}
+}
+
+return null;
+}
+
+/* =========================
+   CERTIFICATIONS
+========================= */
+
+function parseCertifications(t){
+const s=cleanText(t).toUpperCase();
+
+const known=[
+"ISO 9001","ISO9001","ISO 14001","CE","FDA","BSCI",
+"LFGB","ROHS","REACH","HACCP","GMP","UL","SEDEX",
+"FSC","WRAS"
+];
+
+const found=known.filter(x=>s.includes(x));
+
+return found.length?[...new Set(found)].join(", "):null;
+}
+
+/* =========================
+   OEM / ODM
+========================= */
+
+function parseOEMODM(t){
+const s=cleanText(t).toLowerCase();
+const found=[];
+
+if(/\boem\b/.test(s))found.push("OEM");
+if(/\bodm\b/.test(s))found.push("ODM");
+
+if(
+/\bcustom(?:ized|ization)?\b/.test(s)||
+s.includes("private label")
+){
+found.push("Custom");
+}
+
+return [...new Set(found)].join(", ")||null;
+}
+
+/* =========================
+   SIGNALS
+========================= */
+
+function supplierSignals(t){
+const s=cleanText(t).toLowerCase();
+
+return[
+"manufacturer","factory","supplier","wholesale",
+"wholesaler","oem","odm","exporter","bulk",
+"custom","private label"
+].reduce(
+(n,w)=>n+(s.includes(w)?1:0),
+0
+);
+}
+
+function evidence(t){
+const s=cleanText(t).toLowerCase();
+
+let n=0;
+
+for(const [w,v] of[
+["$",8],["usd",6],["moq",10],
+["minimum order",10],["shipping",5],
+["freight",4],["lead time",7],
+["production time",7],["manufacturer",5],
+["factory",5],["oem",5],["odm",5],
+["iso",3],["certification",3],
+["incoterm",4]
+]){
+if(s.includes(w))n+=v;
+}
+
+return Math.min(85,n);
+}
+
+function dealScore(sig,ev,price,moq,lead){
+return Math.min(
+100,
+Math.max(
+0,
+35+
+sig*3+
+ev+
+(price!==null?8:0)+
+(moq!==null?7:0)+
+(lead!==null?5:0)
+)
+);
+}
+
+function confidence(ev,verifiedCount=0){
+return Math.min(
+100,
+Math.round(ev*0.9+verifiedCount*8)
+);
+}
+
+/* =========================
+   JSON-LD
+========================= */
+
+function extractJsonLd(html){
+const out=[];
+const re=/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi;
+
+let m;
+
+while((m=re.exec(html))!==null){
+try{
+const d=JSON.parse(m[1].trim());
+
+if(Array.isArray(d))out.push(...d);
+else if(d&&typeof d==="object")out.push(d);
+
+}catch{}
+}
+
+return out;
+}
+
+function jsonLdPrice(html){
+
+for(const x of extractJsonLd(html)){
+
+const offers=
+Array.isArray(x.offers)
+?x.offers
+:[x.offers];
+
+for(const o of offers){
+
+if(!o)continue;
+
+const n=num(o.price||o.lowPrice);
+
+if(n!==null&&n>0&&n<100000){
+
+return{
+price:n,
+currency:o.priceCurrency||"USD"
+};
+}
+}
+}
+
+for(const re of[
+/<meta[^>]+(?:property|name)=["'](?:product:price:amount|og:price:amount)["'][^>]+content=["']([^"']+)/i,
+/<meta[^>]+content=["']([^"']+)["'][^>]+(?:property|name)=["'](?:product:price:amount|og:price:amount)["']/i
+]){
+
+const m=html.match(re);
+
+if(m){
+
+const n=num(m[1]);
+
+if(n!==null&&n>0&&n<100000){
+return{
+price:n,
+currency:"USD"
+};
+}
+}
+}
+
+return null;
+}
+
+/* =========================
+   YEP
+========================= */
+
+async function yepSearch(query,location,env,limit=10){
+
+if(!env.YEP_API_KEY){
+throw new Error(
+"YEP_API_KEY is missing in Cloudflare."
+);
+}
+
+const r=await fetch(
+"https://platform.yep.com/api/search",
+{
+method:"POST",
+headers:{
+Authorization:`Bearer ${env.YEP_API_KEY}`,
+"Content-Type":"application/json"
+},
+body:JSON.stringify({
+query,
+type:"basic",
+limit,
+language:["en"],
+location
+})
+}
+);
+
+const txt=await r.text();
+
+let d;
+
+try{
+d=JSON.parse(txt);
+}catch{
+throw new Error(
+`Yep returned invalid response. HTTP ${r.status}`
+);
+}
+
+if(!r.ok){
+throw new Error(
+d.error||`Yep HTTP ${r.status}`
+);
+}
+
+return d;
+}
+
+/* =========================
+   ENRICH SUPPLIER
+========================= */
+
+async function enrichSupplier(url,fallback){
+
+if(!url)return fallback;
+
+try{
+
+const controller=new AbortController();
+
+const timer=setTimeout(
+()=>controller.abort(),
+5000
+);
+
+const r=await fetch(
+url,
+{
+method:"GET",
+redirect:"follow",
+signal:controller.signal,
+headers:{
+"User-Agent":
+"Mozilla/5.0 (compatible; NOVA Procurement Bot/1.0)",
+"Accept":
+"text/html,application/xhtml+xml"
+}
+}
+);
+
+clearTimeout(timer);
+
+if(!r.ok)return fallback;
+
+const html=await r.text();
+
+if(!html||html.length<100)return fallback;
+
+const jsonPrice=jsonLdPrice(html);
+
+const text=cleanText(
+html
+.replace(/<script[\s\S]*?<\/script>/gi," ")
+.replace(/<style[\s\S]*?<\/style>/gi," ")
+.replace(/<noscript[\s\S]*?<\/noscript>/gi," ")
+.replace(/<[^>]+>/g," ")
+.replace(/&nbsp;/gi," ")
+.replace(/&amp;/gi,"&")
+);
+
+const price=
+jsonPrice?.price??
+parsePrice(text) ??
+fallback.price;
+
+const currency=
+jsonPrice?.currency||
+fallback.currency||
+(price!==null?"USD":null);
+
+const moq=
+parseMOQ(text) ??
+fallback.moq;
+
+const leadTime=
+parseLead(text) ??
+fallback.leadTime;
+
+const shipping=
+parseShipping(text) ??
+fallback.shipping;
+
+const incoterm=
+parseIncoterm(text) ??
+fallback.incoterm;
+
+const certifications=
+parseCertifications(text) ??
+fallback.certifications;
+
+const oem_odm=
+parseOEMODM(text) ??
+fallback.oem_odm;
+
+const ev=Math.max(
+fallback.evidence||0,
+evidence(text)
+);
+
+const sig=Math.max(
+fallback.supplierSignal||0,
+supplierSignals(text)
+);
+
+const verifiedCount=[
+price,
+moq,
+leadTime,
+shipping,
+incoterm,
+certifications,
+oem_odm
+].filter(
+x=>x!==null&&x!==undefined&&x!==""
+).length;
+
+const score=dealScore(
+sig,
+ev,
+price,
+moq,
+leadTime
+);
+
+const conf=confidence(
+ev,
+verifiedCount
+);
+
+const verified=
+price!==null||
+moq!==null||
+leadTime!==null;
+
+return{
+...fallback,
+price,
+currency,
+moq,
+leadTime,
+shipping,
+incoterm,
+certifications,
+oem_odm,
+evidence:ev,
+confidence:conf,
+dealScore:score,
+verified,
+verification:
+verified
+?"Supplier page evidence"
+:"Not verified"
+};
+
+}catch{
+return fallback;
+}
+}
+
+/* =========================
+   SEARCH SUPPLIERS
+========================= */
+
+async function searchSuppliers(requestText,env,db){
+
+const clean=String(requestText||"")
+.replace(/\s+/g," ")
+.trim()
+.slice(0,700);
+
+if(!clean){
+throw new Error(
+"Please enter a procurement request."
+);
+}
+
+const base=
+`${clean} manufacturer factory supplier wholesale OEM ODM exporter bulk custom MOQ price quotation production lead time shipping`;
+
+const picks=REGIONS.map(
+([code])=>yepSearch(base,code,env,10)
+);
+
+const settled=
+await Promise.allSettled(picks);
+
+let results=[];
+
+for(let i=0;i<settled.length;i++){
+
+const x=settled[i];
+
+if(x.status!=="fulfilled")continue;
+
+const raw=
+Array.isArray(x.value.results)
+?x.value.results
+:[];
+
+for(const r of raw){
+
+const title=
+r.title||
+r.name||
+"Supplier";
+
+const url=
+r.url||
+r.link||
+"";
+
+if(!url)continue;
+
+const snippet=
+r.snippet||
+r.description||
+r.text||
+"";
+
+const combined=
+`${title} ${snippet}`;
+
+const price=parsePrice(combined);
+const moq=parseMOQ(combined);
+const lead=parseLead(combined);
+const shipping=parseShipping(combined);
+const incoterm=parseIncoterm(combined);
+const certifications=parseCertifications(combined);
+const oem_odm=parseOEMODM(combined);
+const sig=supplierSignals(combined);
+const ev=evidence(combined);
+
+const verifiedCount=[
+price,moq,lead,shipping,
+incoterm,certifications,oem_odm
+].filter(
+x=>x!==null&&x!==undefined&&x!==""
+).length;
+
+results.push({
+title,
+url,
+snippet,
+price,
+currency:price!==null?"USD":null,
+moq,
+leadTime:lead,
+shipping,
+incoterm,
+certifications,
+oem_odm,
+supplierSignal:sig,
+evidence:ev,
+confidence:confidence(ev,verifiedCount),
+dealScore:dealScore(
+sig,ev,price,moq,lead
+),
+region:REGIONS[i][1],
+country:REGIONS[i][0],
+verified:
+price!==null||
+moq!==null||
+lead!==null,
+verification:
+price!==null||
+moq!==null||
+lead!==null
+?"Search result evidence"
+:"Not verified"
+});
+}
+}
+
+const unique=[
+...new Map(
+results.map(r=>[r.url,r])
+).values()
+]
+.sort(
+(a,b)=>b.dealScore-a.dealScore
+)
+.slice(0,30);
+
+/* Enrich top 15 */
+
+const enriched=[];
+
+for(const supplier of unique){
+
+if(enriched.length<15){
+
+const result=
+await enrichSupplier(
+supplier.url,
+supplier
+);
+
+enriched.push(result);
+
+}else{
+enriched.push(supplier);
+}
+}
+
+/* Save / update */
+
+if(db&&enriched.length){
+
+for(const r of enriched){
+
+try{
+
+await db.prepare(`
+INSERT INTO suppliers(
+name,url,country,region,source,product,
+price,currency,moq,lead_time,shipping,
+incoterm,certifications,oem_odm,evidence,
+confidence,deal_score,verified,verification
+)
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+ON CONFLICT(url) DO UPDATE SET
+name=excluded.name,
+country=excluded.country,
+region=excluded.region,
+source=excluded.source,
+product=excluded.product,
+price=excluded.price,
+currency=excluded.currency,
+moq=excluded.moq,
+lead_time=excluded.lead_time,
+shipping=excluded.shipping,
+incoterm=excluded.incoterm,
+certifications=excluded.certifications,
+oem_odm=excluded.oem_odm,
+evidence=excluded.evidence,
+confidence=excluded.confidence,
+deal_score=excluded.deal_score,
+verified=excluded.verified,
+verification=excluded.verification
+`).bind(
+r.title,
+r.url,
+r.country,
+r.region,
+"Yep + Supplier Page",
+clean,
+r.price,
+r.currency,
+r.moq,
+r.leadTime,
+r.shipping!==null
+?String(r.shipping)
+:null,
+r.incoterm,
+r.certifications,
+r.oem_odm,
+r.evidence,
+r.confidence,
+r.dealScore,
+r.verified?1:0,
+r.verification
+).run();
+
+}catch{}
+}
+}
+
+return{
+ok:true,
+results:enriched,
+total:enriched.length,
+indexed:enriched.length,
+networkTarget:TARGET_NETWORK,
+coverage:[
+...new Set(REGIONS.map(x=>x[1]))
+]
+};
+}
+
+/* =========================
+   AI
+========================= */
+
+async function ai(env,system,user,max_tokens=900){
+
+if(!env.AI){
+throw new Error(
+"Workers AI binding AI is missing."
+);
+}
+
+const r=
+await env.AI.run(
+MODEL,
+{
+messages:[
+{role:"system",content:system},
+{role:"user",content:user}
+],
+max_tokens
+}
+);
+
+return r.response||
+"No AI response generated.";
+}
+
+async function negotiate(body,env){
+
+return ai(
+env,
+`
+You are NOVA, an AI procurement negotiation agent.
+
+Never invent supplier facts.
+Separate verified facts from assumptions.
+Use the supplier offer provided by the user.
+Give practical commercial negotiation advice.
+`,
+`
+Supplier: ${body.supplier||""}
+Offer: ${body.offer||""}
+Quantity: ${body.quantity||""}
+Target: ${body.target||""}
+Supplier reply: ${body.reply||""}
+
+Return:
+1. Offer analysis
+2. Target price/range
+3. Counteroffer
+4. MOQ strategy
+5. Shipping strategy
+6. Payment strategy
+7. Risks
+8. Ready-to-send negotiation message
+`
+);
+}
+
+/* =========================
+   LANDED COST
+========================= */
+
+function landed(body){
+
+const qty=Math.max(
+0,
+Number(body.quantity??body.qty)||0
+);
+
+const unit=Math.max(
+0,
+Number(body.unitPrice??body.unit_price)||0
+);
+
+const shipping=Math.max(
+0,
+Number(body.shipping)||0
+);
+
+const duty=Math.max(
+0,
+Number(body.dutyPercent??body.duty_percent)||0
+);
+
+const tax=Math.max(
+0,
+Number(body.taxPercent??body.tax_percent)||0
+);
+
+const insurance=Math.max(
+0,
+Number(body.insurance)||0
+);
+
+const local=Math.max(
+0,
+Number(body.localDelivery??body.local_delivery)||0
+);
+
+const goods=qty*unit;
+const dutyAmt=goods*duty/100;
+const taxable=goods+shipping+insurance+dutyAmt;
+const taxAmt=taxable*tax/100;
+const total=
+goods+
+shipping+
+insurance+
+dutyAmt+
+taxAmt+
+local;
+
+return{
+goods,
+shipping,
+insurance,
+duty:dutyAmt,
+tax:taxAmt,
+localDelivery:local,
+total,
+unitLanded:qty?total/qty:0,
+status:
+"Estimated — verify freight, customs and taxes before payment"
+};
+}
+
+/* =========================
+   SEO
+========================= */
+
+function htmlPage(title,desc,body){
+
+return`
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${title}</title>
+<meta name="description" content="${desc}">
+<link rel="canonical" href="https://nova-procurement.nova-procurement-ai.workers.dev${body.path||"/"}">
+</head>
+<body style="font-family:Arial;max-width:900px;margin:40px auto;padding:20px">
+<h1>${title}</h1>
+<p>${desc}</p>
+${body.content||""}
+<p><a href="/">Open NOVA</a></p>
+</body>
+</html>
+`;
+}
+
+const SEO={
+"/ai-procurement":[
+"AI Procurement | NOVA",
+"AI purchasing agent for supplier discovery, comparison, RFQs and negotiation."
+],
+"/ai-sourcing":[
+"AI Sourcing | NOVA",
+"Search global manufacturers and suppliers with evidence-first deal intelligence."
+],
+"/supplier-finder":[
+"Supplier Finder | NOVA",
+"Find manufacturers and suppliers across China, India, Japan, South Korea, Europe and North America."
+],
+"/supplier-comparison":[
+"Supplier Comparison | NOVA",
+"Compare supplier evidence, price, MOQ, lead time, risk and deal score."
+],
+"/china-suppliers":[
+"China Suppliers | NOVA",
+"Discover Chinese manufacturers and wholesale suppliers using AI sourcing."
+],
+"/wholesale-suppliers":[
+"Wholesale Suppliers | NOVA",
+"Find global wholesale suppliers and manufacturers."
+],
+"/ai-purchasing-agent":[
+"AI Purchasing Agent | NOVA",
+"NOVA searches, analyzes, creates RFQs and negotiates procurement offers."
+],
+"/flash-deals":[
+"Factory Flash Deals | NOVA",
+"Discover submitted factory overstock, clearance and special commercial deals."
+]
+};
+
+/* =========================
+   WORKER
+========================= */
+
+export default{
+
+async fetch(request,env){
+
+const u=new URL(request.url);
+const p=u.pathname;
+
+try{
+
+if(env.DB){
+await ensureDB(env.DB);
+}
+
+/* ROBOTS */
+
+if(p==="/robots.txt"){
+return new Response(
+`User-agent: *
+Allow: /
+Sitemap: ${u.origin}/sitemap.xml
+`,
+{
+headers:{
+"Content-Type":"text/plain"
+}
+}
+);
+}
+
+/* SITEMAP */
+
+if(p==="/sitemap.xml"){
+
+const paths=["/",...Object.keys(SEO)];
+
+return new Response(
+`<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${paths.map(
+x=>`<url><loc>${u.origin}${x}</loc></url>`
+).join("")}
+</urlset>`,
+{
+headers:{
+"Content-Type":"application/xml"
+}
+}
+);
+}
+
+/* SEO */
+
+if(SEO[p]){
+
+const[title,desc]=SEO[p];
+
+return new Response(
+htmlPage(
+title,
+desc,
+{
+path:p,
+content:`
+<h2>What NOVA does</h2>
+<p>
+Search suppliers, compare evidence,
+estimate landed cost, generate RFQs
+and negotiate procurement offers.
+Missing facts remain marked as
+not verified.
+</p>`
+}
+),
+{
+headers:{
+"Content-Type":"text/html;charset=UTF-8"
+}
+}
+);
+}
+
+/* SEARCH */
+
+if(
+p==="/api/search"&&
+request.method==="POST"
+){
+
+const b=await request.json();
+
+return json(
+await searchSuppliers(
+b.request,
+env,
+env.DB
+)
+);
+}
+
+/* NETWORK */
+
+if(
+p==="/api/network"&&
+request.method==="GET"
+){
+
+const row=
+env.DB?
+await env.DB
+.prepare(
+"SELECT COUNT(*) AS count FROM suppliers"
+)
+.first():
+{count:0};
+
+return json({
+ok:true,
+actualRecords:Number(row?.count||0),
+targetRecords:TARGET_NETWORK,
+evidenceRecords:Number(row?.count||0),
+coverage:[
+...new Set(REGIONS.map(x=>x[1]))
+],
+status:
+"Live supplier discovery through configured search sources."
+});
+}
+
+/* SUPPLIERS */
+
+if(
+p==="/api/suppliers"&&
+request.method==="GET"
+){
+
+const rows=
+await env.DB
+.prepare(`
+SELECT *
+FROM suppliers
+ORDER BY deal_score DESC,id DESC
+LIMIT 100
+`)
+.all();
+
+return json({
+suppliers:rows.results||[]
+});
+}
+
+/* PROJECT */
+
+if(
+p==="/api/projects"&&
+request.method==="POST"
+){
+
+const b=await request.json();
+
+const user=
+await currentUser(
+request,
+env.DB
+);
+
+const r=
+await env.DB
+.prepare(`
+INSERT INTO projects(
+user_id,name,product,quantity,destination
+)
+VALUES(?,?,?,?,?)
+`)
+.bind(
+user?.id||null,
+b.name||"Procurement Project",
+b.product||"",
+Number(b.quantity)||0,
+b.destination||""
+)
+.run();
+
+return json({
+success:true,
+id:r.meta.last_row_id
+});
+}
+
+/* RFQ */
+
+if(
+p==="/api/rfq"&&
+request.method==="POST"
+){
+
+const b=await request.json();
+
+const msg=
+await ai(
+env,
+`
+You write concise professional procurement RFQs.
+Never invent specifications.
+`,
+`
+Product: ${b.product||""}
+Quantity: ${b.quantity||""}
+Destination: ${b.destination||""}
+Requirements: ${b.requirements||"None"}
+
+Create a ready-to-send RFQ asking for:
+unit price,
+MOQ,
+sample,
+production lead time,
+Incoterm,
+packaging,
+shipping to destination,
+payment terms,
+certifications,
+and quotation validity.
+`
+);
+
+const user=
+await currentUser(
+request,
+env.DB
+);
+
+if(user&&env.DB){
+
+await env.DB
+.prepare(`
+INSERT INTO rfqs(
+user_id,product,quantity,destination,
+requirements,message
+)
+VALUES(?,?,?,?,?,?)
+`)
+.bind(
+user.id,
+b.product||"",
+Number(b.quantity)||0,
+b.destination||"",
+b.requirements||"",
+msg
+)
+.run();
+}
+
+return json({
+success:true,
+message:msg
+});
+}
+
+/* BIDS */
+
+if(
+p==="/api/bids"&&
+request.method==="POST"
+){
+
+const b=await request.json();
+
+const user=
+await currentUser(
+request,
+env.DB
+);
+
+const r=
+await env.DB
+.prepare(`
+INSERT INTO bids(
+user_id,rfq_id,supplier,supplier_url,
+unit_price,currency,moq,lead_time,
+shipping,incoterm,payment_terms,notes
+)
+VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+`)
+.bind(
+user?.id||null,
+Number(b.rfqId??b.rfq_id)||null,
+b.supplier||"",
+b.supplierUrl||b.supplier_url||"",
+Number(b.unitPrice??b.unit_price)||0,
+b.currency||"USD",
+Number(b.moq)||0,
+b.leadTime||b.lead_time||"",
+Number(b.shipping)||0,
+b.incoterm||"",
+b.paymentTerms||b.payment_terms||"",
+b.notes||""
+)
+.run();
+
+return json({
+success:true,
+id:r.meta.last_row_id
+});
+}
+
+/* COMPARE */
+
+if(
+p==="/api/compare"&&
+(request.method==="POST"||
+request.method==="GET")
+){
+
+let rows=[];
+
+if(request.method==="POST"){
+
+const b=await request.json();
+
+const ids=
+Array.isArray(b.ids)?
+b.ids:
+[];
+
+if(ids.length){
+
+const placeholders=
+ids.map(()=>"?").join(",");
+
+const r=
+await env.DB
+.prepare(`
+SELECT *
+FROM bids
+WHERE id IN (${placeholders})
+`)
+.bind(...ids)
+.all();
+
+rows=r.results||[];
+}
+
+}else{
+
+const r=
+await env.DB
+.prepare(`
+SELECT *
+FROM bids
+ORDER BY id DESC
+LIMIT 50
+`)
+.all();
+
+rows=r.results||[];
+}
+
+return json({
+success:true,
+bids:rows
+});
+}
+
+/* LANDED COST */
+
+if(
+p==="/api/landed-cost"&&
+request.method==="POST"
+){
+
+return json(
+landed(
+await request.json()
+)
+);
+}
+
+/* NEGOTIATION */
+
+if(
+p==="/api/negotiate"&&
+request.method==="POST"
+){
+
+const b=await request.json();
+
+if(!b.supplier||!b.offer){
+
+return json(
+{
+error:
+"Supplier and offer are required."
+},
+400
+);
+}
+
+const result=
+await negotiate(
+b,
+env
+);
+
+const user=
+await currentUser(
+request,
+env.DB
+);
+
+if(user&&env.DB){
+
+await env.DB
+.prepare(`
+INSERT INTO negotiations(
+user_id,supplier,offer,result
+)
+VALUES(?,?,?,?)
+`)
+.bind(
+user.id,
+b.supplier,
+b.offer,
+result
+)
+.run();
+}
+
+return json({
+success:true,
+result
+});
+}
+
+/* PURCHASE ORDER */
+
+if(
+p==="/api/purchase-order"&&
+request.method==="POST"
+){
+
+const b=await request.json();
+
+const user=
+await currentUser(
+request,
+env.DB
+);
+
+const quantity=
+Number(b.quantity)||0;
+
+const unitPrice=
+Number(
+b.unitPrice??
+b.unit_price
+)||0;
+
+const total=
+quantity*unitPrice;
+
+const r=
+await env.DB
+.prepare(`
+INSERT INTO purchase_orders(
+user_id,bid_id,supplier,product,
+quantity,unit_price,total,currency,status
+)
+VALUES(?,?,?,?,?,?,?,?,?)
+`)
+.bind(
+user?.id||null,
+Number(b.bidId??b.bid_id)||null,
+b.supplier||"",
+b.product||"",
+quantity,
+unitPrice,
+total,
+b.currency||"USD",
+"draft"
+)
+.run();
+
+return json({
+success:true,
+id:r.meta.last_row_id,
+status:"draft",
+total
+});
+}
+
+/* DEALS */
+
+if(
+p==="/api/deals"&&
+request.method==="GET"
+){
+
+const rows=
+await env.DB
+.prepare(`
+SELECT *
+FROM flash_deals
+WHERE status='submitted'
+AND(
+expires_at IS NULL
+OR expires_at>datetime('now')
+)
+ORDER BY id DESC
+LIMIT 50
+`)
+.all();
+
+return json({
+deals:rows.results||[]
+});
+}
+
+if(
+p==="/api/deals"&&
+request.method==="POST"
+){
+
+const b=await request.json();
+
+const user=
+await currentUser(
+request,
+env.DB
+);
+
+await env.DB
+.prepare(`
+INSERT INTO flash_deals(
+user_id,company,product,description,country,
+quantity,price,currency,moq,expires_at,url
+)
+VALUES(?,?,?,?,?,?,?,?,?,?,?)
+`)
+.bind(
+user?.id||null,
+b.company||"",
+b.product||"",
+b.description||"",
+b.country||"",
+Number(b.quantity)||0,
+Number(b.price)||0,
+b.currency||"USD",
+Number(b.moq)||0,
+b.expiresAt||b.expires_at||null,
+b.url||""
+)
+.run();
+
+return json({
+success:true,
+status:"submitted"
+});
+}
+
+/* MEMORY */
+
+if(
+p==="/api/memory"&&
+request.method==="POST"
+){
+
+const b=await request.json();
+
+const user=
+await currentUser(
+request,
+env.DB
+);
+
+if(!user){
+
+return json(
+{
+error:"Please login first."
+},
+401
+);
+}
+
+await env.DB
+.prepare(`
+INSERT INTO procurement_memory(
+user_id,supplier,product,note
+)
+VALUES(?,?,?,?)
+`)
+.bind(
+user.id,
+b.supplier||"",
+b.product||"",
+b.note||""
+)
+.run();
+
+return json({
+success:true
+});
+}
+
+if(
+p==="/api/memory"&&
+request.method==="GET"
+){
+
+const user=
+await currentUser(
+request,
+env.DB
+);
+
+if(!user){
+
+return json(
+{
+error:"Please login first."
+},
+401
+);
+}
+
+const rows=
+await env.DB
+.prepare(`
+SELECT *
+FROM procurement_memory
+WHERE user_id=?
+ORDER BY id DESC
+`)
+.bind(user.id)
+.all();
+
+return json({
+memory:rows.results||[]
+});
+}
+
+/* SIGNUP */
+
+if(
+p==="/api/signup"&&
+request.method==="POST"
+){
+
+const b=await request.json();
+
+const email=
+String(b.email||"")
+.trim()
+.toLowerCase();
+
+const password=
+String(b.password||"");
+
+if(
+!email||
+password.length<6
+){
+
+return json(
+{
+error:
+"Valid email and password of at least 6 characters are required."
+},
+400
+);
+}
+
+const exists=
+await env.DB
+.prepare(
+"SELECT id FROM users WHERE email=?"
+)
+.bind(email)
+.first();
+
+if(exists){
+
+return json(
+{
+error:"Account already exists."
+},
+409
+);
+}
+
+const salt=token();
+
+const hash=
+await passwordHash(
+password,
+salt
+);
+
+const r=
+await env.DB
+.prepare(`
+INSERT INTO users(
+email,password_hash,salt
+)
+VALUES(?,?,?)
+`)
+.bind(
+email,
+hash,
+salt
+)
+.run();
+
+const t=token();
+
+await env.DB
+.prepare(`
+INSERT INTO sessions(
+token,user_id,expires_at
+)
+VALUES(?,?,?)
+`)
+.bind(
+t,
+r.meta.last_row_id,
+Date.now()+604800000
+)
+.run();
+
+return json(
+{
+success:true,
+email
+},
+200,
+{
+"Set-Cookie":
+sessionCookie(t)
+}
+);
+}
+
+/* LOGIN */
+
+if(
+p==="/api/login"&&
+request.method==="POST"
+){
+
+const b=await request.json();
+
+const email=
+String(b.email||"")
+.trim()
+.toLowerCase();
+
+const password=
+String(b.password||"");
+
+const user=
+await env.DB
+.prepare(
+"SELECT * FROM users WHERE email=?"
+)
+.bind(email)
+.first();
+
+if(
+!user||
+await passwordHash(
+password,
+user.salt
+)!==
+user.password_hash
+){
+
+return json(
+{
+error:
+"Invalid email or password."
+},
+401
+);
+}
+
+const t=token();
+
+await env.DB
+.prepare(`
+INSERT INTO sessions(
+token,user_id,expires_at
+)
+VALUES(?,?,?)
+`)
+.bind(
+t,
+user.id,
+Date.now()+604800000
+)
+.run();
+
+return json(
+{
+success:true,
+email
+},
+200,
+{
+"Set-Cookie":
+sessionCookie(t)
+}
+);
+}
+
+/* LOGOUT */
+
+if(p==="/api/logout"){
+
+const t=
+cookieValue(
+request,
+"nova_session"
+);
+
+if(t){
+
+await env.DB
+.prepare(
+"DELETE FROM sessions WHERE token=?"
+)
+.bind(t)
+.run();
+}
+
+return json(
+{
+success:true
+},
+200,
+{
+"Set-Cookie":
+clearCookie()
+}
+);
+}
+
+/* ME */
+
+if(p==="/api/me"){
+
+const user=
+await currentUser(
+request,
+env.DB
+);
+
+return json({
+loggedIn:!!user,
+user:user||null
+});
+}
+
+/* PURCHASES */
+
+if(
+p==="/api/purchases"&&
+request.method==="POST"
+){
+
+const user=
+await currentUser(
+request,
+env.DB
+);
+
+if(!user){
+
+return json(
+{
+error:
+"Please login first."
+},
+401
+);
+}
+
+const b=await request.json();
+
+await env.DB
+.prepare(`
+INSERT INTO purchases(
+user_id,product,supplier,quantity,
+unit_price,shipping,landed_cost,supplier_url
+)
+VALUES(?,?,?,?,?,?,?,?)
+`)
+.bind(
+user.id,
+b.product||"",
+b.supplier||"",
+Number(b.quantity)||0,
+Number(b.unitPrice??b.unit_price)||0,
+Number(b.shipping)||0,
+Number(b.landedCost??b.landed_cost)||0,
+b.supplierUrl||b.supplier_url||""
+)
+.run();
+
+return json({
+success:true
+});
+}
+
+if(
+p==="/api/purchases"&&
+request.method==="GET"
+){
+
+const user=
+await currentUser(
+request,
+env.DB
+);
+
+if(!user){
+
+return json(
+{
+error:
+"Please login first."
+},
+401
+);
+}
+
+const rows=
+await env.DB
+.prepare(`
+SELECT *
+FROM purchases
+WHERE user_id=?
+ORDER BY id DESC
+`)
+.bind(user.id)
+.all();
+
+return json({
+purchases:
+rows.results||[]
+});
+}
+
+/* HEALTH */
+
+if(p==="/api/health"){
+
+return json({
+ok:true,
+nova:"online",
+database:!!env.DB,
+ai:!!env.AI,
+yep:!!env.YEP_API_KEY
+});
+}
+
+return env.ASSETS.fetch(request);
+
+}catch(e){
+
+return json(
+{
+ok:false,
+error:e?.message||"Server error."
+},
+500
+);
+}
+
+}
+
+};
