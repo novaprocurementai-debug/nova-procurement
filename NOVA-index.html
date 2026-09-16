@@ -1,46 +1,1261 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0b1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NOVA">
+
 <title>NOVA — AI Purchasing Agent</title>
 <meta name="description" content="NOVA searches global suppliers, compares evidence, estimates landed cost, creates RFQs and negotiates procurement offers.">
+
 <link rel="canonical" href="https://nova-procurement.nova-procurement-ai.workers.dev/">
-<meta property="og:title" content="NOVA — AI Purchasing Agent"><meta property="og:description" content="Search, compare, verify and negotiate global procurement offers.">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"NOVA","applicationCategory":"BusinessApplication","description":"AI purchasing agent for global procurement."}</script>
+<link rel="manifest" href="/manifest.webmanifest">
+
+<meta property="og:title" content="NOVA — AI Purchasing Agent">
+<meta property="og:description" content="Search, compare, verify and negotiate global procurement offers.">
+
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Inter,Arial,sans-serif;background:#f5f7fb;color:#101828}header{background:#0b1220;color:#fff;padding:26px 18px}header .wrap,main{max-width:1180px;margin:auto}.brand{font-size:30px;font-weight:900}.tag{color:#b8c2d6;margin-top:4px}.nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.nav a{color:#fff;text-decoration:none;border:1px solid #334155;border-radius:999px;padding:8px 12px;font-size:13px}main{padding:24px 16px 60px}.hero{background:linear-gradient(135deg,#fff,#eef4ff);border:1px solid #dbe3ef;border-radius:20px;padding:26px;margin-bottom:18px}.hero h1{font-size:34px;margin:0 0 8px}.hero p{color:#475467;max-width:760px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}.full{grid-column:1/-1}.card{background:#fff;border:1px solid #e4e7ec;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(16,24,40,.04);margin-bottom:16px}h2{margin:0 0 14px;font-size:20px}label{display:block;font-weight:700;font-size:13px;margin:11px 0 6px}input,textarea,select{width:100%;padding:12px;border:1px solid #d0d5dd;border-radius:10px;font:inherit}textarea{min-height:100px;resize:vertical}button{border:0;border-radius:10px;padding:11px 15px;margin-top:10px;background:#111827;color:#fff;font-weight:800;cursor:pointer}.secondary{background:#667085}.success{background:#087443}.accent{background:#175cd3}.danger{background:#b42318}.status{display:none;margin-top:12px;padding:10px;border-radius:10px;background:#f2f4f7}.status.show{display:block}.status.error{background:#fef3f2;color:#b42318}.status.ok{background:#ecfdf3;color:#067647}.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.stat{background:#f8fafc;border-radius:12px;padding:13px}.stat b{display:block;font-size:22px}.result,.deal{border:1px solid #e4e7ec;border-radius:14px;padding:16px;margin:10px 0}.result h3{margin:0 0 7px;font-size:17px}.result a{color:#175cd3;text-decoration:none}.snippet{color:#667085;line-height:1.5;font-size:14px}.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:12px}.metric{background:#f8fafc;border-radius:9px;padding:9px}.metric small{display:block;color:#667085}.metric strong{font-size:14px}.pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#eef4ff;color:#175cd3;font-size:11px;font-weight:800}.actions{display:flex;gap:7px;flex-wrap:wrap}.hidden{display:none}.muted{color:#667085;font-size:13px}.copy{white-space:pre-wrap;line-height:1.6;background:#f8fafc;padding:13px;border-radius:10px;margin-top:10px}.dealgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.footer{color:#667085;text-align:center;padding:30px;font-size:13px}@media(max-width:760px){.grid,.dealgrid{grid-template-columns:1fr}.full{grid-column:auto}.stats{grid-template-columns:repeat(2,1fr)}.metrics{grid-template-columns:repeat(2,1fr)}.hero h1{font-size:27px}}
-</style></head>
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+ margin:0;
+ font-family:Inter,Arial,sans-serif;
+ background:#f5f7fb;
+ color:#101828;
+ -webkit-text-size-adjust:100%;
+}
+body.rtl{direction:rtl}
+header{
+ background:#0b1220;
+ color:#fff;
+ padding:20px 18px;
+ padding-top:max(20px,env(safe-area-inset-top));
+ position:sticky;
+ top:0;
+ z-index:50;
+}
+header .wrap,main{max-width:1180px;margin:auto}
+.topbar{
+ display:flex;
+ justify-content:space-between;
+ align-items:center;
+ gap:12px;
+}
+.brand{font-size:30px;font-weight:900;letter-spacing:-1px}
+.tag{color:#b8c2d6;margin-top:4px;font-size:14px}
+.controls{display:flex;gap:8px;align-items:center}
+.language{
+ background:#172235;
+ color:#fff;
+ border:1px solid #334155;
+ border-radius:10px;
+ padding:9px 10px;
+ font-weight:700;
+}
+.install{
+ display:none;
+ background:#175cd3;
+ color:#fff;
+ border:0;
+ border-radius:10px;
+ padding:10px 13px;
+ font-weight:800;
+ cursor:pointer;
+}
+.nav{
+ display:flex;
+ gap:7px;
+ flex-wrap:wrap;
+ margin-top:16px;
+}
+.nav a{
+ color:#fff;
+ text-decoration:none;
+ border:1px solid #334155;
+ border-radius:999px;
+ padding:8px 12px;
+ font-size:13px;
+}
+main{padding:20px 16px 60px}
+.hero{
+ background:linear-gradient(135deg,#fff,#eef4ff);
+ border:1px solid #dbe3ef;
+ border-radius:20px;
+ padding:24px;
+ margin-bottom:18px;
+}
+.hero h1{font-size:34px;margin:0 0 8px}
+.hero p{color:#475467;max-width:800px;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.full{grid-column:1/-1}
+.card{
+ background:#fff;
+ border:1px solid #e4e7ec;
+ border-radius:16px;
+ padding:20px;
+ box-shadow:0 2px 10px rgba(16,24,40,.04);
+ margin-bottom:16px;
+}
+h2{margin:0 0 14px;font-size:20px}
+label{display:block;font-weight:700;font-size:13px;margin:11px 0 6px}
+input,textarea,select{
+ width:100%;
+ padding:12px;
+ border:1px solid #d0d5dd;
+ border-radius:10px;
+ font:inherit;
+ background:#fff;
+ color:#101828;
+}
+textarea{min-height:100px;resize:vertical}
+button{
+ border:0;
+ border-radius:10px;
+ padding:11px 15px;
+ margin-top:10px;
+ background:#111827;
+ color:#fff;
+ font-weight:800;
+ cursor:pointer;
+}
+button:active{transform:scale(.98)}
+.secondary{background:#667085}
+.success{background:#087443}
+.accent{background:#175cd3}
+.danger{background:#b42318}
+.status{
+ display:none;
+ margin-top:12px;
+ padding:10px;
+ border-radius:10px;
+ background:#f2f4f7;
+}
+.status.show{display:block}
+.status.error{background:#fef3f2;color:#b42318}
+.status.ok{background:#ecfdf3;color:#067647}
+.stats{
+ display:grid;
+ grid-template-columns:repeat(4,1fr);
+ gap:10px;
+}
+.stat{background:#f8fafc;border-radius:12px;padding:13px}
+.stat b{display:block;font-size:22px}
+.result,.deal{
+ border:1px solid #e4e7ec;
+ border-radius:14px;
+ padding:16px;
+ margin:10px 0;
+}
+.result h3{margin:0 0 7px;font-size:17px}
+.result a{color:#175cd3;text-decoration:none}
+.snippet{color:#667085;line-height:1.5;font-size:14px}
+.metrics{
+ display:grid;
+ grid-template-columns:repeat(5,1fr);
+ gap:7px;
+ margin-top:12px;
+}
+.metric{background:#f8fafc;border-radius:9px;padding:9px}
+.metric small{display:block;color:#667085}
+.metric strong{font-size:14px}
+.pill{
+ display:inline-block;
+ padding:4px 8px;
+ border-radius:999px;
+ background:#eef4ff;
+ color:#175cd3;
+ font-size:11px;
+ font-weight:800;
+}
+.actions{display:flex;gap:7px;flex-wrap:wrap}
+.hidden{display:none}
+.muted{color:#667085;font-size:13px}
+.copy{
+ white-space:pre-wrap;
+ line-height:1.6;
+ background:#f8fafc;
+ padding:13px;
+ border-radius:10px;
+ margin-top:10px;
+}
+.dealgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.footer{color:#667085;text-align:center;padding:30px;font-size:13px}
+
+@media(max-width:760px){
+ header{padding-left:12px;padding-right:12px}
+ .topbar{align-items:flex-start}
+ .brand{font-size:27px}
+ .tag{font-size:12px}
+ .controls{flex-direction:column;align-items:stretch}
+ .language{max-width:130px}
+ .grid,.dealgrid{grid-template-columns:1fr}
+ .full{grid-column:auto}
+ .stats{grid-template-columns:repeat(2,1fr)}
+ .metrics{grid-template-columns:repeat(2,1fr)}
+ .hero h1{font-size:27px}
+ .hero{padding:20px}
+ .card{padding:16px}
+ .nav{overflow-x:auto;flex-wrap:nowrap;padding-bottom:3px}
+ .nav a{white-space:nowrap}
+ button{min-height:44px}
+}
+
+@media(display-mode:standalone){
+ header{position:sticky}
+}
+
+body.rtl .nav,
+body.rtl .actions{direction:rtl}
+body.rtl input,
+body.rtl textarea,
+body.rtl select{text-align:right}
+</style>
+</head>
+
 <body>
-<header><div class="wrap"><div class="brand">NOVA</div><div class="tag">Your AI Purchasing Agent — Search. Verify. Compare. Negotiate.</div><div class="nav"><a href="#search">Search</a><a href="#deals">Flash Deals</a><a href="#rfq">RFQ</a><a href="#landed">Landed Cost</a><a href="#negotiation">Negotiation</a><a href="#account">Account</a></div></div></header>
+
+<header>
+<div class="wrap">
+
+<div class="topbar">
+
+<div>
+<div class="brand">NOVA</div>
+<div class="tag" data-i18n="tag">
+Your AI Purchasing Agent — Search. Verify. Compare. Negotiate.
+</div>
+</div>
+
+<div class="controls">
+
+<select id="languageSelect" class="language" onchange="changeLanguage(this.value)">
+<option value="en">🇬🇧 English</option>
+<option value="ar">🇸🇦 العربية</option>
+<option value="zh">🇨🇳 中文</option>
+<option value="es">🇪🇸 Español</option>
+<option value="fr">🇫🇷 Français</option>
+<option value="de">🇩🇪 Deutsch</option>
+<option value="tr">🇹🇷 Türkçe</option>
+<option value="hi">🇮🇳 हिन्दी</option>
+<option value="ja">🇯🇵 日本語</option>
+<option value="ko">🇰🇷 한국어</option>
+<option value="ru">🇷🇺 Русский</option>
+<option value="it">🇮🇹 Italiano</option>
+</select>
+
+<button id="installBtn" class="install" onclick="installApp()" data-i18n="install">
+Install NOVA
+</button>
+
+</div>
+</div>
+
+<div class="nav">
+<a href="#search" data-i18n="navSearch">Search</a>
+<a href="#deals" data-i18n="navDeals">Flash Deals</a>
+<a href="#rfq" data-i18n="navRFQ">RFQ</a>
+<a href="#landed" data-i18n="navLanded">Landed Cost</a>
+<a href="#negotiation" data-i18n="navNegotiation">Negotiation</a>
+<a href="#history" data-i18n="navHistory">History</a>
+<a href="#account" data-i18n="navAccount">Account</a>
+</div>
+
+</div>
+</header>
+
 <main>
-<section class="hero"><h1>Global procurement intelligence</h1><p>NOVA searches supplier sources across China, India, Japan, South Korea, Europe and North America. It separates evidence from unverified information and helps you move from discovery to RFQ and negotiation.</p><div class="stats"><div class="stat"><small>Network target</small><b>20M+</b><span class="muted">records target</span></div><div class="stat"><small>Regions</small><b>6+</b><span class="muted">major markets</span></div><div class="stat"><small>Evidence</small><b>0–50</b><span class="muted">source strength</span></div><div class="stat"><small>Deals</small><b>AI</b><span class="muted">score + confidence</span></div></div></section>
-<section id="account" class="card"><h2>Account</h2><div class="grid"><div><label>Email</label><input id="email" type="email" placeholder="your@email.com"></div><div><label>Password</label><input id="password" type="password" placeholder="Minimum 6 characters"></div></div><div class="actions"><button onclick="signup()">Create Account</button><button class="secondary" onclick="login()">Login</button><button class="secondary" onclick="logout()">Logout</button><button class="secondary" onclick="me()">Check Account</button></div><div id="accountStatus" class="status"></div></section>
-<section id="search" class="card"><h2>🔎 Search global suppliers</h2><label>What do you want to buy?</label><textarea id="request">1000 stainless steel water bottles with logo</textarea><div class="grid"><div><label>Quantity</label><input id="quantity" type="number" min="1" value="1000"></div><div><label>Destination</label><input id="destination" placeholder="Dubai, UAE"></div></div><button class="accent" onclick="searchSuppliers()">Search Suppliers</button><button class="secondary" onclick="network()">Network Status</button><div id="searchStatus" class="status"></div><div id="networkStatus" class="status"></div><div id="resultsHeader"></div><div id="results"></div></section>
-<section id="rfq" class="card"><h2>📄 AI RFQ Generator</h2><div class="grid"><div><label>Product</label><input id="rfqProduct" placeholder="Product"></div><div><label>Quantity</label><input id="rfqQty" type="number" value="1000"></div><div><label>Destination</label><input id="rfqDestination" placeholder="Dubai, UAE"></div><div><label>Requirements</label><input id="rfqRequirements" placeholder="Material, logo, packaging, quality..."></div></div><button onclick="generateRFQ()">Generate RFQ</button><div id="rfqStatus" class="status"></div><div id="rfqResult" class="copy hidden"></div></section>
-<section id="landed" class="card"><h2>💰 Landed Cost Engine</h2><div class="grid"><div><label>Quantity</label><input id="lcQty" type="number" value="1000"></div><div><label>Unit Price USD</label><input id="lcUnit" type="number" step="0.01" value="2.50"></div><div><label>International Shipping USD</label><input id="lcShip" type="number" step="0.01" value="400"></div><div><label>Duty %</label><input id="lcDuty" type="number" step="0.01" value="5"></div><div><label>Tax %</label><input id="lcTax" type="number" step="0.01" value="5"></div><div><label>Local Delivery USD</label><input id="lcLocal" type="number" step="0.01" value="100"></div></div><button onclick="landedCost()">Calculate</button><div id="lcResult" class="copy hidden"></div></section>
-<section id="negotiation" class="card"><h2>🤖 AI Negotiation Agent</h2><label>Supplier</label><input id="negSupplier" placeholder="Supplier name"><label>Current Offer</label><textarea id="negOffer" placeholder="1000 units at $2.50, shipping $400..."></textarea><label>Supplier Reply</label><textarea id="negReply" placeholder="Paste the supplier's reply"></textarea><button onclick="negotiate()">Analyze & Negotiate</button><div id="negStatus" class="status"></div><div id="negResult" class="copy hidden"></div></section>
-<section id="deals" class="card"><h2>🔥 NOVA Flash Deals</h2><p class="muted">Factory overstock, clearance, cancelled orders and special commercial offers. New submissions are not automatically verified.</p><div class="dealgrid"><div><label>Company</label><input id="dealCompany" placeholder="Company"></div><div><label>Product</label><input id="dealProduct" placeholder="Product"></div><div><label>Country</label><input id="dealCountry" placeholder="China"></div><div><label>Quantity</label><input id="dealQty" type="number"></div><div><label>Price USD</label><input id="dealPrice" type="number" step="0.01"></div><div><label>MOQ</label><input id="dealMOQ" type="number"></div><div class="full"><label>Description</label><textarea id="dealDescription" placeholder="Why is this a special deal?"></textarea></div><div class="full"><label>Product/company URL</label><input id="dealUrl" placeholder="https://..."></div></div><button onclick="submitDeal()">Submit Deal</button><button class="secondary" onclick="loadDeals()">Refresh Deals</button><div id="dealStatus" class="status"></div><div id="dealsList"></div></section>
-<section id="history" class="card"><h2>📦 Procurement History</h2><button onclick="loadPurchases()">Refresh History</button><div id="historyStatus" class="status"></div><div id="purchaseHistory"></div></section>
-</main><div class="footer">NOVA — Evidence-first AI procurement. Missing facts are shown as Not verified.</div>
+
+<section class="hero">
+
+<h1 data-i18n="heroTitle">Global procurement intelligence</h1>
+
+<p data-i18n="heroText">
+NOVA searches supplier sources across China, India, Japan, South Korea, Europe and North America. It separates evidence from unverified information and helps you move from discovery to RFQ and negotiation.
+</p>
+
+<div class="stats">
+
+<div class="stat">
+<small data-i18n="networkTarget">Network target</small>
+<b>20M+</b>
+<span class="muted" data-i18n="recordsTarget">records target</span>
+</div>
+
+<div class="stat">
+<small data-i18n="regions">Regions</small>
+<b>6+</b>
+<span class="muted" data-i18n="majorMarkets">major markets</span>
+</div>
+
+<div class="stat">
+<small data-i18n="evidence">Evidence</small>
+<b>0–50</b>
+<span class="muted" data-i18n="sourceStrength">source strength</span>
+</div>
+
+<div class="stat">
+<small data-i18n="deals">Deals</small>
+<b>AI</b>
+<span class="muted" data-i18n="scoreConfidence">score + confidence</span>
+</div>
+
+</div>
+</section>
+
+
+<section id="account" class="card">
+
+<h2 data-i18n="accountTitle">Account</h2>
+
+<div class="grid">
+
+<div>
+<label data-i18n="email">Email</label>
+<input id="email" type="email" placeholder="your@email.com">
+</div>
+
+<div>
+<label data-i18n="password">Password</label>
+<input id="password" type="password" data-placeholder="passwordPlaceholder" placeholder="Minimum 6 characters">
+</div>
+
+</div>
+
+<div class="actions">
+<button onclick="signup()" data-i18n="createAccount">Create Account</button>
+<button class="secondary" onclick="login()" data-i18n="login">Login</button>
+<button class="secondary" onclick="logout()" data-i18n="logout">Logout</button>
+<button class="secondary" onclick="me()" data-i18n="checkAccount">Check Account</button>
+</div>
+
+<div id="accountStatus" class="status"></div>
+</section>
+
+
+<section id="search" class="card">
+
+<h2 data-i18n="searchTitle">🔎 Search global suppliers</h2>
+
+<label data-i18n="buyQuestion">What do you want to buy?</label>
+
+<textarea id="request">1000 stainless steel water bottles with logo</textarea>
+
+<div class="grid">
+
+<div>
+<label data-i18n="quantity">Quantity</label>
+<input id="quantity" type="number" min="1" value="1000">
+</div>
+
+<div>
+<label data-i18n="destination">Destination</label>
+<input id="destination" placeholder="Dubai, UAE">
+</div>
+
+</div>
+
+<button class="accent" onclick="searchSuppliers()" data-i18n="searchSuppliers">Search Suppliers</button>
+
+<button class="secondary" onclick="network()" data-i18n="networkStatusBtn">Network Status</button>
+
+<div id="searchStatus" class="status"></div>
+<div id="networkStatus" class="status"></div>
+
+<div id="resultsHeader"></div>
+<div id="results"></div>
+
+</section>
+
+
+<section id="rfq" class="card">
+
+<h2 data-i18n="rfqTitle">📄 AI RFQ Generator</h2>
+
+<div class="grid">
+
+<div>
+<label data-i18n="product">Product</label>
+<input id="rfqProduct" placeholder="Product">
+</div>
+
+<div>
+<label data-i18n="quantity">Quantity</label>
+<input id="rfqQty" type="number" value="1000">
+</div>
+
+<div>
+<label data-i18n="destination">Destination</label>
+<input id="rfqDestination" placeholder="Dubai, UAE">
+</div>
+
+<div>
+<label data-i18n="requirements">Requirements</label>
+<input id="rfqRequirements" placeholder="Material, logo, packaging, quality...">
+</div>
+
+</div>
+
+<button onclick="generateRFQ()" data-i18n="generateRFQ">Generate RFQ</button>
+
+<div id="rfqStatus" class="status"></div>
+<div id="rfqResult" class="copy hidden"></div>
+
+</section>
+
+
+<section id="landed" class="card">
+
+<h2 data-i18n="landedTitle">💰 Landed Cost Engine</h2>
+
+<div class="grid">
+
+<div>
+<label data-i18n="quantity">Quantity</label>
+<input id="lcQty" type="number" value="1000">
+</div>
+
+<div>
+<label data-i18n="unitPrice">Unit Price USD</label>
+<input id="lcUnit" type="number" step="0.01" value="2.50">
+</div>
+
+<div>
+<label data-i18n="shipping">International Shipping USD</label>
+<input id="lcShip" type="number" step="0.01" value="400">
+</div>
+
+<div>
+<label data-i18n="duty">Duty %</label>
+<input id="lcDuty" type="number" step="0.01" value="5">
+</div>
+
+<div>
+<label data-i18n="tax">Tax %</label>
+<input id="lcTax" type="number" step="0.01" value="5">
+</div>
+
+<div>
+<label data-i18n="localDelivery">Local Delivery USD</label>
+<input id="lcLocal" type="number" step="0.01" value="100">
+</div>
+
+</div>
+
+<button onclick="landedCost()" data-i18n="calculate">Calculate</button>
+
+<div id="lcResult" class="copy hidden"></div>
+
+</section>
+
+
+<section id="negotiation" class="card">
+
+<h2 data-i18n="negotiationTitle">🤖 AI Negotiation Agent</h2>
+
+<label data-i18n="supplier">Supplier</label>
+<input id="negSupplier" placeholder="Supplier name">
+
+<label data-i18n="currentOffer">Current Offer</label>
+<textarea id="negOffer" placeholder="1000 units at $2.50, shipping $400..."></textarea>
+
+<label data-i18n="supplierReply">Supplier Reply</label>
+<textarea id="negReply" placeholder="Paste the supplier's reply"></textarea>
+
+<button onclick="negotiate()" data-i18n="analyzeNegotiate">
+Analyze & Negotiate
+</button>
+
+<div id="negStatus" class="status"></div>
+<div id="negResult" class="copy hidden"></div>
+
+</section>
+
+
+<section id="deals" class="card">
+
+<h2 data-i18n="dealsTitle">🔥 NOVA Flash Deals</h2>
+
+<p class="muted" data-i18n="dealsText">
+Factory overstock, clearance, cancelled orders and special commercial offers. New submissions are not automatically verified.
+</p>
+
+<div class="dealgrid">
+
+<div>
+<label data-i18n="company">Company</label>
+<input id="dealCompany" placeholder="Company">
+</div>
+
+<div>
+<label data-i18n="product">Product</label>
+<input id="dealProduct" placeholder="Product">
+</div>
+
+<div>
+<label data-i18n="country">Country</label>
+<input id="dealCountry" placeholder="China">
+</div>
+
+<div>
+<label data-i18n="quantity">Quantity</label>
+<input id="dealQty" type="number">
+</div>
+
+<div>
+<label data-i18n="priceUSD">Price USD</label>
+<input id="dealPrice" type="number" step="0.01">
+</div>
+
+<div>
+<label data-i18n="moq">MOQ</label>
+<input id="dealMOQ" type="number">
+</div>
+
+<div class="full">
+<label data-i18n="description">Description</label>
+<textarea id="dealDescription" placeholder="Why is this a special deal?"></textarea>
+</div>
+
+<div class="full">
+<label data-i18n="productURL">Product/company URL</label>
+<input id="dealUrl" placeholder="https://...">
+</div>
+
+</div>
+
+<button onclick="submitDeal()" data-i18n="submitDeal">Submit Deal</button>
+
+<button class="secondary" onclick="loadDeals()" data-i18n="refreshDeals">
+Refresh Deals
+</button>
+
+<div id="dealStatus" class="status"></div>
+<div id="dealsList"></div>
+
+</section>
+
+
+<section id="history" class="card">
+
+<h2 data-i18n="historyTitle">📦 Procurement History</h2>
+
+<button onclick="loadPurchases()" data-i18n="refreshHistory">
+Refresh History
+</button>
+
+<div id="historyStatus" class="status"></div>
+<div id="purchaseHistory"></div>
+
+</section>
+
+</main>
+
+<div class="footer">
+NOVA — Evidence-first AI procurement.
+<span data-i18n="footerText">Missing facts are shown as Not verified.</span>
+</div>
+
+
 <script>
-const API="";let lastResults=[];
-function status(id,msg,type="ok"){const e=document.getElementById(id);e.textContent=msg;e.className="status show "+type}
-async function req(path,opts={}){const r=await fetch(API+path,{credentials:"include",...opts});let d;try{d=await r.json()}catch{throw new Error("Invalid server response")};if(!r.ok&&d.error)throw new Error(d.error);return d}
-async function signup(){try{const d=await req('/api/signup',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email.value,password:password.value})});status('accountStatus','Account created: '+d.email)}catch(e){status('accountStatus',e.message,'error')}}
-async function login(){try{const d=await req('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:email.value,password:password.value})});status('accountStatus','Logged in: '+d.email)}catch(e){status('accountStatus',e.message,'error')}}
-async function logout(){try{await req('/api/logout',{method:'POST'});status('accountStatus','Logged out')}catch(e){status('accountStatus',e.message,'error')}}
-async function me(){try{const d=await req('/api/me');status('accountStatus',d.loggedIn?'Logged in as '+d.user.email:'Not logged in',d.loggedIn?'ok':'error')}catch(e){status('accountStatus',e.message,'error')}}
-async function network(){try{const d=await req('/api/network');status('networkStatus',`Actual indexed records: ${d.actualRecords.toLocaleString()} | Target: ${d.targetRecords.toLocaleString()} | Coverage: ${d.coverage.join(', ')}`)}catch(e){status('networkStatus',e.message,'error')}}
-function esc(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]))}
-function money(v){return v==null?'Not verified':'$'+Number(v).toFixed(2)}
-async function searchSuppliers(){const text=request.value.trim();if(!text)return status('searchStatus','Enter a procurement request.','error');status('searchStatus','Searching global supplier sources...');results.innerHTML='';try{const d=await req('/api/search',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({request:text,quantity:quantity.value,destination:destination.value})});lastResults=d.results||[];resultsHeader.innerHTML=`<p><b>${d.total}</b> supplier results found. Scores are heuristic; facts without source evidence remain Not verified.</p>`;results.innerHTML=lastResults.map((r,i)=>`<article class="result"><h3><a href="${esc(r.url)}" target="_blank" rel="noopener">${esc(r.title)}</a></h3><p class="snippet">${esc(r.snippet)}</p><span class="pill">${esc(r.country)} · ${esc(r.region)}</span><div class="metrics"><div class="metric"><small>Deal Score</small><strong>${r.dealScore}/100</strong></div><div class="metric"><small>Evidence</small><strong>${r.evidence}/50</strong></div><div class="metric"><small>Confidence</small><strong>${r.confidence}%</strong></div><div class="metric"><small>Price</small><strong>${money(r.price)}</strong></div><div class="metric"><small>MOQ</small><strong>${r.moq??'Not verified'}</strong></div></div><p class="muted">Lead time: ${esc(r.leadTime||'Not verified')} · Shipping: Not verified · Supplier: Not verified</p><div class="actions"><button onclick="useSupplier(${i})">Use in RFQ</button><button class="secondary" onclick="useNegotiation(${i})">Negotiate</button></div></article>`).join('');status('searchStatus','Search completed successfully.')}catch(e){status('searchStatus',e.message,'error')}}
-function useSupplier(i){const r=lastResults[i];rfqProduct.value=request.value;rfqQty.value=quantity.value;rfqDestination.value=destination.value;rfqRequirements.value=`Supplier: ${r.title}\nSource: ${r.url}\nPrice: ${r.price??'Not verified'}\nMOQ: ${r.moq??'Not verified'}`;location.hash='rfq'}
-function useNegotiation(i){const r=lastResults[i];negSupplier.value=r.title;negOffer.value=`Product request: ${request.value}\nPrice: ${r.price??'Not verified'}\nMOQ: ${r.moq??'Not verified'}\nSource: ${r.url}`;location.hash='negotiation'}
-async function generateRFQ(){try{status('rfqStatus','Generating RFQ...');const d=await req('/api/rfq',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({product:rfqProduct.value,quantity:rfqQty.value,destination:rfqDestination.value,requirements:rfqRequirements.value})});rfqResult.textContent=d.message;rfqResult.classList.remove('hidden');status('rfqStatus','RFQ generated.')}catch(e){status('rfqStatus',e.message,'error')}}
-async function landedCost(){try{const d=await req('/api/landed-cost',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({quantity:lcQty.value,unitPrice:lcUnit.value,shipping:lcShip.value,dutyPercent:lcDuty.value,taxPercent:lcTax.value,localDelivery:lcLocal.value})});lcResult.innerHTML=`Goods: $${d.goods.toFixed(2)}<br>Shipping: $${d.shipping.toFixed(2)}<br>Duty: $${d.duty.toFixed(2)}<br>Tax: $${d.tax.toFixed(2)}<br>Local delivery: $${d.localDelivery.toFixed(2)}<br><b>Total landed estimate: $${d.total.toFixed(2)}</b><br>Unit landed estimate: $${d.unitLanded.toFixed(2)}<br><br>${esc(d.status)}`;lcResult.classList.remove('hidden')}catch(e){lcResult.textContent=e.message;lcResult.classList.remove('hidden')}}
-async function negotiate(){try{status('negStatus','AI is analyzing the offer...');const d=await req('/api/negotiate',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({supplier:negSupplier.value,offer:negOffer.value,reply:negReply.value})});negResult.textContent=d.result;negResult.classList.remove('hidden');status('negStatus','Negotiation analysis ready.')}catch(e){status('negStatus',e.message,'error')}}
-async function submitDeal(){try{status('dealStatus','Submitting deal...');const d=await req('/api/deals',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({company:dealCompany.value,product:dealProduct.value,country:dealCountry.value,quantity:dealQty.value,price:dealPrice.value,moq:dealMOQ.value,description:dealDescription.value,url:dealUrl.value})});status('dealStatus','Deal submitted as '+d.status+'. It is not automatically verified.');loadDeals()}catch(e){status('dealStatus',e.message,'error')}}
-async function loadDeals(){try{const d=await req('/api/deals');dealsList.innerHTML=(d.deals||[]).map(x=>`<article class="deal"><b>${esc(x.product)}</b><br>${esc(x.company)} · ${esc(x.country)}<br>Price: $${Number(x.price||0).toFixed(2)} · MOQ: ${x.moq||'Not specified'} · Qty: ${x.quantity||'Not specified'}<br><span class="pill">${esc(x.status)} — not verified</span><p>${esc(x.description||'')}</p>${x.url?`<a href="${esc(x.url)}" target="_blank" rel="noopener">Source</a>`:''}</article>`).join('')||'<p class="muted">No submitted deals yet.</p>'}catch(e){status('dealStatus',e.message,'error')}}
-async function loadPurchases(){try{const d=await req('/api/purchases');purchaseHistory.innerHTML=(d.purchases||[]).map(x=>`<div class="result"><b>${esc(x.product)}</b> — ${esc(x.supplier)}<br>Qty: ${x.quantity} · Unit: $${Number(x.unit_price||0).toFixed(2)} · Landed: $${Number(x.landed_cost||0).toFixed(2)}</div>`).join('')||'<p class="muted">No purchases saved.</p>'}catch(e){status('historyStatus',e.message,'error')}}
-loadDeals();network();
-</script></body></html>
+
+const API="";
+let lastResults=[];
+let deferredInstall=null;
+
+const $=id=>document.getElementById(id);
+
+const translations={
+
+en:{
+tag:"Your AI Purchasing Agent — Search. Verify. Compare. Negotiate.",
+install:"Install NOVA",
+navSearch:"Search",
+navDeals:"Flash Deals",
+navRFQ:"RFQ",
+navLanded:"Landed Cost",
+navNegotiation:"Negotiation",
+navHistory:"History",
+navAccount:"Account",
+heroTitle:"Global procurement intelligence",
+heroText:"NOVA searches supplier sources across China, India, Japan, South Korea, Europe and North America. It separates evidence from unverified information and helps you move from discovery to RFQ and negotiation.",
+networkTarget:"Network target",
+recordsTarget:"records target",
+regions:"Regions",
+majorMarkets:"major markets",
+evidence:"Evidence",
+sourceStrength:"source strength",
+deals:"Deals",
+scoreConfidence:"score + confidence",
+accountTitle:"Account",
+email:"Email",
+password:"Password",
+passwordPlaceholder:"Minimum 6 characters",
+createAccount:"Create Account",
+login:"Login",
+logout:"Logout",
+checkAccount:"Check Account",
+searchTitle:"🔎 Search global suppliers",
+buyQuestion:"What do you want to buy?",
+quantity:"Quantity",
+destination:"Destination",
+searchSuppliers:"Search Suppliers",
+networkStatusBtn:"Network Status",
+rfqTitle:"📄 AI RFQ Generator",
+product:"Product",
+requirements:"Requirements",
+generateRFQ:"Generate RFQ",
+landedTitle:"💰 Landed Cost Engine",
+unitPrice:"Unit Price USD",
+shipping:"International Shipping USD",
+duty:"Duty %",
+tax:"Tax %",
+localDelivery:"Local Delivery USD",
+calculate:"Calculate",
+negotiationTitle:"🤖 AI Negotiation Agent",
+supplier:"Supplier",
+currentOffer:"Current Offer",
+supplierReply:"Supplier Reply",
+analyzeNegotiate:"Analyze & Negotiate",
+dealsTitle:"🔥 NOVA Flash Deals",
+dealsText:"Factory overstock, clearance, cancelled orders and special commercial offers. New submissions are not automatically verified.",
+company:"Company",
+country:"Country",
+priceUSD:"Price USD",
+moq:"MOQ",
+description:"Description",
+productURL:"Product/company URL",
+submitDeal:"Submit Deal",
+refreshDeals:"Refresh Deals",
+historyTitle:"📦 Procurement History",
+refreshHistory:"Refresh History",
+footerText:"Missing facts are shown as Not verified.",
+searching:"Searching global supplier sources...",
+searchCompleted:"Search completed successfully.",
+enterRequest:"Enter a procurement request.",
+networkLoading:"Checking NOVA network...",
+rfqLoading:"Generating RFQ...",
+rfqReady:"RFQ generated.",
+negLoading:"AI is analyzing the offer...",
+negReady:"Negotiation analysis ready.",
+dealLoading:"Submitting deal...",
+historyEmpty:"No purchases saved.",
+dealsEmpty:"No submitted deals yet.",
+notVerified:"Not verified"
+},
+
+ar:{
+tag:"وكيل الشراء الذكي الخاص بك — ابحث. تحقق. قارن. تفاوض.",
+install:"تثبيت NOVA",
+navSearch:"البحث",
+navDeals:"العروض السريعة",
+navRFQ:"طلب عرض سعر",
+navLanded:"التكلفة النهائية",
+navNegotiation:"التفاوض",
+navHistory:"السجل",
+navAccount:"الحساب",
+heroTitle:"ذكاء المشتريات العالمي",
+heroText:"تبحث NOVA في مصادر الموردين في الصين والهند واليابان وكوريا الجنوبية وأوروبا وأمريكا الشمالية، وتفصل المعلومات الموثقة عن غير الموثقة وتساعدك من البحث حتى طلب عرض السعر والتفاوض.",
+networkTarget:"هدف الشبكة",
+recordsTarget:"سجل مستهدف",
+regions:"المناطق",
+majorMarkets:"الأسواق الرئيسية",
+evidence:"الأدلة",
+sourceStrength:"قوة المصدر",
+deals:"العروض",
+scoreConfidence:"التقييم والثقة",
+accountTitle:"الحساب",
+email:"البريد الإلكتروني",
+password:"كلمة المرور",
+passwordPlaceholder:"6 أحرف على الأقل",
+createAccount:"إنشاء حساب",
+login:"تسجيل الدخول",
+logout:"تسجيل الخروج",
+checkAccount:"فحص الحساب",
+searchTitle:"🔎 البحث عن الموردين العالميين",
+buyQuestion:"ماذا تريد أن تشتري؟",
+quantity:"الكمية",
+destination:"الوجهة",
+searchSuppliers:"البحث عن الموردين",
+networkStatusBtn:"حالة الشبكة",
+rfqTitle:"📄 مولد طلب عرض السعر بالذكاء الاصطناعي",
+product:"المنتج",
+requirements:"المتطلبات",
+generateRFQ:"إنشاء طلب عرض سعر",
+landedTitle:"💰 محرك حساب التكلفة النهائية",
+unitPrice:"سعر الوحدة بالدولار",
+shipping:"الشحن الدولي بالدولار",
+duty:"الرسوم الجمركية %",
+tax:"الضريبة %",
+localDelivery:"التوصيل المحلي بالدولار",
+calculate:"احسب",
+negotiationTitle:"🤖 وكيل التفاوض بالذكاء الاصطناعي",
+supplier:"المورد",
+currentOffer:"العرض الحالي",
+supplierReply:"رد المورد",
+analyzeNegotiate:"تحليل والتفاوض",
+dealsTitle:"🔥 عروض NOVA السريعة",
+dealsText:"فائض المصانع والتصفية والطلبات الملغاة والعروض التجارية الخاصة. العروض الجديدة لا يتم التحقق منها تلقائيًا.",
+company:"الشركة",
+country:"الدولة",
+priceUSD:"السعر بالدولار",
+moq:"الحد الأدنى للطلب",
+description:"الوصف",
+productURL:"رابط المنتج أو الشركة",
+submitDeal:"إرسال العرض",
+refreshDeals:"تحديث العروض",
+historyTitle:"📦 سجل المشتريات",
+refreshHistory:"تحديث السجل",
+footerText:"المعلومات غير المتوفرة تظهر كـ غير موثقة.",
+searching:"جارٍ البحث في مصادر الموردين العالمية...",
+searchCompleted:"اكتمل البحث بنجاح.",
+enterRequest:"أدخل طلب الشراء.",
+networkLoading:"جارٍ فحص شبكة NOVA...",
+rfqLoading:"جارٍ إنشاء طلب عرض السعر...",
+rfqReady:"تم إنشاء طلب عرض السعر.",
+negLoading:"الذكاء الاصطناعي يحلل العرض...",
+negReady:"أصبح تحليل التفاوض جاهزًا.",
+dealLoading:"جارٍ إرسال العرض...",
+historyEmpty:"لا توجد مشتريات محفوظة.",
+dealsEmpty:"لا توجد عروض مرسلة حتى الآن.",
+notVerified:"غير موثق"
+},
+
+zh:{
+tag:"您的AI采购代理 — 搜索、验证、比较、谈判",
+install:"安装 NOVA",
+navSearch:"搜索",
+navDeals:"闪购",
+navRFQ:"询价",
+navLanded:"到岸成本",
+navNegotiation:"谈判",
+navHistory:"历史",
+navAccount:"账户",
+heroTitle:"全球采购智能",
+heroText:"NOVA搜索来自中国、印度、日本、韩国、欧洲和北美的供应商信息，并区分有证据和未经验证的信息。",
+networkTarget:"网络目标",
+recordsTarget:"目标记录",
+regions:"地区",
+majorMarkets:"主要市场",
+evidence:"证据",
+sourceStrength:"来源强度",
+deals:"交易",
+scoreConfidence:"评分和可信度",
+accountTitle:"账户",
+email:"邮箱",
+password:"密码",
+passwordPlaceholder:"至少6个字符",
+createAccount:"创建账户",
+login:"登录",
+logout:"退出",
+checkAccount:"检查账户",
+searchTitle:"🔎 搜索全球供应商",
+buyQuestion:"您想购买什么？",
+quantity:"数量",
+destination:"目的地",
+searchSuppliers:"搜索供应商",
+networkStatusBtn:"网络状态",
+rfqTitle:"📄 AI询价生成器",
+product:"产品",
+requirements:"要求",
+generateRFQ:"生成询价",
+landedTitle:"💰 到岸成本计算",
+unitPrice:"美元单价",
+shipping:"国际运费美元",
+duty:"关税 %",
+tax:"税率 %",
+localDelivery:"本地配送美元",
+calculate:"计算",
+negotiationTitle:"🤖 AI谈判代理",
+supplier:"供应商",
+currentOffer:"当前报价",
+supplierReply:"供应商回复",
+analyzeNegotiate:"分析并谈判",
+dealsTitle:"🔥 NOVA闪购",
+dealsText:"工厂库存、清仓、取消订单和特殊商业报价。新提交的交易不会自动验证。",
+company:"公司",
+country:"国家",
+priceUSD:"美元价格",
+moq:"最小起订量",
+description:"描述",
+productURL:"产品/公司网址",
+submitDeal:"提交交易",
+refreshDeals:"刷新交易",
+historyTitle:"📦 采购历史",
+refreshHistory:"刷新历史",
+footerText:"缺失的信息显示为未验证。",
+searching:"正在搜索全球供应商...",
+searchCompleted:"搜索成功完成。",
+enterRequest:"请输入采购需求。",
+networkLoading:"正在检查NOVA网络...",
+rfqLoading:"正在生成询价...",
+rfqReady:"询价已生成。",
+negLoading:"AI正在分析报价...",
+negReady:"谈判分析已完成。",
+dealLoading:"正在提交交易...",
+historyEmpty:"暂无采购记录。",
+dealsEmpty:"暂无提交的交易。",
+notVerified:"未验证"
+},
+
+es:{
+tag:"Tu agente de compras con IA — Buscar. Verificar. Comparar. Negociar.",
+install:"Instalar NOVA",
+navSearch:"Buscar",
+navDeals:"Ofertas",
+navRFQ:"RFQ",
+navLanded:"Costo total",
+navNegotiation:"Negociación",
+navHistory:"Historial",
+navAccount:"Cuenta",
+heroTitle:"Inteligencia global de compras",
+heroText:"NOVA busca proveedores en China, India, Japón, Corea del Sur, Europa y Norteamérica.",
+networkTarget:"Objetivo de red",
+recordsTarget:"registros objetivo",
+regions:"Regiones",
+majorMarkets:"mercados principales",
+evidence:"Evidencia",
+sourceStrength:"fuerza de la fuente",
+deals:"Ofertas",
+scoreConfidence:"puntuación y confianza",
+accountTitle:"Cuenta",
+email:"Correo electrónico",
+password:"Contraseña",
+passwordPlaceholder:"Mínimo 6 caracteres",
+createAccount:"Crear cuenta",
+login:"Iniciar sesión",
+logout:"Cerrar sesión",
+checkAccount:"Comprobar cuenta",
+searchTitle:"🔎 Buscar proveedores globales",
+buyQuestion:"¿Qué quieres comprar?",
+quantity:"Cantidad",
+destination:"Destino",
+searchSuppliers:"Buscar proveedores",
+networkStatusBtn:"Estado de red",
+rfqTitle:"📄 Generador de RFQ con IA",
+product:"Producto",
+requirements:"Requisitos",
+generateRFQ:"Generar RFQ",
+landedTitle:"💰 Motor de costo total",
+unitPrice:"Precio unitario USD",
+shipping:"Envío internacional USD",
+duty:"Arancel %",
+tax:"Impuesto %",
+localDelivery:"Entrega local USD",
+calculate:"Calcular",
+negotiationTitle:"🤖 Agente de negociación IA",
+supplier:"Proveedor",
+currentOffer:"Oferta actual",
+supplierReply:"Respuesta del proveedor",
+analyzeNegotiate:"Analizar y negociar",
+dealsTitle:"🔥 Ofertas rápidas NOVA",
+dealsText:"Exceso de inventario, liquidaciones, pedidos cancelados y ofertas comerciales especiales.",
+company:"Empresa",
+country:"País",
+priceUSD:"Precio USD",
+moq:"MOQ",
+description:"Descripción",
+productURL:"URL del producto/empresa",
+submitDeal:"Enviar oferta",
+refreshDeals:"Actualizar ofertas",
+historyTitle:"📦 Historial de compras",
+refreshHistory:"Actualizar historial",
+footerText:"Los datos faltantes aparecen como No verificados.",
+searching:"Buscando proveedores globales...",
+searchCompleted:"Búsqueda completada.",
+enterRequest:"Introduce una solicitud de compra.",
+networkLoading:"Comprobando red NOVA...",
+rfqLoading:"Generando RFQ...",
+rfqReady:"RFQ generado.",
+negLoading:"La IA está analizando la oferta...",
+negReady:"Análisis de negociación listo.",
+dealLoading:"Enviando oferta...",
+historyEmpty:"No hay compras guardadas.",
+dealsEmpty:"No hay ofertas enviadas.",
+notVerified:"No verificado"
+},
+
+fr:{
+tag:"Votre agent d'achat IA — Rechercher. Vérifier. Comparer. Négocier.",
+install:"Installer NOVA",
+navSearch:"Recherche",
+navDeals:"Offres",
+navRFQ:"RFQ",
+navLanded:"Coût rendu",
+navNegotiation:"Négociation",
+navHistory:"Historique",
+navAccount:"Compte",
+heroTitle:"Intelligence mondiale des achats",
+heroText:"NOVA recherche des fournisseurs en Chine, Inde, Japon, Corée du Sud, Europe et Amérique du Nord.",
+networkTarget:"Objectif réseau",
+recordsTarget:"enregistrements ciblés",
+regions:"Régions",
+majorMarkets:"marchés principaux",
+evidence:"Preuves",
+sourceStrength:"force de la source",
+deals:"Offres",
+scoreConfidence:"score et confiance",
+accountTitle:"Compte",
+email:"E-mail",
+password:"Mot de passe",
+passwordPlaceholder:"Minimum 6 caractères",
+createAccount:"Créer un compte",
+login:"Connexion",
+logout:"Déconnexion",
+checkAccount:"Vérifier le compte",
+searchTitle:"🔎 Rechercher des fournisseurs mondiaux",
+buyQuestion:"Que voulez-vous acheter ?",
+quantity:"Quantité",
+destination:"Destination",
+searchSuppliers:"Rechercher",
+networkStatusBtn:"État du réseau",
+rfqTitle:"📄 Générateur RFQ IA",
+product:"Produit",
+requirements:"Exigences",
+generateRFQ:"Générer RFQ",
+landedTitle:"💰 Calculateur du coût rendu",
+unitPrice:"Prix unitaire USD",
+shipping:"Expédition internationale USD",
+duty:"Droits %",
+tax:"Taxe %",
+localDelivery:"Livraison locale USD",
+calculate:"Calculer",
+negotiationTitle:"🤖 Agent de négociation IA",
+supplier:"Fournisseur",
+currentOffer:"Offre actuelle",
+supplierReply:"Réponse du fournisseur",
+analyzeNegotiate:"Analyser et négocier",
+dealsTitle:"🔥 Offres Flash NOVA",
+dealsText:"Surstocks, liquidations, commandes annulées et offres commerciales spéciales.",
+company:"Entreprise",
+country:"Pays",
+priceUSD:"Prix USD",
+moq:"MOQ",
+description:"Description",
+productURL:"URL produit/entreprise",
+submitDeal:"Soumettre l'offre",
+refreshDeals:"Actualiser les offres",
+historyTitle:"📦 Historique des achats",
+refreshHistory:"Actualiser l'historique",
+footerText:"Les informations manquantes sont indiquées comme Non vérifiées.",
+searching:"Recherche des fournisseurs...",
+searchCompleted:"Recherche terminée.",
+enterRequest:"Saisissez une demande d'achat.",
+networkLoading:"Vérification du réseau NOVA...",
+rfqLoading:"Génération du RFQ...",
+rfqReady:"RFQ généré.",
+negLoading:"L'IA analyse l'offre...",
+negReady:"Analyse de négociation prête.",
+dealLoading:"Envoi de l'offre...",
+historyEmpty:"Aucun achat enregistré.",
+dealsEmpty:"Aucune offre envoyée.",
+notVerified:"Non vérifié"
+},
+
+de:{
+tag:"Ihr KI-Einkaufsagent — Suchen. Prüfen. Vergleichen. Verhandeln.",
+install:"NOVA installieren",
+navSearch:"Suche",
+navDeals:"Flash-Angebote",
+navRFQ:"RFQ",
+navLanded:"Landed Cost",
+navNegotiation:"Verhandlung",
+navHistory:"Verlauf",
+navAccount:"Konto",
+heroTitle:"Globale Einkaufsintelligenz",
+heroText:"NOVA sucht Lieferanten in China, Indien, Japan, Südkorea, Europa und Nordamerika.",
+networkTarget:"Netzwerkziel",
+recordsTarget:"Zieldatensätze",
+regions:"Regionen",
+majorMarkets:"Hauptmärkte",
+evidence:"Belege",
+sourceStrength:"Quellenstärke",
+deals:"Angebote",
+scoreConfidence:"Score und Vertrauen",
+accountTitle:"Konto",
+email:"E-Mail",
+password:"Passwort",
+passwordPlaceholder:"Mindestens 6 Zeichen",
+createAccount:"Konto erstellen",
+login:"Anmelden",
+logout:"Abmelden",
+checkAccount:"Konto prüfen",
+searchTitle:"🔎 Globale Lieferanten suchen",
+buyQuestion:"Was möchten Sie kaufen?",
+quantity:"Menge",
+destination:"Zielort",
+searchSuppliers:"Lieferanten suchen",
+networkStatusBtn:"Netzwerkstatus",
+rfqTitle:"📄 KI-RFQ-Generator",
+product:"Produkt",
+requirements:"Anforderungen",
+generateRFQ:"RFQ erstellen",
+landedTitle:"💰 Landed-Cost-Engine",
+unitPrice:"Stückpreis USD",
+shipping:"Internationaler Versand USD",
+duty:"Zoll %",
+tax:"Steuer %",
+localDelivery:"Lokale Lieferung USD",
+calculate:"Berechnen",
+negotiationTitle:"🤖 KI-Verhandlungsagent",
+supplier:"Lieferant",
+currentOffer:"Aktuelles Angebot",
+supplierReply:"Antwort des Lieferanten",
+analyzeNegotiate:"Analysieren & Verhandeln",
+dealsTitle:"🔥 NOVA Flash-Angebote",
+dealsText:"Überbestände, Räumungsverkäufe, stornierte Bestellungen und Sonderangebote.",
+company:"Unternehmen",
+country:"Land",
+priceUSD:"Preis USD",
+moq:"MOQ",
+description:"Beschreibung",
+productURL:"Produkt-/Firmen-URL",
+submitDeal:"Angebot senden",
+refreshDeals:"Angebote aktualisieren",
+historyTitle:"📦 Einkaufshistorie",
+refreshHistory:"Historie aktualisieren",
+footerText:"Fehlende Angaben werden als Nicht verifiziert angezeigt.",
+searching:"Globale Lieferanten werden gesucht...",
+searchCompleted:"Suche erfolgreich abgeschlossen.",
+enterRequest:"Geben Sie eine Einkaufsanfrage ein.",
+networkLoading:"NOVA-Netzwerk wird geprüft...",
+rfqLoading:"RFQ wird erstellt...",
+rfqReady:"RFQ erstellt.",
+negLoading:"KI analysiert das Angebot...",
+negReady:"Verhandlungsanalyse bereit.",
+dealLoading:"Angebot wird gesendet...",
+historyEmpty:"Keine Einkäufe gespeichert.",
+dealsEmpty:"Keine Angebote eingereicht.",
+notVerified:"Nicht verifiziert"
+},
+
+tr:{
+tag:"Yapay Zeka Satın Alma Ajanınız — Ara. Doğrula. Karşılaştır. Pazarlık Yap.",
+install:"NOVA'yı yükle",
+navSearch:"Ara",
+navDeals:"Flaş Fırsatlar",
+navRFQ:"RFQ",
+navLanded:"Toplam Maliyet",
+navNegotiation:"Pazarlık",
+navHistory:"Geçmiş",
+navAccount:"Hesap",
+heroTitle:"Küresel satın alma zekası",
+heroText:"NOVA Çin, Hindistan, Japonya, Güney Kore, Avrupa ve Kuzey Amerika'daki tedarikçileri arar.",
+networkTarget:"Ağ hedefi",
+recordsTarget:"hedef kayıt",
+regions:"Bölgeler",
+majorMarkets:"ana pazarlar",
+evidence:"Kanıt",
+sourceStrength:"kaynak gücü",
+deals:"Fırsatlar",
+scoreConfidence:"puan ve güven",
+accountTitle:"Hesap",
+email:"E-posta",
+password:"Şifre",
+passwordPlaceholder:"En az 6 karakter",
+createAccount:"Hesap oluştur",
+login:"Giriş yap",
+logout:"Çıkış yap",
+checkAccount:"Hesabı kontrol et",
+searchTitle:"🔎 Küresel tedarikçi ara",
+buyQuestion:"Ne satın almak istiyorsunuz?",
+quantity:"Miktar",
+destination:"Varış yeri",
+searchSuppliers:"Tedarikçi ara",
+networkStatusBtn:"Ağ durumu",
+rfqTitle:"📄 AI RFQ Oluşturucu",
+product:"Ürün",
+requirements:"Gereksinimler",
+generateRFQ:"RFQ oluştur",
+landedTitle:"💰 Toplam Maliyet Motoru",
+unitPrice:"Birim fiyat USD",
+shipping:"Uluslararası nakliye USD",
+duty:"Gümrük %",
+tax:"Vergi %",
+localDelivery:"Yerel teslimat USD",
+calculate:"Hesapla",
+negotiationTitle:"🤖 AI Pazarlık Ajanı",
+supplier:"Tedarikçi",
+currentOffer:"Mevcut teklif",
+supplierReply:"Tedarikçi cevabı",
+analyzeNegotiate:"Analiz Et ve Pazarlık Yap",
+dealsTitle:"🔥 NOVA Flaş Fırsatlar",
+dealsText:"Fabrika fazlası, tasfiye, iptal edilen siparişler ve özel ticari teklifler.",
+company:"Şirket",
+country:"Ülke",
+priceUSD:"Fiyat USD",
+moq:"MOQ",
+description:"Açıklama",
+productURL:"Ürün/şirket URL'si",
+submitDeal:"Teklif gönder",
+refreshDeals:"Fırsatları yenile",
+historyTitle:"📦 Satın alma geçmişi",
+refreshHistory:"Geçmişi yenile",
+footerText:"Eksik bilgiler Doğrulanmadı olarak gösterilir.",
+searching:"Küresel tedarikçiler aranıyor...",
+searchCompleted:"Arama başarıyla tamamlandı.",
+enterRequest:"Bir satın alma talebi girin.",
+networkLoading:"NOVA ağı kontrol ediliyor...",
+rfqLoading:"RFQ oluşturuluyor...",
+rfqReady:"RFQ oluşturuldu.",
+negLoading:"AI teklifinizi analiz ediyor...",
+negReady:"Pazarlık analizi hazır.",
+dealLoading:"Teklif gönderiliyor...",
+historyEmpty:"Kayıtlı satın alma yok.",
+dealsEmpty:"Gönderilmiş teklif yok.",
+notVerified:"Doğrulanmadı"
+},
+
+hi:{
+tag:"आपका AI खरीद एजेंट — खोजें। सत्यापित करें। तुलना करें। बातचीत करें।",
+install:"NOVA इंस्टॉल करें",
+navSearch:"खोज",
+navDeals:"फ्लैश डील",
+navRFQ:"RFQ",
+navLanded:"कुल लागत",
+navNegotiation:"बातचीत",
+navHistory:"इतिहास",
+navAccount:"खाता",
+heroTitle:"वैश्विक खरीदारी बुद्धिमत्ता",
+heroText:"NOVA चीन, भारत, जापान, दक्षिण कोरिया, यूरोप और उत्तरी अमेरिका के आपूर्तिकर्ताओं को खोजता है।",
+networkTarget:"नेटवर्क लक्ष्य",
+recordsTarget:"लक्षित रिकॉर्ड",
+regions:"क्षेत्र",
+majorMarkets:"मुख्य बाजार",
+evidence:"प्रमाण",
+sourceStrength:"स्रोत शक्ति",
+deals:"डील",
+scoreConfidence:"स्कोर और भरोसा",
+accountTitle:"खाता",
+email:"ईमेल",
+password:"पासवर्ड",
+passwordPlaceholder:"कम से कम 6 अक्षर",
+createAccount:"खाता बनाएं",
+login:"लॉगिन",
+logout:"लॉगआउट",
+checkAccount:"खाता जांचें",
+searchTitle:"🔎 वैश्विक आपूर्तिकर्ता खोजें",
+buyQuestion:"आप क्या खरीदना चाहते हैं?",
+quantity:"मात्रा",
+destination:"गंतव्य",
+searchSuppliers:"आपूर्तिकर्ता खोजें",
+networkStatusBtn:"नेटवर्क स्थिति",
+rfqTitle:"📄 AI RFQ जनरेटर",
+product:"उत्पाद",
+requirements:"आवश्यकताएं",
+generateRFQ:"RFQ बनाएं",
+landedTitle:"💰 कुल लागत इंजन",
+unitPrice:"इकाई मूल्य USD",
+shipping:"अंतरराष्ट्रीय शिपिंग USD",
+duty:"शुल्क %",
+tax:"कर %",
+localDelivery:"स्थानीय डिलीवरी USD",
+calculate:"गणना करें",
+negotiationTitle:"🤖 AI बातचीत एजेंट",
+supplier:"आपूर्तिकर्ता",
+currentOffer:"वर्तमान प्रस्ताव",
+supplierReply:"आपूर्तिकर्ता का उत्तर",
+analyzeNegotiate:"विश्लेषण और बातचीत",
+dealsTitle:"🔥 NOVA फ्लैश डील",
+dealsText:"फैक्टरी ओवरस्टॉक, क्लियरेंस, रद्द ऑर्डर और विशेष व्यावसायिक ऑफर।",
+company:"कंपनी",
+country:"देश",
+priceUSD:"मूल्य USD",
+moq:"MOQ",
+description:"विवरण",
+productURL:"उत्पाद/कंपनी URL",
+submitDeal:"डील भेजें",
+refreshDeals:"डील रीफ्रेश करें",
+historyTitle:"📦 खरीद इतिहास",
+refreshHistory:"इतिहास रीफ्रेश करें",
+footerText:"गुम जानकारी सत्यापित नहीं के रूप में दिखाई जाती है।",
+searching:"वैश्विक आपूर्तिकर्ताओं को खोजा जा रहा है...",
+searchCompleted:"खोज सफलतापूर्वक पूरी हुई।",
+enterRequest:"खरीद अनुरोध दर्ज करें।",
+networkLoading:"NOVA नेटवर्क जांचा जा रहा है...",
+rfqLoading:"RFQ बनाया जा रहा है...",
+rfqReady:"RFQ तैयार है।",
+negLoading:"AI ऑफर का विश्लेषण कर रहा है...",
+negReady:"बातचीत विश्लेषण तैयार है।",
+dealLoading:"डील भेजी जा रही है...",
+historyEmpty:"कोई खरीद सहेजी नहीं गई।",
+dealsEmpty:"कोई डील जमा नहीं की गई।",
+notVerified:"सत्यापित नहीं"
+},
+
+ja:{
+tag:"AI購買エージェント — 検索・確認・比較・交渉",
+install:"NOVAをインストール",
+navSearch:"検索",
+navDeals:"フラッシュディール",
+navRFQ:"RFQ",
+navLanded:"着地原価",
+navNegotiation:"交渉",
+navHistory:"履歴",
+navAccount:"アカウント",
+heroTitle:"グローバル調達インテリジェンス",
+heroText:"NOVAは中国、インド、日本、韓国、欧州、北米のサプライヤーを検索します。",
+networkTarget:"ネットワーク目標",
+recordsTarget:"目標レコード",
+regions:"地域",
+majorMarkets:"主要市場",
+evidence:"証拠",
+sourceStrength:"情報源の強度",
+deals:"取引",
+scoreConfidence:"スコアと信頼度",
+accountTitle:"アカウント",
+email:"メール",
+password:"パスワード",
+passwordPlaceholder:"6文字以上",
+createAccount:"アカウント作成",
+login:"ログイン",
+logout:"ログアウト",
+checkAccount:"アカウント確認",
+searchTitle:"🔎 グローバルサプライヤー検索",
+buyQuestion:"何を購入しますか？",
+quantity:"数量",
+destination:"配送先",
+searchSuppliers:"サプライヤー検索",
+networkStatusBtn:"ネットワーク状態",
+rfqTitle:"📄 AI RFQジェネレーター",
+product:"製品",
+requirements:"要件",
+generateRFQ:"RFQを生成",
+landedTitle:"💰 着地原価エンジン",
+unitPrice:"単価 USD",
+shipping:"国際送料 USD",
+duty:"関税 %",
+tax:"税 %",
+localDelivery:"国内配送 USD",
+calculate:"計算",
+negotiationTitle:"🤖 AI交渉エージェント",
+supplier:"サプライヤー",
+currentOffer:"現在のオファー",
+supplierReply:"サプライヤーの返信",
+analyzeNegotiate:"分析して交渉",
+dealsTitle:"🔥 NOVAフラッシュディール",
+dealsText:"工場在庫、クリアランス、キャンセル注文、特別商業オファー。",
+company:"会社",
+country:"国",
+priceUSD:"価格 USD",
+moq:"MOQ",
+description:"説明",
+productURL:"製品/会社URL",
+submitDeal:"取引を送信",
+refreshDeals:"取引を更新",
+historyTitle:"📦 購買履歴",
+refreshHistory:"履歴を更新",
+footerText:"不足情報は未確認として表示されます。",
+searching:"グローバルサプライヤーを検索中...",
+searchCompleted:"検索が完了しました。",
+enterRequest:"購買リクエストを入力してください。",
+networkLoading:"NOVAネットワークを確認中...",
+rfqLoading:"RFQを生成中...",
+rfqReady:"RFQを生成しました。",
+negLoading:"AIがオファーを分析中...",
+negReady:"交渉分析の準備ができました。",
+dealLoading:"取引を送信中...",
+historyEmpty:"保存された購入はありません。",
+dealsEmpty:"送信された取引は
