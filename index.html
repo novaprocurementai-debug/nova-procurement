@@ -1,52 +1,71 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>NOVA — Your AI Purchasing Agent</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NOVA — AI Purchasing Agent</title>
+<meta name="description" content="NOVA searches global suppliers, compares evidence, estimates landed cost, creates RFQs and negotiates procurement offers.">
+<link rel="canonical" href="https://nova-procurement.nova-procurement-ai.workers.dev/">
+<meta property="og:title" content="NOVA — AI Purchasing Agent">
+<meta property="og:description" content="Search, compare, verify and negotiate global procurement offers.">
+
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"SoftwareApplication","name":"NOVA","applicationCategory":"BusinessApplication","description":"AI purchasing agent for global procurement."}
+</script>
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f5f7fb;color:#172033}
-header{background:#fff;border-bottom:1px solid #e5e7eb;padding:22px 18px}
-.header-inner,main{max-width:1100px;margin:auto}
-h1{margin:0;font-size:28px}
-.tagline{margin-top:5px;color:#667085;font-size:15px}
-main{padding:25px 18px 50px}
-.card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:20px;margin-bottom:20px;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-h2{margin-top:0;font-size:20px}
-label{display:block;margin-top:12px;margin-bottom:6px;font-weight:600;font-size:14px}
-input,textarea{width:100%;padding:12px;border:1px solid #d0d5dd;border-radius:9px;font-size:15px;font-family:inherit}
+body{margin:0;font-family:Inter,Arial,sans-serif;background:#f5f7fb;color:#101828}
+header{background:#0b1220;color:#fff;padding:26px 18px}
+header .wrap,main{max-width:1180px;margin:auto}
+.brand{font-size:30px;font-weight:900}
+.tag{color:#b8c2d6;margin-top:4px}
+.nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.nav a{color:#fff;text-decoration:none;border:1px solid #334155;border-radius:999px;padding:8px 12px;font-size:13px}
+main{padding:24px 16px 60px}
+.hero{background:linear-gradient(135deg,#fff,#eef4ff);border:1px solid #dbe3ef;border-radius:20px;padding:26px;margin-bottom:18px}
+.hero h1{font-size:34px;margin:0 0 8px}
+.hero p{color:#475467;max-width:760px}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.full{grid-column:1/-1}
+.card{background:#fff;border:1px solid #e4e7ec;border-radius:16px;padding:20px;box-shadow:0 2px 10px rgba(16,24,40,.04);margin-bottom:16px}
+h2{margin:0 0 14px;font-size:20px}
+label{display:block;font-weight:700;font-size:13px;margin:11px 0 6px}
+input,textarea,select{width:100%;padding:12px;border:1px solid #d0d5dd;border-radius:10px;font:inherit}
 textarea{min-height:100px;resize:vertical}
-button{margin-top:12px;padding:12px 18px;border:0;border-radius:9px;background:#111827;color:#fff;font-weight:700;cursor:pointer}
-button:hover{opacity:.9}
-button.secondary{background:#667085}
-button.success{background:#087443}
-.status{margin-top:12px;padding:10px;border-radius:8px;background:#f2f4f7;color:#344054;display:none}
-.results-header{margin-bottom:15px;font-weight:700}
-.result{border:1px solid #e4e7ec;border-radius:12px;padding:17px;margin-bottom:14px;background:#fff}
-.result h3{margin:0 0 8px;font-size:17px;line-height:1.4}
-.result h3 a{color:#111827;text-decoration:none}
-.result h3 a:hover{text-decoration:underline}
-.snippet{color:#667085;font-size:14px;line-height:1.5;margin-bottom:12px}
-.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:12px 0}
-.metric{background:#f8fafc;border-radius:8px;padding:10px}
-.metric-title{font-size:11px;color:#667085;margin-bottom:4px}
-.metric-value{font-weight:700;font-size:14px}
-.score{font-size:20px}
-.buttons{display:flex;gap:8px;flex-wrap:wrap}
-.buttons button{margin-top:5px}
-.selected{border:2px solid #111827}
-.workspace-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.workspace-grid .full{grid-column:1/-1}
+button{border:0;border-radius:10px;padding:11px 15px;margin-top:10px;background:#111827;color:#fff;font-weight:800;cursor:pointer}
+.secondary{background:#667085}
+.success{background:#087443}
+.accent{background:#175cd3}
+.danger{background:#b42318}
+.status{display:none;margin-top:12px;padding:10px;border-radius:10px;background:#f2f4f7}
+.status.show{display:block}
+.status.error{background:#fef3f2;color:#b42318}
+.status.ok{background:#ecfdf3;color:#067647}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.stat{background:#f8fafc;border-radius:12px;padding:13px}
+.stat b{display:block;font-size:22px}
+.result,.deal{border:1px solid #e4e7ec;border-radius:14px;padding:16px;margin:10px 0}
+.result h3{margin:0 0 7px;font-size:17px}
+.result a{color:#175cd3;text-decoration:none}
+.snippet{color:#667085;line-height:1.5;font-size:14px}
+.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:12px}
+.metric{background:#f8fafc;border-radius:9px;padding:9px}
+.metric small{display:block;color:#667085}
+.metric strong{font-size:14px}
+.pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#eef4ff;color:#175cd3;font-size:11px;font-weight:800}
+.actions{display:flex;gap:7px;flex-wrap:wrap}
 .hidden{display:none}
-.purchase-item{border:1px solid #e4e7ec;padding:12px;border-radius:9px;margin-bottom:8px}
-.success-text{color:#087443;font-weight:700}
-.error-text{color:#b42318;font-weight:700}
-@media(max-width:700px){
+.muted{color:#667085;font-size:13px}
+.copy{white-space:pre-wrap;line-height:1.6;background:#f8fafc;padding:13px;border-radius:10px;margin-top:10px}
+.dealgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.footer{color:#667085;text-align:center;padding:30px;font-size:13px}
+@media(max-width:760px){
+.grid,.dealgrid{grid-template-columns:1fr}
+.full{grid-column:auto}
+.stats{grid-template-columns:repeat(2,1fr)}
 .metrics{grid-template-columns:repeat(2,1fr)}
-.workspace-grid{grid-template-columns:1fr}
-.workspace-grid .full{grid-column:auto}
+.hero h1{font-size:27px}
 }
 </style>
 </head>
@@ -54,784 +73,775 @@ button.success{background:#087443}
 <body>
 
 <header>
-<div class="header-inner">
-<h1>NOVA</h1>
-<div class="tagline">Your AI Purchasing Agent</div>
+<div class="wrap">
+<div class="brand">NOVA</div>
+<div class="tag">Your AI Purchasing Agent — Search. Verify. Compare. Negotiate.</div>
+<div class="nav">
+<a href="#search">Search</a>
+<a href="#deals">Flash Deals</a>
+<a href="#rfq">RFQ</a>
+<a href="#landed">Landed Cost</a>
+<a href="#negotiation">Negotiation</a>
+<a href="#account">Account</a>
+</div>
 </div>
 </header>
 
 <main>
 
-<section class="card">
+<section class="hero">
+<h1>Global procurement intelligence</h1>
+<p>NOVA searches supplier sources across China, India, Japan, South Korea, Europe and North America. It separates evidence from unverified information and helps you move from discovery to RFQ and negotiation.</p>
+
+<div class="stats">
+<div class="stat"><small>Network target</small><b>20M+</b><span class="muted">records target</span></div>
+<div class="stat"><small>Regions</small><b>6+</b><span class="muted">major markets</span></div>
+<div class="stat"><small>Evidence</small><b>0–50</b><span class="muted">source strength</span></div>
+<div class="stat"><small>Deals</small><b>AI</b><span class="muted">score + confidence</span></div>
+</div>
+</section>
+
+<section id="account" class="card">
 <h2>Account</h2>
 
+<div class="grid">
+<div>
 <label>Email</label>
 <input id="email" type="email" placeholder="your@email.com">
+</div>
 
+<div>
 <label>Password</label>
-<input id="password" type="password" placeholder="Password">
+<input id="password" type="password" placeholder="Minimum 6 characters">
+</div>
+</div>
 
-<div class="buttons">
+<div class="actions">
 <button onclick="signup()">Create Account</button>
 <button class="secondary" onclick="login()">Login</button>
 <button class="secondary" onclick="logout()">Logout</button>
+<button class="secondary" onclick="me()">Check Account</button>
 </div>
 
 <div id="accountStatus" class="status"></div>
 </section>
 
+<section id="search" class="card">
+<h2>🔎 Search global suppliers</h2>
 
-<section class="card">
-<h2>Search with NOVA</h2>
-
-<label>What do you need?</label>
+<label>What do you want to buy?</label>
 <textarea id="request">1000 stainless steel water bottles with logo</textarea>
 
+<div class="grid">
+<div>
 <label>Quantity</label>
-<input id="quantity" type="number" value="1000" min="1">
+<input id="quantity" type="number" min="1" value="1000">
+</div>
 
-<button onclick="searchSuppliers()">Search Suppliers</button>
+<div>
+<label>Destination</label>
+<input id="destination" placeholder="Dubai, UAE">
+</div>
+</div>
+
+<button class="accent" onclick="searchSuppliers()">Search Suppliers</button>
+<button class="secondary" onclick="network()">Network Status</button>
 
 <div id="searchStatus" class="status"></div>
-<div id="resultsHeader" class="results-header"></div>
+<div id="networkStatus" class="status"></div>
+<div id="resultsHeader"></div>
 <div id="results"></div>
 </section>
 
+<section id="rfq" class="card">
+<h2>📄 AI RFQ Generator</h2>
 
-<section id="purchaseWorkspace" class="card hidden">
-
-<h2>Purchase Workspace</h2>
-
-<div class="workspace-grid">
-
+<div class="grid">
 <div>
 <label>Product</label>
-<input id="purchaseProduct">
-</div>
-
-<div>
-<label>Supplier</label>
-<input id="purchaseSupplier">
+<input id="rfqProduct" placeholder="Product">
 </div>
 
 <div>
 <label>Quantity</label>
-<input id="purchaseQuantity" type="number">
+<input id="rfqQty" type="number" value="1000">
 </div>
 
 <div>
-<label>Unit Price ($)</label>
-<input id="purchaseUnitPrice" type="number" step="0.01">
+<label>Destination</label>
+<input id="rfqDestination" placeholder="Dubai, UAE">
 </div>
 
 <div>
-<label>Shipping Cost ($)</label>
-<input id="shippingCost" type="number" step="0.01">
+<label>Requirements</label>
+<input id="rfqRequirements" placeholder="Material, logo, packaging, quality...">
+</div>
 </div>
 
-<div>
-<label>Landed Cost ($)</label>
-<input id="landedCost" type="number" step="0.01" readonly>
-</div>
+<button onclick="generateRFQ()">Generate RFQ</button>
 
-<div class="full">
-<label>Supplier URL</label>
-<input id="supplierUrl">
-</div>
-
-</div>
-
-<button onclick="calculateLandedCost()">Calculate Landed Cost</button>
-<button class="success" onclick="savePurchase()">Save Purchase</button>
-
-<div id="purchaseStatus" class="status"></div>
+<div id="rfqStatus" class="status"></div>
+<div id="rfqResult" class="copy hidden"></div>
 </section>
 
+<section id="landed" class="card">
+<h2>💰 Landed Cost Engine</h2>
 
-<section class="card">
+<div class="grid">
+<div>
+<label>Quantity</label>
+<input id="lcQty" type="number" value="1000">
+</div>
 
-<h2>NOVA AI Negotiation</h2>
+<div>
+<label>Unit Price USD</label>
+<input id="lcUnit" type="number" step="0.01" value="2.50">
+</div>
 
-<label>Supplier name</label>
+<div>
+<label>International Shipping USD</label>
+<input id="lcShip" type="number" step="0.01" value="400">
+</div>
+
+<div>
+<label>Duty %</label>
+<input id="lcDuty" type="number" step="0.01" value="5">
+</div>
+
+<div>
+<label>Tax %</label>
+<input id="lcTax" type="number" step="0.01" value="5">
+</div>
+
+<div>
+<label>Local Delivery USD</label>
+<input id="lcLocal" type="number" step="0.01" value="100">
+</div>
+</div>
+
+<button onclick="landedCost()">Calculate</button>
+<div id="lcResult" class="copy hidden"></div>
+</section>
+
+<section id="negotiation" class="card">
+<h2>🤖 AI Negotiation Agent</h2>
+
+<label>Supplier</label>
 <input id="negSupplier" placeholder="Supplier name">
 
-<label>Supplier offer</label>
-<textarea id="negOffer" placeholder="Example: 1000 bottles at $3 each, shipping $300"></textarea>
+<label>Current Offer</label>
+<textarea id="negOffer" placeholder="1000 units at $2.50, shipping $400..."></textarea>
 
-<label>Paste the supplier's complete reply here</label>
-<textarea id="negReply" placeholder="Paste the complete supplier reply..."></textarea>
+<label>Supplier Reply</label>
+<textarea id="negReply" placeholder="Paste the supplier's reply"></textarea>
 
 <button onclick="negotiate()">Analyze & Negotiate</button>
 
 <div id="negStatus" class="status"></div>
-
-<div id="negResult" style="white-space:pre-wrap;margin-top:15px;line-height:1.6"></div>
-
+<div id="negResult" class="copy hidden"></div>
 </section>
 
+<section id="deals" class="card">
+<h2>🔥 NOVA Flash Deals</h2>
 
-<section class="card">
+<p class="muted">
+Factory overstock, clearance, cancelled orders and special commercial offers.
+New submissions are not automatically verified.
+</p>
 
-<h2>My Procurement Dashboard</h2>
+<div class="dealgrid">
+
+<div>
+<label>Company</label>
+<input id="dealCompany" placeholder="Company">
+</div>
+
+<div>
+<label>Product</label>
+<input id="dealProduct" placeholder="Product">
+</div>
+
+<div>
+<label>Country</label>
+<input id="dealCountry" placeholder="China">
+</div>
+
+<div>
+<label>Quantity</label>
+<input id="dealQty" type="number">
+</div>
+
+<div>
+<label>Price USD</label>
+<input id="dealPrice" type="number" step="0.01">
+</div>
+
+<div>
+<label>MOQ</label>
+<input id="dealMOQ" type="number">
+</div>
+
+<div class="full">
+<label>Description</label>
+<textarea id="dealDescription" placeholder="Why is this a special deal?"></textarea>
+</div>
+
+<div class="full">
+<label>Product/company URL</label>
+<input id="dealUrl" placeholder="https://...">
+</div>
+
+</div>
+
+<button onclick="submitDeal()">Submit Deal</button>
+<button class="secondary" onclick="loadDeals()">Refresh Deals</button>
+
+<div id="dealStatus" class="status"></div>
+<div id="dealsList"></div>
+</section>
+
+<section id="history" class="card">
+<h2>📦 Procurement History</h2>
 
 <button onclick="loadPurchases()">Refresh History</button>
 
-<div id="purchaseHistory" style="margin-top:15px"></div>
-
+<div id="historyStatus" class="status"></div>
+<div id="purchaseHistory"></div>
 </section>
 
 </main>
 
+<div class="footer">
+NOVA — Evidence-first AI procurement. Missing facts are shown as Not verified.
+</div>
 
 <script>
 
-const API = "";
+const API="";
+let lastResults=[];
 
-
-/* STATUS */
-
-function showStatus(id,message,type=""){
-const el=document.getElementById(id);
-el.style.display="block";
-el.className="status";
-
-if(type==="success") el.classList.add("success-text");
-if(type==="error") el.classList.add("error-text");
-
-el.textContent=message;
+function status(id,msg,type="ok"){
+const e=document.getElementById(id);
+e.textContent=msg;
+e.className="status show "+type;
 }
 
+async function req(path,opts={}){
+const r=await fetch(API+path,{
+credentials:"include",
+...opts
+});
 
-/* ACCOUNT */
+let d;
+
+try{
+d=await r.json();
+}catch{
+throw new Error("Invalid server response");
+}
+
+if(!r.ok&&d.error){
+throw new Error(d.error);
+}
+
+return d;
+}
 
 async function signup(){
-
-const email=document.getElementById("email").value.trim();
-const password=document.getElementById("password").value;
-
-if(!email||!password){
-showStatus("accountStatus","Enter email and password.","error");
-return;
-}
-
 try{
-
-const res=await fetch(API+"/api/signup",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({email,password})
+const d=await req('/api/signup',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+email:email.value,
+password:password.value
+})
 });
 
-const data=await res.json();
-
-if(!res.ok||!data.success){
-showStatus("accountStatus",data.error||"Signup failed.","error");
-return;
-}
-
-showStatus("accountStatus","Account created successfully.","success");
-
-}catch(error){
-showStatus("accountStatus",error.message,"error");
+status('accountStatus','Account created: '+d.email);
+}catch(e){
+status('accountStatus',e.message,'error');
 }
 }
-
 
 async function login(){
-
-const email=document.getElementById("email").value.trim();
-const password=document.getElementById("password").value;
-
-if(!email||!password){
-showStatus("accountStatus","Enter email and password.","error");
-return;
-}
-
 try{
-
-const res=await fetch(API+"/api/login",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({email,password})
+const d=await req('/api/login',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+email:email.value,
+password:password.value
+})
 });
 
-const data=await res.json();
-
-if(!res.ok||!data.success){
-showStatus("accountStatus",data.error||"Login failed.","error");
-return;
-}
-
-showStatus("accountStatus","Logged in successfully.","success");
-loadPurchases();
-
-}catch(error){
-showStatus("accountStatus",error.message,"error");
+status('accountStatus','Logged in: '+d.email);
+}catch(e){
+status('accountStatus',e.message,'error');
 }
 }
-
 
 async function logout(){
-
 try{
-
-const res=await fetch(API+"/api/logout");
-const data=await res.json();
-
-showStatus("accountStatus","Logged out.","success");
-
-}catch(error){
-showStatus("accountStatus",error.message,"error");
+await req('/api/logout',{method:'POST'});
+status('accountStatus','Logged out');
+}catch(e){
+status('accountStatus',e.message,'error');
 }
 }
 
+async function me(){
+try{
+const d=await req('/api/me');
 
-/* SEARCH */
+status(
+'accountStatus',
+d.loggedIn?'Logged in as '+d.user.email:'Not logged in',
+d.loggedIn?'ok':'error'
+);
+
+}catch(e){
+status('accountStatus',e.message,'error');
+}
+}
+
+async function network(){
+try{
+const d=await req('/api/network');
+
+status(
+'networkStatus',
+`Actual indexed records: ${d.actualRecords.toLocaleString()} | Target: ${d.targetRecords.toLocaleString()} | Coverage: ${d.coverage.join(', ')}`
+);
+
+}catch(e){
+status('networkStatus',e.message,'error');
+}
+}
+
+function esc(s){
+return String(s??'').replace(
+/[&<>'"]/g,
+c=>({
+'&':'&amp;',
+'<':'&lt;',
+'>':'&gt;',
+"'":'&#39;',
+'"':'&quot;'
+}[c])
+);
+}
+
+function money(v){
+return v==null?'Not verified':'$'+Number(v).toFixed(2);
+}
 
 async function searchSuppliers(){
 
-const request=document.getElementById("request").value.trim();
-const quantity=Number(document.getElementById("quantity").value||0);
+const text=request.value.trim();
 
-if(!request){
-showStatus("searchStatus","Enter what you need.","error");
-return;
+if(!text){
+return status(
+'searchStatus',
+'Enter a procurement request.',
+'error'
+);
 }
 
-showStatus("searchStatus","NOVA is searching suppliers...");
-document.getElementById("results").innerHTML="";
-document.getElementById("resultsHeader").textContent="";
+status(
+'searchStatus',
+'Searching global supplier sources...'
+);
+
+results.innerHTML='';
 
 try{
 
-const res=await fetch(API+"/api/search",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
-body:JSON.stringify({request,quantity})
+const d=await req('/api/search',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+request:text,
+quantity:quantity.value,
+destination:destination.value
+})
 });
 
-const data=await res.json();
+lastResults=d.results||[];
 
-/*
-FIX:
-Worker returns ok:true, not success:true.
-*/
+resultsHeader.innerHTML=
+`<p><b>${d.total}</b> supplier results found. Scores are heuristic; facts without source evidence remain Not verified.</p>`;
 
-if(!res.ok||data.ok!==true){
+results.innerHTML=lastResults.map((r,i)=>`
 
-let message=data.error||"Search failed.";
-
-if(data.request_id){
-message+=" Request ID: "+data.request_id;
-}
-
-showStatus("searchStatus",message,"error");
-return;
-}
-
-const results=Array.isArray(data.results)?data.results:[];
-
-document.getElementById("resultsHeader").textContent=
-`Found ${results.length} supplier results.`;
-
-showStatus(
-"searchStatus",
-"Search completed successfully.",
-"success"
-);
-
-if(!results.length){
-
-document.getElementById("results").innerHTML=
-"<p>No supplier results were returned by Yep.</p>";
-
-return;
-}
-
-renderResults(results);
-
-}catch(error){
-
-showStatus(
-"searchStatus",
-"Search error: "+error.message,
-"error"
-);
-
-}
-}
-
-
-/* RESULTS */
-
-function renderResults(results){
-
-const container=document.getElementById("results");
-container.innerHTML="";
-window.novaResults=results;
-
-results.forEach((supplier,index)=>{
-
-const div=document.createElement("div");
-div.className="result";
-
-const title=supplier.title||"Supplier";
-const url=supplier.url||"#";
-const snippet=supplier.snippet||"No description available.";
-
-const score=supplier.dealScore??0;
-const evidence=supplier.evidence??0;
-
-const price=
-supplier.price!==null&&supplier.price!==undefined
-?"$"+Number(supplier.price).toFixed(2)
-:"Not verified";
-
-const moq=
-supplier.moq!==null&&supplier.moq!==undefined
-?Number(supplier.moq).toLocaleString()
-:"Not verified";
-
-const lead=supplier.leadTime||"Not verified";
-
-const productCost=
-supplier.productCost!==null&&supplier.productCost!==undefined
-?"$"+Number(supplier.productCost).toFixed(2)
-:"Not calculated";
-
-div.innerHTML=`
+<article class="result">
 
 <h3>
-<a href="${escapeHTML(url)}" target="_blank" rel="noopener noreferrer">
-${escapeHTML(title)}
+<a href="${esc(r.url)}" target="_blank" rel="noopener">
+${esc(r.title)}
 </a>
 </h3>
 
-<div class="snippet">
-${escapeHTML(snippet)}
-</div>
+<p class="snippet">${esc(r.snippet)}</p>
+
+<span class="pill">
+${esc(r.country)} · ${esc(r.region)}
+</span>
 
 <div class="metrics">
 
 <div class="metric">
-<div class="metric-title">Deal Score</div>
-<div class="metric-value score">${escapeHTML(String(score))}/100</div>
+<small>Deal Score</small>
+<strong>${r.dealScore}/100</strong>
 </div>
 
 <div class="metric">
-<div class="metric-title">Evidence</div>
-<div class="metric-value">${escapeHTML(String(evidence))}/50</div>
+<small>Evidence</small>
+<strong>${r.evidence}/50</strong>
 </div>
 
 <div class="metric">
-<div class="metric-title">Price</div>
-<div class="metric-value">${escapeHTML(price)}</div>
+<small>Confidence</small>
+<strong>${r.confidence}%</strong>
 </div>
 
 <div class="metric">
-<div class="metric-title">MOQ</div>
-<div class="metric-value">${escapeHTML(moq)}</div>
+<small>Price</small>
+<strong>${money(r.price)}</strong>
 </div>
 
 <div class="metric">
-<div class="metric-title">Lead time</div>
-<div class="metric-value">${escapeHTML(lead)}</div>
-</div>
-
-<div class="metric">
-<div class="metric-title">Product cost</div>
-<div class="metric-value">${escapeHTML(productCost)}</div>
+<small>MOQ</small>
+<strong>${r.moq??'Not verified'}</strong>
 </div>
 
 </div>
 
-<div class="buttons">
+<p class="muted">
+Lead time: ${esc(r.leadTime||'Not verified')}
+· Shipping: Not verified
+· Supplier: Not verified
+</p>
 
-<button onclick="openSupplier(${index})">
-Open Supplier
+<div class="actions">
+
+<button onclick="useSupplier(${i})">
+Use in RFQ
 </button>
 
-<button class="success" onclick="selectSupplier(${index})">
-Select
+<button class="secondary" onclick="useNegotiation(${i})">
+Negotiate
 </button>
 
 </div>
-`;
 
-container.appendChild(div);
+</article>
 
-});
-}
+`).join('');
 
-
-/* OPEN */
-
-function openSupplier(index){
-
-const supplier=window.novaResults?.[index];
-
-if(supplier?.url){
-window.open(supplier.url,"_blank","noopener,noreferrer");
-}
-}
-
-
-/* SELECT */
-
-function selectSupplier(index){
-
-const supplier=window.novaResults?.[index];
-
-if(!supplier)return;
-
-document.querySelectorAll(".result").forEach(el=>{
-el.classList.remove("selected");
-});
-
-const cards=document.querySelectorAll(".result");
-
-if(cards[index])cards[index].classList.add("selected");
-
-document.getElementById("purchaseWorkspace").classList.remove("hidden");
-
-document.getElementById("purchaseProduct").value=
-document.getElementById("request").value;
-
-document.getElementById("purchaseSupplier").value=
-supplier.title||"";
-
-document.getElementById("purchaseQuantity").value=
-document.getElementById("quantity").value;
-
-document.getElementById("purchaseUnitPrice").value=
-supplier.price??"";
-
-document.getElementById("supplierUrl").value=
-supplier.url||"";
-
-document.getElementById("shippingCost").value="";
-document.getElementById("landedCost").value="";
-
-document.getElementById("purchaseWorkspace").scrollIntoView({
-behavior:"smooth"
-});
-}
-
-
-/* LANDED COST */
-
-function calculateLandedCost(){
-
-const quantity=Number(
-document.getElementById("purchaseQuantity").value||0
+status(
+'searchStatus',
+'Search completed successfully.'
 );
 
-const unitPrice=Number(
-document.getElementById("purchaseUnitPrice").value||0
+}catch(e){
+
+status(
+'searchStatus',
+e.message,
+'error'
 );
 
-const shipping=Number(
-document.getElementById("shippingCost").value||0
-);
-
-if(!quantity||!unitPrice){
-
-showStatus(
-"purchaseStatus",
-"Enter quantity and unit price.",
-"error"
-);
-
-return;
+}
 }
 
-const landed=(quantity*unitPrice)+shipping;
+function useSupplier(i){
 
-document.getElementById("landedCost").value=
-landed.toFixed(2);
+const r=lastResults[i];
 
-showStatus(
-"purchaseStatus",
-`Landed cost calculated: $${landed.toFixed(2)}`,
-"success"
-);
+rfqProduct.value=request.value;
+rfqQty.value=quantity.value;
+rfqDestination.value=destination.value;
+
+rfqRequirements.value=
+`Supplier: ${r.title}
+Source: ${r.url}
+Price: ${r.price??'Not verified'}
+MOQ: ${r.moq??'Not verified'}`;
+
+location.hash='rfq';
 }
 
+function useNegotiation(i){
 
-/* SAVE */
+const r=lastResults[i];
 
-async function savePurchase(){
+negSupplier.value=r.title;
+
+negOffer.value=
+`Product request: ${request.value}
+Price: ${r.price??'Not verified'}
+MOQ: ${r.moq??'Not verified'}
+Source: ${r.url}`;
+
+location.hash='negotiation';
+}
+
+async function generateRFQ(){
 
 try{
 
-const res=await fetch(API+"/api/purchases",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
+status(
+'rfqStatus',
+'Generating RFQ...'
+);
+
+const d=await req('/api/rfq',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
 body:JSON.stringify({
-
-product:document.getElementById("purchaseProduct").value,
-
-supplier:document.getElementById("purchaseSupplier").value,
-
-quantity:Number(
-document.getElementById("purchaseQuantity").value||0
-),
-
-unitPrice:Number(
-document.getElementById("purchaseUnitPrice").value||0
-),
-
-shipping:Number(
-document.getElementById("shippingCost").value||0
-),
-
-landedCost:Number(
-document.getElementById("landedCost").value||0
-),
-
-supplierUrl:
-document.getElementById("supplierUrl").value
-
+product:rfqProduct.value,
+quantity:rfqQty.value,
+destination:rfqDestination.value,
+requirements:rfqRequirements.value
 })
 });
 
-const data=await res.json();
+rfqResult.textContent=d.message;
+rfqResult.classList.remove('hidden');
 
-if(!res.ok||!data.success){
-
-showStatus(
-"purchaseStatus",
-data.error||"Could not save purchase.",
-"error"
+status(
+'rfqStatus',
+'RFQ generated.'
 );
 
-return;
-}
+}catch(e){
 
-showStatus(
-"purchaseStatus",
-"Purchase saved successfully.",
-"success"
-);
-
-loadPurchases();
-
-}catch(error){
-
-showStatus(
-"purchaseStatus",
-error.message,
-"error"
+status(
+'rfqStatus',
+e.message,
+'error'
 );
 
 }
 }
 
+async function landedCost(){
 
-/* NEGOTIATION */
+try{
+
+const d=await req('/api/landed-cost',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+quantity:lcQty.value,
+unitPrice:lcUnit.value,
+shipping:lcShip.value,
+dutyPercent:lcDuty.value,
+taxPercent:lcTax.value,
+localDelivery:lcLocal.value
+})
+});
+
+lcResult.innerHTML=
+`Goods: $${d.goods.toFixed(2)}
+<br>Shipping: $${d.shipping.toFixed(2)}
+<br>Duty: $${d.duty.toFixed(2)}
+<br>Tax: $${d.tax.toFixed(2)}
+<br>Local delivery: $${d.localDelivery.toFixed(2)}
+<br><b>Total landed estimate: $${d.total.toFixed(2)}</b>
+<br>Unit landed estimate: $${d.unitLanded.toFixed(2)}
+<br><br>${esc(d.status)}`;
+
+lcResult.classList.remove('hidden');
+
+}catch(e){
+
+lcResult.textContent=e.message;
+lcResult.classList.remove('hidden');
+
+}
+}
 
 async function negotiate(){
 
-const supplier=
-document.getElementById("negSupplier").value.trim();
-
-const offer=
-document.getElementById("negOffer").value.trim();
-
-const reply=
-document.getElementById("negReply").value.trim();
-
-if(!supplier||!offer||!reply){
-
-showStatus(
-"negStatus",
-"Enter supplier, offer and complete reply.",
-"error"
-);
-
-return;
-}
-
-showStatus(
-"negStatus",
-"NOVA AI is analyzing the offer..."
-);
-
-document.getElementById("negResult").textContent="";
-
 try{
 
-const res=await fetch(API+"/api/negotiate",{
-method:"POST",
-headers:{"Content-Type":"application/json"},
+status(
+'negStatus',
+'AI is analyzing the offer...'
+);
+
+const d=await req('/api/negotiate',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
 body:JSON.stringify({
-supplier,
-offer:offer+"\nSupplier reply:\n"+reply
+supplier:negSupplier.value,
+offer:negOffer.value,
+reply:negReply.value
 })
 });
 
-const data=await res.json();
+negResult.textContent=d.result;
+negResult.classList.remove('hidden');
 
-if(!res.ok||!data.success){
-
-showStatus(
-"negStatus",
-data.error||"Negotiation analysis failed.",
-"error"
+status(
+'negStatus',
+'Negotiation analysis ready.'
 );
 
-return;
-}
+}catch(e){
 
-showStatus(
-"negStatus",
-"Analysis complete.",
-"success"
-);
-
-document.getElementById("negResult").textContent=
-data.result||"No analysis returned.";
-
-}catch(error){
-
-showStatus(
-"negStatus",
-error.message,
-"error"
+status(
+'negStatus',
+e.message,
+'error'
 );
 
 }
 }
 
+async function submitDeal(){
 
-/* DASHBOARD */
+try{
+
+status(
+'dealStatus',
+'Submitting deal...'
+);
+
+const d=await req('/api/deals',{
+method:'POST',
+headers:{'Content-Type':'application/json'},
+body:JSON.stringify({
+company:dealCompany.value,
+product:dealProduct.value,
+country:dealCountry.value,
+quantity:dealQty.value,
+price:dealPrice.value,
+moq:dealMOQ.value,
+description:dealDescription.value,
+url:dealUrl.value
+})
+});
+
+status(
+'dealStatus',
+'Deal submitted as '+d.status+'. It is not automatically verified.'
+);
+
+loadDeals();
+
+}catch(e){
+
+status(
+'dealStatus',
+e.message,
+'error'
+);
+
+}
+}
+
+async function loadDeals(){
+
+try{
+
+const d=await req('/api/deals');
+
+dealsList.innerHTML=
+(d.deals||[]).map(x=>`
+
+<article class="deal">
+
+<b>${esc(x.product)}</b>
+<br>
+
+${esc(x.company)} · ${esc(x.country)}
+
+<br>
+
+Price:
+$${Number(x.price||0).toFixed(2)}
+· MOQ:
+${x.moq||'Not specified'}
+· Qty:
+${x.quantity||'Not specified'}
+
+<br>
+
+<span class="pill">
+${esc(x.status)} — not verified
+</span>
+
+<p>
+${esc(x.description||'')}
+</p>
+
+${x.url?
+`<a href="${esc(x.url)}" target="_blank" rel="noopener">Source</a>`
+:''}
+
+</article>
+
+`).join('')||
+'<p class="muted">No submitted deals yet.</p>';
+
+}catch(e){
+
+status(
+'dealStatus',
+e.message,
+'error'
+);
+
+}
+}
 
 async function loadPurchases(){
 
-const container=document.getElementById("purchaseHistory");
-
 try{
 
-const res=await fetch(API+"/api/purchases");
-const data=await res.json();
+const d=await req('/api/purchases');
 
-if(!res.ok){
+purchaseHistory.innerHTML=
+(d.purchases||[]).map(x=>`
 
-container.innerHTML=
-`<p>${escapeHTML(data.error||"Please login first.")}</p>`;
+<div class="result">
 
-return;
-}
-
-const purchases=
-Array.isArray(data.purchases)?data.purchases:[];
-
-if(!purchases.length){
-
-container.innerHTML=
-"<p>No saved purchases yet.</p>";
-
-return;
-}
-
-container.innerHTML="";
-
-purchases.forEach(p=>{
-
-const div=document.createElement("div");
-div.className="purchase-item";
-
-div.innerHTML=`
-
-<strong>
-${escapeHTML(p.product||"Product")}
-</strong>
+<b>${esc(x.product)}</b>
+—
+${esc(x.supplier)}
 
 <br>
 
-Supplier:
-${escapeHTML(p.supplier||"Not stated")}
+Qty:
+${x.quantity}
+· Unit:
+$${Number(x.unit_price||0).toFixed(2)}
+· Landed:
+$${Number(x.landed_cost||0).toFixed(2)}
 
-<br>
+</div>
 
-Quantity:
-${escapeHTML(String(p.quantity||""))}
+`).join('')||
+'<p class="muted">No purchases saved.</p>';
 
-<br>
+}catch(e){
 
-Unit price:
-${p.unit_price!=null
-?"$"+Number(p.unit_price).toFixed(2)
-:"Not stated"}
-
-<br>
-
-Landed cost:
-${p.landed_cost!=null
-?"$"+Number(p.landed_cost).toFixed(2)
-:"Not calculated"}
-
-`;
-
-container.appendChild(div);
-
-});
-
-}catch(error){
-
-container.innerHTML=
-`<p>${escapeHTML(error.message)}</p>`;
-
-}
-}
-
-
-/* SECURITY */
-
-function escapeHTML(value){
-
-return String(value)
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
-
-}
-
-
-/* START */
-
-async function checkLogin(){
-
-try{
-
-const res=await fetch(API+"/api/me");
-const data=await res.json();
-
-if(data.loggedIn){
-
-showStatus(
-"accountStatus",
-"You are logged in.",
-"success"
+status(
+'historyStatus',
+e.message,
+'error'
 );
 
-loadPurchases();
-
-}
-
-}catch(error){
-console.log(error);
 }
 }
 
-checkLogin();
+loadDeals();
+network();
 
 </script>
 
 </body>
-</html>
-
-
-
+  </html>
