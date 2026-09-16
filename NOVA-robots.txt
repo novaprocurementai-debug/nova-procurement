@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://nova-procurement.nova-procurement-ai.workers.dev/sitemap.xml
