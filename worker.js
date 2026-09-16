@@ -14,17 +14,17 @@ const REGIONS = [
   ["IT", "Europe"]
 ];
 
-function json(data, status = 200, extra = {}) {
+function json(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), {
     status,
     headers: {
       "Content-Type": "application/json;charset=UTF-8",
-      ...extra
+      ...headers
     }
   });
 }
 
-function cookie(req, name) {
+function cookieValue(req, name) {
   const c = req.headers.get("Cookie") || "";
   const m = c.match(new RegExp("(^|;\\s*)" + name + "=([^;]*)"));
   return m ? decodeURIComponent(m[2]) : null;
@@ -60,30 +60,48 @@ function clearCookie() {
    DATABASE
 ========================= */
 
-async function ensureDB(db) {
-  if (!db) throw new Error("D1 binding DB is not configured.");
+async function tableColumns(db, table) {
+  const r = await db.prepare(`PRAGMA table_info("${table}")`).all();
+  return new Set((r.results || []).map(x => x.name));
+}
 
+async function addColumns(db, table, columns) {
+  const existing = await tableColumns(db, table);
+  const stmts = [];
+
+  for (const [name, type] of Object.entries(columns)) {
+    if (!existing.has(name)) {
+      stmts.push(
+        db.prepare(`ALTER TABLE "${table}" ADD COLUMN "${name}" ${type}`)
+      );
+    }
+  }
+
+  if (stmts.length) await db.batch(stmts);
+}
+
+async function migrateDatabase(db) {
   await db.batch([
     db.prepare(`
-      CREATE TABLE IF NOT EXISTS users(
+      CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-        email TEXT UNIQUE NOT NULL,
-        password_hash TEXT NOT NULL,
-        salt TEXT NOT NULL,
+        email TEXT UNIQUE,
+        password_hash TEXT,
+        salt TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
     `),
 
     db.prepare(`
-      CREATE TABLE IF NOT EXISTS sessions(
+      CREATE TABLE IF NOT EXISTS sessions (
         token TEXT PRIMARY KEY,
-        user_id INTEGER NOT NULL,
-        expires_at INTEGER NOT NULL
+        user_id INTEGER,
+        expires_at INTEGER
       )
     `),
 
     db.prepare(`
-      CREATE TABLE IF NOT EXISTS suppliers(
+      CREATE TABLE IF NOT EXISTS suppliers (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT,
         url TEXT,
@@ -97,26 +115,61 @@ async function ensureDB(db) {
         moq REAL,
         lead_time TEXT,
         confidence INTEGER DEFAULT 0,
-        verification_status TEXT DEFAULT 'Not verified',
+        verification TEXT,
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
     `),
 
     db.prepare(`
-      CREATE TABLE IF NOT EXISTS rfqs(
+      CREATE TABLE IF NOT EXISTS projects (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
+        name TEXT,
+        product TEXT,
+        quantity REAL,
+        destination TEXT,
+        requirements TEXT,
+        status TEXT DEFAULT 'active',
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+      )
+    `),
+
+    db.prepare(`
+      CREATE TABLE IF NOT EXISTS rfqs (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        project_id INTEGER,
+        supplier_id INTEGER,
         product TEXT,
         quantity REAL,
         destination TEXT,
         requirements TEXT,
         message TEXT,
+        status TEXT DEFAULT 'draft',
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
     `),
 
     db.prepare(`
-      CREATE TABLE IF NOT EXISTS negotiations(
+      CREATE TABLE IF NOT EXISTS bids (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        project_id INTEGER,
+        supplier_id INTEGER,
+        supplier TEXT,
+        unit_price REAL,
+        currency TEXT DEFAULT 'USD',
+        moq REAL,
+        lead_time_days REAL,
+        shipping REAL,
+        notes TEXT,
+        status TEXT DEFAULT 'submitted',
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+      )
+    `),
+
+    db.prepare(`
+      CREATE TABLE IF NOT EXISTS negotiations (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
         supplier TEXT,
@@ -127,7 +180,38 @@ async function ensureDB(db) {
     `),
 
     db.prepare(`
-      CREATE TABLE IF NOT EXISTS flash_deals(
+      CREATE TABLE IF NOT EXISTS purchase_orders (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        project_id INTEGER,
+        supplier_id INTEGER,
+        bid_id INTEGER,
+        quantity REAL,
+        unit_price REAL,
+        currency TEXT DEFAULT 'USD',
+        notes TEXT,
+        status TEXT DEFAULT 'draft',
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+      )
+    `),
+
+    db.prepare(`
+      CREATE TABLE IF NOT EXISTS purchases (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        user_id INTEGER,
+        product TEXT,
+        supplier TEXT,
+        quantity REAL,
+        unit_price REAL,
+        shipping REAL,
+        landed_cost REAL,
+        supplier_url TEXT,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+      )
+    `),
+
+    db.prepare(`
+      CREATE TABLE IF NOT EXISTS flash_deals (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
         company TEXT,
@@ -146,70 +230,7 @@ async function ensureDB(db) {
     `),
 
     db.prepare(`
-      CREATE TABLE IF NOT EXISTS purchases(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        product TEXT,
-        supplier TEXT,
-        quantity REAL,
-        unit_price REAL,
-        shipping REAL,
-        landed_cost REAL,
-        supplier_url TEXT,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
-      )
-    `),
-
-    db.prepare(`
-      CREATE TABLE IF NOT EXISTS projects(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        name TEXT,
-        product TEXT,
-        quantity REAL,
-        destination TEXT,
-        status TEXT DEFAULT 'active',
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
-      )
-    `),
-
-    db.prepare(`
-      CREATE TABLE IF NOT EXISTS bids(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        project_id INTEGER,
-        supplier_id INTEGER,
-        supplier TEXT,
-        unit_price REAL,
-        quantity REAL,
-        shipping REAL,
-        lead_time_days REAL,
-        moq REAL,
-        currency TEXT DEFAULT 'USD',
-        notes TEXT,
-        status TEXT DEFAULT 'submitted',
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
-      )
-    `),
-
-    db.prepare(`
-      CREATE TABLE IF NOT EXISTS purchase_orders(
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        user_id INTEGER,
-        project_id INTEGER,
-        supplier_id INTEGER,
-        supplier TEXT,
-        product TEXT,
-        quantity REAL,
-        unit_price REAL,
-        currency TEXT DEFAULT 'USD',
-        notes TEXT,
-        status TEXT DEFAULT 'draft',
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
-      )
-    `),
-
-    db.prepare(`
-      CREATE TABLE IF NOT EXISTS procurement_memory(
+      CREATE TABLE IF NOT EXISTS procurement_memory (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         user_id INTEGER,
         product TEXT,
@@ -221,18 +242,21 @@ async function ensureDB(db) {
     `)
   ]);
 
-  await migrateSuppliers(db);
-}
+  await addColumns(db, "users", {
+    email: "TEXT",
+    password_hash: "TEXT",
+    salt: "TEXT",
+    created_at: "TEXT"
+  });
 
-async function tableColumns(db, table) {
-  const r = await db.prepare(`PRAGMA table_info(${table})`).all();
-  return new Set((r.results || []).map(x => x.name));
-}
+  await addColumns(db, "sessions", {
+    token: "TEXT",
+    user_id: "INTEGER",
+    expires_at: "INTEGER"
+  });
 
-async function migrateSuppliers(db) {
-  const columns = await tableColumns(db, "suppliers");
-
-  const required = {
+  await addColumns(db, "suppliers", {
+    name: "TEXT",
     url: "TEXT",
     country: "TEXT",
     region: "TEXT",
@@ -244,26 +268,112 @@ async function migrateSuppliers(db) {
     moq: "REAL",
     lead_time: "TEXT",
     confidence: "INTEGER DEFAULT 0",
-    verification_status: "TEXT DEFAULT 'Not verified'"
-  };
+    verification: "TEXT",
+    created_at: "TEXT"
+  });
 
-  for (const [name, type] of Object.entries(required)) {
-    if (!columns.has(name)) {
-      await db.prepare(
-        `ALTER TABLE suppliers ADD COLUMN ${name} ${type}`
-      ).run();
-    }
-  }
+  await addColumns(db, "projects", {
+    user_id: "INTEGER",
+    name: "TEXT",
+    product: "TEXT",
+    quantity: "REAL",
+    destination: "TEXT",
+    requirements: "TEXT",
+    status: "TEXT DEFAULT 'active'",
+    created_at: "TEXT"
+  });
+
+  await addColumns(db, "rfqs", {
+    user_id: "INTEGER",
+    project_id: "INTEGER",
+    supplier_id: "INTEGER",
+    product: "TEXT",
+    quantity: "REAL",
+    destination: "TEXT",
+    requirements: "TEXT",
+    message: "TEXT",
+    status: "TEXT DEFAULT 'draft'",
+    created_at: "TEXT"
+  });
+
+  await addColumns(db, "bids", {
+    user_id: "INTEGER",
+    project_id: "INTEGER",
+    supplier_id: "INTEGER",
+    supplier: "TEXT",
+    unit_price: "REAL",
+    currency: "TEXT",
+    moq: "REAL",
+    lead_time_days: "REAL",
+    shipping: "REAL",
+    notes: "TEXT",
+    status: "TEXT DEFAULT 'submitted'",
+    created_at: "TEXT"
+  });
+
+  await addColumns(db, "negotiations", {
+    user_id: "INTEGER",
+    supplier: "TEXT",
+    offer: "TEXT",
+    result: "TEXT",
+    created_at: "TEXT"
+  });
+
+  await addColumns(db, "purchase_orders", {
+    user_id: "INTEGER",
+    project_id: "INTEGER",
+    supplier_id: "INTEGER",
+    bid_id: "INTEGER",
+    quantity: "REAL",
+    unit_price: "REAL",
+    currency: "TEXT",
+    notes: "TEXT",
+    status: "TEXT DEFAULT 'draft'",
+    created_at: "TEXT"
+  });
+
+  await addColumns(db, "purchases", {
+    user_id: "INTEGER",
+    product: "TEXT",
+    supplier: "TEXT",
+    quantity: "REAL",
+    unit_price: "REAL",
+    shipping: "REAL",
+    landed_cost: "REAL",
+    supplier_url: "TEXT",
+    created_at: "TEXT"
+  });
+
+  await addColumns(db, "flash_deals", {
+    user_id: "INTEGER",
+    company: "TEXT",
+    product: "TEXT",
+    description: "TEXT",
+    country: "TEXT",
+    quantity: "REAL",
+    price: "REAL",
+    currency: "TEXT",
+    moq: "REAL",
+    expires_at: "TEXT",
+    status: "TEXT",
+    url: "TEXT",
+    created_at: "TEXT"
+  });
+
+  await addColumns(db, "procurement_memory", {
+    user_id: "INTEGER",
+    product: "TEXT",
+    supplier: "TEXT",
+    outcome: "TEXT",
+    memory: "TEXT",
+    created_at: "TEXT"
+  });
 }
-
-/* =========================
-   USER
-========================= */
 
 async function currentUser(req, db) {
   if (!db) return null;
 
-  const t = cookie(req, "nova_session");
+  const t = cookieValue(req, "nova_session");
   if (!t) return null;
 
   return db.prepare(`
@@ -271,7 +381,7 @@ async function currentUser(req, db) {
     FROM sessions
     JOIN users ON users.id = sessions.user_id
     WHERE sessions.token = ?
-    AND sessions.expires_at > ?
+      AND sessions.expires_at > ?
   `).bind(t, Date.now()).first();
 }
 
@@ -279,31 +389,31 @@ async function currentUser(req, db) {
    SUPPLIER INTELLIGENCE
 ========================= */
 
-function parsePrice(text) {
-  const m = String(text || "").match(
+function parsePrice(t) {
+  const m = String(t || "").match(
     /(?:USD|US\$|\$)\s?(\d+(?:\.\d+)?)/i
   );
   return m ? Number(m[1]) : null;
 }
 
-function parseMOQ(text) {
-  const m = String(text || "").match(
+function parseMOQ(t) {
+  const m = String(t || "").match(
     /(?:MOQ|minimum order quantity|min(?:imum)? order)\D{0,40}([\d,]+)/i
   );
   return m ? Number(m[1].replace(/,/g, "")) : null;
 }
 
-function parseLead(text) {
-  const m = String(text || "").match(
+function parseLead(t) {
+  const m = String(t || "").match(
     /(\d+(?:\s*-\s*\d+)?)\s*(days?|weeks?)/i
   );
   return m ? m[0] : null;
 }
 
-function supplierSignals(text) {
-  const s = String(text || "").toLowerCase();
+function supplierSignals(t) {
+  const s = String(t || "").toLowerCase();
 
-  const words = [
+  return [
     "manufacturer",
     "factory",
     "supplier",
@@ -315,18 +425,14 @@ function supplierSignals(text) {
     "bulk",
     "custom",
     "private label"
-  ];
-
-  return words.reduce(
-    (n, w) => n + (s.includes(w) ? 1 : 0),
-    0
-  );
+  ].reduce((n, w) => n + (s.includes(w) ? 1 : 0), 0);
 }
 
-function evidenceScore(text) {
-  const s = String(text || "").toLowerCase();
+function evidence(t) {
+  const s = String(t || "").toLowerCase();
+  let n = 0;
 
-  const words = [
+  for (const [w, v] of [
     ["$", 10],
     ["moq", 10],
     ["minimum order", 10],
@@ -336,38 +442,30 @@ function evidenceScore(text) {
     ["factory", 5],
     ["oem", 5],
     ["odm", 5]
-  ];
-
-  let n = 0;
-
-  for (const [w, v] of words) {
+  ]) {
     if (s.includes(w)) n += v;
   }
 
   return Math.min(50, n);
 }
 
-function dealScore(signal, evidence, price, moq) {
+function dealScore(sig, ev, price, moq) {
   return Math.min(
     100,
     Math.max(
       0,
       50 +
-      signal * 3 +
-      evidence +
+      sig * 3 +
+      ev +
       (price !== null ? 5 : 0) +
       (moq !== null ? 5 : 0)
     )
   );
 }
 
-function confidence(evidence) {
-  return Math.min(100, Math.round(evidence * 1.6));
+function confidence(ev) {
+  return Math.min(100, Math.round(ev * 1.6));
 }
-
-/* =========================
-   YEP
-========================= */
 
 async function yepSearch(query, location, env, limit = 10) {
   if (!env.YEP_API_KEY) {
@@ -392,32 +490,27 @@ async function yepSearch(query, location, env, limit = 10) {
     }
   );
 
-  const text = await r.text();
+  const txt = await r.text();
 
-  let data;
-
+  let d;
   try {
-    data = JSON.parse(text);
+    d = JSON.parse(txt);
   } catch {
     throw new Error(`Yep returned invalid response. HTTP ${r.status}`);
   }
 
   if (!r.ok) {
-    throw new Error(
-      data.error || `Yep HTTP ${r.status}`
-    );
+    throw new Error(d.error || `Yep HTTP ${r.status}`);
   }
 
-  return data;
+  return d;
 }
 
-/* =========================
-   SEARCH + SAVE
-========================= */
+async function saveSupplier(db, r, clean) {
+  if (!db || !r.url) return;
 
-async function saveSupplier(db, r) {
   const existing = await db.prepare(
-    "SELECT id FROM suppliers WHERE url = ? LIMIT 1"
+    "SELECT id FROM suppliers WHERE url=? LIMIT 1"
   ).bind(r.url).first();
 
   if (existing) {
@@ -434,49 +527,45 @@ async function saveSupplier(db, r) {
           moq=?,
           lead_time=?,
           confidence=?,
-          verification_status=?
+          verification=?
       WHERE id=?
     `).bind(
       r.title,
       r.country,
       r.region,
       "Yep",
-      r.product,
+      clean,
       r.evidence,
       r.dealScore,
       r.price,
       r.moq,
       r.leadTime,
       r.confidence,
-      "Not verified",
+      r.verification,
       existing.id
     ).run();
-
-    return;
+  } else {
+    await db.prepare(`
+      INSERT INTO suppliers
+      (name,url,country,region,source,product,evidence,deal_score,
+       price,moq,lead_time,confidence,verification)
+      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
+    `).bind(
+      r.title,
+      r.url,
+      r.country,
+      r.region,
+      "Yep",
+      clean,
+      r.evidence,
+      r.dealScore,
+      r.price,
+      r.moq,
+      r.leadTime,
+      r.confidence,
+      r.verification
+    ).run();
   }
-
-  await db.prepare(`
-    INSERT INTO suppliers(
-      name,url,country,region,source,product,
-      evidence,deal_score,price,moq,lead_time,
-      confidence,verification_status
-    )
-    VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
-  `).bind(
-    r.title,
-    r.url,
-    r.country,
-    r.region,
-    "Yep",
-    r.product,
-    r.evidence,
-    r.dealScore,
-    r.price,
-    r.moq,
-    r.leadTime,
-    r.confidence,
-    "Not verified"
-  ).run();
 }
 
 async function searchSuppliers(requestText, env, db) {
@@ -490,16 +579,13 @@ async function searchSuppliers(requestText, env, db) {
   }
 
   const base =
-    `${clean} manufacturer factory supplier wholesale ` +
-    `OEM ODM exporter bulk custom MOQ price quotation ` +
-    `production lead time shipping`;
+    `${clean} manufacturer factory supplier wholesale OEM ODM exporter bulk custom MOQ price quotation production lead time shipping`;
 
-  const jobs = REGIONS.map(([code]) =>
+  const searches = REGIONS.map(([code]) =>
     yepSearch(base, code, env, 10)
   );
 
-  const settled = await Promise.allSettled(jobs);
-
+  const settled = await Promise.allSettled(searches);
   const results = [];
 
   for (let i = 0; i < settled.length; i++) {
@@ -512,15 +598,8 @@ async function searchSuppliers(requestText, env, db) {
       : [];
 
     for (const r of raw) {
-      const title =
-        r.title ||
-        r.name ||
-        "Supplier";
-
-      const url =
-        r.url ||
-        r.link ||
-        "";
+      const title = r.title || r.name || "Supplier";
+      const url = r.url || r.link || "";
 
       if (!url) continue;
 
@@ -530,20 +609,15 @@ async function searchSuppliers(requestText, env, db) {
         r.text ||
         "";
 
-      const combined =
-        `${title} ${snippet}`;
+      const combined = `${title} ${snippet}`;
 
       const price = parsePrice(combined);
       const moq = parseMOQ(combined);
       const lead = parseLead(combined);
-      const signal = supplierSignals(combined);
-      const evidence = evidenceScore(combined);
-      const score = dealScore(
-        signal,
-        evidence,
-        price,
-        moq
-      );
+      const sig = supplierSignals(combined);
+      const ev = evidence(combined);
+      const score = dealScore(sig, ev, price, moq);
+      const conf = confidence(ev);
 
       results.push({
         title,
@@ -553,13 +627,12 @@ async function searchSuppliers(requestText, env, db) {
         moq,
         leadTime: lead,
         shipping: null,
-        supplierSignal: signal,
-        evidence,
-        confidence: confidence(evidence),
+        supplierSignal: sig,
+        evidence: ev,
+        confidence: conf,
         dealScore: score,
         region: REGIONS[i][1],
         country: REGIONS[i][0],
-        product: clean,
         verified: false,
         verification: "Not verified"
       });
@@ -567,21 +640,15 @@ async function searchSuppliers(requestText, env, db) {
   }
 
   const unique = [
-    ...new Map(
-      results.map(x => [x.url, x])
-    ).values()
+    ...new Map(results.map(r => [r.url, r])).values()
   ]
     .sort((a, b) => b.dealScore - a.dealScore)
     .slice(0, 60);
 
-  if (db && unique.length) {
-    for (const r of unique) {
-      try {
-        await saveSupplier(db, r);
-      } catch (e) {
-        console.log("Supplier save skipped:", e.message);
-      }
-    }
+  for (const r of unique) {
+    try {
+      await saveSupplier(db, r, clean);
+    } catch {}
   }
 
   return {
@@ -601,362 +668,33 @@ async function ai(env, system, user, max_tokens = 900) {
     throw new Error("Workers AI binding AI is missing.");
   }
 
-  const r = await env.AI.run(
-    MODEL,
-    {
-      messages: [
-        {
-          role: "system",
-          content: system
-        },
-        {
-          role: "user",
-          content: user
-        }
-      ],
-      max_tokens
-    }
-  );
+  const r = await env.AI.run(MODEL, {
+    messages: [
+      { role: "system", content: system },
+      { role: "user", content: user }
+    ],
+    max_tokens
+  });
 
-  return r.response ||
-    "No AI response generated.";
+  return r.response || "No AI response generated.";
 }
 
-/* =========================
-   LANDED COST
-========================= */
-
-function landed(body) {
-  const quantity =
-    Math.max(0, Number(body.quantity) || 0);
-
-  const unitPrice =
-    Math.max(
-      0,
-      Number(
-        body.unitPrice ??
-        body.unit_price
-      ) || 0
-    );
-
-  const shipping =
-    Math.max(
-      0,
-      Number(body.shipping) || 0
-    );
-
-  const dutyPercent =
-    Math.max(
-      0,
-      Number(
-        body.dutyPercent ??
-        body.duty_percent
-      ) || 0
-    );
-
-  const taxPercent =
-    Math.max(
-      0,
-      Number(
-        body.taxPercent ??
-        body.tax_percent
-      ) || 0
-    );
-
-  const localDelivery =
-    Math.max(
-      0,
-      Number(
-        body.localDelivery ??
-        body.local_delivery
-      ) || 0
-    );
-
-  const goods = quantity * unitPrice;
-
-  const dutyAmount =
-    goods * dutyPercent / 100;
-
-  const taxable =
-    goods +
-    shipping +
-    dutyAmount;
-
-  const taxAmount =
-    taxable * taxPercent / 100;
-
-  const total =
-    goods +
-    shipping +
-    dutyAmount +
-    taxAmount +
-    localDelivery;
-
-  return {
-    goods,
-    shipping,
-    duty: dutyAmount,
-    tax: taxAmount,
-    localDelivery,
-    total,
-    unitLanded:
-      quantity ? total / quantity : 0,
-    status:
-      "Estimated — verify freight, customs and taxes before payment"
-  };
-}
-
-/* =========================
-   HTML
-========================= */
-
-function page(title, description) {
-  return `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>${title}</title>
-<meta name="description" content="${description}">
-</head>
-<body style="font-family:Arial;max-width:900px;margin:40px auto;padding:20px">
-<h1>${title}</h1>
-<p>${description}</p>
-<p><a href="/">Open NOVA</a></p>
-</body>
-</html>`;
-}
-
-/* =========================
-   MAIN
-========================= */
-
-export default {
-  async fetch(request, env) {
-    const url = new URL(request.url);
-    const path = url.pathname;
-
-    try {
-      if (!env.DB) {
-        if (path.startsWith("/api/")) {
-          return json({
-            ok: false,
-            error: "D1 binding DB is not configured."
-          }, 500);
-        }
-      } else {
-        await ensureDB(env.DB);
-      }
-
-      /* HEALTH */
-
-      if (path === "/api/health") {
-        let supplierCount = 0;
-
-        if (env.DB) {
-          const row = await env.DB
-            .prepare("SELECT COUNT(*) AS count FROM suppliers")
-            .first();
-
-          supplierCount =
-            Number(row?.count || 0);
-        }
-
-        return json({
-          ok: true,
-          nova: "online",
-          db: !!env.DB,
-          ai: !!env.AI,
-          yep: !!env.YEP_API_KEY,
-          supplierRecords: supplierCount,
-          target: TARGET_NETWORK
-        });
-      }
-
-      /* NETWORK */
-
-      if (
-        path === "/api/network" &&
-        request.method === "GET"
-      ) {
-        const row = await env.DB
-          .prepare(
-            "SELECT COUNT(*) AS count FROM suppliers"
-          )
-          .first();
-
-        return json({
-          ok: true,
-          actualRecords:
-            Number(row?.count || 0),
-          targetRecords:
-            TARGET_NETWORK,
-          coverage: [
-            ...new Set(
-              REGIONS.map(x => x[1])
-            )
-          ]
-        });
-      }
-
-      /* SEARCH */
-
-      if (
-        path === "/api/search" &&
-        request.method === "POST"
-      ) {
-        const body =
-          await request.json();
-
-        return json(
-          await searchSuppliers(
-            body.request,
-            env,
-            env.DB
-          )
-        );
-      }
-
-      /* SUPPLIERS */
-
-      if (
-        path === "/api/suppliers" &&
-        request.method === "GET"
-      ) {
-        const rows =
-          await env.DB
-            .prepare(`
-              SELECT *
-              FROM suppliers
-              ORDER BY deal_score DESC, id DESC
-              LIMIT 100
-            `)
-            .all();
-
-        return json({
-          ok: true,
-          suppliers:
-            rows.results || []
-        });
-      }
-
-      /* LANDED COST */
-
-      if (
-        path === "/api/landed-cost" &&
-        request.method === "POST"
-      ) {
-        return json(
-          landed(await request.json())
-        );
-      }
-
-      /* RFQ */
-
-      if (
-        path === "/api/rfq" &&
-        request.method === "POST"
-      ) {
-        const body =
-          await request.json();
-
-        if (!body.product) {
-          return json({
-            error: "Product is required."
-          }, 400);
-        }
-
-        const message =
-          await ai(
-            env,
-            "You are NOVA, a professional procurement RFQ generator. Never invent specifications.",
-            `Product: ${body.product}
-Quantity: ${body.quantity || ""}
-Destination: ${body.destination || ""}
-Requirements: ${body.requirements || "None"}
-
-Create a ready-to-send RFQ requesting:
-unit price,
-MOQ,
-sample cost,
-production lead time,
-Incoterm,
-packaging,
-shipping,
-payment terms,
-certifications,
-price validity.`
-          );
-
-        const user =
-          await currentUser(
-            request,
-            env.DB
-          );
-
-        if (user) {
-          await env.DB.prepare(`
-            INSERT INTO rfqs(
-              user_id,product,quantity,
-              destination,requirements,message
-            )
-            VALUES(?,?,?,?,?,?)
-          `).bind(
-            user.id,
-            body.product,
-            Number(body.quantity) || 0,
-            body.destination || "",
-            body.requirements || "",
-            message
-          ).run();
-        }
-
-        return json({
-          ok: true,
-          success: true,
-          message
-        });
-      }
-
-      /* NEGOTIATION */
-
-      if (
-        path === "/api/negotiate" &&
-        request.method === "POST"
-      ) {
-        const body =
-          await request.json();
-
-        if (!body.supplier) {
-          return json({
-            error: "Supplier is required."
-          }, 400);
-        }
-
-        if (!body.offer && !body.message) {
-          return json({
-            error: "Offer is required."
-          }, 400);
-        }
-
-        const offer =
-          body.offer ||
-          body.message ||
-          "";
-
-        const result =
-          await ai(
-            env,
-            `You are NOVA, an evidence-first procurement negotiation agent.
+async function negotiate(body, env) {
+  return ai(
+    env,
+    `You are NOVA, an advanced procurement negotiation agent.
 Never invent supplier facts.
-Clearly separate verified facts from assumptions.`,
-            `Supplier: ${body.supplier}
-
-Current offer:
-${offer}
-
-Supplier reply:
-${body.reply || "Not provided"}
+Clearly separate verified facts from assumptions.
+Give practical commercial negotiation advice.`,
+    `
+Supplier: ${body.supplier || ""}
+Target Price: ${body.target || ""}
+Quantity: ${body.quantity || ""}
+Current Price: ${body.current || ""}
+Negotiation Goal: ${body.goal || ""}
+Supplier Offer: ${body.offer || ""}
+Supplier Reply: ${body.reply || ""}
+Supplier Message: ${body.message || ""}
 
 Return:
 1. Offer analysis
@@ -965,123 +703,890 @@ Return:
 4. MOQ strategy
 5. Shipping strategy
 6. Payment strategy
-7. Risks
-8. Ready-to-send negotiation message`
-          );
+7. Risk points
+8. Ready-to-send negotiation message
+`
+  );
+}
 
-        const user =
-          await currentUser(
-            request,
+/* =========================
+   LANDED COST
+========================= */
+
+function landed(body) {
+  const qty = Math.max(
+    0,
+    Number(body.quantity ?? body.qty) || 0
+  );
+
+  const unit = Math.max(
+    0,
+    Number(body.unitPrice ?? body.unit_price) || 0
+  );
+
+  const shipping = Math.max(
+    0,
+    Number(body.shipping) || 0
+  );
+
+  const insurance = Math.max(
+    0,
+    Number(body.insurance) || 0
+  );
+
+  const duty = Math.max(
+    0,
+    Number(body.dutyPercent ?? body.duty_percent) || 0
+  );
+
+  const tax = Math.max(
+    0,
+    Number(body.taxPercent ?? body.tax_percent) || 0
+  );
+
+  const local = Math.max(
+    0,
+    Number(body.localDelivery ?? body.local_delivery) || 0
+  );
+
+  const goods = qty * unit;
+
+  const dutyAmount =
+    goods * duty / 100;
+
+  const taxable =
+    goods +
+    shipping +
+    insurance +
+    dutyAmount;
+
+  const taxAmount =
+    taxable * tax / 100;
+
+  const total =
+    goods +
+    shipping +
+    insurance +
+    dutyAmount +
+    taxAmount +
+    local;
+
+  return {
+    goods,
+    shipping,
+    insurance,
+    duty: dutyAmount,
+    tax: taxAmount,
+    localDelivery: local,
+    total,
+    unitLanded: qty ? total / qty : 0,
+    status:
+      "Estimated — verify freight, customs and taxes before payment"
+  };
+}
+
+/* =========================
+   SEO
+========================= */
+
+const SEO = {
+  "/ai-procurement": [
+    "AI Procurement | NOVA",
+    "AI purchasing agent for supplier discovery, comparison, RFQs and negotiation."
+  ],
+  "/ai-sourcing": [
+    "AI Sourcing | NOVA",
+    "Search global manufacturers and suppliers with evidence-first deal intelligence."
+  ],
+  "/supplier-finder": [
+    "Supplier Finder | NOVA",
+    "Find manufacturers and suppliers across global markets."
+  ],
+  "/supplier-comparison": [
+    "Supplier Comparison | NOVA",
+    "Compare supplier evidence, price, MOQ, lead time, risk and deal score."
+  ],
+  "/china-suppliers": [
+    "China Suppliers | NOVA",
+    "Discover Chinese manufacturers and wholesale suppliers."
+  ],
+  "/wholesale-suppliers": [
+    "Wholesale Suppliers | NOVA",
+    "Find global wholesale suppliers and manufacturers."
+  ],
+  "/ai-purchasing-agent": [
+    "AI Purchasing Agent | NOVA",
+    "NOVA searches, analyzes, creates RFQs and negotiates procurement offers."
+  ],
+  "/flash-deals": [
+    "Factory Flash Deals | NOVA",
+    "Discover factory commercial deals."
+  ]
+};
+
+function htmlPage(title, desc) {
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${title}</title>
+<meta name="description" content="${desc}">
+</head>
+<body style="font-family:Arial;max-width:900px;margin:40px auto;padding:20px">
+<h1>${title}</h1>
+<p>${desc}</p>
+<p><a href="/">Open NOVA</a></p>
+</body>
+</html>`;
+}
+
+/* =========================
+   REQUEST HANDLER
+========================= */
+
+export default {
+  async fetch(request, env) {
+    const u = new URL(request.url);
+    const p = u.pathname;
+    const method = request.method;
+
+    try {
+      if (env.DB) {
+        await migrateDatabase(env.DB);
+      }
+
+      /* HEALTH */
+      if (p === "/api/health") {
+        return json({
+          ok: true,
+          nova: "online",
+          database: !!env.DB,
+          ai: !!env.AI,
+          yep: !!env.YEP_API_KEY,
+          timestamp: new Date().toISOString()
+        });
+      }
+
+      /* ROBOTS */
+      if (p === "/robots.txt") {
+        return new Response(
+          `User-agent: *
+Allow: /
+Sitemap: ${u.origin}/sitemap.xml`,
+          {
+            headers: {
+              "Content-Type": "text/plain"
+            }
+          }
+        );
+      }
+
+      /* SITEMAP */
+      if (p === "/sitemap.xml") {
+        const paths = [
+          "/",
+          ...Object.keys(SEO)
+        ];
+
+        return new Response(
+          `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+${paths.map(x =>
+  `<url><loc>${u.origin}${x}</loc></url>`
+).join("")}
+</urlset>`,
+          {
+            headers: {
+              "Content-Type": "application/xml"
+            }
+          }
+        );
+      }
+
+      /* SEO */
+      if (SEO[p]) {
+        const [title, desc] = SEO[p];
+
+        return new Response(
+          htmlPage(title, desc),
+          {
+            headers: {
+              "Content-Type": "text/html;charset=UTF-8"
+            }
+          }
+        );
+      }
+
+      /* SEARCH */
+      if (p === "/api/search" && method === "POST") {
+        const b = await request.json();
+
+        return json(
+          await searchSuppliers(
+            b.request || b.query || b.product,
+            env,
             env.DB
-          );
+          )
+        );
+      }
 
-        if (user) {
-          await env.DB.prepare(`
-            INSERT INTO negotiations(
-              user_id,supplier,offer,result
-            )
-            VALUES(?,?,?,?)
-          `).bind(
-            user.id,
-            body.supplier,
-            offer,
-            result
-          ).run();
-        }
+      /* NETWORK */
+      if (p === "/api/network" && method === "GET") {
+        const row = await env.DB
+          .prepare("SELECT COUNT(*) AS count FROM suppliers")
+          .first();
 
         return json({
           ok: true,
+          actualRecords: Number(row?.count || 0),
+          targetRecords: TARGET_NETWORK,
+          evidenceRecords: Number(row?.count || 0),
+          coverage: [
+            ...new Set(REGIONS.map(x => x[1]))
+          ],
+          status:
+            "Live supplier discovery through configured search sources."
+        });
+      }
+
+      /* SUPPLIERS */
+      if (p === "/api/suppliers" && method === "GET") {
+        const rows = await env.DB
+          .prepare(`
+            SELECT *
+            FROM suppliers
+            ORDER BY deal_score DESC, id DESC
+            LIMIT 200
+          `)
+          .all();
+
+        return json({
+          suppliers: rows.results || []
+        });
+      }
+
+      /* PROJECTS - CREATE */
+      if (p === "/api/projects" && method === "POST") {
+        const b = await request.json();
+        const user = await currentUser(request, env.DB);
+
+        const r = await env.DB.prepare(`
+          INSERT INTO projects
+          (user_id,name,product,quantity,destination,requirements,status)
+          VALUES(?,?,?,?,?,?,?)
+        `).bind(
+          user?.id || null,
+          b.name || "",
+          b.product || "",
+          Number(b.quantity) || 0,
+          b.destination || "",
+          b.requirements || "",
+          "active"
+        ).run();
+
+        return json({
+          success: true,
+          projectId: r.meta.last_row_id
+        });
+      }
+
+      /* PROJECTS - LOAD */
+      if (p === "/api/projects" && method === "GET") {
+        const user = await currentUser(request, env.DB);
+
+        const rows = user
+          ? await env.DB.prepare(`
+              SELECT *
+              FROM projects
+              WHERE user_id=? OR user_id IS NULL
+              ORDER BY id DESC
+            `).bind(user.id).all()
+          : await env.DB.prepare(`
+              SELECT *
+              FROM projects
+              ORDER BY id DESC
+            `).all();
+
+        return json({
+          projects: rows.results || []
+        });
+      }
+
+      /* RFQ */
+      if (p === "/api/rfq" && method === "POST") {
+        const b = await request.json();
+
+        const msg = await ai(
+          env,
+          "You write concise professional procurement RFQs. Never invent specifications.",
+          `
+Product: ${b.product || ""}
+Quantity: ${b.quantity || ""}
+Destination: ${b.destination || ""}
+Requirements: ${b.requirements || "None"}
+
+Create a ready-to-send RFQ requesting:
+unit price, MOQ, sample, production lead time,
+Incoterm, packaging, shipping to destination,
+payment terms, certifications and quotation validity.
+`
+        );
+
+        const user = await currentUser(request, env.DB);
+
+        const r = await env.DB.prepare(`
+          INSERT INTO rfqs
+          (user_id,project_id,supplier_id,product,quantity,destination,requirements,message,status)
+          VALUES(?,?,?,?,?,?,?,?,?)
+        `).bind(
+          user?.id || null,
+          b.project_id ?? b.projectId ?? null,
+          b.supplier_id ?? b.supplierId ?? null,
+          b.product || "",
+          Number(b.quantity) || 0,
+          b.destination || "",
+          b.requirements || "",
+          msg,
+          "draft"
+        ).run();
+
+        return json({
+          success: true,
+          rfqId: r.meta.last_row_id,
+          message: msg
+        });
+      }
+
+      /* RFQ LOAD */
+      if (p === "/api/rfq" && method === "GET") {
+        const rows = await env.DB
+          .prepare(`
+            SELECT *
+            FROM rfqs
+            ORDER BY id DESC
+            LIMIT 100
+          `)
+          .all();
+
+        return json({
+          rfqs: rows.results || []
+        });
+      }
+
+      /* BIDS - SUBMIT */
+      if (p === "/api/bids" && method === "POST") {
+        const b = await request.json();
+        const user = await currentUser(request, env.DB);
+
+        const r = await env.DB.prepare(`
+          INSERT INTO bids
+          (user_id,project_id,supplier_id,supplier,unit_price,currency,
+           moq,lead_time_days,shipping,notes,status)
+          VALUES(?,?,?,?,?,?,?,?,?,?,?)
+        `).bind(
+          user?.id || null,
+          b.project_id ?? b.projectId ?? null,
+          b.supplier_id ?? b.supplierId ?? null,
+          b.supplier || b.supplierName || "",
+          Number(b.unit_price ?? b.unitPrice) || 0,
+          b.currency || "USD",
+          Number(b.moq) || 0,
+          Number(b.lead_time_days ?? b.leadTimeDays) || 0,
+          Number(b.shipping) || 0,
+          b.notes || "",
+          "submitted"
+        ).run();
+
+        return json({
+          success: true,
+          bidId: r.meta.last_row_id
+        });
+      }
+
+      /* BIDS - LOAD */
+      if (p === "/api/bids" && method === "GET") {
+        const rows = await env.DB
+          .prepare(`
+            SELECT *
+            FROM bids
+            ORDER BY id DESC
+            LIMIT 200
+          `)
+          .all();
+
+        return json({
+          bids: rows.results || []
+        });
+      }
+
+      /* BIDS - COMPARE GET */
+      if (
+        p === "/api/bids/compare" &&
+        method === "GET"
+      ) {
+        const projectId =
+          u.searchParams.get("project_id") ||
+          u.searchParams.get("projectId");
+
+        let rows;
+
+        if (projectId) {
+          rows = await env.DB.prepare(`
+            SELECT *
+            FROM bids
+            WHERE project_id=?
+            ORDER BY unit_price ASC
+          `).bind(projectId).all();
+        } else {
+          rows = await env.DB.prepare(`
+            SELECT *
+            FROM bids
+            ORDER BY unit_price ASC
+            LIMIT 100
+          `).all();
+        }
+
+        return json({
+          bids: rows.results || []
+        });
+      }
+
+      /* BIDS - COMPARE POST */
+      if (
+        p === "/api/bids/compare" &&
+        method === "POST"
+      ) {
+        const b = await request.json();
+
+        const projectId =
+          b.project_id ??
+          b.projectId ??
+          null;
+
+        const rows = projectId
+          ? await env.DB.prepare(`
+              SELECT *
+              FROM bids
+              WHERE project_id=?
+              ORDER BY unit_price ASC
+            `).bind(projectId).all()
+          : await env.DB.prepare(`
+              SELECT *
+              FROM bids
+              ORDER BY unit_price ASC
+              LIMIT 100
+            `).all();
+
+        return json({
+          bids: rows.results || []
+        });
+      }
+
+      /* AWARD */
+      if (p === "/api/bids/award" && method === "POST") {
+        const b = await request.json();
+
+        const bidId =
+          b.bid_id ??
+          b.bidId;
+
+        if (!bidId) {
+          return json({
+            error: "Bid ID is required."
+          }, 400);
+        }
+
+        await env.DB.prepare(`
+          UPDATE bids
+          SET status='awarded'
+          WHERE id=?
+        `).bind(bidId).run();
+
+        return json({
+          success: true,
+          bidId
+        });
+      }
+
+      /* LANDED COST */
+      if (
+        p === "/api/landed-cost" &&
+        method === "POST"
+      ) {
+        return json(
+          landed(await request.json())
+        );
+      }
+
+      /* NEGOTIATION */
+      if (
+        p === "/api/negotiate" &&
+        method === "POST"
+      ) {
+        const b = await request.json();
+
+        if (!b.supplier) {
+          return json({
+            error: "Supplier is required."
+          }, 400);
+        }
+
+        const result =
+          await negotiate(b, env);
+
+        const user =
+          await currentUser(request, env.DB);
+
+        await env.DB.prepare(`
+          INSERT INTO negotiations
+          (user_id,supplier,offer,result)
+          VALUES(?,?,?,?)
+        `).bind(
+          user?.id || null,
+          b.supplier || "",
+          b.offer ||
+          b.current ||
+          b.target ||
+          "",
+          result
+        ).run();
+
+        return json({
           success: true,
           result
         });
       }
 
-      /* FLASH DEALS - FIXED */
-
+      /* NEGOTIATION HISTORY */
       if (
-        path === "/api/deals" &&
-        request.method === "GET"
+        p === "/api/negotiations" &&
+        method === "GET"
       ) {
-        const rows =
-          await env.DB
-            .prepare(`
-              SELECT *
-              FROM flash_deals
-              WHERE status='submitted'
-              AND (
-                expires_at IS NULL
-                OR expires_at > datetime('now')
-              )
-              ORDER BY id DESC
-              LIMIT 50
-            `)
-            .all();
+        const rows = await env.DB
+          .prepare(`
+            SELECT *
+            FROM negotiations
+            ORDER BY id DESC
+            LIMIT 100
+          `)
+          .all();
 
         return json({
-          ok: true,
-          deals:
+          negotiations: rows.results || []
+        });
+      }
+
+      /* PURCHASE ORDERS - CREATE */
+      if (
+        p === "/api/purchase-orders" &&
+        method === "POST"
+      ) {
+        const b = await request.json();
+        const user =
+          await currentUser(request, env.DB);
+
+        let projectId =
+          b.project_id ??
+          b.projectId ??
+          null;
+
+        let supplierId =
+          b.supplier_id ??
+          b.supplierId ??
+          null;
+
+        let bidId =
+          b.bid_id ??
+          b.bidId ??
+          null;
+
+        let quantity =
+          Number(b.quantity) || 0;
+
+        let unitPrice =
+          Number(
+            b.unit_price ??
+            b.unitPrice
+          ) || 0;
+
+        let currency =
+          b.currency || "USD";
+
+        let notes =
+          b.notes || "";
+
+        if (bidId) {
+          const bid =
+            await env.DB.prepare(
+              "SELECT * FROM bids WHERE id=?"
+            ).bind(bidId).first();
+
+          if (bid) {
+            projectId ??= bid.project_id;
+            supplierId ??= bid.supplier_id;
+
+            if (!unitPrice)
+              unitPrice =
+                Number(bid.unit_price) || 0;
+
+            if (!quantity)
+              quantity = 1;
+
+            currency =
+              b.currency ||
+              bid.currency ||
+              "USD";
+          }
+        }
+
+        const r =
+          await env.DB.prepare(`
+            INSERT INTO purchase_orders
+            (user_id,project_id,supplier_id,bid_id,
+             quantity,unit_price,currency,notes,status)
+            VALUES(?,?,?,?,?,?,?,?,?)
+          `).bind(
+            user?.id || null,
+            projectId,
+            supplierId,
+            bidId,
+            quantity,
+            unitPrice,
+            currency,
+            notes,
+            "draft"
+          ).run();
+
+        return json({
+          success: true,
+          purchaseOrderId:
+            r.meta.last_row_id,
+          status: "draft"
+        });
+      }
+
+      /* PURCHASE ORDERS - LOAD */
+      if (
+        p === "/api/purchase-orders" &&
+        method === "GET"
+      ) {
+        const rows =
+          await env.DB.prepare(`
+            SELECT *
+            FROM purchase_orders
+            ORDER BY id DESC
+            LIMIT 200
+          `).all();
+
+        return json({
+          purchaseOrders:
             rows.results || []
         });
       }
 
+      /* FLASH DEALS - GET */
       if (
-        path === "/api/deals" &&
-        request.method === "POST"
+        p === "/api/deals" &&
+        method === "GET"
       ) {
-        const body =
-          await request.json();
-
-        const user =
-          await currentUser(
-            request,
-            env.DB
-          );
-
-        await env.DB.prepare(`
-          INSERT INTO flash_deals(
-            user_id,company,product,
-            description,country,quantity,
-            price,currency,moq,
-            expires_at,url
-          )
-          VALUES(?,?,?,?,?,?,?,?,?,?,?)
-        `).bind(
-          user?.id || null,
-          body.company || "",
-          body.product || "",
-          body.description || "",
-          body.country || "",
-          Number(body.quantity) || 0,
-          Number(body.price) || 0,
-          body.currency || "USD",
-          Number(body.moq) || 0,
-          body.expiresAt || null,
-          body.url || ""
-        ).run();
+        const rows =
+          await env.DB.prepare(`
+            SELECT *
+            FROM flash_deals
+            WHERE status='submitted'
+              AND (
+                expires_at IS NULL
+                OR expires_at=''
+                OR expires_at > datetime('now')
+              )
+            ORDER BY id DESC
+            LIMIT 100
+          `).all();
 
         return json({
-          ok: true,
+          deals: rows.results || []
+        });
+      }
+
+      /* FLASH DEALS - CREATE */
+      if (
+        p === "/api/deals" &&
+        method === "POST"
+      ) {
+        const b = await request.json();
+
+        const user =
+          await currentUser(request, env.DB);
+
+        const r =
+          await env.DB.prepare(`
+            INSERT INTO flash_deals
+            (user_id,company,product,description,country,
+             quantity,price,currency,moq,expires_at,status,url)
+            VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
+          `).bind(
+            user?.id || null,
+            b.company ||
+            b.supplier ||
+            "",
+            b.product || "",
+            b.description || "",
+            b.country || "",
+            Number(b.quantity) || 0,
+            Number(b.price) || 0,
+            b.currency || "USD",
+            Number(b.moq) || 0,
+            b.expiresAt ||
+            b.expires_at ||
+            null,
+            "submitted",
+            b.url || ""
+          ).run();
+
+        return json({
           success: true,
+          dealId: r.meta.last_row_id,
           status: "submitted"
         });
       }
 
-      /* ACCOUNT */
-
+      /* MEMORY - SAVE */
       if (
-        path === "/api/signup" &&
-        request.method === "POST"
+        p === "/api/memory" &&
+        method === "POST"
       ) {
-        const body =
+        const b = await request.json();
+
+        const user =
+          await currentUser(request, env.DB);
+
+        const r =
+          await env.DB.prepare(`
+            INSERT INTO procurement_memory
+            (user_id,product,supplier,outcome,memory)
+            VALUES(?,?,?,?,?)
+          `).bind(
+            user?.id || null,
+            b.product || "",
+            b.supplier || "",
+            b.outcome || "",
+            b.memory || ""
+          ).run();
+
+        return json({
+          success: true,
+          memoryId: r.meta.last_row_id
+        });
+      }
+
+      /* MEMORY - LOAD */
+      if (
+        p === "/api/memory" &&
+        method === "GET"
+      ) {
+        const rows =
+          await env.DB.prepare(`
+            SELECT *
+            FROM procurement_memory
+            ORDER BY id DESC
+            LIMIT 200
+          `).all();
+
+        return json({
+          memory: rows.results || []
+        });
+      }
+
+      /* PURCHASE HISTORY - CREATE */
+      if (
+        p === "/api/purchases" &&
+        method === "POST"
+      ) {
+        const user =
+          await currentUser(request, env.DB);
+
+        if (!user) {
+          return json({
+            error: "Please login first."
+          }, 401);
+        }
+
+        const b =
+          await request.json();
+
+        await env.DB.prepare(`
+          INSERT INTO purchases
+          (user_id,product,supplier,quantity,
+           unit_price,shipping,landed_cost,supplier_url)
+          VALUES(?,?,?,?,?,?,?,?)
+        `).bind(
+          user.id,
+          b.product || "",
+          b.supplier || "",
+          Number(b.quantity) || 0,
+          Number(
+            b.unitPrice ??
+            b.unit_price
+          ) || 0,
+          Number(b.shipping) || 0,
+          Number(
+            b.landedCost ??
+            b.landed_cost
+          ) || 0,
+          b.supplierUrl ||
+          b.supplier_url ||
+          ""
+        ).run();
+
+        return json({
+          success: true
+        });
+      }
+
+      /* PURCHASE HISTORY - LOAD */
+      if (
+        p === "/api/purchases" &&
+        method === "GET"
+      ) {
+        const user =
+          await currentUser(request, env.DB);
+
+        if (!user) {
+          return json({
+            error: "Please login first."
+          }, 401);
+        }
+
+        const rows =
+          await env.DB.prepare(`
+            SELECT *
+            FROM purchases
+            WHERE user_id=?
+            ORDER BY id DESC
+          `).bind(user.id).all();
+
+        return json({
+          purchases:
+            rows.results || []
+        });
+      }
+
+      /* SIGNUP */
+      if (
+        p === "/api/signup" &&
+        method === "POST"
+      ) {
+        const b =
           await request.json();
 
         const email =
-          String(body.email || "")
+          String(b.email || "")
             .trim()
             .toLowerCase();
 
         const password =
-          String(body.password || "");
+          String(b.password || "");
 
         if (
           !email ||
@@ -1106,7 +1611,6 @@ Return:
         }
 
         const salt = token();
-
         const hash =
           await passwordHash(
             password,
@@ -1115,9 +1619,8 @@ Return:
 
         const r =
           await env.DB.prepare(`
-            INSERT INTO users(
-              email,password_hash,salt
-            )
+            INSERT INTO users
+            (email,password_hash,salt)
             VALUES(?,?,?)
           `).bind(
             email,
@@ -1125,56 +1628,58 @@ Return:
             salt
           ).run();
 
-        const session =
-          token();
+        const t = token();
 
         await env.DB.prepare(`
-          INSERT INTO sessions(
-            token,user_id,expires_at
-          )
+          INSERT INTO sessions
+          (token,user_id,expires_at)
           VALUES(?,?,?)
         `).bind(
-          session,
+          t,
           r.meta.last_row_id,
           Date.now() + 604800000
         ).run();
 
         return json(
           {
-            ok: true,
             success: true,
             email
           },
           200,
           {
             "Set-Cookie":
-              sessionCookie(session)
+              sessionCookie(t)
           }
         );
       }
 
+      /* LOGIN */
       if (
-        path === "/api/login" &&
-        request.method === "POST"
+        p === "/api/login" &&
+        method === "POST"
       ) {
-        const body =
+        const b =
           await request.json();
 
         const email =
-          String(body.email || "")
+          String(b.email || "")
             .trim()
             .toLowerCase();
 
         const password =
-          String(body.password || "");
+          String(b.password || "");
 
         const user =
-          await env.DB.prepare(
-            "SELECT * FROM users WHERE email=?"
-          ).bind(email).first();
+          await env.DB.prepare(`
+            SELECT *
+            FROM users
+            WHERE email=?
+          `).bind(email).first();
 
         if (
           !user ||
+          !user.salt ||
+          !user.password_hash ||
           await passwordHash(
             password,
             user.salt
@@ -1186,39 +1691,37 @@ Return:
           }, 401);
         }
 
-        const session =
-          token();
+        const t = token();
 
         await env.DB.prepare(`
-          INSERT INTO sessions(
-            token,user_id,expires_at
-          )
+          INSERT INTO sessions
+          (token,user_id,expires_at)
           VALUES(?,?,?)
         `).bind(
-          session,
+          t,
           user.id,
           Date.now() + 604800000
         ).run();
 
         return json(
           {
-            ok: true,
             success: true,
             email
           },
           200,
           {
             "Set-Cookie":
-              sessionCookie(session)
+              sessionCookie(t)
           }
         );
       }
 
+      /* LOGOUT */
       if (
-        path === "/api/logout"
+        p === "/api/logout"
       ) {
         const t =
-          cookie(
+          cookieValue(
             request,
             "nova_session"
           );
@@ -1231,7 +1734,6 @@ Return:
 
         return json(
           {
-            ok: true,
             success: true
           },
           200,
@@ -1242,8 +1744,9 @@ Return:
         );
       }
 
+      /* ACCOUNT */
       if (
-        path === "/api/me"
+        p === "/api/me"
       ) {
         const user =
           await currentUser(
@@ -1252,536 +1755,36 @@ Return:
           );
 
         return json({
-          ok: true,
           loggedIn: !!user,
           user: user || null
         });
       }
 
-      /* PURCHASE HISTORY */
-
-      if (
-        path === "/api/purchases" &&
-        request.method === "GET"
-      ) {
-        const user =
-          await currentUser(
-            request,
-            env.DB
-          );
-
-        if (!user) {
-          return json({
-            error:
-              "Please login first."
-          }, 401);
-        }
-
-        const rows =
-          await env.DB.prepare(`
-            SELECT *
-            FROM purchases
-            WHERE user_id=?
-            ORDER BY id DESC
-          `).bind(user.id).all();
-
-        return json({
-          ok: true,
-          purchases:
-            rows.results || []
-        });
+      /* STATIC FRONTEND */
+      if (env.ASSETS) {
+        return env.ASSETS.fetch(request);
       }
 
-      if (
-        path === "/api/purchases" &&
-        request.method === "POST"
-      ) {
-        const user =
-          await currentUser(
-            request,
-            env.DB
-          );
-
-        if (!user) {
-          return json({
-            error:
-              "Please login first."
-          }, 401);
-        }
-
-        const body =
-          await request.json();
-
-        await env.DB.prepare(`
-          INSERT INTO purchases(
-            user_id,product,supplier,
-            quantity,unit_price,shipping,
-            landed_cost,supplier_url
-          )
-          VALUES(?,?,?,?,?,?,?,?)
-        `).bind(
-          user.id,
-          body.product || "",
-          body.supplier || "",
-          Number(body.quantity) || 0,
-          Number(
-            body.unitPrice ??
-            body.unit_price
-          ) || 0,
-          Number(body.shipping) || 0,
-          Number(
-            body.landedCost ??
-            body.landed_cost
-          ) || 0,
-          body.supplierUrl ||
-          body.supplier_url ||
-          ""
-        ).run();
-
-        return json({
-          ok: true,
-          success: true
-        });
-      }
-
-      /* PROJECTS */
-
-      if (
-        path === "/api/projects" &&
-        request.method === "POST"
-      ) {
-        const user =
-          await currentUser(
-            request,
-            env.DB
-          );
-
-        const body =
-          await request.json();
-
-        const r =
-          await env.DB.prepare(`
-            INSERT INTO projects(
-              user_id,name,product,
-              quantity,destination
-            )
-            VALUES(?,?,?,?,?)
-          `).bind(
-            user?.id || null,
-            body.name ||
-              body.product ||
-              "Procurement Project",
-            body.product || "",
-            Number(body.quantity) || 0,
-            body.destination || ""
-          ).run();
-
-        return json({
-          ok: true,
-          success: true,
-          projectId:
-            r.meta.last_row_id
-        });
-      }
-
-      if (
-        path === "/api/projects" &&
-        request.method === "GET"
-      ) {
-        const rows =
-          await env.DB
-            .prepare(`
-              SELECT *
-              FROM projects
-              ORDER BY id DESC
-            `)
-            .all();
-
-        return json({
-          ok: true,
-          projects:
-            rows.results || []
-        });
-      }
-
-      /* BIDS */
-
-      if (
-        path === "/api/bids" &&
-        request.method === "POST"
-      ) {
-        const b =
-          await request.json();
-
-        const projectId =
-          b.projectId ??
-          b.project_id;
-
-        const supplierId =
-          b.supplierId ??
-          b.supplier_id;
-
-        await env.DB.prepare(`
-          INSERT INTO bids(
-            project_id,supplier_id,
-            supplier,unit_price,
-            quantity,shipping,
-            lead_time_days,moq,
-            currency,notes
-          )
-          VALUES(?,?,?,?,?,?,?,?,?,?)
-        `).bind(
-          Number(projectId) || null,
-          Number(supplierId) || null,
-          b.supplier || "",
-          Number(
-            b.unitPrice ??
-            b.unit_price
-          ) || 0,
-          Number(b.quantity) || 0,
-          Number(b.shipping) || 0,
-          Number(
-            b.leadTimeDays ??
-            b.lead_time_days
-          ) || 0,
-          Number(b.moq) || 0,
-          b.currency || "USD",
-          b.notes || ""
-        ).run();
-
-        return json({
-          ok: true,
-          success: true
-        });
-      }
-
-      if (
-        path === "/api/bids/compare" &&
-        request.method === "GET"
-      ) {
-        const projectId =
-          url.searchParams.get(
-            "project_id"
-          );
-
-        const rows =
-          await env.DB.prepare(`
-            SELECT *
-            FROM bids
-            WHERE project_id=?
-            ORDER BY unit_price ASC
-          `).bind(
-            projectId
-          ).all();
-
-        return json({
-          ok: true,
-          bids:
-            rows.results || []
-        });
-      }
-
-      /* AWARD */
-
-      if (
-        path === "/api/bids/award" &&
-        request.method === "POST"
-      ) {
-        const b =
-          await request.json();
-
-        const bidId =
-          b.bidId ??
-          b.bid_id;
-
-        await env.DB.prepare(`
-          UPDATE bids
-          SET status='awarded'
-          WHERE id=?
-        `).bind(
-          bidId
-        ).run();
-
-        return json({
-          ok: true,
-          success: true,
-          status: "awarded"
-        });
-      }
-
-      /* PURCHASE ORDER */
-
-      if (
-        path === "/api/purchase-orders" &&
-        request.method === "POST"
-      ) {
-        const user =
-          await currentUser(
-            request,
-            env.DB
-          );
-
-        const b =
-          await request.json();
-
-        let data = {
-          projectId:
-            b.projectId ??
-            b.project_id,
-          supplierId:
-            b.supplierId ??
-            b.supplier_id,
-          supplier:
-            b.supplier || "",
-          product:
-            b.product || "",
-          quantity:
-            Number(b.quantity) || 0,
-          unitPrice:
-            Number(
-              b.unitPrice ??
-              b.unit_price
-            ) || 0,
-          currency:
-            b.currency || "USD",
-          notes:
-            b.notes || ""
-        };
-
-        const bidId =
-          b.bidId ??
-          b.bid_id;
-
-        if (bidId) {
-          const bid =
-            await env.DB.prepare(
-              "SELECT * FROM bids WHERE id=?"
-            ).bind(bidId).first();
-
-          if (bid) {
-            data = {
-              projectId:
-                bid.project_id,
-              supplierId:
-                bid.supplier_id,
-              supplier:
-                bid.supplier || "",
-              product:
-                b.product || "",
-              quantity:
-                Number(
-                  b.quantity ||
-                  bid.quantity
-                ) || 0,
-              unitPrice:
-                Number(
-                  b.unitPrice ??
-                  bid.unit_price
-                ) || 0,
-              currency:
-                b.currency ||
-                bid.currency ||
-                "USD",
-              notes:
-                b.notes ||
-                bid.notes ||
-                ""
-            };
+      return new Response(
+        "NOVA is online.",
+        {
+          headers: {
+            "Content-Type":
+              "text/plain;charset=UTF-8"
           }
         }
+      );
 
-        const r =
-          await env.DB.prepare(`
-            INSERT INTO purchase_orders(
-              user_id,project_id,
-              supplier_id,supplier,
-              product,quantity,
-              unit_price,currency,
-              notes,status
-            )
-            VALUES(?,?,?,?,?,?,?,?,?,'draft')
-          `).bind(
-            user?.id || null,
-            data.projectId || null,
-            data.supplierId || null,
-            data.supplier,
-            data.product,
-            data.quantity,
-            data.unitPrice,
-            data.currency,
-            data.notes
-          ).run();
-
-        return json({
-          ok: true,
-          success: true,
-          purchaseOrderId:
-            r.meta.last_row_id,
-          status: "draft",
-          approvalRequired: true
-        });
-      }
-
-      /* MEMORY */
-
-      if (
-        path === "/api/memory" &&
-        request.method === "POST"
-      ) {
-        const user =
-          await currentUser(
-            request,
-            env.DB
-          );
-
-        const b =
-          await request.json();
-
-        await env.DB.prepare(`
-          INSERT INTO procurement_memory(
-            user_id,product,
-            supplier,outcome,memory
-          )
-          VALUES(?,?,?,?,?)
-        `).bind(
-          user?.id || null,
-          b.product || "",
-          b.supplier || "",
-          b.outcome || "",
-          b.memory || ""
-        ).run();
-
-        return json({
-          ok: true,
-          success: true
-        });
-      }
-
-      if (
-        path === "/api/memory" &&
-        request.method === "GET"
-      ) {
-        const rows =
-          await env.DB.prepare(`
-            SELECT *
-            FROM procurement_memory
-            ORDER BY id DESC
-            LIMIT 100
-          `).all();
-
-        return json({
-          ok: true,
-          memory:
-            rows.results || []
-        });
-      }
-
-      /* SEO */
-
-      const seo = {
-        "/ai-procurement":
-          [
-            "AI Procurement | NOVA",
-            "AI purchasing agent."
-          ],
-        "/ai-sourcing":
-          [
-            "AI Sourcing | NOVA",
-            "Global supplier discovery."
-          ],
-        "/supplier-finder":
-          [
-            "Supplier Finder | NOVA",
-            "Find global manufacturers."
-          ],
-        "/supplier-comparison":
-          [
-            "Supplier Comparison | NOVA",
-            "Compare supplier intelligence."
-          ],
-        "/china-suppliers":
-          [
-            "China Suppliers | NOVA",
-            "Discover Chinese manufacturers."
-          ],
-        "/wholesale-suppliers":
-          [
-            "Wholesale Suppliers | NOVA",
-            "Find global wholesalers."
-          ],
-        "/ai-purchasing-agent":
-          [
-            "AI Purchasing Agent | NOVA",
-            "AI procurement workflow."
-          ],
-        "/flash-deals":
-          [
-            "Factory Flash Deals | NOVA",
-            "Commercial supplier deals."
-          ]
-      };
-
-      if (seo[path]) {
-        return new Response(
-          page(
-            seo[path][0],
-            seo[path][1]
-          ),
-          {
-            headers: {
-              "Content-Type":
-                "text/html;charset=UTF-8"
-            }
-          }
-        );
-      }
-
-      if (path === "/robots.txt") {
-        return new Response(
-          `User-agent: *
-Allow: /
-Sitemap: ${url.origin}/sitemap.xml`
-        );
-      }
-
-      if (path === "/sitemap.xml") {
-        const paths = [
-          "/",
-          "/ai-procurement",
-          "/ai-sourcing",
-          "/supplier-finder",
-          "/supplier-comparison",
-          "/china-suppliers",
-          "/wholesale-suppliers",
-          "/ai-purchasing-agent",
-          "/flash-deals"
-        ];
-
-        return new Response(
-          `<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${paths.map(
-  x => `<url><loc>${url.origin}${x}</loc></url>`
-).join("")}
-</urlset>`,
-          {
-            headers: {
-              "Content-Type":
-                "application/xml"
-            }
-          }
-        );
-      }
-
-      return env.ASSETS.fetch(request);
-
-    } catch (error) {
-      return json({
-        ok: false,
-        error:
-          error?.message ||
-          "Server error."
-      }, 500);
+    } catch (e) {
+      return json(
+        {
+          ok: false,
+          error:
+            e?.message ||
+            "Server error."
+        },
+        500
+      );
     }
   }
 };
