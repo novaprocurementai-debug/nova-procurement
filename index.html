@@ -363,7 +363,6 @@ font-size:28px
 <body>
 
 <header>
-
 <div class="wrap">
 
 <div class="brand">NOVA</div>
@@ -373,7 +372,6 @@ Your AI Purchasing Agent — Search. Verify. Compare. Negotiate. Execute.
 </div>
 
 <div class="nav">
-
 <a href="#search">Search</a>
 <a href="#projects">Projects</a>
 <a href="#suppliers">Suppliers</a>
@@ -385,11 +383,9 @@ Your AI Purchasing Agent — Search. Verify. Compare. Negotiate. Execute.
 <a href="#deals">Flash Deals</a>
 <a href="#memory">Memory</a>
 <a href="#account">Account</a>
-
 </div>
 
 </div>
-
 </header>
 
 <main>
@@ -431,8 +427,10 @@ analysis, negotiation and purchase-order workflows.
 </div>
 
 </div>
-
 </section>
+
+
+<!-- ACCOUNT -->
 
 <section id="account" class="card">
 
@@ -465,6 +463,9 @@ analysis, negotiation and purchase-order workflows.
 
 </section>
 
+
+<!-- SEARCH -->
+
 <section id="search" class="card">
 
 <h2>🔎 Global Supplier Discovery</h2>
@@ -472,8 +473,7 @@ analysis, negotiation and purchase-order workflows.
 <div class="section-note">
 NOVA searches configured external sources and extracts
 commercial evidence such as supplier type, price, MOQ
-and lead time. Information without sufficient evidence
-is shown as Not verified.
+and lead time.
 </div>
 
 <label>What do you want to buy?</label>
@@ -509,6 +509,9 @@ Network Status
 
 </section>
 
+
+<!-- PROJECTS -->
+
 <section id="projects" class="card">
 
 <h2>📁 Procurement Projects</h2>
@@ -537,5 +540,1963 @@ Network Status
 
 <div class="full">
 <label>Requirements</label>
-<textarea id="projectRequirements" placeholder="304 stainless steel, vacuum insulated, custom logo, packaging..."></textarea>
-  </div>
+<textarea id="projectRequirements"
+placeholder="304 stainless steel, vacuum insulated, custom logo, packaging..."></textarea>
+</div>
+
+</div>
+
+<div class="actions">
+
+<button class="accent" onclick="createProject()">
+Create Project
+</button>
+
+<button class="secondary" onclick="loadProjects()">
+Load Projects
+</button>
+
+</div>
+
+<div id="projectStatus" class="status"></div>
+<div id="projectsList"></div>
+
+</section>
+
+
+<!-- SUPPLIERS -->
+
+<section id="suppliers" class="card">
+
+<h2>🏭 Supplier Intelligence</h2>
+
+<button class="accent" onclick="loadSuppliers()">
+Load Suppliers
+</button>
+
+<div id="supplierStatus" class="status"></div>
+<div id="suppliersList"></div>
+
+</section>
+
+
+<!-- RFQ -->
+
+<section id="rfq" class="card">
+
+<h2>📨 AI RFQ Generator</h2>
+
+<div class="grid">
+
+<div>
+<label>Product</label>
+<input id="rfqProduct"
+placeholder="750ml Stainless Steel Bottle">
+</div>
+
+<div>
+<label>Quantity</label>
+<input id="rfqQuantity"
+type="number"
+value="1000">
+</div>
+
+<div>
+<label>Destination</label>
+<input id="rfqDestination"
+placeholder="Dubai, UAE">
+</div>
+
+<div>
+<label>Supplier</label>
+<input id="rfqSupplier"
+placeholder="Supplier name">
+</div>
+
+<div class="full">
+<label>Requirements</label>
+<textarea id="rfqRequirements"
+placeholder="Material, dimensions, logo, packaging, certifications..."></textarea>
+</div>
+
+</div>
+
+<div class="actions">
+
+<button class="accent" onclick="generateRFQ()">
+Generate RFQ
+</button>
+
+<button class="secondary" onclick="createSavedRFQ()">
+Save RFQ
+</button>
+
+</div>
+
+<div id="rfqStatus" class="status"></div>
+<div id="rfqOutput" class="copy"></div>
+
+</section>
+
+
+<!-- BIDS -->
+
+<section id="bids" class="card">
+
+<h2>📊 Supplier Bid Management</h2>
+
+<div class="grid">
+
+<div>
+<label>Project ID</label>
+<input id="bidProjectId" type="number"
+placeholder="Project ID">
+</div>
+
+<div>
+<label>Supplier ID</label>
+<input id="bidSupplierId" type="number"
+placeholder="Supplier ID">
+</div>
+
+<div>
+<label>Unit Price</label>
+<input id="bidUnitPrice" type="number"
+step="0.01"
+placeholder="2.50">
+</div>
+
+<div>
+<label>Currency</label>
+<input id="bidCurrency"
+value="USD">
+</div>
+
+<div>
+<label>MOQ</label>
+<input id="bidMOQ" type="number"
+placeholder="500">
+</div>
+
+<div>
+<label>Lead Time Days</label>
+<input id="bidLeadTime" type="number"
+placeholder="20">
+</div>
+
+<div class="full">
+<label>Notes</label>
+<textarea id="bidNotes"
+placeholder="Shipping, certifications, packaging, payment terms..."></textarea>
+</div>
+
+</div>
+
+<div class="actions">
+
+<button class="accent" onclick="submitBid()">
+Submit Bid
+</button>
+
+<button class="secondary" onclick="compareBids()">
+Compare Bids
+</button>
+
+</div>
+
+<div id="bidStatus" class="status"></div>
+<div id="bidsList"></div>
+
+</section>
+
+
+<!-- LANDED COST -->
+
+<section id="landed" class="card">
+
+<h2>💰 Landed Cost Engine</h2>
+
+<div class="grid">
+
+<div>
+<label>Unit Price</label>
+<input id="lcUnit" type="number"
+step="0.01"
+value="2.50">
+</div>
+
+<div>
+<label>Quantity</label>
+<input id="lcQty" type="number"
+value="1000">
+</div>
+
+<div>
+<label>Shipping</label>
+<input id="lcShipping" type="number"
+step="0.01"
+value="250">
+</div>
+
+<div>
+<label>Insurance</label>
+<input id="lcInsurance" type="number"
+step="0.01"
+value="30">
+</div>
+
+<div>
+<label>Duty %</label>
+<input id="lcDuty" type="number"
+step="0.01"
+value="5">
+</div>
+
+<div>
+<label>Tax %</label>
+<input id="lcTax" type="number"
+step="0.01"
+value="5">
+</div>
+
+</div>
+
+<button class="accent" onclick="landedCost()">
+Calculate Landed Cost
+</button>
+
+<div id="lcStatus" class="status"></div>
+<div id="lcOutput" class="copy"></div>
+
+</section>
+
+
+<!-- NEGOTIATION -->
+
+<section id="negotiation" class="card">
+
+<h2>🤖 AI Negotiation Agent</h2>
+
+<div class="grid">
+
+<div>
+<label>Supplier</label>
+<input id="negSupplier"
+placeholder="Supplier name">
+</div>
+
+<div>
+<label>Target Price</label>
+<input id="negTarget"
+placeholder="$2.20">
+</div>
+
+<div>
+<label>Quantity</label>
+<input id="negQty"
+type="number"
+value="1000">
+</div>
+
+<div>
+<label>Current Price</label>
+<input id="negCurrent"
+placeholder="$2.70">
+</div>
+
+<div class="full">
+<label>Negotiation Goal</label>
+<input id="negGoal"
+placeholder="Lower price while preserving quality and lead time">
+</div>
+
+<div class="full">
+<label>Supplier Message</label>
+<textarea id="negMessage"
+placeholder="Paste supplier message here..."></textarea>
+</div>
+
+</div>
+
+<div class="actions">
+
+<button class="accent" onclick="negotiate()">
+Generate Negotiation
+</button>
+
+<button class="secondary" onclick="loadNegotiations()">
+History
+</button>
+
+</div>
+
+<div id="negStatus" class="status"></div>
+<div id="negOutput" class="copy"></div>
+<div id="negHistory"></div>
+
+</section>
+
+
+<!-- PURCHASE ORDERS -->
+
+<section id="po" class="card">
+
+<h2>📦 Award & Purchase Orders</h2>
+
+<div class="grid">
+
+<div>
+<label>Bid ID</label>
+<input id="awardBidId"
+type="number"
+placeholder="Bid ID">
+</div>
+
+<div>
+<label>PO Project ID</label>
+<input id="poProjectId"
+type="number"
+placeholder="Project ID">
+</div>
+
+<div>
+<label>PO Supplier ID</label>
+<input id="poSupplierId"
+type="number"
+placeholder="Supplier ID">
+</div>
+
+<div>
+<label>PO Quantity</label>
+<input id="poQuantity"
+type="number"
+value="1000">
+</div>
+
+<div>
+<label>PO Unit Price</label>
+<input id="poUnitPrice"
+type="number"
+step="0.01"
+value="2.50">
+</div>
+
+<div>
+<label>PO Currency</label>
+<input id="poCurrency"
+value="USD">
+</div>
+
+<div class="full">
+<label>PO Notes</label>
+<textarea id="poNotes"
+placeholder="Payment terms, shipping, packaging, delivery..."></textarea>
+</div>
+
+</div>
+
+<div class="actions">
+
+<button class="success" onclick="awardBid()">
+Award Bid
+</button>
+
+<button class="accent" onclick="createPO()">
+Create Purchase Order
+</button>
+
+<button class="secondary" onclick="loadPOs()">
+Load Purchase Orders
+</button>
+
+</div>
+
+<div id="poStatus" class="status"></div>
+<div id="poList"></div>
+
+</section>
+
+
+<!-- FLASH DEALS -->
+
+<section id="deals" class="card">
+
+<h2>⚡ Flash Deals</h2>
+
+<div class="grid">
+
+<div>
+<label>Product</label>
+<input id="dealProduct"
+placeholder="Stainless Steel Bottle">
+</div>
+
+<div>
+<label>Supplier</label>
+<input id="dealSupplier"
+placeholder="Supplier">
+</div>
+
+<div>
+<label>Price</label>
+<input id="dealPrice"
+type="number"
+step="0.01"
+placeholder="2.20">
+</div>
+
+<div>
+<label>MOQ</label>
+<input id="dealMOQ"
+type="number"
+placeholder="500">
+</div>
+
+</div>
+
+<div class="actions">
+
+<button class="accent" onclick="submitDeal()">
+Publish Deal
+</button>
+
+<button class="secondary" onclick="loadDeals()">
+Load Deals
+</button>
+
+</div>
+
+<div id="dealStatus" class="status"></div>
+<div id="dealsList"></div>
+
+</section>
+
+
+<!-- MEMORY -->
+
+<section id="memory" class="card">
+
+<h2>🧠 Procurement Memory</h2>
+
+<div class="grid">
+
+<div>
+<label>Product</label>
+<input id="memoryProduct"
+placeholder="Stainless Steel Bottle">
+</div>
+
+<div>
+<label>Supplier</label>
+<input id="memorySupplier"
+placeholder="Supplier name">
+</div>
+
+<div>
+<label>Outcome</label>
+<select id="memoryOutcome">
+<option value="successful">Successful</option>
+<option value="failed">Failed</option>
+<option value="partial">Partial</option>
+</select>
+</div>
+
+<div class="full">
+<label>Memory</label>
+<textarea id="memoryText"
+placeholder="What happened? Price, quality, delivery, negotiation result..."></textarea>
+</div>
+
+</div>
+
+<div class="actions">
+
+<button class="accent" onclick="saveMemory()">
+Save Memory
+</button>
+
+<button class="secondary" onclick="loadMemory()">
+Load Memory
+</button>
+
+</div>
+
+<div id="memoryStatus" class="status"></div>
+<div id="memoryList"></div>
+
+</section>
+
+
+<!-- HISTORY -->
+
+<section class="card">
+
+<h2>🧾 Procurement History</h2>
+
+<button class="secondary" onclick="loadPurchases()">
+Load Purchase History
+</button>
+
+<div id="purchaseStatus" class="status"></div>
+<div id="purchaseList"></div>
+
+</section>
+
+
+</main>
+
+<div class="footer">
+NOVA — AI Purchasing Agent
+</div>
+
+
+<script>
+
+const API="";
+
+async function req(path,options={}){
+
+try{
+
+const response=await fetch(API+path,{
+credentials:"include",
+...options,
+headers:{
+"Content-Type":"application/json",
+...(options.headers||{})
+}
+});
+
+let data={};
+
+try{
+data=await response.json();
+}catch(e){
+data={};
+}
+
+if(!response.ok){
+
+throw new Error(
+data.error ||
+`HTTP ${response.status}`
+);
+
+}
+
+return data;
+
+}catch(error){
+
+console.error("NOVA API ERROR:",error);
+throw error;
+
+}
+
+}
+
+
+function show(id,message,type="ok"){
+
+const el=document.getElementById(id);
+
+if(!el)return;
+
+el.textContent=message;
+el.className="status show "+type;
+
+}
+
+
+function html(value){
+
+return String(value ?? "")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+
+function money(value){
+
+if(value===null || value===undefined || value===""){
+return "Not verified";
+}
+
+return String(value);
+
+}
+
+
+/* ACCOUNT */
+
+async function signup(){
+
+try{
+
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value;
+
+if(!email||!password){
+show("accountStatus","Enter email and password.","error");
+return;
+}
+
+const d=await req("/api/signup",{
+method:"POST",
+body:JSON.stringify({
+email,
+password
+})
+});
+
+show(
+"accountStatus",
+d.message || "Account created successfully.",
+"ok"
+);
+
+}catch(e){
+
+show("accountStatus",e.message,"error");
+
+}
+
+}
+
+
+async function login(){
+
+try{
+
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value;
+
+const d=await req("/api/login",{
+method:"POST",
+body:JSON.stringify({
+email,
+password
+})
+});
+
+show(
+"accountStatus",
+d.message || "Logged in successfully.",
+"ok"
+);
+
+}catch(e){
+
+show("accountStatus",e.message,"error");
+
+}
+
+}
+
+
+async function logout(){
+
+try{
+
+const d=await req("/api/logout",{
+method:"POST"
+});
+
+show(
+"accountStatus",
+d.message || "Logged out.",
+"ok"
+);
+
+}catch(e){
+
+show("accountStatus",e.message,"error");
+
+}
+
+}
+
+
+async function me(){
+
+try{
+
+const d=await req("/api/me",{
+method:"GET"
+});
+
+show(
+"accountStatus",
+d.loggedIn
+? `Logged in as ${d.user?.email || "user"}`
+: "Not logged in.",
+d.loggedIn ? "ok":"error"
+);
+
+}catch(e){
+
+show("accountStatus",e.message,"error");
+
+}
+
+}
+
+
+/* SEARCH */
+
+async function searchSuppliers(){
+
+show(
+"searchStatus",
+"Searching real suppliers...",
+"ok"
+);
+
+document.getElementById("results").innerHTML="";
+document.getElementById("resultsHeader").innerHTML="";
+
+const request=
+document.getElementById("request").value.trim();
+
+const quantity=
+Number(document.getElementById("quantity").value||1);
+
+const destination=
+document.getElementById("destination").value.trim();
+
+if(!request){
+
+show(
+"searchStatus",
+"Please enter what you want to buy.",
+"error"
+);
+
+return;
+
+}
+
+try{
+
+const d=await req("/api/search",{
+method:"POST",
+body:JSON.stringify({
+request,
+quantity,
+destination
+})
+});
+
+const items=
+d.results ||
+d.suppliers ||
+d.data ||
+[];
+
+show(
+"searchStatus",
+`Found ${items.length} supplier results.`,
+"ok"
+);
+
+document.getElementById("resultsHeader").innerHTML=
+`<h3>Supplier Results</h3>
+<div class="muted">
+Live supplier discovery
+</div>`;
+
+if(!items.length){
+
+document.getElementById("results").innerHTML=
+`<div class="result">
+No supplier results found.
+</div>`;
+
+return;
+
+}
+
+document.getElementById("results").innerHTML=
+items.map((s,i)=>{
+
+const name=
+s.supplier ||
+s.name ||
+s.title ||
+"Supplier";
+
+const url=
+s.url ||
+s.link ||
+s.source_url ||
+"#";
+
+const snippet=
+s.snippet ||
+s.description ||
+"";
+
+const price=
+s.price ||
+s.unit_price ||
+"Not verified";
+
+const moq=
+s.moq ||
+"Not verified";
+
+const lead=
+s.lead_time ||
+s.leadTime ||
+"Not verified";
+
+const evidence=
+s.evidence ??
+"0";
+
+const confidence=
+s.confidence ??
+"Not verified";
+
+return `
+
+<div class="result">
+
+<h3>${html(name)}</h3>
+
+<div class="snippet">
+${html(snippet)}
+</div>
+
+<div class="metrics">
+
+<div class="metric">
+<small>Price</small>
+<strong>${html(price)}</strong>
+</div>
+
+<div class="metric">
+<small>MOQ</small>
+<strong>${html(moq)}</strong>
+</div>
+
+<div class="metric">
+<small>Lead Time</small>
+<strong>${html(lead)}</strong>
+</div>
+
+<div class="metric">
+<small>Evidence</small>
+<strong>${html(evidence)}</strong>
+</div>
+
+<div class="metric">
+<small>Confidence</small>
+<strong>${html(confidence)}</strong>
+</div>
+
+</div>
+
+<div class="actions">
+
+<a href="${html(url)}"
+target="_blank"
+rel="noopener"
+style="display:inline-block;margin-top:12px">
+View Supplier
+</a>
+
+<button
+class="accent"
+onclick="useSupplier(${i})">
+Use Supplier
+</button>
+
+</div>
+
+</div>
+
+`;
+
+}).join("");
+
+window.novaSearchResults=items;
+
+}catch(e){
+
+show(
+"searchStatus",
+"Search error: "+e.message,
+"error"
+);
+
+}
+
+}
+
+
+function useSupplier(index){
+
+const s=
+(window.novaSearchResults||[])[index];
+
+if(!s)return;
+
+const name=
+s.supplier ||
+s.name ||
+s.title ||
+"";
+
+document.getElementById("rfqSupplier").value=name;
+
+document.getElementById("negSupplier").value=name;
+
+document.getElementById("rfq").scrollIntoView({
+behavior:"smooth"
+});
+
+}
+
+
+/* NETWORK */
+
+async function network(){
+
+try{
+
+show(
+"networkStatus",
+"Checking NOVA network...",
+"ok"
+);
+
+const d=await req("/api/network",{
+method:"GET"
+});
+
+show(
+"networkStatus",
+`Actual indexed records: ${d.actualRecords ?? 0} | Target: ${d.targetRecords ?? 20000000} | Coverage: ${(d.coverage||[]).join(", ")}`,
+"ok"
+);
+
+}catch(e){
+
+show(
+"networkStatus",
+e.message,
+"error"
+);
+
+}
+
+}
+
+
+/* PROJECTS */
+
+async function createProject(){
+
+try{
+
+const d=await req("/api/projects",{
+method:"POST",
+body:JSON.stringify({
+
+name:
+document.getElementById("projectName").value,
+
+product:
+document.getElementById("projectProduct").value,
+
+quantity:
+Number(document.getElementById("projectQty").value||0),
+
+destination:
+document.getElementById("projectDestination").value,
+
+requirements:
+document.getElementById("projectRequirements").value
+
+})
+});
+
+show(
+"projectStatus",
+`Project created. ID: ${d.id || d.project?.id || "created"}`,
+"ok"
+);
+
+loadProjects();
+
+}catch(e){
+
+show("projectStatus",e.message,"error");
+
+}
+
+}
+
+
+async function loadProjects(){
+
+try{
+
+const d=await req("/api/projects",{
+method:"GET"
+});
+
+const items=
+d.projects ||
+d.items ||
+d.data ||
+[];
+
+document.getElementById("projectsList").innerHTML=
+items.length
+?items.map(p=>`
+
+<div class="project">
+
+<h3>${html(p.name||"Project")}</h3>
+
+<div class="muted">
+ID: ${html(p.id)}
+</div>
+
+<p>
+Product: ${html(p.product||"")}
+</p>
+
+<p>
+Quantity: ${html(p.quantity||"")}
+</p>
+
+<p>
+Destination: ${html(p.destination||"")}
+</p>
+
+</div>
+
+`).join("")
+:
+`<div class="project">
+No projects found.
+</div>`;
+
+}catch(e){
+
+show("projectStatus",e.message,"error");
+
+}
+
+}
+
+
+/* SUPPLIERS */
+
+async function loadSuppliers(){
+
+try{
+
+show(
+"supplierStatus",
+"Loading supplier intelligence...",
+"ok"
+);
+
+const d=await req(
+"/api/suppliers?limit=100",
+{method:"GET"}
+);
+
+const items=
+d.suppliers ||
+d.items ||
+d.data ||
+[];
+
+document.getElementById("suppliersList").innerHTML=
+items.length
+?items.map(s=>`
+
+<div class="supplier">
+
+<h3>${html(s.name||s.supplier||"Supplier")}</h3>
+
+<div class="pill">
+${html(s.verification_status||"Not verified")}
+</div>
+
+<p>
+Country:
+${html(s.country||"Not verified")}
+</p>
+
+<p>
+Category:
+${html(s.category||"Not verified")}
+</p>
+
+<p>
+Evidence:
+${html(s.evidence_score??0)}
+</p>
+
+</div>
+
+`).join("")
+:
+`<div class="supplier">
+No indexed suppliers yet.
+</div>`;
+
+}catch(e){
+
+show(
+"supplierStatus",
+e.message,
+"error"
+);
+
+}
+
+}
+
+
+/* RFQ */
+
+async function generateRFQ(){
+
+try{
+
+const d=await req("/api/rfq",{
+method:"POST",
+body:JSON.stringify({
+
+product:
+document.getElementById("rfqProduct").value,
+
+quantity:
+Number(document.getElementById("rfqQuantity").value||0),
+
+destination:
+document.getElementById("rfqDestination").value,
+
+supplier:
+document.getElementById("rfqSupplier").value,
+
+requirements:
+document.getElementById("rfqRequirements").value
+
+})
+});
+
+const output=
+d.rfq ||
+d.message ||
+d.result ||
+JSON.stringify(d,null,2);
+
+document.getElementById("rfqOutput").textContent=
+typeof output==="string"
+?output
+:JSON.stringify(output,null,2);
+
+show(
+"rfqStatus",
+"RFQ generated successfully.",
+"ok"
+);
+
+}catch(e){
+
+show("rfqStatus",e.message,"error");
+
+}
+
+}
+
+
+async function createSavedRFQ(){
+
+try{
+
+const d=await req("/api/rfq/create",{
+method:"POST",
+body:JSON.stringify({
+
+project_id:
+Number(document.getElementById("bidProjectId").value||0),
+
+supplier_id:
+Number(document.getElementById("bidSupplierId").value||0),
+
+product:
+document.getElementById("rfqProduct").value,
+
+quantity:
+Number(document.getElementById("rfqQuantity").value||0),
+
+destination:
+document.getElementById("rfqDestination").value,
+
+requirements:
+document.getElementById("rfqRequirements").value
+
+})
+});
+
+show(
+"rfqStatus",
+`RFQ saved. ID: ${d.id || d.rfq?.id || "created"}`,
+"ok"
+);
+
+}catch(e){
+
+show("rfqStatus",e.message,"error");
+
+}
+
+}
+
+
+/* BIDS */
+
+async function submitBid(){
+
+try{
+
+const d=await req("/api/bids",{
+method:"POST",
+body:JSON.stringify({
+
+project_id:
+Number(document.getElementById("bidProjectId").value||0),
+
+supplier_id:
+Number(document.getElementById("bidSupplierId").value||0),
+
+unit_price:
+Number(document.getElementById("bidUnitPrice").value||0),
+
+currency:
+document.getElementById("bidCurrency").value,
+
+moq:
+Number(document.getElementById("bidMOQ").value||0),
+
+lead_time_days:
+Number(document.getElementById("bidLeadTime").value||0),
+
+notes:
+document.getElementById("bidNotes").value
+
+})
+});
+
+show(
+"bidStatus",
+`Bid submitted. ID: ${d.id || d.bid?.id || "created"}`,
+"ok"
+);
+
+}catch(e){
+
+show("bidStatus",e.message,"error");
+
+}
+
+}
+
+
+async function compareBids(){
+
+try{
+
+const projectId=
+Number(
+document.getElementById("bidProjectId").value||0
+);
+
+const d=await req(
+"/api/bids/compare?project_id="+projectId,
+{
+method:"GET"
+}
+);
+
+const items=
+d.bids ||
+d.items ||
+d.data ||
+[];
+
+document.getElementById("bidsList").innerHTML=
+items.length
+?items.map(b=>`
+
+<div class="bid">
+
+<h3>
+Bid #${html(b.id)}
+</h3>
+
+<p>
+Supplier:
+${html(b.supplier_name||b.supplier_id||"")}
+</p>
+
+<p>
+Price:
+${html(b.unit_price)}
+${html(b.currency||"USD")}
+</p>
+
+<p>
+MOQ:
+${html(b.moq)}
+</p>
+
+<p>
+Lead Time:
+${html(b.lead_time_days)} days
+</p>
+
+<div class="score">
+${html(b.score??"—")}
+</div>
+
+<button
+class="secondary"
+onclick="setAwardId(${Number(b.id)||0})">
+Use This Bid
+</button>
+
+</div>
+
+`).join("")
+:
+`<div class="bid">
+No bids found.
+</div>`;
+
+show(
+"bidStatus",
+"Bid comparison loaded.",
+"ok"
+);
+
+}catch(e){
+
+show("bidStatus",e.message,"error");
+
+}
+
+}
+
+
+function setAwardId(id){
+
+document.getElementById("awardBidId").value=id;
+
+document.getElementById("po").scrollIntoView({
+behavior:"smooth"
+});
+
+}
+
+
+/* NEGOTIATION */
+
+function setNegotiationFromBid(b){
+
+document.getElementById("negSupplier").value=
+b.supplier_name||b.supplier_id||"";
+
+document.getElementById("negCurrent").value=
+b.unit_price||"";
+
+}
+
+
+async function negotiate(){
+
+try{
+
+const d=await req("/api/negotiate",{
+method:"POST",
+body:JSON.stringify({
+
+supplier:
+document.getElementById("negSupplier").value,
+
+target:
+document.getElementById("negTarget").value,
+
+quantity:
+Number(document.getElementById("negQty").value||0),
+
+current:
+document.getElementById("negCurrent").value,
+
+goal:
+document.getElementById("negGoal").value,
+
+message:
+document.getElementById("negMessage").value
+
+})
+});
+
+const reply=
+d.reply ||
+d.result ||
+d.message ||
+JSON.stringify(d,null,2);
+
+document.getElementById("negOutput").textContent=
+typeof reply==="string"
+?reply
+:JSON.stringify(reply,null,2);
+
+show(
+"negStatus",
+"Negotiation draft generated.",
+"ok"
+);
+
+}catch(e){
+
+show("negStatus",e.message,"error");
+
+}
+
+}
+
+
+async function loadNegotiations(){
+
+try{
+
+const d=await req(
+"/api/negotiations",
+{method:"GET"}
+);
+
+const items=
+d.negotiations ||
+d.items ||
+d.data ||
+[];
+
+document.getElementById("negHistory").innerHTML=
+items.length
+?items.map(n=>`
+
+<div class="memory">
+
+<strong>
+${html(n.supplier||"Supplier")}
+</strong>
+
+<div class="copy">
+${html(n.reply||n.message||n.result||"")}
+</div>
+
+</div>
+
+`).join("")
+:
+`<div class="memory">
+No negotiation history.
+</div>`;
+
+}catch(e){
+
+show("negStatus",e.message,"error");
+
+}
+
+}
+
+
+/* LANDED COST */
+
+async function landedCost(){
+
+try{
+
+const d=await req("/api/landed-cost",{
+method:"POST",
+body:JSON.stringify({
+
+unit_price:
+Number(document.getElementById("lcUnit").value||0),
+
+quantity:
+Number(document.getElementById("lcQty").value||0),
+
+shipping:
+Number(document.getElementById("lcShipping").value||0),
+
+insurance:
+Number(document.getElementById("lcInsurance").value||0),
+
+duty_percent:
+Number(document.getElementById("lcDuty").value||0),
+
+tax_percent:
+Number(document.getElementById("lcTax").value||0)
+
+})
+});
+
+document.getElementById("lcOutput").textContent=
+JSON.stringify(d,null,2);
+
+show(
+"lcStatus",
+"Landed cost calculated.",
+"ok"
+);
+
+}catch(e){
+
+show("lcStatus",e.message,"error");
+
+}
+
+}
+
+
+/* PURCHASE ORDERS */
+
+async function awardBid(){
+
+try{
+
+const bidId=
+Number(
+document.getElementById("awardBidId").value||0
+);
+
+const d=await req("/api/award",{
+method:"POST",
+body:JSON.stringify({
+bid_id:bidId
+})
+});
+
+show(
+"poStatus",
+d.message || `Bid ${bidId} awarded.`,
+"ok"
+);
+
+}catch(e){
+
+show("poStatus",e.message,"error");
+
+}
+
+}
+
+
+async function createPO(){
+
+try{
+
+const d=await req("/api/purchase-orders",{
+method:"POST",
+body:JSON.stringify({
+
+project_id:
+Number(document.getElementById("poProjectId").value||0),
+
+supplier_id:
+Number(document.getElementById("poSupplierId").value||0),
+
+quantity:
+Number(document.getElementById("poQuantity").value||0),
+
+unit_price:
+Number(document.getElementById("poUnitPrice").value||0),
+
+currency:
+document.getElementById("poCurrency").value,
+
+notes:
+document.getElementById("poNotes").value
+
+})
+});
+
+show(
+"poStatus",
+`Purchase Order created. ID: ${d.id || d.po?.id || "created"}`,
+"ok"
+);
+
+loadPOs();
+
+}catch(e){
+
+show("poStatus",e.message,"error");
+
+}
+
+}
+
+
+async function loadPOs(){
+
+try{
+
+const d=await req(
+"/api/purchase-orders",
+{method:"GET"}
+);
+
+const items=
+d.purchase_orders ||
+d.purchaseOrders ||
+d.items ||
+d.data ||
+[];
+
+document.getElementById("poList").innerHTML=
+items.length
+?items.map(p=>`
+
+<div class="po">
+
+<h3>
+PO #${html(p.id)}
+</h3>
+
+<p>
+Supplier:
+${html(p.supplier_id||"")}
+</p>
+
+<p>
+Quantity:
+${html(p.quantity||"")}
+</p>
+
+<p>
+Unit Price:
+${html(p.unit_price||"")}
+${html(p.currency||"USD")}
+</p>
+
+<p>
+Status:
+<span class="pill">
+${html(p.status||"draft")}
+</span>
+</p>
+
+</div>
+
+`).join("")
+:
+`<div class="po">
+No purchase orders.
+</div>`;
+
+show(
+"poStatus",
+"Purchase orders loaded.",
+"ok"
+);
+
+}catch(e){
+
+show("poStatus",e.message,"error");
+
+}
+
+}
+
+
+/* DEALS */
+
+async function submitDeal(){
+
+try{
+
+const d=await req("/api/deals",{
+method:"POST",
+body:JSON.stringify({
+
+product:
+document.getElementById("dealProduct").value,
+
+supplier:
+document.getElementById("dealSupplier").value,
+
+price:
+Number(document.getElementById("dealPrice").value||0),
+
+moq:
+Number(document.getElementById("dealMOQ").value||0)
+
+})
+});
+
+show(
+"dealStatus",
+d.message || "Deal published.",
+"ok"
+);
+
+loadDeals();
+
+}catch(e){
+
+show("dealStatus",e.message,"error");
+
+}
+
+}
+
+
+async function loadDeals(){
+
+try{
+
+const d=await req(
+"/api/deals",
+{method:"GET"}
+);
+
+const items=
+d.deals ||
+d.items ||
+d.data ||
+[];
+
+document.getElementById("dealsList").innerHTML=
+items.length
+?items.map(x=>`
+
+<div class="deal">
+
+<h3>
+${html(x.product||"Deal")}
+</h3>
+
+<p>
+Supplier:
+${html(x.supplier||"")}
+</p>
+
+<p>
+Price:
+${html(x.price||"Not verified")}
+</p>
+
+<p>
+MOQ:
+${html(x.moq||"Not verified")}
+</p>
+
+</div>
+
+`).join("")
+:
+`<div class="deal">
+No flash deals.
+</div>`;
+
+}catch(e){
+
+show("dealStatus",e.message,"error");
+
+}
+
+}
+
+
+/* MEMORY */
+
+async function saveMemory(){
+
+try{
+
+const d=await req("/api/memory",{
+method:"POST",
+body:JSON.stringify({
+
+product:
+document.getElementById("memoryProduct").value,
+
+supplier:
+document.getElementById("memorySupplier").value,
+
+outcome:
+document.getElementById("memoryOutcome").value,
+
+memory:
+document.getElementById("memoryText").value
+
+})
+});
+
+show(
+"memoryStatus",
+d.message || "Memory saved.",
+"ok"
+);
+
+loadMemory();
+
+}catch(e){
+
+show("memoryStatus",e.message,"error");
+
+}
+
+}
+
+
+async function loadMemory(){
+
+try{
+
+const d=await req(
+"/api/memory",
+{method:"GET"}
+);
+
+const items=
+d.memory ||
+d.memories ||
+d.items ||
+d.data ||
+[];
+
+document.getElementById("memoryList").innerHTML=
+items.length
+?items.map(m=>`
+
+<div class="memory">
+
+<h3>
+${html(m.product||"Procurement Memory")}
+</h3>
+
+<p>
+Supplier:
+${html(m.supplier||"")}
+</p>
+
+<p>
+Outcome:
+${html(m.outcome||"")}
+</p>
+
+<div class="copy">
+${html(m.memory||m.text||"")}
+</div>
+
+</div>
+
+`).join("")
+:
+`<div class="memory">
+No procurement memory.
+</div>`;
+
+}catch(e){
+
+show("memoryStatus",e.message,"error");
+
+}
+
+}
+
+
+/* PURCHASE HISTORY */
+
+async function loadPurchases(){
+
+try{
+
+const d=await req(
+"/api/purchases",
+{method:"GET"}
+);
+
+const items=
+d.purchases ||
+d.items ||
+d.data ||
+[];
+
+document.getElementById("purchaseList").innerHTML=
+items.length
+?items.map(p=>`
+
+<div class="po">
+
+<h3>
+Purchase #${html(p.id)}
+</h3>
+
+<p>
+${html(p.product||p.item||"")}
+</p>
+
+<p>
+${html(p.status||"")}
+</p>
+
+</div>
+
+`).join("")
+:
+`<div class="po">
+No purchase history.
+</div>`;
+
+show(
+"purchaseStatus",
+"Purchase history loaded.",
+"ok"
+);
+
+}catch(e){
+
+show(
+"purchaseStatus",
+e.message,
+"error"
+);
+
+}
+
+}
+
+
+/* STARTUP */
+
+document.addEventListener("DOMContentLoaded",()=>{
+
+network();
+loadDeals();
+
+});
+
+</script>
+
+</body>
+  </html>
