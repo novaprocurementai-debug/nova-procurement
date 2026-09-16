@@ -14,6 +14,10 @@ const REGIONS = [
   ["IT", "Europe"]
 ];
 
+/* =========================================================
+   BASIC HELPERS
+========================================================= */
+
 function json(data, status = 200, headers = {}) {
   return new Response(JSON.stringify(data), {
     status,
@@ -26,7 +30,9 @@ function json(data, status = 200, headers = {}) {
 
 function cookieValue(req, name) {
   const c = req.headers.get("Cookie") || "";
-  const m = c.match(new RegExp("(^|;\\s*)" + name + "=([^;]*)"));
+  const m = c.match(
+    new RegExp("(^|;\\s*)" + name + "=([^;]*)")
+  );
   return m ? decodeURIComponent(m[2]) : null;
 }
 
@@ -39,6 +45,7 @@ async function sha256(text) {
     "SHA-256",
     new TextEncoder().encode(text)
   );
+
   return [...new Uint8Array(h)]
     .map(x => x.toString(16).padStart(2, "0"))
     .join("");
@@ -56,32 +63,43 @@ function clearCookie() {
   return "nova_session=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0";
 }
 
-/* =========================
+/* =========================================================
    DATABASE
-========================= */
+========================================================= */
 
 async function tableColumns(db, table) {
-  const r = await db.prepare(`PRAGMA table_info("${table}")`).all();
-  return new Set((r.results || []).map(x => x.name));
+  const r = await db
+    .prepare(`PRAGMA table_info("${table}")`)
+    .all();
+
+  return new Set(
+    (r.results || []).map(x => x.name)
+  );
 }
 
 async function addColumns(db, table, columns) {
   const existing = await tableColumns(db, table);
-  const stmts = [];
+  const statements = [];
 
   for (const [name, type] of Object.entries(columns)) {
     if (!existing.has(name)) {
-      stmts.push(
-        db.prepare(`ALTER TABLE "${table}" ADD COLUMN "${name}" ${type}`)
+      statements.push(
+        db.prepare(
+          `ALTER TABLE "${table}" ADD COLUMN "${name}" ${type}`
+        )
       );
     }
   }
 
-  if (stmts.length) await db.batch(stmts);
+  if (statements.length) {
+    await db.batch(statements);
+  }
 }
 
 async function migrateDatabase(db) {
+
   await db.batch([
+
     db.prepare(`
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -240,6 +258,7 @@ async function migrateDatabase(db) {
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
       )
     `)
+
   ]);
 
   await addColumns(db, "users", {
@@ -371,47 +390,146 @@ async function migrateDatabase(db) {
 }
 
 async function currentUser(req, db) {
+
   if (!db) return null;
 
-  const t = cookieValue(req, "nova_session");
+  const t = cookieValue(
+    req,
+    "nova_session"
+  );
+
   if (!t) return null;
 
   return db.prepare(`
     SELECT users.id, users.email
     FROM sessions
-    JOIN users ON users.id = sessions.user_id
+    JOIN users
+      ON users.id = sessions.user_id
     WHERE sessions.token = ?
       AND sessions.expires_at > ?
-  `).bind(t, Date.now()).first();
+  `)
+    .bind(t, Date.now())
+    .first();
 }
 
-/* =========================
-   SUPPLIER INTELLIGENCE
-========================= */
+/* =========================================================
+   SUPPLIER PARSING
+========================================================= */
 
-function parsePrice(t) {
-  const m = String(t || "").match(
-    /(?:USD|US\$|\$)\s?(\d+(?:\.\d+)?)/i
-  );
-  return m ? Number(m[1]) : null;
+function parsePrice(text) {
+
+  const patterns = [
+
+    /(?:US\$|USD|\$)\s*([0-9]+(?:\.[0-9]+)?)/i,
+
+    /([0-9]+(?:\.[0-9]+)?)\s*(?:USD|US\$)/i,
+
+    /(?:price|pricing|starting|from)
+      \D{0,40}
+      (?:US\$|USD|\$)
+      \s*
+      ([0-9]+(?:\.[0-9]+)?)/ix
+
+  ];
+
+  for (const pattern of patterns) {
+
+    const m = String(text || "")
+      .match(pattern);
+
+    if (m) {
+
+      const value = Number(m[1]);
+
+      if (
+        value > 0 &&
+        value < 100000
+      ) {
+        return value;
+      }
+    }
+  }
+
+  return null;
 }
 
-function parseMOQ(t) {
-  const m = String(t || "").match(
-    /(?:MOQ|minimum order quantity|min(?:imum)? order)\D{0,40}([\d,]+)/i
-  );
-  return m ? Number(m[1].replace(/,/g, "")) : null;
+function parseMOQ(text) {
+
+  const patterns = [
+
+    /(?:MOQ|minimum order quantity|minimum order)
+      \D{0,60}
+      ([\d,]+)
+      \s*(?:pcs?|pieces?|units?)?/ix,
+
+    /(?:minimum quantity|minimum qty)
+      \D{0,50}
+      ([\d,]+)/ix,
+
+    /([\d,]+)
+      \s*(?:pcs?|pieces?)
+      \s*(?:MOQ|minimum)/ix
+
+  ];
+
+  for (const pattern of patterns) {
+
+    const m = String(text || "")
+      .match(pattern);
+
+    if (m) {
+
+      const value =
+        Number(
+          m[1].replace(/,/g, "")
+        );
+
+      if (
+        value > 0 &&
+        value < 100000000
+      ) {
+        return value;
+      }
+    }
+  }
+
+  return null;
 }
 
-function parseLead(t) {
-  const m = String(t || "").match(
-    /(\d+(?:\s*-\s*\d+)?)\s*(days?|weeks?)/i
-  );
-  return m ? m[0] : null;
+function parseLead(text) {
+
+  const patterns = [
+
+    /(?:lead time|production time|delivery time|production lead time)
+      \D{0,60}
+      (\d+(?:\s*-\s*\d+)?)
+      \s*(days?|weeks?)/ix,
+
+    /(\d+(?:\s*-\s*\d+)?)
+      \s*(days?|weeks?)
+      \s*(?:lead time|production|delivery)/ix
+
+  ];
+
+  for (const pattern of patterns) {
+
+    const m =
+      String(text || "")
+        .match(pattern);
+
+    if (m) {
+      return `${m[1]} ${m[2]}`;
+    }
+  }
+
+  return null;
 }
 
-function supplierSignals(t) {
-  const s = String(t || "").toLowerCase();
+function supplierSignals(text) {
+
+  const s =
+    String(text || "")
+      .toLowerCase();
 
   return [
     "manufacturer",
@@ -425,15 +543,25 @@ function supplierSignals(t) {
     "bulk",
     "custom",
     "private label"
-  ].reduce((n, w) => n + (s.includes(w) ? 1 : 0), 0);
+  ].reduce(
+    (n, word) =>
+      n + (s.includes(word) ? 1 : 0),
+    0
+  );
 }
 
-function evidence(t) {
-  const s = String(t || "").toLowerCase();
-  let n = 0;
+function evidence(text) {
 
-  for (const [w, v] of [
+  const s =
+    String(text || "")
+      .toLowerCase();
+
+  let score = 0;
+
+  for (const [word, value] of [
+
     ["$", 10],
+    ["usd", 10],
     ["moq", 10],
     ["minimum order", 10],
     ["shipping", 5],
@@ -441,21 +569,35 @@ function evidence(t) {
     ["manufacturer", 5],
     ["factory", 5],
     ["oem", 5],
-    ["odm", 5]
+    ["odm", 5],
+    ["certification", 3],
+    ["fda", 3],
+    ["lfgb", 3],
+    ["bpa", 2]
+
   ]) {
-    if (s.includes(w)) n += v;
+
+    if (s.includes(word)) {
+      score += value;
+    }
   }
 
-  return Math.min(50, n);
+  return Math.min(50, score);
 }
 
-function dealScore(sig, ev, price, moq) {
+function dealScore(
+  signal,
+  ev,
+  price,
+  moq
+) {
+
   return Math.min(
     100,
     Math.max(
       0,
       50 +
-      sig * 3 +
+      signal * 3 +
       ev +
       (price !== null ? 5 : 0) +
       (moq !== null ? 5 : 0)
@@ -464,59 +606,350 @@ function dealScore(sig, ev, price, moq) {
 }
 
 function confidence(ev) {
-  return Math.min(100, Math.round(ev * 1.6));
-}
-
-async function yepSearch(query, location, env, limit = 10) {
-  if (!env.YEP_API_KEY) {
-    throw new Error("YEP_API_KEY is missing in Cloudflare.");
-  }
-
-  const r = await fetch(
-    "https://platform.yep.com/api/search",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${env.YEP_API_KEY}`,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        query,
-        type: "basic",
-        limit,
-        language: ["en"],
-        location
-      })
-    }
+  return Math.min(
+    100,
+    Math.round(ev * 1.6)
   );
-
-  const txt = await r.text();
-
-  let d;
-  try {
-    d = JSON.parse(txt);
-  } catch {
-    throw new Error(`Yep returned invalid response. HTTP ${r.status}`);
-  }
-
-  if (!r.ok) {
-    throw new Error(d.error || `Yep HTTP ${r.status}`);
-  }
-
-  return d;
 }
 
-async function saveSupplier(db, r, clean) {
-  if (!db || !r.url) return;
+/* =========================================================
+   YEP SEARCH
+========================================================= */
 
-  const existing = await db.prepare(
-    "SELECT id FROM suppliers WHERE url=? LIMIT 1"
-  ).bind(r.url).first();
+async function yepSearch(
+  query,
+  location,
+  env,
+  limit = 10
+) {
 
-  if (existing) {
-    await db.prepare(`
-      UPDATE suppliers
-      SET name=?,
+  if (!env.YEP_API_KEY) {
+    throw new Error(
+      "YEP_API_KEY is missing in Cloudflare."
+    );
+  }
+
+  const response =
+    await fetch(
+      "https://platform.yep.com/api/search",
+      {
+        method: "POST",
+
+        headers: {
+          Authorization:
+            `Bearer ${env.YEP_API_KEY}`,
+
+          "Content-Type":
+            "application/json"
+        },
+
+        body: JSON.stringify({
+          query,
+          type: "basic",
+          limit,
+          language: ["en"],
+          location
+        })
+      }
+    );
+
+  const text =
+    await response.text();
+
+  let data;
+
+  try {
+    data = JSON.parse(text);
+  } catch {
+    throw new Error(
+      `Yep returned invalid response. HTTP ${response.status}`
+    );
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      data.error ||
+      `Yep HTTP ${response.status}`
+    );
+  }
+
+  return data;
+}
+
+/* =========================================================
+   SUPPLIER PAGE ENRICHMENT
+========================================================= */
+
+function cleanHTML(html) {
+
+  return String(html || "")
+    .replace(
+      /<script[\s\S]*?<\/script>/gi,
+      " "
+    )
+    .replace(
+      /<style[\s\S]*?<\/style>/gi,
+      " "
+    )
+    .replace(
+      /<noscript[\s\S]*?<\/noscript>/gi,
+      " "
+    )
+    .replace(
+      /<svg[\s\S]*?<\/svg>/gi,
+      " "
+    )
+    .replace(
+      /<[^>]+>/g,
+      " "
+    )
+    .replace(
+      /&nbsp;/gi,
+      " "
+    )
+    .replace(
+      /&amp;/gi,
+      "&"
+    )
+    .replace(
+      /&quot;/gi,
+      '"'
+    )
+    .replace(
+      /&#39;/gi,
+      "'"
+    )
+    .replace(
+      /&#x27;/gi,
+      "'"
+    )
+    .replace(
+      /\s+/g,
+      " "
+    )
+    .trim()
+    .slice(0, 120000);
+}
+
+async function enrichSupplier(
+  url,
+  fallback
+) {
+
+  const result = {
+    ...fallback,
+
+    price:
+      fallback.price ?? null,
+
+    moq:
+      fallback.moq ?? null,
+
+    leadTime:
+      fallback.leadTime ?? null,
+
+    evidence:
+      Number(fallback.evidence) || 0,
+
+    confidence:
+      Number(fallback.confidence) || 0,
+
+    verification:
+      fallback.verification ||
+      "Not verified",
+
+    verified:
+      false,
+
+    sourcePageChecked:
+      false
+  };
+
+  if (!url) {
+    return result;
+  }
+
+  try {
+
+    const response =
+      await fetch(
+        url,
+        {
+          method: "GET",
+
+          headers: {
+            "User-Agent":
+              "Mozilla/5.0 (compatible; NOVA Procurement Bot/1.0)",
+
+            "Accept":
+              "text/html,application/xhtml+xml,text/html"
+          }
+        }
+      );
+
+    if (!response.ok) {
+      return result;
+    }
+
+    const html =
+      await response.text();
+
+    if (
+      !html ||
+      html.length < 200
+    ) {
+      return result;
+    }
+
+    const pageText =
+      cleanHTML(html);
+
+    const combined =
+      `${fallback.title || ""}
+       ${fallback.snippet || ""}
+       ${pageText}`;
+
+    const pagePrice =
+      parsePrice(combined);
+
+    const pageMOQ =
+      parseMOQ(combined);
+
+    const pageLead =
+      parseLead(combined);
+
+    if (
+      result.price === null &&
+      pagePrice !== null
+    ) {
+      result.price = pagePrice;
+    }
+
+    if (
+      result.moq === null &&
+      pageMOQ !== null
+    ) {
+      result.moq = pageMOQ;
+    }
+
+    if (
+      !result.leadTime &&
+      pageLead
+    ) {
+      result.leadTime =
+        pageLead;
+    }
+
+    const signal =
+      supplierSignals(combined);
+
+    const ev =
+      evidence(combined);
+
+    result.supplierSignal =
+      Math.max(
+        Number(result.supplierSignal) || 0,
+        signal
+      );
+
+    result.evidence =
+      Math.min(
+        50,
+        Math.max(
+          Number(result.evidence) || 0,
+          ev
+        )
+      );
+
+    result.dealScore =
+      dealScore(
+        result.supplierSignal,
+        result.evidence,
+        result.price,
+        result.moq
+      );
+
+    result.confidence =
+      confidence(
+        result.evidence
+      );
+
+    result.sourcePageChecked =
+      true;
+
+    const commercial =
+      result.price !== null ||
+      result.moq !== null ||
+      result.leadTime !== null;
+
+    const supplierIdentity =
+      /manufacturer|factory|supplier|wholesale|oem|odm|exporter/i
+        .test(combined);
+
+    if (
+      commercial &&
+      supplierIdentity &&
+      result.evidence >= 20
+    ) {
+
+      result.verification =
+        "Partially Verified";
+
+      result.verified =
+        false;
+    }
+
+    if (
+      result.price !== null &&
+      result.moq !== null &&
+      result.leadTime !== null &&
+      result.evidence >= 30
+    ) {
+
+      result.verification =
+        "Verified from supplier page";
+
+      result.verified =
+        true;
+    }
+
+    return result;
+
+  } catch {
+
+    return result;
+  }
+}
+
+/* =========================================================
+   SAVE SUPPLIER
+========================================================= */
+
+async function saveSupplier(
+  db,
+  supplier,
+  product
+) {
+
+  if (!db || !supplier.url) {
+    return;
+  }
+
+  try {
+
+    const existing =
+      await db.prepare(
+        "SELECT id FROM suppliers WHERE url=? LIMIT 1"
+      )
+      .bind(supplier.url)
+      .first();
+
+    if (existing) {
+
+      await db.prepare(`
+        UPDATE suppliers
+        SET
+          name=?,
           country=?,
           region=?,
           source=?,
@@ -528,80 +961,200 @@ async function saveSupplier(db, r, clean) {
           lead_time=?,
           confidence=?,
           verification=?
-      WHERE id=?
-    `).bind(
-      r.title,
-      r.country,
-      r.region,
-      "Yep",
-      clean,
-      r.evidence,
-      r.dealScore,
-      r.price,
-      r.moq,
-      r.leadTime,
-      r.confidence,
-      r.verification,
-      existing.id
-    ).run();
-  } else {
-    await db.prepare(`
-      INSERT INTO suppliers
-      (name,url,country,region,source,product,evidence,deal_score,
-       price,moq,lead_time,confidence,verification)
-      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
-    `).bind(
-      r.title,
-      r.url,
-      r.country,
-      r.region,
-      "Yep",
-      clean,
-      r.evidence,
-      r.dealScore,
-      r.price,
-      r.moq,
-      r.leadTime,
-      r.confidence,
-      r.verification
-    ).run();
+        WHERE id=?
+      `)
+        .bind(
+          supplier.title ||
+            "Supplier",
+
+          supplier.country ||
+            "",
+
+          supplier.region ||
+            "",
+
+          "Yep + Supplier Page",
+
+          product ||
+            "",
+
+          Number(
+            supplier.evidence
+          ) || 0,
+
+          Number(
+            supplier.dealScore
+          ) || 0,
+
+          supplier.price,
+
+          supplier.moq,
+
+          supplier.leadTime ||
+            null,
+
+          Number(
+            supplier.confidence
+          ) || 0,
+
+          supplier.verification ||
+            "Not verified",
+
+          existing.id
+        )
+        .run();
+
+    } else {
+
+      await db.prepare(`
+        INSERT INTO suppliers
+        (
+          name,
+          url,
+          country,
+          region,
+          source,
+          product,
+          evidence,
+          deal_score,
+          price,
+          moq,
+          lead_time,
+          confidence,
+          verification
+        )
+        VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)
+      `)
+        .bind(
+
+          supplier.title ||
+            "Supplier",
+
+          supplier.url,
+
+          supplier.country ||
+            "",
+
+          supplier.region ||
+            "",
+
+          "Yep + Supplier Page",
+
+          product ||
+            "",
+
+          Number(
+            supplier.evidence
+          ) || 0,
+
+          Number(
+            supplier.dealScore
+          ) || 0,
+
+          supplier.price,
+
+          supplier.moq,
+
+          supplier.leadTime ||
+            null,
+
+          Number(
+            supplier.confidence
+          ) || 0,
+
+          supplier.verification ||
+            "Not verified"
+
+        )
+        .run();
+    }
+
+  } catch {
+    /* Supplier failure must never break the search */
   }
 }
 
-async function searchSuppliers(requestText, env, db) {
-  const clean = String(requestText || "")
-    .replace(/\s+/g, " ")
-    .trim()
-    .slice(0, 700);
+/* =========================================================
+   SEARCH + ENRICHMENT
+========================================================= */
+
+async function searchSuppliers(
+  requestText,
+  env,
+  db
+) {
+
+  const clean =
+    String(requestText || "")
+      .replace(/\s+/g, " ")
+      .trim()
+      .slice(0, 700);
 
   if (!clean) {
-    throw new Error("Please enter a procurement request.");
+    throw new Error(
+      "Please enter a procurement request."
+    );
   }
 
   const base =
     `${clean} manufacturer factory supplier wholesale OEM ODM exporter bulk custom MOQ price quotation production lead time shipping`;
 
-  const searches = REGIONS.map(([code]) =>
-    yepSearch(base, code, env, 10)
-  );
+  const searches =
+    REGIONS.map(
+      ([code]) =>
+        yepSearch(
+          base,
+          code,
+          env,
+          10
+        )
+    );
 
-  const settled = await Promise.allSettled(searches);
+  const settled =
+    await Promise.allSettled(
+      searches
+    );
+
   const results = [];
 
-  for (let i = 0; i < settled.length; i++) {
-    const x = settled[i];
+  for (
+    let i = 0;
+    i < settled.length;
+    i++
+  ) {
 
-    if (x.status !== "fulfilled") continue;
+    const item =
+      settled[i];
 
-    const raw = Array.isArray(x.value.results)
-      ? x.value.results
-      : [];
+    if (
+      item.status !==
+      "fulfilled"
+    ) {
+      continue;
+    }
+
+    const raw =
+      Array.isArray(
+        item.value.results
+      )
+        ? item.value.results
+        : [];
 
     for (const r of raw) {
-      const title = r.title || r.name || "Supplier";
-      const url = r.url || r.link || "";
 
-      if (!url) continue;
+      const title =
+        r.title ||
+        r.name ||
+        "Supplier";
+
+      const url =
+        r.url ||
+        r.link ||
+        "";
+
+      if (!url) {
+        continue;
+      }
 
       const snippet =
         r.snippet ||
@@ -609,94 +1162,248 @@ async function searchSuppliers(requestText, env, db) {
         r.text ||
         "";
 
-      const combined = `${title} ${snippet}`;
+      const combined =
+        `${title} ${snippet}`;
 
-      const price = parsePrice(combined);
-      const moq = parseMOQ(combined);
-      const lead = parseLead(combined);
-      const sig = supplierSignals(combined);
-      const ev = evidence(combined);
-      const score = dealScore(sig, ev, price, moq);
-      const conf = confidence(ev);
+      const price =
+        parsePrice(combined);
+
+      const moq =
+        parseMOQ(combined);
+
+      const lead =
+        parseLead(combined);
+
+      const signal =
+        supplierSignals(
+          combined
+        );
+
+      const ev =
+        evidence(
+          combined
+        );
+
+      const score =
+        dealScore(
+          signal,
+          ev,
+          price,
+          moq
+        );
 
       results.push({
+
         title,
+
         url,
+
         snippet,
+
         price,
+
         moq,
-        leadTime: lead,
-        shipping: null,
-        supplierSignal: sig,
-        evidence: ev,
-        confidence: conf,
-        dealScore: score,
-        region: REGIONS[i][1],
-        country: REGIONS[i][0],
-        verified: false,
-        verification: "Not verified"
+
+        leadTime:
+          lead,
+
+        shipping:
+          null,
+
+        supplierSignal:
+          signal,
+
+        evidence:
+          ev,
+
+        confidence:
+          confidence(ev),
+
+        dealScore:
+          score,
+
+        region:
+          REGIONS[i][1],
+
+        country:
+          REGIONS[i][0],
+
+        verified:
+          false,
+
+        verification:
+          "Not verified"
+
       });
     }
   }
 
   const unique = [
-    ...new Map(results.map(r => [r.url, r])).values()
+    ...new Map(
+      results.map(
+        r => [r.url, r]
+      )
+    ).values()
   ]
-    .sort((a, b) => b.dealScore - a.dealScore)
-    .slice(0, 60);
+    .sort(
+      (a, b) =>
+        Number(b.dealScore || 0) -
+        Number(a.dealScore || 0)
+    )
+    .slice(0, 40);
 
-  for (const r of unique) {
-    try {
-      await saveSupplier(db, r, clean);
-    } catch {}
+  /*
+    فحص صفحات الموردين الحقيقية.
+    30 صفحة كحد أقصى في كل عملية بحث.
+  */
+
+  const checked =
+    unique.slice(0, 30);
+
+  const enriched =
+    await Promise.all(
+      checked.map(
+        supplier =>
+          enrichSupplier(
+            supplier.url,
+            supplier
+          )
+      )
+    );
+
+  const remaining =
+    unique.slice(30);
+
+  const finalResults = [
+    ...enriched,
+    ...remaining
+  ];
+
+  finalResults.sort(
+    (a, b) =>
+      Number(b.dealScore || 0) -
+      Number(a.dealScore || 0)
+  );
+
+  for (
+    const supplier of finalResults
+  ) {
+
+    await saveSupplier(
+      db,
+      supplier,
+      clean
+    );
   }
 
   return {
+
     ok: true,
-    results: unique,
-    total: unique.length,
-    networkTarget: TARGET_NETWORK
+
+    results:
+      finalResults,
+
+    total:
+      finalResults.length,
+
+    networkTarget:
+      TARGET_NETWORK,
+
+    pageEnrichment:
+      true,
+
+    checkedSupplierPages:
+      enriched.length
+
   };
 }
 
-/* =========================
+/* =========================================================
    AI
-========================= */
+========================================================= */
 
-async function ai(env, system, user, max_tokens = 900) {
+async function ai(
+  env,
+  system,
+  user,
+  max_tokens = 900
+) {
+
   if (!env.AI) {
-    throw new Error("Workers AI binding AI is missing.");
+    throw new Error(
+      "Workers AI binding AI is missing."
+    );
   }
 
-  const r = await env.AI.run(MODEL, {
-    messages: [
-      { role: "system", content: system },
-      { role: "user", content: user }
-    ],
-    max_tokens
-  });
+  const response =
+    await env.AI.run(
+      MODEL,
+      {
+        messages: [
+          {
+            role: "system",
+            content: system
+          },
+          {
+            role: "user",
+            content: user
+          }
+        ],
+        max_tokens
+      }
+    );
 
-  return r.response || "No AI response generated.";
+  return (
+    response.response ||
+    "No AI response generated."
+  );
 }
 
-async function negotiate(body, env) {
+/* =========================================================
+   NEGOTIATION
+========================================================= */
+
+async function negotiate(
+  body,
+  env
+) {
+
   return ai(
+
     env,
+
     `You are NOVA, an advanced procurement negotiation agent.
 Never invent supplier facts.
 Clearly separate verified facts from assumptions.
 Give practical commercial negotiation advice.`,
+
     `
-Supplier: ${body.supplier || ""}
-Target Price: ${body.target || ""}
-Quantity: ${body.quantity || ""}
-Current Price: ${body.current || ""}
-Negotiation Goal: ${body.goal || ""}
-Supplier Offer: ${body.offer || ""}
-Supplier Reply: ${body.reply || ""}
-Supplier Message: ${body.message || ""}
+Supplier:
+${body.supplier || ""}
+
+Target Price:
+${body.target || ""}
+
+Quantity:
+${body.quantity || ""}
+
+Current Price:
+${body.current || ""}
+
+Negotiation Goal:
+${body.goal || ""}
+
+Supplier Offer:
+${body.offer || ""}
+
+Supplier Reply:
+${body.reply || ""}
+
+Supplier Message:
+${body.message || ""}
 
 Return:
+
 1. Offer analysis
 2. Target price/range
 3. Counteroffer
@@ -709,632 +1416,1106 @@ Return:
   );
 }
 
-/* =========================
+/* =========================================================
    LANDED COST
-========================= */
+========================================================= */
 
 function landed(body) {
-  const qty = Math.max(
-    0,
-    Number(body.quantity ?? body.qty) || 0
-  );
 
-  const unit = Math.max(
-    0,
-    Number(body.unitPrice ?? body.unit_price) || 0
-  );
+  const quantity =
+    Math.max(
+      0,
+      Number(
+        body.quantity ??
+        body.qty
+      ) || 0
+    );
 
-  const shipping = Math.max(
-    0,
-    Number(body.shipping) || 0
-  );
+  const unitPrice =
+    Math.max(
+      0,
+      Number(
+        body.unitPrice ??
+        body.unit_price
+      ) || 0
+    );
 
-  const insurance = Math.max(
-    0,
-    Number(body.insurance) || 0
-  );
+  const shipping =
+    Math.max(
+      0,
+      Number(body.shipping) || 0
+    );
 
-  const duty = Math.max(
-    0,
-    Number(body.dutyPercent ?? body.duty_percent) || 0
-  );
+  const insurance =
+    Math.max(
+      0,
+      Number(body.insurance) || 0
+    );
 
-  const tax = Math.max(
-    0,
-    Number(body.taxPercent ?? body.tax_percent) || 0
-  );
+  const dutyPercent =
+    Math.max(
+      0,
+      Number(
+        body.dutyPercent ??
+        body.duty_percent
+      ) || 0
+    );
 
-  const local = Math.max(
-    0,
-    Number(body.localDelivery ?? body.local_delivery) || 0
-  );
+  const taxPercent =
+    Math.max(
+      0,
+      Number(
+        body.taxPercent ??
+        body.tax_percent
+      ) || 0
+    );
 
-  const goods = qty * unit;
+  const localDelivery =
+    Math.max(
+      0,
+      Number(
+        body.localDelivery ??
+        body.local_delivery
+      ) || 0
+    );
 
-  const dutyAmount =
-    goods * duty / 100;
+  const goods =
+    quantity * unitPrice;
+
+  const duty =
+    goods *
+    dutyPercent /
+    100;
 
   const taxable =
     goods +
     shipping +
     insurance +
-    dutyAmount;
+    duty;
 
-  const taxAmount =
-    taxable * tax / 100;
+  const tax =
+    taxable *
+    taxPercent /
+    100;
 
   const total =
     goods +
     shipping +
     insurance +
-    dutyAmount +
-    taxAmount +
-    local;
+    duty +
+    tax +
+    localDelivery;
 
   return {
+
     goods,
+
     shipping,
+
     insurance,
-    duty: dutyAmount,
-    tax: taxAmount,
-    localDelivery: local,
+
+    duty,
+
+    tax,
+
+    localDelivery,
+
     total,
-    unitLanded: qty ? total / qty : 0,
+
+    unitLanded:
+      quantity
+        ? total / quantity
+        : 0,
+
     status:
       "Estimated — verify freight, customs and taxes before payment"
+
   };
 }
 
-/* =========================
+/* =========================================================
    SEO
-========================= */
+========================================================= */
 
 const SEO = {
+
   "/ai-procurement": [
     "AI Procurement | NOVA",
     "AI purchasing agent for supplier discovery, comparison, RFQs and negotiation."
   ],
+
   "/ai-sourcing": [
     "AI Sourcing | NOVA",
     "Search global manufacturers and suppliers with evidence-first deal intelligence."
   ],
+
   "/supplier-finder": [
     "Supplier Finder | NOVA",
     "Find manufacturers and suppliers across global markets."
   ],
+
   "/supplier-comparison": [
     "Supplier Comparison | NOVA",
     "Compare supplier evidence, price, MOQ, lead time, risk and deal score."
   ],
+
   "/china-suppliers": [
     "China Suppliers | NOVA",
     "Discover Chinese manufacturers and wholesale suppliers."
   ],
+
   "/wholesale-suppliers": [
     "Wholesale Suppliers | NOVA",
     "Find global wholesale suppliers and manufacturers."
   ],
+
   "/ai-purchasing-agent": [
     "AI Purchasing Agent | NOVA",
     "NOVA searches, analyzes, creates RFQs and negotiates procurement offers."
   ],
+
   "/flash-deals": [
     "Factory Flash Deals | NOVA",
     "Discover factory commercial deals."
   ]
+
 };
 
-function htmlPage(title, desc) {
+function htmlPage(
+  title,
+  description
+) {
+
   return `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>${title}</title>
-<meta name="description" content="${desc}">
+<meta name="description" content="${description}">
 </head>
 <body style="font-family:Arial;max-width:900px;margin:40px auto;padding:20px">
 <h1>${title}</h1>
-<p>${desc}</p>
+<p>${description}</p>
 <p><a href="/">Open NOVA</a></p>
 </body>
 </html>`;
 }
 
-/* =========================
-   REQUEST HANDLER
-========================= */
+/* =========================================================
+   MAIN WORKER
+========================================================= */
 
 export default {
-  async fetch(request, env) {
-    const u = new URL(request.url);
-    const p = u.pathname;
-    const method = request.method;
+
+  async fetch(
+    request,
+    env
+  ) {
+
+    const url =
+      new URL(request.url);
+
+    const path =
+      url.pathname;
+
+    const method =
+      request.method;
 
     try {
+
+      /* DATABASE MIGRATION */
+
       if (env.DB) {
-        await migrateDatabase(env.DB);
+        await migrateDatabase(
+          env.DB
+        );
       }
 
       /* HEALTH */
-      if (p === "/api/health") {
+
+      if (
+        path === "/api/health"
+      ) {
+
         return json({
+
           ok: true,
-          nova: "online",
-          database: !!env.DB,
-          ai: !!env.AI,
-          yep: !!env.YEP_API_KEY,
-          timestamp: new Date().toISOString()
+
+          nova:
+            "online",
+
+          database:
+            !!env.DB,
+
+          ai:
+            !!env.AI,
+
+          yep:
+            !!env.YEP_API_KEY,
+
+          timestamp:
+            new Date()
+              .toISOString()
+
         });
       }
 
       /* ROBOTS */
-      if (p === "/robots.txt") {
+
+      if (
+        path === "/robots.txt"
+      ) {
+
         return new Response(
           `User-agent: *
 Allow: /
-Sitemap: ${u.origin}/sitemap.xml`,
+Sitemap: ${url.origin}/sitemap.xml`,
           {
             headers: {
-              "Content-Type": "text/plain"
+              "Content-Type":
+                "text/plain"
             }
           }
         );
       }
 
       /* SITEMAP */
-      if (p === "/sitemap.xml") {
+
+      if (
+        path === "/sitemap.xml"
+      ) {
+
         const paths = [
           "/",
           ...Object.keys(SEO)
         ];
 
         return new Response(
+
           `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-${paths.map(x =>
-  `<url><loc>${u.origin}${x}</loc></url>`
+${paths.map(
+  x =>
+    `<url><loc>${url.origin}${x}</loc></url>`
 ).join("")}
 </urlset>`,
+
           {
             headers: {
-              "Content-Type": "application/xml"
+              "Content-Type":
+                "application/xml"
             }
           }
+
         );
       }
 
-      /* SEO */
-      if (SEO[p]) {
-        const [title, desc] = SEO[p];
+      /* SEO PAGES */
+
+      if (SEO[path]) {
+
+        const [
+          title,
+          description
+        ] = SEO[path];
 
         return new Response(
-          htmlPage(title, desc),
+
+          htmlPage(
+            title,
+            description
+          ),
+
           {
             headers: {
-              "Content-Type": "text/html;charset=UTF-8"
+              "Content-Type":
+                "text/html;charset=UTF-8"
             }
           }
+
         );
       }
 
-      /* SEARCH */
-      if (p === "/api/search" && method === "POST") {
-        const b = await request.json();
+      /* =====================================================
+         SEARCH
+      ===================================================== */
+
+      if (
+        path === "/api/search" &&
+        method === "POST"
+      ) {
+
+        const body =
+          await request.json();
 
         return json(
           await searchSuppliers(
-            b.request || b.query || b.product,
+            body.request ||
+            body.query ||
+            body.product,
             env,
             env.DB
           )
         );
       }
 
-      /* NETWORK */
-      if (p === "/api/network" && method === "GET") {
-        const row = await env.DB
-          .prepare("SELECT COUNT(*) AS count FROM suppliers")
-          .first();
+      /* =====================================================
+         NETWORK
+      ===================================================== */
+
+      if (
+        path === "/api/network" &&
+        method === "GET"
+      ) {
+
+        const row =
+          await env.DB
+            .prepare(
+              "SELECT COUNT(*) AS count FROM suppliers"
+            )
+            .first();
 
         return json({
+
           ok: true,
-          actualRecords: Number(row?.count || 0),
-          targetRecords: TARGET_NETWORK,
-          evidenceRecords: Number(row?.count || 0),
-          coverage: [
-            ...new Set(REGIONS.map(x => x[1]))
-          ],
+
+          actualRecords:
+            Number(
+              row?.count || 0
+            ),
+
+          targetRecords:
+            TARGET_NETWORK,
+
+          evidenceRecords:
+            Number(
+              row?.count || 0
+            ),
+
+          coverage:
+            [
+              ...new Set(
+                REGIONS.map(
+                  x => x[1]
+                )
+              )
+            ],
+
           status:
             "Live supplier discovery through configured search sources."
+
         });
       }
 
-      /* SUPPLIERS */
-      if (p === "/api/suppliers" && method === "GET") {
-        const rows = await env.DB
-          .prepare(`
-            SELECT *
-            FROM suppliers
-            ORDER BY deal_score DESC, id DESC
-            LIMIT 200
+      /* =====================================================
+         SUPPLIERS
+      ===================================================== */
+
+      if (
+        path === "/api/suppliers" &&
+        method === "GET"
+      ) {
+
+        const rows =
+          await env.DB
+            .prepare(`
+              SELECT *
+              FROM suppliers
+              ORDER BY deal_score DESC, id DESC
+              LIMIT 200
+            `)
+            .all();
+
+        return json({
+          suppliers:
+            rows.results || []
+        });
+      }
+
+      /* =====================================================
+         PROJECTS CREATE
+      ===================================================== */
+
+      if (
+        path === "/api/projects" &&
+        method === "POST"
+      ) {
+
+        const body =
+          await request.json();
+
+        const user =
+          await currentUser(
+            request,
+            env.DB
+          );
+
+        const r =
+          await env.DB.prepare(`
+            INSERT INTO projects
+            (
+              user_id,
+              name,
+              product,
+              quantity,
+              destination,
+              requirements,
+              status
+            )
+            VALUES(?,?,?,?,?,?,?)
           `)
-          .all();
+          .bind(
+
+            user?.id || null,
+
+            body.name || "",
+
+            body.product || "",
+
+            Number(
+              body.quantity
+            ) || 0,
+
+            body.destination ||
+              "",
+
+            body.requirements ||
+              "",
+
+            "active"
+
+          )
+          .run();
 
         return json({
-          suppliers: rows.results || []
-        });
-      }
 
-      /* PROJECTS - CREATE */
-      if (p === "/api/projects" && method === "POST") {
-        const b = await request.json();
-        const user = await currentUser(request, env.DB);
-
-        const r = await env.DB.prepare(`
-          INSERT INTO projects
-          (user_id,name,product,quantity,destination,requirements,status)
-          VALUES(?,?,?,?,?,?,?)
-        `).bind(
-          user?.id || null,
-          b.name || "",
-          b.product || "",
-          Number(b.quantity) || 0,
-          b.destination || "",
-          b.requirements || "",
-          "active"
-        ).run();
-
-        return json({
           success: true,
-          projectId: r.meta.last_row_id
+
+          projectId:
+            r.meta.last_row_id
+
         });
       }
 
-      /* PROJECTS - LOAD */
-      if (p === "/api/projects" && method === "GET") {
-        const user = await currentUser(request, env.DB);
+      /* PROJECTS LOAD */
+
+      if (
+        path === "/api/projects" &&
+        method === "GET"
+      ) {
+
+        const user =
+          await currentUser(
+            request,
+            env.DB
+          );
 
         const rows = user
-          ? await env.DB.prepare(`
-              SELECT *
-              FROM projects
-              WHERE user_id=? OR user_id IS NULL
-              ORDER BY id DESC
-            `).bind(user.id).all()
-          : await env.DB.prepare(`
-              SELECT *
-              FROM projects
-              ORDER BY id DESC
-            `).all();
+
+          ? await env.DB
+              .prepare(`
+                SELECT *
+                FROM projects
+                WHERE user_id=?
+                   OR user_id IS NULL
+                ORDER BY id DESC
+              `)
+              .bind(user.id)
+              .all()
+
+          : await env.DB
+              .prepare(`
+                SELECT *
+                FROM projects
+                ORDER BY id DESC
+              `)
+              .all();
 
         return json({
-          projects: rows.results || []
+          projects:
+            rows.results || []
         });
       }
 
-      /* RFQ */
-      if (p === "/api/rfq" && method === "POST") {
-        const b = await request.json();
+      /* =====================================================
+         RFQ CREATE
+      ===================================================== */
 
-        const msg = await ai(
-          env,
-          "You write concise professional procurement RFQs. Never invent specifications.",
-          `
-Product: ${b.product || ""}
-Quantity: ${b.quantity || ""}
-Destination: ${b.destination || ""}
-Requirements: ${b.requirements || "None"}
+      if (
+        path === "/api/rfq" &&
+        method === "POST"
+      ) {
 
-Create a ready-to-send RFQ requesting:
-unit price, MOQ, sample, production lead time,
-Incoterm, packaging, shipping to destination,
-payment terms, certifications and quotation validity.
+        const body =
+          await request.json();
+
+        const message =
+          await ai(
+
+            env,
+
+            "You write concise professional procurement RFQs. Never invent specifications.",
+
+            `
+Product:
+${body.product || ""}
+
+Quantity:
+${body.quantity || ""}
+
+Destination:
+${body.destination || ""}
+
+Requirements:
+${body.requirements || "None"}
+
+Create a professional RFQ requesting:
+
+- Unit price
+- MOQ
+- Sample cost
+- Production lead time
+- Incoterm
+- Packaging
+- Shipping to destination
+- Payment terms
+- Certifications
+- Quotation validity
 `
-        );
 
-        const user = await currentUser(request, env.DB);
+          );
 
-        const r = await env.DB.prepare(`
-          INSERT INTO rfqs
-          (user_id,project_id,supplier_id,product,quantity,destination,requirements,message,status)
-          VALUES(?,?,?,?,?,?,?,?,?)
-        `).bind(
-          user?.id || null,
-          b.project_id ?? b.projectId ?? null,
-          b.supplier_id ?? b.supplierId ?? null,
-          b.product || "",
-          Number(b.quantity) || 0,
-          b.destination || "",
-          b.requirements || "",
-          msg,
-          "draft"
-        ).run();
+        const user =
+          await currentUser(
+            request,
+            env.DB
+          );
+
+        const r =
+          await env.DB.prepare(`
+            INSERT INTO rfqs
+            (
+              user_id,
+              project_id,
+              supplier_id,
+              product,
+              quantity,
+              destination,
+              requirements,
+              message,
+              status
+            )
+            VALUES(?,?,?,?,?,?,?,?,?)
+          `)
+          .bind(
+
+            user?.id || null,
+
+            body.project_id ??
+              body.projectId ??
+              null,
+
+            body.supplier_id ??
+              body.supplierId ??
+              null,
+
+            body.product || "",
+
+            Number(
+              body.quantity
+            ) || 0,
+
+            body.destination ||
+              "",
+
+            body.requirements ||
+              "",
+
+            message,
+
+            "draft"
+
+          )
+          .run();
 
         return json({
+
           success: true,
-          rfqId: r.meta.last_row_id,
-          message: msg
+
+          rfqId:
+            r.meta.last_row_id,
+
+          message
+
         });
       }
 
       /* RFQ LOAD */
-      if (p === "/api/rfq" && method === "GET") {
-        const rows = await env.DB
-          .prepare(`
-            SELECT *
-            FROM rfqs
-            ORDER BY id DESC
-            LIMIT 100
-          `)
-          .all();
 
-        return json({
-          rfqs: rows.results || []
-        });
-      }
-
-      /* BIDS - SUBMIT */
-      if (p === "/api/bids" && method === "POST") {
-        const b = await request.json();
-        const user = await currentUser(request, env.DB);
-
-        const r = await env.DB.prepare(`
-          INSERT INTO bids
-          (user_id,project_id,supplier_id,supplier,unit_price,currency,
-           moq,lead_time_days,shipping,notes,status)
-          VALUES(?,?,?,?,?,?,?,?,?,?,?)
-        `).bind(
-          user?.id || null,
-          b.project_id ?? b.projectId ?? null,
-          b.supplier_id ?? b.supplierId ?? null,
-          b.supplier || b.supplierName || "",
-          Number(b.unit_price ?? b.unitPrice) || 0,
-          b.currency || "USD",
-          Number(b.moq) || 0,
-          Number(b.lead_time_days ?? b.leadTimeDays) || 0,
-          Number(b.shipping) || 0,
-          b.notes || "",
-          "submitted"
-        ).run();
-
-        return json({
-          success: true,
-          bidId: r.meta.last_row_id
-        });
-      }
-
-      /* BIDS - LOAD */
-      if (p === "/api/bids" && method === "GET") {
-        const rows = await env.DB
-          .prepare(`
-            SELECT *
-            FROM bids
-            ORDER BY id DESC
-            LIMIT 200
-          `)
-          .all();
-
-        return json({
-          bids: rows.results || []
-        });
-      }
-
-      /* BIDS - COMPARE GET */
       if (
-        p === "/api/bids/compare" &&
+        path === "/api/rfq" &&
         method === "GET"
       ) {
-        const projectId =
-          u.searchParams.get("project_id") ||
-          u.searchParams.get("projectId");
 
-        let rows;
-
-        if (projectId) {
-          rows = await env.DB.prepare(`
-            SELECT *
-            FROM bids
-            WHERE project_id=?
-            ORDER BY unit_price ASC
-          `).bind(projectId).all();
-        } else {
-          rows = await env.DB.prepare(`
-            SELECT *
-            FROM bids
-            ORDER BY unit_price ASC
-            LIMIT 100
-          `).all();
-        }
+        const rows =
+          await env.DB
+            .prepare(`
+              SELECT *
+              FROM rfqs
+              ORDER BY id DESC
+              LIMIT 100
+            `)
+            .all();
 
         return json({
-          bids: rows.results || []
+          rfqs:
+            rows.results || []
         });
       }
 
-      /* BIDS - COMPARE POST */
+      /* =====================================================
+         BIDS SUBMIT
+      ===================================================== */
+
       if (
-        p === "/api/bids/compare" &&
+        path === "/api/bids" &&
         method === "POST"
       ) {
-        const b = await request.json();
 
-        const projectId =
-          b.project_id ??
-          b.projectId ??
-          null;
+        const body =
+          await request.json();
 
-        const rows = projectId
-          ? await env.DB.prepare(`
-              SELECT *
-              FROM bids
-              WHERE project_id=?
-              ORDER BY unit_price ASC
-            `).bind(projectId).all()
-          : await env.DB.prepare(`
-              SELECT *
-              FROM bids
-              ORDER BY unit_price ASC
-              LIMIT 100
-            `).all();
+        const user =
+          await currentUser(
+            request,
+            env.DB
+          );
+
+        const r =
+          await env.DB.prepare(`
+            INSERT INTO bids
+            (
+              user_id,
+              project_id,
+              supplier_id,
+              supplier,
+              unit_price,
+              currency,
+              moq,
+              lead_time_days,
+              shipping,
+              notes,
+              status
+            )
+            VALUES(?,?,?,?,?,?,?,?,?,?,?)
+          `)
+          .bind(
+
+            user?.id || null,
+
+            body.project_id ??
+              body.projectId ??
+              null,
+
+            body.supplier_id ??
+              body.supplierId ??
+              null,
+
+            body.supplier ||
+              body.supplierName ||
+              "",
+
+            Number(
+              body.unit_price ??
+              body.unitPrice
+            ) || 0,
+
+            body.currency ||
+              "USD",
+
+            Number(
+              body.moq
+            ) || 0,
+
+            Number(
+              body.lead_time_days ??
+              body.leadTimeDays
+            ) || 0,
+
+            Number(
+              body.shipping
+            ) || 0,
+
+            body.notes || "",
+
+            "submitted"
+
+          )
+          .run();
 
         return json({
-          bids: rows.results || []
+
+          success: true,
+
+          bidId:
+            r.meta.last_row_id
+
         });
       }
 
-      /* AWARD */
-      if (p === "/api/bids/award" && method === "POST") {
-        const b = await request.json();
+      /* BIDS LOAD */
+
+      if (
+        path === "/api/bids" &&
+        method === "GET"
+      ) {
+
+        const rows =
+          await env.DB
+            .prepare(`
+              SELECT *
+              FROM bids
+              ORDER BY id DESC
+              LIMIT 200
+            `)
+            .all();
+
+        return json({
+          bids:
+            rows.results || []
+        });
+      }
+
+      /* =====================================================
+         BID COMPARE GET
+      ===================================================== */
+
+      if (
+        path === "/api/bids/compare" &&
+        method === "GET"
+      ) {
+
+        const projectId =
+          url.searchParams.get(
+            "project_id"
+          ) ||
+          url.searchParams.get(
+            "projectId"
+          );
+
+        const rows =
+          projectId
+
+            ? await env.DB
+                .prepare(`
+                  SELECT *
+                  FROM bids
+                  WHERE project_id=?
+                  ORDER BY unit_price ASC
+                `)
+                .bind(projectId)
+                .all()
+
+            : await env.DB
+                .prepare(`
+                  SELECT *
+                  FROM bids
+                  ORDER BY unit_price ASC
+                  LIMIT 100
+                `)
+                .all();
+
+        return json({
+          bids:
+            rows.results || []
+        });
+      }
+
+      /* BID COMPARE POST */
+
+      if (
+        path === "/api/bids/compare" &&
+        method === "POST"
+      ) {
+
+        const body =
+          await request.json();
+
+        const projectId =
+          body.project_id ??
+          body.projectId ??
+          null;
+
+        const rows =
+          projectId
+
+            ? await env.DB
+                .prepare(`
+                  SELECT *
+                  FROM bids
+                  WHERE project_id=?
+                  ORDER BY unit_price ASC
+                `)
+                .bind(projectId)
+                .all()
+
+            : await env.DB
+                .prepare(`
+                  SELECT *
+                  FROM bids
+                  ORDER BY unit_price ASC
+                  LIMIT 100
+                `)
+                .all();
+
+        return json({
+          bids:
+            rows.results || []
+        });
+      }
+
+      /* =====================================================
+         AWARD BID
+      ===================================================== */
+
+      if (
+        path === "/api/bids/award" &&
+        method === "POST"
+      ) {
+
+        const body =
+          await request.json();
 
         const bidId =
-          b.bid_id ??
-          b.bidId;
+          body.bid_id ??
+          body.bidId;
 
         if (!bidId) {
           return json({
-            error: "Bid ID is required."
+            error:
+              "Bid ID is required."
           }, 400);
         }
 
-        await env.DB.prepare(`
-          UPDATE bids
-          SET status='awarded'
-          WHERE id=?
-        `).bind(bidId).run();
+        await env.DB
+          .prepare(`
+            UPDATE bids
+            SET status='awarded'
+            WHERE id=?
+          `)
+          .bind(bidId)
+          .run();
 
         return json({
+
           success: true,
+
           bidId
+
         });
       }
 
-      /* LANDED COST */
+      /* =====================================================
+         LANDED COST
+      ===================================================== */
+
       if (
-        p === "/api/landed-cost" &&
+        path === "/api/landed-cost" &&
         method === "POST"
       ) {
+
+        const body =
+          await request.json();
+
         return json(
-          landed(await request.json())
+          landed(body)
         );
       }
 
-      /* NEGOTIATION */
+      /* =====================================================
+         NEGOTIATION
+      ===================================================== */
+
       if (
-        p === "/api/negotiate" &&
+        path === "/api/negotiate" &&
         method === "POST"
       ) {
-        const b = await request.json();
 
-        if (!b.supplier) {
+        const body =
+          await request.json();
+
+        if (!body.supplier) {
+
           return json({
-            error: "Supplier is required."
+            error:
+              "Supplier is required."
           }, 400);
+
         }
 
         const result =
-          await negotiate(b, env);
+          await negotiate(
+            body,
+            env
+          );
 
         const user =
-          await currentUser(request, env.DB);
+          await currentUser(
+            request,
+            env.DB
+          );
 
         await env.DB.prepare(`
           INSERT INTO negotiations
-          (user_id,supplier,offer,result)
+          (
+            user_id,
+            supplier,
+            offer,
+            result
+          )
           VALUES(?,?,?,?)
-        `).bind(
-          user?.id || null,
-          b.supplier || "",
-          b.offer ||
-          b.current ||
-          b.target ||
-          "",
-          result
-        ).run();
+        `)
+          .bind(
+
+            user?.id || null,
+
+            body.supplier ||
+              "",
+
+            body.offer ||
+              body.current ||
+              body.target ||
+              "",
+
+            result
+
+          )
+          .run();
 
         return json({
+
           success: true,
+
           result
+
         });
       }
 
       /* NEGOTIATION HISTORY */
+
       if (
-        p === "/api/negotiations" &&
+        path === "/api/negotiations" &&
         method === "GET"
       ) {
-        const rows = await env.DB
-          .prepare(`
-            SELECT *
-            FROM negotiations
-            ORDER BY id DESC
-            LIMIT 100
-          `)
-          .all();
+
+        const rows =
+          await env.DB
+            .prepare(`
+              SELECT *
+              FROM negotiations
+              ORDER BY id DESC
+              LIMIT 100
+            `)
+            .all();
 
         return json({
-          negotiations: rows.results || []
+          negotiations:
+            rows.results || []
         });
       }
 
-      /* PURCHASE ORDERS - CREATE */
+      /* =====================================================
+         PURCHASE ORDER CREATE
+      ===================================================== */
+
       if (
-        p === "/api/purchase-orders" &&
+        path === "/api/purchase-orders" &&
         method === "POST"
       ) {
-        const b = await request.json();
+
+        const body =
+          await request.json();
+
         const user =
-          await currentUser(request, env.DB);
+          await currentUser(
+            request,
+            env.DB
+          );
 
         let projectId =
-          b.project_id ??
-          b.projectId ??
+          body.project_id ??
+          body.projectId ??
           null;
 
         let supplierId =
-          b.supplier_id ??
-          b.supplierId ??
+          body.supplier_id ??
+          body.supplierId ??
           null;
 
         let bidId =
-          b.bid_id ??
-          b.bidId ??
+          body.bid_id ??
+          body.bidId ??
           null;
 
         let quantity =
-          Number(b.quantity) || 0;
+          Number(
+            body.quantity
+          ) || 0;
 
         let unitPrice =
           Number(
-            b.unit_price ??
-            b.unitPrice
+            body.unit_price ??
+            body.unitPrice
           ) || 0;
 
         let currency =
-          b.currency || "USD";
+          body.currency ||
+          "USD";
 
         let notes =
-          b.notes || "";
+          body.notes ||
+          "";
 
         if (bidId) {
+
           const bid =
-            await env.DB.prepare(
-              "SELECT * FROM bids WHERE id=?"
-            ).bind(bidId).first();
+            await env.DB
+              .prepare(
+                "SELECT * FROM bids WHERE id=?"
+              )
+              .bind(bidId)
+              .first();
 
           if (bid) {
-            projectId ??= bid.project_id;
-            supplierId ??= bid.supplier_id;
 
-            if (!unitPrice)
+            if (
+              projectId === null
+            ) {
+              projectId =
+                bid.project_id;
+            }
+
+            if (
+              supplierId === null
+            ) {
+              supplierId =
+                bid.supplier_id;
+            }
+
+            if (!unitPrice) {
               unitPrice =
-                Number(bid.unit_price) || 0;
+                Number(
+                  bid.unit_price
+                ) || 0;
+            }
 
-            if (!quantity)
+            if (!quantity) {
               quantity = 1;
+            }
 
             currency =
-              b.currency ||
+              body.currency ||
               bid.currency ||
               "USD";
           }
@@ -1343,41 +2524,71 @@ payment terms, certifications and quotation validity.
         const r =
           await env.DB.prepare(`
             INSERT INTO purchase_orders
-            (user_id,project_id,supplier_id,bid_id,
-             quantity,unit_price,currency,notes,status)
+            (
+              user_id,
+              project_id,
+              supplier_id,
+              bid_id,
+              quantity,
+              unit_price,
+              currency,
+              notes,
+              status
+            )
             VALUES(?,?,?,?,?,?,?,?,?)
-          `).bind(
+          `)
+          .bind(
+
             user?.id || null,
+
             projectId,
+
             supplierId,
+
             bidId,
+
             quantity,
+
             unitPrice,
+
             currency,
+
             notes,
+
             "draft"
-          ).run();
+
+          )
+          .run();
 
         return json({
+
           success: true,
+
           purchaseOrderId:
             r.meta.last_row_id,
-          status: "draft"
+
+          status:
+            "draft"
+
         });
       }
 
-      /* PURCHASE ORDERS - LOAD */
+      /* PURCHASE ORDERS LOAD */
+
       if (
-        p === "/api/purchase-orders" &&
+        path === "/api/purchase-orders" &&
         method === "GET"
       ) {
+
         const rows =
-          await env.DB.prepare(`
-            SELECT *
-            FROM purchase_orders
-            ORDER BY id DESC
-            LIMIT 200
-          `).all();
+          await env.DB
+            .prepare(`
+              SELECT *
+              FROM purchase_orders
+              ORDER BY id DESC
+              LIMIT 200
+            `)
+            .all();
 
         return json({
           purchaseOrders:
@@ -1385,186 +2596,324 @@ payment terms, certifications and quotation validity.
         });
       }
 
-      /* FLASH DEALS - GET */
+      /* =====================================================
+         FLASH DEALS LOAD
+      ===================================================== */
+
       if (
-        p === "/api/deals" &&
+        path === "/api/deals" &&
         method === "GET"
       ) {
+
         const rows =
-          await env.DB.prepare(`
-            SELECT *
-            FROM flash_deals
-            WHERE status='submitted'
-              AND (
-                expires_at IS NULL
-                OR expires_at=''
-                OR expires_at > datetime('now')
-              )
-            ORDER BY id DESC
-            LIMIT 100
-          `).all();
+          await env.DB
+            .prepare(`
+              SELECT *
+              FROM flash_deals
+              WHERE status='submitted'
+                AND (
+                  expires_at IS NULL
+                  OR expires_at=''
+                  OR expires_at > datetime('now')
+                )
+              ORDER BY id DESC
+              LIMIT 100
+            `)
+            .all();
 
         return json({
-          deals: rows.results || []
+          deals:
+            rows.results || []
         });
       }
 
-      /* FLASH DEALS - CREATE */
+      /* FLASH DEAL CREATE */
+
       if (
-        p === "/api/deals" &&
+        path === "/api/deals" &&
         method === "POST"
       ) {
-        const b = await request.json();
+
+        const body =
+          await request.json();
 
         const user =
-          await currentUser(request, env.DB);
+          await currentUser(
+            request,
+            env.DB
+          );
 
         const r =
           await env.DB.prepare(`
             INSERT INTO flash_deals
-            (user_id,company,product,description,country,
-             quantity,price,currency,moq,expires_at,status,url)
+            (
+              user_id,
+              company,
+              product,
+              description,
+              country,
+              quantity,
+              price,
+              currency,
+              moq,
+              expires_at,
+              status,
+              url
+            )
             VALUES(?,?,?,?,?,?,?,?,?,?,?,?)
-          `).bind(
+          `)
+          .bind(
+
             user?.id || null,
-            b.company ||
-            b.supplier ||
-            "",
-            b.product || "",
-            b.description || "",
-            b.country || "",
-            Number(b.quantity) || 0,
-            Number(b.price) || 0,
-            b.currency || "USD",
-            Number(b.moq) || 0,
-            b.expiresAt ||
-            b.expires_at ||
-            null,
+
+            body.company ||
+              body.supplier ||
+              "",
+
+            body.product ||
+              "",
+
+            body.description ||
+              "",
+
+            body.country ||
+              "",
+
+            Number(
+              body.quantity
+            ) || 0,
+
+            Number(
+              body.price
+            ) || 0,
+
+            body.currency ||
+              "USD",
+
+            Number(
+              body.moq
+            ) || 0,
+
+            body.expiresAt ||
+              body.expires_at ||
+              null,
+
             "submitted",
-            b.url || ""
-          ).run();
+
+            body.url ||
+              ""
+
+          )
+          .run();
 
         return json({
+
           success: true,
-          dealId: r.meta.last_row_id,
-          status: "submitted"
+
+          dealId:
+            r.meta.last_row_id,
+
+          status:
+            "submitted"
+
         });
       }
 
-      /* MEMORY - SAVE */
+      /* =====================================================
+         MEMORY SAVE
+      ===================================================== */
+
       if (
-        p === "/api/memory" &&
+        path === "/api/memory" &&
         method === "POST"
       ) {
-        const b = await request.json();
+
+        const body =
+          await request.json();
 
         const user =
-          await currentUser(request, env.DB);
+          await currentUser(
+            request,
+            env.DB
+          );
 
         const r =
           await env.DB.prepare(`
             INSERT INTO procurement_memory
-            (user_id,product,supplier,outcome,memory)
+            (
+              user_id,
+              product,
+              supplier,
+              outcome,
+              memory
+            )
             VALUES(?,?,?,?,?)
-          `).bind(
+          `)
+          .bind(
+
             user?.id || null,
-            b.product || "",
-            b.supplier || "",
-            b.outcome || "",
-            b.memory || ""
-          ).run();
+
+            body.product ||
+              "",
+
+            body.supplier ||
+              "",
+
+            body.outcome ||
+              "",
+
+            body.memory ||
+              ""
+
+          )
+          .run();
 
         return json({
+
           success: true,
-          memoryId: r.meta.last_row_id
+
+          memoryId:
+            r.meta.last_row_id
+
         });
       }
 
-      /* MEMORY - LOAD */
+      /* MEMORY LOAD */
+
       if (
-        p === "/api/memory" &&
+        path === "/api/memory" &&
         method === "GET"
       ) {
+
         const rows =
-          await env.DB.prepare(`
-            SELECT *
-            FROM procurement_memory
-            ORDER BY id DESC
-            LIMIT 200
-          `).all();
+          await env.DB
+            .prepare(`
+              SELECT *
+              FROM procurement_memory
+              ORDER BY id DESC
+              LIMIT 200
+            `)
+            .all();
 
         return json({
-          memory: rows.results || []
+          memory:
+            rows.results || []
         });
       }
 
-      /* PURCHASE HISTORY - CREATE */
+      /* =====================================================
+         PURCHASE HISTORY CREATE
+      ===================================================== */
+
       if (
-        p === "/api/purchases" &&
+        path === "/api/purchases" &&
         method === "POST"
       ) {
+
         const user =
-          await currentUser(request, env.DB);
+          await currentUser(
+            request,
+            env.DB
+          );
 
         if (!user) {
+
           return json({
-            error: "Please login first."
+            error:
+              "Please login first."
           }, 401);
+
         }
 
-        const b =
+        const body =
           await request.json();
 
         await env.DB.prepare(`
           INSERT INTO purchases
-          (user_id,product,supplier,quantity,
-           unit_price,shipping,landed_cost,supplier_url)
+          (
+            user_id,
+            product,
+            supplier,
+            quantity,
+            unit_price,
+            shipping,
+            landed_cost,
+            supplier_url
+          )
           VALUES(?,?,?,?,?,?,?,?)
-        `).bind(
-          user.id,
-          b.product || "",
-          b.supplier || "",
-          Number(b.quantity) || 0,
-          Number(
-            b.unitPrice ??
-            b.unit_price
-          ) || 0,
-          Number(b.shipping) || 0,
-          Number(
-            b.landedCost ??
-            b.landed_cost
-          ) || 0,
-          b.supplierUrl ||
-          b.supplier_url ||
-          ""
-        ).run();
+        `)
+          .bind(
+
+            user.id,
+
+            body.product ||
+              "",
+
+            body.supplier ||
+              "",
+
+            Number(
+              body.quantity
+            ) || 0,
+
+            Number(
+              body.unitPrice ??
+              body.unit_price
+            ) || 0,
+
+            Number(
+              body.shipping
+            ) || 0,
+
+            Number(
+              body.landedCost ??
+              body.landed_cost
+            ) || 0,
+
+            body.supplierUrl ||
+              body.supplier_url ||
+              ""
+
+          )
+          .run();
 
         return json({
           success: true
         });
       }
 
-      /* PURCHASE HISTORY - LOAD */
+      /* PURCHASE HISTORY LOAD */
+
       if (
-        p === "/api/purchases" &&
+        path === "/api/purchases" &&
         method === "GET"
       ) {
+
         const user =
-          await currentUser(request, env.DB);
+          await currentUser(
+            request,
+            env.DB
+          );
 
         if (!user) {
+
           return json({
-            error: "Please login first."
+            error:
+              "Please login first."
           }, 401);
+
         }
 
         const rows =
-          await env.DB.prepare(`
-            SELECT *
-            FROM purchases
-            WHERE user_id=?
-            ORDER BY id DESC
-          `).bind(user.id).all();
+          await env.DB
+            .prepare(`
+              SELECT *
+              FROM purchases
+              WHERE user_id=?
+              ORDER BY id DESC
+            `)
+            .bind(user.id)
+            .all();
 
         return json({
           purchases:
@@ -1572,45 +2921,62 @@ payment terms, certifications and quotation validity.
         });
       }
 
-      /* SIGNUP */
+      /* =====================================================
+         SIGN UP
+      ===================================================== */
+
       if (
-        p === "/api/signup" &&
+        path === "/api/signup" &&
         method === "POST"
       ) {
-        const b =
+
+        const body =
           await request.json();
 
         const email =
-          String(b.email || "")
+          String(
+            body.email || ""
+          )
             .trim()
             .toLowerCase();
 
         const password =
-          String(b.password || "");
+          String(
+            body.password || ""
+          );
 
         if (
           !email ||
           password.length < 6
         ) {
+
           return json({
             error:
               "Valid email and password of at least 6 characters are required."
           }, 400);
+
         }
 
         const exists =
-          await env.DB.prepare(
-            "SELECT id FROM users WHERE email=?"
-          ).bind(email).first();
+          await env.DB
+            .prepare(
+              "SELECT id FROM users WHERE email=?"
+            )
+            .bind(email)
+            .first();
 
         if (exists) {
+
           return json({
             error:
               "Account already exists."
           }, 409);
+
         }
 
-        const salt = token();
+        const salt =
+          token();
+
         const hash =
           await passwordHash(
             password,
@@ -1620,61 +2986,92 @@ payment terms, certifications and quotation validity.
         const r =
           await env.DB.prepare(`
             INSERT INTO users
-            (email,password_hash,salt)
+            (
+              email,
+              password_hash,
+              salt
+            )
             VALUES(?,?,?)
-          `).bind(
+          `)
+          .bind(
             email,
             hash,
             salt
-          ).run();
+          )
+          .run();
 
-        const t = token();
+        const session =
+          token();
 
         await env.DB.prepare(`
           INSERT INTO sessions
-          (token,user_id,expires_at)
+          (
+            token,
+            user_id,
+            expires_at
+          )
           VALUES(?,?,?)
-        `).bind(
-          t,
-          r.meta.last_row_id,
-          Date.now() + 604800000
-        ).run();
+        `)
+          .bind(
+            session,
+            r.meta.last_row_id,
+            Date.now() +
+              604800000
+          )
+          .run();
 
         return json(
+
           {
             success: true,
             email
           },
+
           200,
+
           {
             "Set-Cookie":
-              sessionCookie(t)
+              sessionCookie(
+                session
+              )
           }
+
         );
       }
 
-      /* LOGIN */
+      /* =====================================================
+         LOGIN
+      ===================================================== */
+
       if (
-        p === "/api/login" &&
+        path === "/api/login" &&
         method === "POST"
       ) {
-        const b =
+
+        const body =
           await request.json();
 
         const email =
-          String(b.email || "")
+          String(
+            body.email || ""
+          )
             .trim()
             .toLowerCase();
 
         const password =
-          String(b.password || "");
+          String(
+            body.password || ""
+          );
 
         const user =
-          await env.DB.prepare(`
-            SELECT *
-            FROM users
-            WHERE email=?
-          `).bind(email).first();
+          await env.DB
+            .prepare(`
+              SELECT *
+              FROM users
+              WHERE email=?
+            `)
+            .bind(email)
+            .first();
 
         if (
           !user ||
@@ -1683,71 +3080,109 @@ payment terms, certifications and quotation validity.
           await passwordHash(
             password,
             user.salt
-          ) !== user.password_hash
+          ) !==
+          user.password_hash
         ) {
+
           return json({
             error:
               "Invalid email or password."
           }, 401);
+
         }
 
-        const t = token();
+        const session =
+          token();
 
         await env.DB.prepare(`
           INSERT INTO sessions
-          (token,user_id,expires_at)
+          (
+            token,
+            user_id,
+            expires_at
+          )
           VALUES(?,?,?)
-        `).bind(
-          t,
-          user.id,
-          Date.now() + 604800000
-        ).run();
+        `)
+          .bind(
+
+            session,
+
+            user.id,
+
+            Date.now() +
+              604800000
+
+          )
+          .run();
 
         return json(
+
           {
             success: true,
             email
           },
+
           200,
+
           {
             "Set-Cookie":
-              sessionCookie(t)
+              sessionCookie(
+                session
+              )
           }
+
         );
       }
 
-      /* LOGOUT */
+      /* =====================================================
+         LOGOUT
+      ===================================================== */
+
       if (
-        p === "/api/logout"
+        path === "/api/logout"
       ) {
-        const t =
+
+        const session =
           cookieValue(
             request,
             "nova_session"
           );
 
-        if (t) {
-          await env.DB.prepare(
-            "DELETE FROM sessions WHERE token=?"
-          ).bind(t).run();
+        if (session) {
+
+          await env.DB
+            .prepare(
+              "DELETE FROM sessions WHERE token=?"
+            )
+            .bind(session)
+            .run();
+
         }
 
         return json(
+
           {
             success: true
           },
+
           200,
+
           {
             "Set-Cookie":
               clearCookie()
           }
+
         );
       }
 
-      /* ACCOUNT */
+      /* =====================================================
+         ACCOUNT
+      ===================================================== */
+
       if (
-        p === "/api/me"
+        path === "/api/me"
       ) {
+
         const user =
           await currentUser(
             request,
@@ -1755,14 +3190,26 @@ payment terms, certifications and quotation validity.
           );
 
         return json({
-          loggedIn: !!user,
-          user: user || null
+
+          loggedIn:
+            !!user,
+
+          user:
+            user || null
+
         });
       }
 
-      /* STATIC FRONTEND */
+      /* =====================================================
+         STATIC FRONTEND
+      ===================================================== */
+
       if (env.ASSETS) {
-        return env.ASSETS.fetch(request);
+
+        return env.ASSETS.fetch(
+          request
+        );
+
       }
 
       return new Response(
@@ -1775,15 +3222,20 @@ payment terms, certifications and quotation validity.
         }
       );
 
-    } catch (e) {
+    } catch (error) {
+
       return json(
+
         {
           ok: false,
+
           error:
-            e?.message ||
+            error?.message ||
             "Server error."
         },
+
         500
+
       );
     }
   }
