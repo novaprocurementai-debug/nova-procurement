@@ -49,7 +49,7 @@ public class MainActivity extends Activity {
                 String host = uri.getHost();
 
                 if (host != null &&
-                    host.equals("nova-procurement.nova-procurement-ai.workers.dev")) {
+                        host.equals("nova-procurement.nova-procurement-ai.workers.dev")) {
                     return false;
                 }
 
@@ -63,7 +63,6 @@ public class MainActivity extends Activity {
         });
 
         webView.setWebChromeClient(new WebChromeClient() {
-
             @Override
             public boolean onShowFileChooser(
                     WebView view,
@@ -114,10 +113,9 @@ public class MainActivity extends Activity {
                     results = new Uri[count];
 
                     for (int i = 0; i < count; i++) {
-                        results[i] =
-                                data.getClipData()
-                                        .getItemAt(i)
-                                        .getUri();
+                        results[i] = data.getClipData()
+                                .getItemAt(i)
+                                .getUri();
                     }
 
                 } else if (data.getData() != null) {
@@ -143,11 +141,10 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-
         if (webView.canGoBack()) {
             webView.goBack();
         } else {
             super.onBackPressed();
         }
     }
-                    }
+            }
