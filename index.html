@@ -2,16 +2,26 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 
 <title>NOVA — AI Purchasing Agent</title>
 
 <meta name="description" content="NOVA is an AI procurement platform for supplier discovery, evidence intelligence, RFQs, bid comparison, landed cost, negotiation and purchase orders.">
+<meta name="theme-color" content="#0b1220">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="NOVA">
+
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/nova-icon.svg">
 
 <link rel="canonical" href="https://nova-procurement.nova-procurement-ai.workers.dev/">
 
 <style>
 *{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
 
 body{
 margin:0;
@@ -23,7 +33,7 @@ color:#101828
 header{
 background:#0b1220;
 color:#fff;
-padding:24px 18px;
+padding:20px 18px;
 position:sticky;
 top:0;
 z-index:20
@@ -42,7 +52,39 @@ letter-spacing:-1px
 
 .tag{
 color:#b8c2d6;
-margin-top:4px
+margin-top:4px;
+line-height:1.5
+}
+
+.topbar{
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:12px;
+flex-wrap:wrap
+}
+
+.language{
+display:flex;
+align-items:center;
+gap:7px
+}
+
+.language select{
+width:auto;
+min-width:130px;
+padding:9px 12px;
+margin:0;
+border-radius:9px;
+border:1px solid #334155;
+background:#111827;
+color:#fff
+}
+
+#novaInstall{
+display:none;
+background:#175cd3;
+margin:0
 }
 
 .nav{
@@ -356,6 +398,18 @@ grid-template-columns:repeat(2,1fr)
 font-size:28px
 }
 
+.topbar{
+align-items:flex-start
+}
+
+.nav{
+gap:5px
+}
+
+.nav a{
+padding:7px 9px;
+font-size:11px
+}
 }
 </style>
 </head>
@@ -365,10 +419,37 @@ font-size:28px
 <header>
 <div class="wrap">
 
+<div class="topbar">
+
+<div>
 <div class="brand">NOVA</div>
 
 <div class="tag">
 Your AI Purchasing Agent — Search. Verify. Compare. Negotiate. Execute.
+</div>
+</div>
+
+<div class="language">
+
+<select id="languageSelect" aria-label="Language">
+<option value="en">English</option>
+<option value="ar">العربية</option>
+<option value="zh">中文</option>
+<option value="es">Español</option>
+<option value="fr">Français</option>
+<option value="de">Deutsch</option>
+<option value="tr">Türkçe</option>
+<option value="hi">हिन्दी</option>
+<option value="ja">日本語</option>
+<option value="ko">한국어</option>
+<option value="ru">Русский</option>
+<option value="it">Italiano</option>
+</select>
+
+<button id="novaInstall">Install NOVA</button>
+
+</div>
+
 </div>
 
 <div class="nav">
@@ -416,7 +497,7 @@ analysis, negotiation and purchase-order workflows.
 
 <div class="stat">
 <small>Evidence</small>
-<b>0–50</b>
+<b>0–85</b>
 <span class="muted">source strength</span>
 </div>
 
@@ -428,9 +509,6 @@ analysis, negotiation and purchase-order workflows.
 
 </div>
 </section>
-
-
-<!-- ACCOUNT -->
 
 <section id="account" class="card">
 
@@ -462,9 +540,6 @@ analysis, negotiation and purchase-order workflows.
 <div id="accountStatus" class="status"></div>
 
 </section>
-
-
-<!-- SEARCH -->
 
 <section id="search" class="card">
 
@@ -509,9 +584,6 @@ Network Status
 
 </section>
 
-
-<!-- PROJECTS -->
-
 <section id="projects" class="card">
 
 <h2>📁 Procurement Projects</h2>
@@ -540,8 +612,7 @@ Network Status
 
 <div class="full">
 <label>Requirements</label>
-<textarea id="projectRequirements"
-placeholder="304 stainless steel, vacuum insulated, custom logo, packaging..."></textarea>
+<textarea id="projectRequirements" placeholder="304 stainless steel, vacuum insulated, custom logo, packaging..."></textarea>
 </div>
 
 </div>
@@ -563,9 +634,6 @@ Load Projects
 
 </section>
 
-
-<!-- SUPPLIERS -->
-
 <section id="suppliers" class="card">
 
 <h2>🏭 Supplier Intelligence</h2>
@@ -579,9 +647,6 @@ Load Suppliers
 
 </section>
 
-
-<!-- RFQ -->
-
 <section id="rfq" class="card">
 
 <h2>📨 AI RFQ Generator</h2>
@@ -590,33 +655,27 @@ Load Suppliers
 
 <div>
 <label>Product</label>
-<input id="rfqProduct"
-placeholder="750ml Stainless Steel Bottle">
+<input id="rfqProduct" placeholder="750ml Stainless Steel Bottle">
 </div>
 
 <div>
 <label>Quantity</label>
-<input id="rfqQuantity"
-type="number"
-value="1000">
+<input id="rfqQuantity" type="number" value="1000">
 </div>
 
 <div>
 <label>Destination</label>
-<input id="rfqDestination"
-placeholder="Dubai, UAE">
+<input id="rfqDestination" placeholder="Dubai, UAE">
 </div>
 
 <div>
 <label>Supplier</label>
-<input id="rfqSupplier"
-placeholder="Supplier name">
+<input id="rfqSupplier" placeholder="Supplier name">
 </div>
 
 <div class="full">
 <label>Requirements</label>
-<textarea id="rfqRequirements"
-placeholder="Material, dimensions, logo, packaging, certifications..."></textarea>
+<textarea id="rfqRequirements" placeholder="Material, dimensions, logo, packaging, certifications..."></textarea>
 </div>
 
 </div>
@@ -638,9 +697,6 @@ Save RFQ
 
 </section>
 
-
-<!-- BIDS -->
-
 <section id="bids" class="card">
 
 <h2>📊 Supplier Bid Management</h2>
@@ -649,45 +705,37 @@ Save RFQ
 
 <div>
 <label>Project ID</label>
-<input id="bidProjectId" type="number"
-placeholder="Project ID">
+<input id="bidProjectId" type="number" placeholder="Project ID">
 </div>
 
 <div>
 <label>Supplier ID</label>
-<input id="bidSupplierId" type="number"
-placeholder="Supplier ID">
+<input id="bidSupplierId" type="number" placeholder="Supplier ID">
 </div>
 
 <div>
 <label>Unit Price</label>
-<input id="bidUnitPrice" type="number"
-step="0.01"
-placeholder="2.50">
+<input id="bidUnitPrice" type="number" step="0.01" placeholder="2.50">
 </div>
 
 <div>
 <label>Currency</label>
-<input id="bidCurrency"
-value="USD">
+<input id="bidCurrency" value="USD">
 </div>
 
 <div>
 <label>MOQ</label>
-<input id="bidMOQ" type="number"
-placeholder="500">
+<input id="bidMOQ" type="number" placeholder="500">
 </div>
 
 <div>
 <label>Lead Time Days</label>
-<input id="bidLeadTime" type="number"
-placeholder="20">
+<input id="bidLeadTime" type="number" placeholder="20">
 </div>
 
 <div class="full">
 <label>Notes</label>
-<textarea id="bidNotes"
-placeholder="Shipping, certifications, packaging, payment terms..."></textarea>
+<textarea id="bidNotes" placeholder="Shipping, certifications, packaging, payment terms..."></textarea>
 </div>
 
 </div>
@@ -709,9 +757,6 @@ Compare Bids
 
 </section>
 
-
-<!-- LANDED COST -->
-
 <section id="landed" class="card">
 
 <h2>💰 Landed Cost Engine</h2>
@@ -720,43 +765,32 @@ Compare Bids
 
 <div>
 <label>Unit Price</label>
-<input id="lcUnit" type="number"
-step="0.01"
-value="2.50">
+<input id="lcUnit" type="number" step="0.01" value="2.50">
 </div>
 
 <div>
 <label>Quantity</label>
-<input id="lcQty" type="number"
-value="1000">
+<input id="lcQty" type="number" value="1000">
 </div>
 
 <div>
 <label>Shipping</label>
-<input id="lcShipping" type="number"
-step="0.01"
-value="250">
+<input id="lcShipping" type="number" step="0.01" value="250">
 </div>
 
 <div>
 <label>Insurance</label>
-<input id="lcInsurance" type="number"
-step="0.01"
-value="30">
+<input id="lcInsurance" type="number" step="0.01" value="30">
 </div>
 
 <div>
 <label>Duty %</label>
-<input id="lcDuty" type="number"
-step="0.01"
-value="5">
+<input id="lcDuty" type="number" step="0.01" value="5">
 </div>
 
 <div>
 <label>Tax %</label>
-<input id="lcTax" type="number"
-step="0.01"
-value="5">
+<input id="lcTax" type="number" step="0.01" value="5">
 </div>
 
 </div>
@@ -770,9 +804,6 @@ Calculate Landed Cost
 
 </section>
 
-
-<!-- NEGOTIATION -->
-
 <section id="negotiation" class="card">
 
 <h2>🤖 AI Negotiation Agent</h2>
@@ -781,39 +812,32 @@ Calculate Landed Cost
 
 <div>
 <label>Supplier</label>
-<input id="negSupplier"
-placeholder="Supplier name">
+<input id="negSupplier" placeholder="Supplier name">
 </div>
 
 <div>
 <label>Target Price</label>
-<input id="negTarget"
-placeholder="$2.20">
+<input id="negTarget" placeholder="$2.20">
 </div>
 
 <div>
 <label>Quantity</label>
-<input id="negQty"
-type="number"
-value="1000">
+<input id="negQty" type="number" value="1000">
 </div>
 
 <div>
 <label>Current Price</label>
-<input id="negCurrent"
-placeholder="$2.70">
+<input id="negCurrent" placeholder="$2.70">
 </div>
 
 <div class="full">
 <label>Negotiation Goal</label>
-<input id="negGoal"
-placeholder="Lower price while preserving quality and lead time">
+<input id="negGoal" placeholder="Lower price while preserving quality and lead time">
 </div>
 
 <div class="full">
 <label>Supplier Message</label>
-<textarea id="negMessage"
-placeholder="Paste supplier message here..."></textarea>
+<textarea id="negMessage" placeholder="Paste supplier message here..."></textarea>
 </div>
 
 </div>
@@ -836,9 +860,6 @@ History
 
 </section>
 
-
-<!-- PURCHASE ORDERS -->
-
 <section id="po" class="card">
 
 <h2>📦 Award & Purchase Orders</h2>
@@ -847,50 +868,37 @@ History
 
 <div>
 <label>Bid ID</label>
-<input id="awardBidId"
-type="number"
-placeholder="Bid ID">
+<input id="awardBidId" type="number" placeholder="Bid ID">
 </div>
 
 <div>
 <label>PO Project ID</label>
-<input id="poProjectId"
-type="number"
-placeholder="Project ID">
+<input id="poProjectId" type="number" placeholder="Project ID">
 </div>
 
 <div>
 <label>PO Supplier ID</label>
-<input id="poSupplierId"
-type="number"
-placeholder="Supplier ID">
+<input id="poSupplierId" type="number" placeholder="Supplier ID">
 </div>
 
 <div>
 <label>PO Quantity</label>
-<input id="poQuantity"
-type="number"
-value="1000">
+<input id="poQuantity" type="number" value="1000">
 </div>
 
 <div>
 <label>PO Unit Price</label>
-<input id="poUnitPrice"
-type="number"
-step="0.01"
-value="2.50">
+<input id="poUnitPrice" type="number" step="0.01" value="2.50">
 </div>
 
 <div>
 <label>PO Currency</label>
-<input id="poCurrency"
-value="USD">
+<input id="poCurrency" value="USD">
 </div>
 
 <div class="full">
 <label>PO Notes</label>
-<textarea id="poNotes"
-placeholder="Payment terms, shipping, packaging, delivery..."></textarea>
+<textarea id="poNotes" placeholder="Payment terms, shipping, packaging, delivery..."></textarea>
 </div>
 
 </div>
@@ -916,9 +924,6 @@ Load Purchase Orders
 
 </section>
 
-
-<!-- FLASH DEALS -->
-
 <section id="deals" class="card">
 
 <h2>⚡ Flash Deals</h2>
@@ -927,29 +932,22 @@ Load Purchase Orders
 
 <div>
 <label>Product</label>
-<input id="dealProduct"
-placeholder="Stainless Steel Bottle">
+<input id="dealProduct" placeholder="Stainless Steel Bottle">
 </div>
 
 <div>
 <label>Supplier</label>
-<input id="dealSupplier"
-placeholder="Supplier">
+<input id="dealSupplier" placeholder="Supplier">
 </div>
 
 <div>
 <label>Price</label>
-<input id="dealPrice"
-type="number"
-step="0.01"
-placeholder="2.20">
+<input id="dealPrice" type="number" step="0.01" placeholder="2.20">
 </div>
 
 <div>
 <label>MOQ</label>
-<input id="dealMOQ"
-type="number"
-placeholder="500">
+<input id="dealMOQ" type="number" placeholder="500">
 </div>
 
 </div>
@@ -971,9 +969,6 @@ Load Deals
 
 </section>
 
-
-<!-- MEMORY -->
-
 <section id="memory" class="card">
 
 <h2>🧠 Procurement Memory</h2>
@@ -982,14 +977,12 @@ Load Deals
 
 <div>
 <label>Product</label>
-<input id="memoryProduct"
-placeholder="Stainless Steel Bottle">
+<input id="memoryProduct" placeholder="Stainless Steel Bottle">
 </div>
 
 <div>
 <label>Supplier</label>
-<input id="memorySupplier"
-placeholder="Supplier name">
+<input id="memorySupplier" placeholder="Supplier name">
 </div>
 
 <div>
@@ -1003,8 +996,7 @@ placeholder="Supplier name">
 
 <div class="full">
 <label>Memory</label>
-<textarea id="memoryText"
-placeholder="What happened? Price, quality, delivery, negotiation result..."></textarea>
+<textarea id="memoryText" placeholder="What happened? Price, quality, delivery, negotiation result..."></textarea>
 </div>
 
 </div>
@@ -1026,9 +1018,6 @@ Load Memory
 
 </section>
 
-
-<!-- HISTORY -->
-
 <section class="card">
 
 <h2>🧾 Procurement History</h2>
@@ -1042,13 +1031,11 @@ Load Purchase History
 
 </section>
 
-
 </main>
 
 <div class="footer">
 NOVA — AI Purchasing Agent
 </div>
-
 
 <script>
 
@@ -1076,12 +1063,7 @@ data={};
 }
 
 if(!response.ok){
-
-throw new Error(
-data.error ||
-`HTTP ${response.status}`
-);
-
+throw new Error(data.error||`HTTP ${response.status}`);
 }
 
 return data;
@@ -1095,7 +1077,6 @@ throw error;
 
 }
 
-
 function show(id,message,type="ok"){
 
 const el=document.getElementById(id);
@@ -1106,7 +1087,6 @@ el.textContent=message;
 el.className="status show "+type;
 
 }
-
 
 function html(value){
 
@@ -1119,17 +1099,21 @@ return String(value ?? "")
 
 }
 
+function safeUrl(value){
 
-function money(value){
+try{
 
-if(value===null || value===undefined || value===""){
-return "Not verified";
+const u=new URL(String(value||""),window.location.origin);
+
+if(u.protocol==="http:"||u.protocol==="https:"){
+return u.href;
 }
 
-return String(value);
+}catch(e){}
+
+return "#";
 
 }
-
 
 /* ACCOUNT */
 
@@ -1147,26 +1131,20 @@ return;
 
 const d=await req("/api/signup",{
 method:"POST",
-body:JSON.stringify({
-email,
-password
-})
+body:JSON.stringify({email,password})
 });
 
 show(
 "accountStatus",
-d.message || "Account created successfully.",
+d.message||"Account created successfully.",
 "ok"
 );
 
 }catch(e){
-
 show("accountStatus",e.message,"error");
-
 }
 
 }
-
 
 async function login(){
 
@@ -1175,98 +1153,78 @@ try{
 const email=document.getElementById("email").value.trim();
 const password=document.getElementById("password").value;
 
+if(!email||!password){
+show("accountStatus","Enter email and password.","error");
+return;
+}
+
 const d=await req("/api/login",{
 method:"POST",
-body:JSON.stringify({
-email,
-password
-})
+body:JSON.stringify({email,password})
 });
 
 show(
 "accountStatus",
-d.message || "Logged in successfully.",
+d.message||"Logged in successfully.",
 "ok"
 );
 
 }catch(e){
-
 show("accountStatus",e.message,"error");
-
 }
 
 }
-
 
 async function logout(){
 
 try{
 
-const d=await req("/api/logout",{
-method:"POST"
-});
+const d=await req("/api/logout",{method:"POST"});
 
 show(
 "accountStatus",
-d.message || "Logged out.",
+d.message||"Logged out.",
 "ok"
 );
 
 }catch(e){
-
 show("accountStatus",e.message,"error");
-
 }
 
 }
-
 
 async function me(){
 
 try{
 
-const d=await req("/api/me",{
-method:"GET"
-});
+const d=await req("/api/me",{method:"GET"});
 
 show(
 "accountStatus",
 d.loggedIn
-? `Logged in as ${d.user?.email || "user"}`
-: "Not logged in.",
-d.loggedIn ? "ok":"error"
+?`Logged in as ${d.user?.email||"user"}`
+:"Not logged in.",
+d.loggedIn?"ok":"error"
 );
 
 }catch(e){
-
 show("accountStatus",e.message,"error");
-
 }
 
 }
-
 
 /* SEARCH */
 
 async function searchSuppliers(){
 
-show(
-"searchStatus",
-"Searching real suppliers...",
-"ok"
-);
+show("searchStatus","Searching real suppliers...","ok");
 
 document.getElementById("results").innerHTML="";
 document.getElementById("resultsHeader").innerHTML="";
 
-const request=
-document.getElementById("request").value.trim();
-
-const quantity=
-Number(document.getElementById("quantity").value||1);
-
-const destination=
-document.getElementById("destination").value.trim();
+const request=document.getElementById("request").value.trim();
+const quantity=Number(document.getElementById("quantity").value||1);
+const destination=document.getElementById("destination").value.trim();
 
 if(!request){
 
@@ -1277,7 +1235,6 @@ show(
 );
 
 return;
-
 }
 
 try{
@@ -1291,11 +1248,7 @@ destination
 })
 });
 
-const items=
-d.results ||
-d.suppliers ||
-d.data ||
-[];
+const items=d.results||d.suppliers||d.data||[];
 
 show(
 "searchStatus",
@@ -1305,16 +1258,12 @@ show(
 
 document.getElementById("resultsHeader").innerHTML=
 `<h3>Supplier Results</h3>
-<div class="muted">
-Live supplier discovery
-</div>`;
+<div class="muted">Live supplier discovery</div>`;
 
 if(!items.length){
 
 document.getElementById("results").innerHTML=
-`<div class="result">
-No supplier results found.
-</div>`;
+`<div class="result">No supplier results found.</div>`;
 
 return;
 
@@ -1323,44 +1272,14 @@ return;
 document.getElementById("results").innerHTML=
 items.map((s,i)=>{
 
-const name=
-s.supplier ||
-s.name ||
-s.title ||
-"Supplier";
-
-const url=
-s.url ||
-s.link ||
-s.source_url ||
-"#";
-
-const snippet=
-s.snippet ||
-s.description ||
-"";
-
-const price=
-s.price ||
-s.unit_price ||
-"Not verified";
-
-const moq=
-s.moq ||
-"Not verified";
-
-const lead=
-s.lead_time ||
-s.leadTime ||
-"Not verified";
-
-const evidence=
-s.evidence ??
-"0";
-
-const confidence=
-s.confidence ??
-"Not verified";
+const name=s.supplier||s.name||s.title||"Supplier";
+const url=s.url||s.link||s.source_url||"#";
+const snippet=s.snippet||s.description||"";
+const price=s.price??s.unit_price??"Not verified";
+const moq=s.moq??"Not verified";
+const lead=s.lead_time||s.leadTime||"Not verified";
+const evidence=s.evidence??"0";
+const confidence=s.confidence??"Not verified";
 
 return `
 
@@ -1368,9 +1287,7 @@ return `
 
 <h3>${html(name)}</h3>
 
-<div class="snippet">
-${html(snippet)}
-</div>
+<div class="snippet">${html(snippet)}</div>
 
 <div class="metrics">
 
@@ -1403,9 +1320,9 @@ ${html(snippet)}
 
 <div class="actions">
 
-<a href="${html(url)}"
+<a href="${html(safeUrl(url))}"
 target="_blank"
-rel="noopener"
+rel="noopener noreferrer"
 style="display:inline-block;margin-top:12px">
 View Supplier
 </a>
@@ -1438,22 +1355,15 @@ show(
 
 }
 
-
 function useSupplier(index){
 
-const s=
-(window.novaSearchResults||[])[index];
+const s=(window.novaSearchResults||[])[index];
 
 if(!s)return;
 
-const name=
-s.supplier ||
-s.name ||
-s.title ||
-"";
+const name=s.supplier||s.name||s.title||"";
 
 document.getElementById("rfqSupplier").value=name;
-
 document.getElementById("negSupplier").value=name;
 
 document.getElementById("rfq").scrollIntoView({
@@ -1461,7 +1371,6 @@ behavior:"smooth"
 });
 
 }
-
 
 /* NETWORK */
 
@@ -1475,28 +1384,21 @@ show(
 "ok"
 );
 
-const d=await req("/api/network",{
-method:"GET"
-});
+const d=await req("/api/network",{method:"GET"});
 
 show(
 "networkStatus",
-`Actual indexed records: ${d.actualRecords ?? 0} | Target: ${d.targetRecords ?? 20000000} | Coverage: ${(d.coverage||[]).join(", ")}`,
+`Actual indexed records: ${d.actualRecords??0} | Target: ${d.targetRecords??20000000} | Coverage: ${(d.coverage||[]).join(", ")}`,
 "ok"
 );
 
 }catch(e){
 
-show(
-"networkStatus",
-e.message,
-"error"
-);
+show("networkStatus",e.message,"error");
 
 }
 
 }
-
 
 /* PROJECTS */
 
@@ -1508,27 +1410,18 @@ const d=await req("/api/projects",{
 method:"POST",
 body:JSON.stringify({
 
-name:
-document.getElementById("projectName").value,
-
-product:
-document.getElementById("projectProduct").value,
-
-quantity:
-Number(document.getElementById("projectQty").value||0),
-
-destination:
-document.getElementById("projectDestination").value,
-
-requirements:
-document.getElementById("projectRequirements").value
+name:document.getElementById("projectName").value,
+product:document.getElementById("projectProduct").value,
+quantity:Number(document.getElementById("projectQty").value||0),
+destination:document.getElementById("projectDestination").value,
+requirements:document.getElementById("projectRequirements").value
 
 })
 });
 
 show(
 "projectStatus",
-`Project created. ID: ${d.id || d.project?.id || "created"}`,
+`Project created. ID: ${d.id||d.project?.id||"created"}`,
 "ok"
 );
 
@@ -1542,20 +1435,13 @@ show("projectStatus",e.message,"error");
 
 }
 
-
 async function loadProjects(){
 
 try{
 
-const d=await req("/api/projects",{
-method:"GET"
-});
+const d=await req("/api/projects",{method:"GET"});
 
-const items=
-d.projects ||
-d.items ||
-d.data ||
-[];
+const items=d.projects||d.items||d.data||[];
 
 document.getElementById("projectsList").innerHTML=
 items.length
@@ -1565,29 +1451,17 @@ items.length
 
 <h3>${html(p.name||"Project")}</h3>
 
-<div class="muted">
-ID: ${html(p.id)}
-</div>
+<div class="muted">ID: ${html(p.id)}</div>
 
-<p>
-Product: ${html(p.product||"")}
-</p>
-
-<p>
-Quantity: ${html(p.quantity||"")}
-</p>
-
-<p>
-Destination: ${html(p.destination||"")}
-</p>
+<p>Product: ${html(p.product||"")}</p>
+<p>Quantity: ${html(p.quantity??"")}</p>
+<p>Destination: ${html(p.destination||"")}</p>
 
 </div>
 
 `).join("")
 :
-`<div class="project">
-No projects found.
-</div>`;
+`<div class="project">No projects found.</div>`;
 
 }catch(e){
 
@@ -1596,7 +1470,6 @@ show("projectStatus",e.message,"error");
 }
 
 }
-
 
 /* SUPPLIERS */
 
@@ -1615,11 +1488,7 @@ const d=await req(
 {method:"GET"}
 );
 
-const items=
-d.suppliers ||
-d.items ||
-d.data ||
-[];
+const items=d.suppliers||d.items||d.data||[];
 
 document.getElementById("suppliersList").innerHTML=
 items.length
@@ -1630,31 +1499,18 @@ items.length
 <h3>${html(s.name||s.supplier||"Supplier")}</h3>
 
 <div class="pill">
-${html(s.verification_status||"Not verified")}
+${html(s.verification||s.verification_status||"Not verified")}
 </div>
 
-<p>
-Country:
-${html(s.country||"Not verified")}
-</p>
-
-<p>
-Category:
-${html(s.category||"Not verified")}
-</p>
-
-<p>
-Evidence:
-${html(s.evidence_score??0)}
-</p>
+<p>Country: ${html(s.country||"Not verified")}</p>
+<p>Category: ${html(s.product||s.category||"Not verified")}</p>
+<p>Evidence: ${html(s.evidence??s.evidence_score??0)}</p>
 
 </div>
 
 `).join("")
 :
-`<div class="supplier">
-No indexed suppliers yet.
-</div>`;
+`<div class="supplier">No indexed suppliers yet.</div>`;
 
 }catch(e){
 
@@ -1668,7 +1524,6 @@ e.message,
 
 }
 
-
 /* RFQ */
 
 async function generateRFQ(){
@@ -1679,29 +1534,16 @@ const d=await req("/api/rfq",{
 method:"POST",
 body:JSON.stringify({
 
-product:
-document.getElementById("rfqProduct").value,
-
-quantity:
-Number(document.getElementById("rfqQuantity").value||0),
-
-destination:
-document.getElementById("rfqDestination").value,
-
-supplier:
-document.getElementById("rfqSupplier").value,
-
-requirements:
-document.getElementById("rfqRequirements").value
+product:document.getElementById("rfqProduct").value,
+quantity:Number(document.getElementById("rfqQuantity").value||0),
+destination:document.getElementById("rfqDestination").value,
+supplier:document.getElementById("rfqSupplier").value,
+requirements:document.getElementById("rfqRequirements").value
 
 })
 });
 
-const output=
-d.rfq ||
-d.message ||
-d.result ||
-JSON.stringify(d,null,2);
+const output=d.rfq||d.message||d.result||JSON.stringify(d,null,2);
 
 document.getElementById("rfqOutput").textContent=
 typeof output==="string"
@@ -1722,7 +1564,6 @@ show("rfqStatus",e.message,"error");
 
 }
 
-
 async function createSavedRFQ(){
 
 try{
@@ -1731,30 +1572,19 @@ const d=await req("/api/rfq/create",{
 method:"POST",
 body:JSON.stringify({
 
-project_id:
-Number(document.getElementById("bidProjectId").value||0),
-
-supplier_id:
-Number(document.getElementById("bidSupplierId").value||0),
-
-product:
-document.getElementById("rfqProduct").value,
-
-quantity:
-Number(document.getElementById("rfqQuantity").value||0),
-
-destination:
-document.getElementById("rfqDestination").value,
-
-requirements:
-document.getElementById("rfqRequirements").value
+project_id:Number(document.getElementById("bidProjectId").value||0),
+supplier_id:Number(document.getElementById("bidSupplierId").value||0),
+product:document.getElementById("rfqProduct").value,
+quantity:Number(document.getElementById("rfqQuantity").value||0),
+destination:document.getElementById("rfqDestination").value,
+requirements:document.getElementById("rfqRequirements").value
 
 })
 });
 
 show(
 "rfqStatus",
-`RFQ saved. ID: ${d.id || d.rfq?.id || "created"}`,
+`RFQ saved. ID: ${d.id||d.rfq?.id||"created"}`,
 "ok"
 );
 
@@ -1766,7 +1596,6 @@ show("rfqStatus",e.message,"error");
 
 }
 
-
 /* BIDS */
 
 async function submitBid(){
@@ -1777,33 +1606,20 @@ const d=await req("/api/bids",{
 method:"POST",
 body:JSON.stringify({
 
-project_id:
-Number(document.getElementById("bidProjectId").value||0),
-
-supplier_id:
-Number(document.getElementById("bidSupplierId").value||0),
-
-unit_price:
-Number(document.getElementById("bidUnitPrice").value||0),
-
-currency:
-document.getElementById("bidCurrency").value,
-
-moq:
-Number(document.getElementById("bidMOQ").value||0),
-
-lead_time_days:
-Number(document.getElementById("bidLeadTime").value||0),
-
-notes:
-document.getElementById("bidNotes").value
+project_id:Number(document.getElementById("bidProjectId").value||0),
+supplier_id:Number(document.getElementById("bidSupplierId").value||0),
+unit_price:Number(document.getElementById("bidUnitPrice").value||0),
+currency:document.getElementById("bidCurrency").value,
+moq:Number(document.getElementById("bidMOQ").value||0),
+lead_time_days:Number(document.getElementById("bidLeadTime").value||0),
+notes:document.getElementById("bidNotes").value
 
 })
 });
 
 show(
 "bidStatus",
-`Bid submitted. ID: ${d.id || d.bid?.id || "created"}`,
+`Bid submitted. ID: ${d.id||d.bid?.id||"created"}`,
 "ok"
 );
 
@@ -1815,28 +1631,21 @@ show("bidStatus",e.message,"error");
 
 }
 
-
 async function compareBids(){
 
 try{
 
 const projectId=
-Number(
-document.getElementById("bidProjectId").value||0
-);
+Number(document.getElementById("bidProjectId").value||0);
 
 const d=await req(
-"/api/bids/compare?project_id="+projectId,
+"/api/compare",
 {
 method:"GET"
 }
 );
 
-const items=
-d.bids ||
-d.items ||
-d.data ||
-[];
+const items=d.bids||d.items||d.data||[];
 
 document.getElementById("bidsList").innerHTML=
 items.length
@@ -1844,13 +1653,11 @@ items.length
 
 <div class="bid">
 
-<h3>
-Bid #${html(b.id)}
-</h3>
+<h3>Bid #${html(b.id)}</h3>
 
 <p>
 Supplier:
-${html(b.supplier_name||b.supplier_id||"")}
+${html(b.supplier_name||b.supplier_id||b.supplier||"")}
 </p>
 
 <p>
@@ -1859,19 +1666,11 @@ ${html(b.unit_price)}
 ${html(b.currency||"USD")}
 </p>
 
-<p>
-MOQ:
-${html(b.moq)}
-</p>
+<p>MOQ: ${html(b.moq)}</p>
 
-<p>
-Lead Time:
-${html(b.lead_time_days)} days
-</p>
+<p>Lead Time: ${html(b.lead_time||b.lead_time_days||"")} days</p>
 
-<div class="score">
-${html(b.score??"—")}
-</div>
+<div class="score">${html(b.score??"—")}</div>
 
 <button
 class="secondary"
@@ -1883,13 +1682,13 @@ Use This Bid
 
 `).join("")
 :
-`<div class="bid">
-No bids found.
-</div>`;
+`<div class="bid">No bids found.</div>`;
 
 show(
 "bidStatus",
-"Bid comparison loaded.",
+projectId
+?"Bid comparison loaded."
+:"Bid comparison loaded.",
 "ok"
 );
 
@@ -1901,7 +1700,6 @@ show("bidStatus",e.message,"error");
 
 }
 
-
 function setAwardId(id){
 
 document.getElementById("awardBidId").value=id;
@@ -1912,53 +1710,62 @@ behavior:"smooth"
 
 }
 
-
 /* NEGOTIATION */
-
-function setNegotiationFromBid(b){
-
-document.getElementById("negSupplier").value=
-b.supplier_name||b.supplier_id||"";
-
-document.getElementById("negCurrent").value=
-b.unit_price||"";
-
-}
-
 
 async function negotiate(){
 
 try{
 
+const supplier=
+document.getElementById("negSupplier").value.trim();
+
+const target=
+document.getElementById("negTarget").value.trim();
+
+const current=
+document.getElementById("negCurrent").value.trim();
+
+const message=
+document.getElementById("negMessage").value.trim();
+
+if(!supplier||(!current&&!message)){
+
+show(
+"negStatus",
+"Enter supplier and current offer or supplier message.",
+"error"
+);
+
+return;
+}
+
+const offer=
+current||message;
+
 const d=await req("/api/negotiate",{
 method:"POST",
 body:JSON.stringify({
 
-supplier:
-document.getElementById("negSupplier").value,
-
-target:
-document.getElementById("negTarget").value,
+supplier,
+offer,
 
 quantity:
 Number(document.getElementById("negQty").value||0),
 
-current:
-document.getElementById("negCurrent").value,
+target,
+
+reply:message,
 
 goal:
-document.getElementById("negGoal").value,
-
-message:
-document.getElementById("negMessage").value
+document.getElementById("negGoal").value
 
 })
 });
 
 const reply=
-d.reply ||
-d.result ||
-d.message ||
+d.reply||
+d.result||
+d.message||
 JSON.stringify(d,null,2);
 
 document.getElementById("negOutput").textContent=
@@ -1980,7 +1787,6 @@ show("negStatus",e.message,"error");
 
 }
 
-
 async function loadNegotiations(){
 
 try{
@@ -1990,11 +1796,7 @@ const d=await req(
 {method:"GET"}
 );
 
-const items=
-d.negotiations ||
-d.items ||
-d.data ||
-[];
+const items=d.negotiations||d.items||d.data||[];
 
 document.getElementById("negHistory").innerHTML=
 items.length
@@ -2002,21 +1804,17 @@ items.length
 
 <div class="memory">
 
-<strong>
-${html(n.supplier||"Supplier")}
-</strong>
+<strong>${html(n.supplier||"Supplier")}</strong>
 
 <div class="copy">
-${html(n.reply||n.message||n.result||"")}
+${html(n.result||n.reply||n.message||"")}
 </div>
 
 </div>
 
 `).join("")
 :
-`<div class="memory">
-No negotiation history.
-</div>`;
+`<div class="memory">No negotiation history.</div>`;
 
 }catch(e){
 
@@ -2025,7 +1823,6 @@ show("negStatus",e.message,"error");
 }
 
 }
-
 
 /* LANDED COST */
 
@@ -2037,23 +1834,12 @@ const d=await req("/api/landed-cost",{
 method:"POST",
 body:JSON.stringify({
 
-unit_price:
-Number(document.getElementById("lcUnit").value||0),
-
-quantity:
-Number(document.getElementById("lcQty").value||0),
-
-shipping:
-Number(document.getElementById("lcShipping").value||0),
-
-insurance:
-Number(document.getElementById("lcInsurance").value||0),
-
-duty_percent:
-Number(document.getElementById("lcDuty").value||0),
-
-tax_percent:
-Number(document.getElementById("lcTax").value||0)
+unit_price:Number(document.getElementById("lcUnit").value||0),
+quantity:Number(document.getElementById("lcQty").value||0),
+shipping:Number(document.getElementById("lcShipping").value||0),
+insurance:Number(document.getElementById("lcInsurance").value||0),
+duty_percent:Number(document.getElementById("lcDuty").value||0),
+tax_percent:Number(document.getElementById("lcTax").value||0)
 
 })
 });
@@ -2075,7 +1861,6 @@ show("lcStatus",e.message,"error");
 
 }
 
-
 /* PURCHASE ORDERS */
 
 async function awardBid(){
@@ -2083,9 +1868,14 @@ async function awardBid(){
 try{
 
 const bidId=
-Number(
-document.getElementById("awardBidId").value||0
-);
+Number(document.getElementById("awardBidId").value||0);
+
+if(!bidId){
+
+show("poStatus","Enter a Bid ID.","error");
+return;
+
+}
 
 const d=await req("/api/award",{
 method:"POST",
@@ -2096,7 +1886,7 @@ bid_id:bidId
 
 show(
 "poStatus",
-d.message || `Bid ${bidId} awarded.`,
+d.message||`Bid ${bidId} awarded.`,
 "ok"
 );
 
@@ -2108,39 +1898,36 @@ show("poStatus",e.message,"error");
 
 }
 
-
 async function createPO(){
 
 try{
 
-const d=await req("/api/purchase-orders",{
+const d=await req("/api/purchase-order",{
 method:"POST",
 body:JSON.stringify({
 
-project_id:
-Number(document.getElementById("poProjectId").value||0),
+bid_id:Number(document.getElementById("awardBidId").value||0),
 
-supplier_id:
-Number(document.getElementById("poSupplierId").value||0),
+project_id:Number(document.getElementById("poProjectId").value||0),
 
-quantity:
-Number(document.getElementById("poQuantity").value||0),
+supplier:document.getElementById("poSupplierId").value,
 
-unit_price:
-Number(document.getElementById("poUnitPrice").value||0),
+product:"",
 
-currency:
-document.getElementById("poCurrency").value,
+quantity:Number(document.getElementById("poQuantity").value||0),
 
-notes:
-document.getElementById("poNotes").value
+unit_price:Number(document.getElementById("poUnitPrice").value||0),
+
+currency:document.getElementById("poCurrency").value,
+
+notes:document.getElementById("poNotes").value
 
 })
 });
 
 show(
 "poStatus",
-`Purchase Order created. ID: ${d.id || d.po?.id || "created"}`,
+`Purchase Order created. ID: ${d.id||d.po?.id||"created"}`,
 "ok"
 );
 
@@ -2154,78 +1941,15 @@ show("poStatus",e.message,"error");
 
 }
 
-
 async function loadPOs(){
-
-try{
-
-const d=await req(
-"/api/purchase-orders",
-{method:"GET"}
-);
-
-const items=
-d.purchase_orders ||
-d.purchaseOrders ||
-d.items ||
-d.data ||
-[];
-
-document.getElementById("poList").innerHTML=
-items.length
-?items.map(p=>`
-
-<div class="po">
-
-<h3>
-PO #${html(p.id)}
-</h3>
-
-<p>
-Supplier:
-${html(p.supplier_id||"")}
-</p>
-
-<p>
-Quantity:
-${html(p.quantity||"")}
-</p>
-
-<p>
-Unit Price:
-${html(p.unit_price||"")}
-${html(p.currency||"USD")}
-</p>
-
-<p>
-Status:
-<span class="pill">
-${html(p.status||"draft")}
-</span>
-</p>
-
-</div>
-
-`).join("")
-:
-`<div class="po">
-No purchase orders.
-</div>`;
 
 show(
 "poStatus",
-"Purchase orders loaded.",
-"ok"
+"Purchase order loading is not available from the current Worker endpoint.",
+"error"
 );
 
-}catch(e){
-
-show("poStatus",e.message,"error");
-
 }
-
-}
-
 
 /* DEALS */
 
@@ -2237,24 +1961,17 @@ const d=await req("/api/deals",{
 method:"POST",
 body:JSON.stringify({
 
-product:
-document.getElementById("dealProduct").value,
-
-supplier:
-document.getElementById("dealSupplier").value,
-
-price:
-Number(document.getElementById("dealPrice").value||0),
-
-moq:
-Number(document.getElementById("dealMOQ").value||0)
+product:document.getElementById("dealProduct").value,
+company:document.getElementById("dealSupplier").value,
+price:Number(document.getElementById("dealPrice").value||0),
+moq:Number(document.getElementById("dealMOQ").value||0)
 
 })
 });
 
 show(
 "dealStatus",
-d.message || "Deal published.",
+d.message||"Deal published.",
 "ok"
 );
 
@@ -2268,7 +1985,6 @@ show("dealStatus",e.message,"error");
 
 }
 
-
 async function loadDeals(){
 
 try{
@@ -2278,11 +1994,7 @@ const d=await req(
 {method:"GET"}
 );
 
-const items=
-d.deals ||
-d.items ||
-d.data ||
-[];
+const items=d.deals||d.items||d.data||[];
 
 document.getElementById("dealsList").innerHTML=
 items.length
@@ -2290,32 +2002,17 @@ items.length
 
 <div class="deal">
 
-<h3>
-${html(x.product||"Deal")}
-</h3>
+<h3>${html(x.product||"Deal")}</h3>
 
-<p>
-Supplier:
-${html(x.supplier||"")}
-</p>
-
-<p>
-Price:
-${html(x.price||"Not verified")}
-</p>
-
-<p>
-MOQ:
-${html(x.moq||"Not verified")}
-</p>
+<p>Supplier: ${html(x.company||x.supplier||"")}</p>
+<p>Price: ${html(x.price??"Not verified")}</p>
+<p>MOQ: ${html(x.moq??"Not verified")}</p>
 
 </div>
 
 `).join("")
 :
-`<div class="deal">
-No flash deals.
-</div>`;
+`<div class="deal">No flash deals.</div>`;
 
 }catch(e){
 
@@ -2324,7 +2021,6 @@ show("dealStatus",e.message,"error");
 }
 
 }
-
 
 /* MEMORY */
 
@@ -2336,24 +2032,17 @@ const d=await req("/api/memory",{
 method:"POST",
 body:JSON.stringify({
 
-product:
-document.getElementById("memoryProduct").value,
-
-supplier:
-document.getElementById("memorySupplier").value,
-
-outcome:
-document.getElementById("memoryOutcome").value,
-
-memory:
-document.getElementById("memoryText").value
+product:document.getElementById("memoryProduct").value,
+supplier:document.getElementById("memorySupplier").value,
+outcome:document.getElementById("memoryOutcome").value,
+note:document.getElementById("memoryText").value
 
 })
 });
 
 show(
 "memoryStatus",
-d.message || "Memory saved.",
+d.message||"Memory saved.",
 "ok"
 );
 
@@ -2367,7 +2056,6 @@ show("memoryStatus",e.message,"error");
 
 }
 
-
 async function loadMemory(){
 
 try{
@@ -2377,12 +2065,7 @@ const d=await req(
 {method:"GET"}
 );
 
-const items=
-d.memory ||
-d.memories ||
-d.items ||
-d.data ||
-[];
+const items=d.memory||d.memories||d.items||d.data||[];
 
 document.getElementById("memoryList").innerHTML=
 items.length
@@ -2390,31 +2073,20 @@ items.length
 
 <div class="memory">
 
-<h3>
-${html(m.product||"Procurement Memory")}
-</h3>
+<h3>${html(m.product||"Procurement Memory")}</h3>
 
-<p>
-Supplier:
-${html(m.supplier||"")}
-</p>
-
-<p>
-Outcome:
-${html(m.outcome||"")}
-</p>
+<p>Supplier: ${html(m.supplier||"")}</p>
+<p>Outcome: ${html(m.outcome||"")}</p>
 
 <div class="copy">
-${html(m.memory||m.text||"")}
+${html(m.note||m.memory||m.text||"")}
 </div>
 
 </div>
 
 `).join("")
 :
-`<div class="memory">
-No procurement memory.
-</div>`;
+`<div class="memory">No procurement memory.</div>`;
 
 }catch(e){
 
@@ -2423,7 +2095,6 @@ show("memoryStatus",e.message,"error");
 }
 
 }
-
 
 /* PURCHASE HISTORY */
 
@@ -2436,11 +2107,7 @@ const d=await req(
 {method:"GET"}
 );
 
-const items=
-d.purchases ||
-d.items ||
-d.data ||
-[];
+const items=d.purchases||d.items||d.data||[];
 
 document.getElementById("purchaseList").innerHTML=
 items.length
@@ -2448,25 +2115,17 @@ items.length
 
 <div class="po">
 
-<h3>
-Purchase #${html(p.id)}
-</h3>
+<h3>Purchase #${html(p.id)}</h3>
 
-<p>
-${html(p.product||p.item||"")}
-</p>
+<p>${html(p.product||p.item||"")}</p>
 
-<p>
-${html(p.status||"")}
-</p>
+<p>${html(p.status||"")}</p>
 
 </div>
 
 `).join("")
 :
-`<div class="po">
-No purchase history.
-</div>`;
+`<div class="po">No purchase history.</div>`;
 
 show(
 "purchaseStatus",
@@ -2486,15 +2145,345 @@ e.message,
 
 }
 
+/* LANGUAGE */
+
+const translations={
+
+en:{
+install:"Install NOVA",
+search:"Search",
+projects:"Projects",
+suppliers:"Suppliers",
+rfq:"RFQ",
+bids:"Bids",
+landed:"Landed Cost",
+negotiation:"Negotiation",
+po:"Purchase Orders",
+deals:"Flash Deals",
+memory:"Memory",
+account:"Account"
+},
+
+ar:{
+install:"تثبيت NOVA",
+search:"البحث",
+projects:"المشاريع",
+suppliers:"الموردون",
+rfq:"طلب عرض سعر",
+bids:"العروض",
+landed:"التكلفة النهائية",
+negotiation:"التفاوض",
+po:"أوامر الشراء",
+deals:"العروض السريعة",
+memory:"الذاكرة",
+account:"الحساب"
+},
+
+zh:{
+install:"安装 NOVA",
+search:"搜索",
+projects:"项目",
+suppliers:"供应商",
+rfq:"询价",
+bids:"报价",
+landed:"落地成本",
+negotiation:"谈判",
+po:"采购订单",
+deals:"限时优惠",
+memory:"采购记忆",
+account:"账户"
+},
+
+es:{
+install:"Instalar NOVA",
+search:"Buscar",
+projects:"Proyectos",
+suppliers:"Proveedores",
+rfq:"RFQ",
+bids:"Ofertas",
+landed:"Costo puesto",
+negotiation:"Negociación",
+po:"Órdenes de compra",
+deals:"Ofertas flash",
+memory:"Memoria",
+account:"Cuenta"
+},
+
+fr:{
+install:"Installer NOVA",
+search:"Recherche",
+projects:"Projets",
+suppliers:"Fournisseurs",
+rfq:"RFQ",
+bids:"Offres",
+landed:"Coût rendu",
+negotiation:"Négociation",
+po:"Bons de commande",
+deals:"Offres flash",
+memory:"Mémoire",
+account:"Compte"
+},
+
+de:{
+install:"NOVA installieren",
+search:"Suche",
+projects:"Projekte",
+suppliers:"Lieferanten",
+rfq:"RFQ",
+bids:"Angebote",
+landed:"Landed Cost",
+negotiation:"Verhandlung",
+po:"Bestellungen",
+deals:"Flash-Angebote",
+memory:"Speicher",
+account:"Konto"
+},
+
+tr:{
+install:"NOVA'yı yükle",
+search:"Arama",
+projects:"Projeler",
+suppliers:"Tedarikçiler",
+rfq:"RFQ",
+bids:"Teklifler",
+landed:"Nihai Maliyet",
+negotiation:"Müzakere",
+po:"Satın Alma Siparişleri",
+deals:"Flaş Fırsatlar",
+memory:"Hafıza",
+account:"Hesap"
+},
+
+hi:{
+install:"NOVA इंस्टॉल करें",
+search:"खोज",
+projects:"प्रोजेक्ट",
+suppliers:"आपूर्तिकर्ता",
+rfq:"RFQ",
+bids:"बोलियां",
+landed:"लैंडेड लागत",
+negotiation:"बातचीत",
+po:"खरीद आदेश",
+deals:"फ्लैश डील्स",
+memory:"मेमोरी",
+account:"खाता"
+},
+
+ja:{
+install:"NOVAをインストール",
+search:"検索",
+projects:"プロジェクト",
+suppliers:"サプライヤー",
+rfq:"RFQ",
+bids:"入札",
+landed:"着地コスト",
+negotiation:"交渉",
+po:"発注書",
+deals:"フラッシュセール",
+memory:"購買メモリー",
+account:"アカウント"
+},
+
+ko:{
+install:"NOVA 설치",
+search:"검색",
+projects:"프로젝트",
+suppliers:"공급업체",
+rfq:"RFQ",
+bids:"입찰",
+landed:"총 도착 비용",
+negotiation:"협상",
+po:"구매 주문",
+deals:"플래시 딜",
+memory:"구매 메모리",
+account:"계정"
+},
+
+ru:{
+install:"Установить NOVA",
+search:"Поиск",
+projects:"Проекты",
+suppliers:"Поставщики",
+rfq:"RFQ",
+bids:"Предложения",
+landed:"Полная стоимость",
+negotiation:"Переговоры",
+po:"Заказы на покупку",
+deals:"Спецпредложения",
+memory:"Память",
+account:"Аккаунт"
+},
+
+it:{
+install:"Installa NOVA",
+search:"Ricerca",
+projects:"Progetti",
+suppliers:"Fornitori",
+rfq:"RFQ",
+bids:"Offerte",
+landed:"Costo totale",
+negotiation:"Negoziazione",
+po:"Ordini di acquisto",
+deals:"Offerte flash",
+memory:"Memoria",
+account:"Account"
+}
+
+};
+
+function setLanguage(lang){
+
+const t=translations[lang]||translations.en;
+
+document.documentElement.lang=lang;
+
+document.documentElement.dir=
+lang==="ar"?"rtl":"ltr";
+
+const navLinks=document.querySelectorAll(".nav a");
+
+const keys=[
+"search",
+"projects",
+"suppliers",
+"rfq",
+"bids",
+"landed",
+"negotiation",
+"po",
+"deals",
+"memory",
+"account"
+];
+
+navLinks.forEach((a,i)=>{
+if(keys[i]&&t[keys[i]]){
+a.textContent=t[keys[i]];
+}
+});
+
+const install=document.getElementById("novaInstall");
+
+if(install){
+install.textContent=t.install;
+}
+
+try{
+localStorage.setItem("nova-language",lang);
+}catch(e){}
+
+}
+
+function initLanguage(){
+
+let lang="en";
+
+try{
+lang=localStorage.getItem("nova-language")||"en";
+}catch(e){}
+
+const select=document.getElementById("languageSelect");
+
+if(select){
+select.value=lang;
+
+select.addEventListener("change",()=>{
+setLanguage(select.value);
+});
+}
+
+setLanguage(lang);
+
+}
+
+/* PWA */
+
+let novaDeferredPrompt=null;
+
+window.addEventListener(
+"beforeinstallprompt",
+event=>{
+
+event.preventDefault();
+
+novaDeferredPrompt=event;
+
+const button=
+document.getElementById("novaInstall");
+
+if(button){
+button.style.display="block";
+}
+
+}
+);
+
+document.getElementById("novaInstall").addEventListener(
+"click",
+async()=>{
+
+if(novaDeferredPrompt){
+
+novaDeferredPrompt.prompt();
+
+try{
+await novaDeferredPrompt.userChoice;
+}catch(e){}
+
+novaDeferredPrompt=null;
+
+document.getElementById("novaInstall").style.display="none";
+
+return;
+
+}
+
+alert(
+"To install NOVA: use your browser menu and choose 'Add to Home Screen' or 'Install app'."
+);
+
+}
+);
+
+window.addEventListener(
+"appinstalled",
+()=>{
+const button=document.getElementById("novaInstall");
+if(button)button.style.display="none";
+}
+);
+
+/* SERVICE WORKER */
+
+if("serviceWorker" in navigator){
+
+window.addEventListener(
+"load",
+()=>{
+
+navigator.serviceWorker
+.register("/sw.js")
+.catch(error=>{
+console.warn("NOVA service worker:",error);
+});
+
+}
+);
+
+}
 
 /* STARTUP */
 
-document.addEventListener("DOMContentLoaded",()=>{
+document.addEventListener(
+"DOMContentLoaded",
+()=>{
 
+initLanguage();
 network();
 loadDeals();
 
-});
+}
+);
 
 </script>
 
