@@ -1,0 +1,19 @@
+{
+  "name": "NOVA — AI Purchasing Agent",
+  "short_name": "NOVA",
+  "description": "AI purchasing agent for global procurement.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#0b1220",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/nova-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
