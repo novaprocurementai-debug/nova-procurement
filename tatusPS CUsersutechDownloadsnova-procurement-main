@@ -1,0 +1,375 @@
+Submodule nova-procurement-main contains modified content
+[1mdiff --git a/nova-procurement-main/NOVA-index.html b/nova-procurement-main/NOVA-index.html[m
+[1mindex 0967cc9..7177531 100644[m
+[1m--- a/nova-procurement-main/NOVA-index.html[m
+[1m+++ b/nova-procurement-main/NOVA-index.html[m
+[36m@@ -442,7 +442,10 @@[m [me.className="status show "+type;[m
+ }[m
+ [m
+ async function req(path,opts={}){[m
+[31m-const r=await fetch(API+path,{credentials:"include",...opts});[m
+[32m+[m[32mconst token=localStorage.getItem("nova_token");[m
+[32m+[m[32mconst headers={...opts.headers};[m
+[32m+[m[32mif(token)headers["Authorization"]="Bearer "+token;[m
+[32m+[m[32mconst r=await fetch(API+path,{credentials:"include",...opts,headers});[m
+ let d;[m
+ try{[m
+ d=await r.json();[m
+[36m@@ -463,7 +466,9 @@[m [memail:email.value,[m
+ password:password.value[m
+ })[m
+ });[m
+[32m+[m[32mif(d.token)localStorage.setItem("nova_token",d.token);[m
+ status('accountStatus','Account created: '+d.email);[m
+[32m+[m[32mme();[m
+ }catch(e){[m
+ status('accountStatus',e.message,'error');[m
+ }[m
+[36m@@ -479,7 +484,10 @@[m [memail:email.value,[m
+ password:password.value[m
+ })[m
+ });[m
+[32m+[m[32mif(d.token)localStorage.setItem("nova_token",d.token);[m
+ status('accountStatus','Logged in: '+d.email);[m
+[32m+[m[32mme();[m
+[32m+[m[32mloadPurchases();[m
+ }catch(e){[m
+ status('accountStatus',e.message,'error');[m
+ }[m
+[36m@@ -488,7 +496,9 @@[m [mstatus('accountStatus',e.message,'error');[m
+ async function logout(){[m
+ try{[m
+ await req('/api/logout',{method:'POST'});[m
+[32m+[m[32mlocalStorage.removeItem("nova_token");[m
+ status('accountStatus','Logged out');[m
+[32m+[m[32mme();[m
+ }catch(e){[m
+ status('accountStatus',e.message,'error');[m
+ }[m
+[36m@@ -817,18 +827,19 @@[m [mPrice: $${Number(x.price||0).toFixed(2)}[m
+ <br>[m
+ [m
+ <span class="pill">[m
+[31m-${esc(x.status)} — not verified[m
+[32m+[m[32m${esc(x.status)} — verified catalog[m
+ </span>[m
+ [m
+ <p>${esc(x.description||'')}</p>[m
+ [m
+[31m-${x.url?[m
+[31m-`<a href="${esc(x.url)}" target="_blank" rel="noopener">Source</a>`[m
+[31m-:''}[m
+[32m+[m[32m<div class="actions">[m
+[32m+[m[32m<button class="accent" style="margin-top:6px;font-size:12px;padding:6px 12px" onclick="orderFlashDeal(${x.id})">Order Deal</button>[m
+[32m+[m[32m${x.url?`<a href="${esc(x.url)}" target="_blank" rel="noopener" style="font-size:12px;margin-top:10px;display:inline-block">Source</a>`:''}[m
+[32m+[m[32m</div>[m
+ [m
+ </article>[m
+ [m
+[31m-`).join()[m
+[32m+[m[32m`).join('')[m
+ ||'<p class="muted">No submitted deals yet.</p>';[m
+ [m
+ }catch(e){[m
+[36m@@ -838,30 +849,59 @@[m [mstatus('dealStatus',e.message,'error');[m
+ }[m
+ }[m
+ [m
+[32m+[m[32masync function orderFlashDeal(dealId){[m
+[32m+[m[32mconst qtyStr=prompt("Enter order quantity for this deal:","100");[m
+[32m+[m[32mif(!qtyStr)return;[m
+[32m+[m[32mconst quantity=Number(qtyStr);[m
+[32m+[m[32mif(!quantity||quantity<=0)return alert("Please enter a valid quantity.");[m
+[32m+[m[32mtry{[m
+[32m+[m[32mconst res=await req('/api/deals/order',{[m
+[32m+[m[32mmethod:'POST',[m
+[32m+[m[32mheaders:{'Content-Type':'application/json'},[m
+[32m+[m[32mbody:JSON.stringify({dealId,quantity})[m
+[32m+[m[32m});[m
+[32m+[m[32malert('Order placed successfully! Purchase Order #'+res.orderId+' created. Total: $'+Number(res.total).toFixed(2));[m
+[32m+[m[32mloadDeals();[m
+[32m+[m[32mloadPurchases();[m
+[32m+[m[32m}catch(e){[m
+[32m+[m[32malert(e.message);[m
+[32m+[m[32m}[m
+[32m+[m[32m}[m
+[32m+[m
+ async function loadPurchases(){[m
+ [m
+ try{[m
+ [m
+[31m-const d=await req('/api/purchases');[m
+[32m+[m[32mconst [purchasesRes,ordersRes]=await Promise.allSettled([[m
+[32m+[m[32mreq('/api/purchases'),[m
+[32m+[m[32mreq('/api/purchase-orders')[m
+[32m+[m[32m]);[m
+ [m
+[31m-purchaseHistory.innerHTML=[m
+[31m-(d.purchases||[]).map(x=>`[m
+[32m+[m[32mlet html='';[m
+ [m
+[32m+[m[32mif(ordersRes.status==='fulfilled'&&ordersRes.value.orders?.length){[m
+[32m+[m[32mhtml+='<h3 style="margin:10px 0">Purchase Orders</h3>'+ordersRes.value.orders.map(x=>`[m
+ <div class="result">[m
+[31m-[m
+[31m-<b>${esc(x.product)}</b>[m
+[31m-— ${esc(x.supplier)}[m
+[31m-[m
+[32m+[m[32m<b>Order #${x.id}: ${esc(x.product)}</b> — ${esc(x.supplier)}[m
+ <br>[m
+[32m+[m[32mQty: ${x.quantity} · Unit: $${Number(x.unit_price||0).toFixed(2)} · Total: $${Number(x.total||0).toFixed(2)}[m
+[32m+[m[32m<br>[m
+[32m+[m[32m<span class="pill">${esc(x.status||'draft').toUpperCase()}</span>[m
+[32m+[m[32m</div>[m
+[32m+[m[32m`).join('');[m
+[32m+[m[32m}[m
+ [m
+[31m-Qty: ${x.quantity}[m
+[31m-· Unit: $${Number(x.unit_price||0).toFixed(2)}[m
+[31m-· Landed: $${Number(x.landed_cost||0).toFixed(2)}[m
+[31m-[m
+[32m+[m[32mif(purchasesRes.status==='fulfilled'&&purchasesRes.value.purchases?.length){[m
+[32m+[m[32mhtml+='<h3 style="margin:16px 0 10px">Recorded Purchases</h3>'+purchasesRes.value.purchases.map(x=>`[m
+[32m+[m[32m<div class="result">[m
+[32m+[m[32m<b>${esc(x.product)}</b> — ${esc(x.supplier)}[m
+[32m+[m[32m<br>[m
+[32m+[m[32mQty: ${x.quantity} · Unit: $${Number(x.unit_price||0).toFixed(2)} · Landed: $${Number(x.landed_cost||0).toFixed(2)}[m
+ </div>[m
+[32m+[m[32m`).join('');[m
+[32m+[m[32m}[m
+ [m
+[31m-`).join()[m
+[31m-||'<p class="muted">No purchases saved.</p>';[m
+[32m+[m[32mpurchaseHistory.innerHTML=html||'<p class="muted">No purchases or orders saved yet.</p>';[m
+ [m
+ }catch(e){[m
+ [m
+[1mdiff --git a/nova-procurement-main/index.html b/nova-procurement-main/index.html[m
+[1mindex 9e0b5ff..7177531 100644[m
+[1m--- a/nova-procurement-main/index.html[m
+[1m+++ b/nova-procurement-main/index.html[m
+[36m@@ -4,15 +4,18 @@[m
+ <meta charset="utf-8">[m
+ <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">[m
+ <meta name="theme-color" content="#0b1220">[m
+[31m-<meta name="mobile-web-app-capable" content="yes">[m
+ <meta name="apple-mobile-web-app-capable" content="yes">[m
+ <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">[m
+ <meta name="apple-mobile-web-app-title" content="NOVA">[m
+ <link rel="manifest" href="/manifest.webmanifest">[m
+[31m-<link rel="apple-touch-icon" sizes="192x192" href="/nova-icon-192.png">[m
+[32m+[m[32m<link rel="apple-touch-icon" href="/nova-icon.svg">[m
+ <title>NOVA — AI Purchasing Agent</title>[m
+ <meta name="description" content="NOVA searches global suppliers, compares evidence, estimates landed cost, creates RFQs and negotiates procurement offers.">[m
+ <link rel="canonical" href="https://nova-procurement.nova-procurement-ai.workers.dev/">[m
+[32m+[m[32m<meta property="og:title" content="NOVA — AI Purchasing Agent">[m
+[32m+[m[32m<meta property="og:description" content="Search, compare, verify and negotiate global procurement offers.">[m
+[32m+[m[32m<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"NOVA","applicationCategory":"BusinessApplication","description":"AI purchasing agent for global procurement."}</script>[m
+[32m+[m
+ <style>[m
+ *{box-sizing:border-box}[m
+ body{margin:0;font-family:Inter,Arial,sans-serif;background:#f5f7fb;color:#101828}[m
+[36m@@ -35,7 +38,9 @@[m [minput,textarea,select{width:100%;padding:12px;border:1px solid #d0d5dd;border-ra[m
+ textarea{min-height:100px;resize:vertical}[m
+ button{border:0;border-radius:10px;padding:11px 15px;margin-top:10px;background:#111827;color:#fff;font-weight:800;cursor:pointer}[m
+ .secondary{background:#667085}[m
+[32m+[m[32m.success{background:#087443}[m
+ .accent{background:#175cd3}[m
+[32m+[m[32m.danger{background:#b42318}[m
+ .status{display:none;margin-top:12px;padding:10px;border-radius:10px;background:#f2f4f7}[m
+ .status.show{display:block}[m
+ .status.error{background:#fef3f2;color:#b42318}[m
+[36m@@ -58,12 +63,6 @@[m [mbutton{border:0;border-radius:10px;padding:11px 15px;margin-top:10px;background:[m
+ .copy{white-space:pre-wrap;line-height:1.6;background:#f8fafc;padding:13px;border-radius:10px;margin-top:10px}[m
+ .dealgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}[m
+ .footer{color:#667085;text-align:center;padding:30px;font-size:13px}[m
+[31m-.topline{display:flex;justify-content:space-between;align-items:center;gap:12px}[m
+[31m-.app-controls{display:flex;align-items:center;gap:8px}[m
+[31m-#novaLanguage{background:#172235;color:#fff;border:1px solid #334155;border-radius:10px;padding:9px 10px;font-weight:700}[m
+[31m-#novaInstall{display:none;margin:0;background:#175cd3}[m
+[31m-body.rtl{direction:rtl}[m
+[31m-body.rtl input,body.rtl textarea,body.rtl select{text-align:right}[m
+ [m
+ @media(max-width:760px){[m
+ body{-webkit-text-size-adjust:100%;padding-bottom:env(safe-area-inset-bottom)}[m
+[36m@@ -76,6 +75,17 @@[m [mbutton{min-height:44px}[m
+ .stats{grid-template-columns:repeat(2,1fr)}[m
+ .metrics{grid-template-columns:repeat(2,1fr)}[m
+ .hero h1{font-size:27px}[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32m.topline{display:flex;justify-content:space-between;align-items:center;gap:12px}[m
+[32m+[m[32m.app-controls{display:flex;align-items:center;gap:8px}[m
+[32m+[m[32m#novaLanguage{background:#172235;color:#fff;border:1px solid #334155;border-radius:10px;padding:9px 10px;font-weight:700}[m
+[32m+[m[32m#novaInstall{display:none;margin:0;background:#175cd3}[m
+[32m+[m[32mbody.rtl{direction:rtl}[m
+[32m+[m[32mbody.rtl .topline,body.rtl .nav{direction:rtl}[m
+[32m+[m[32mbody.rtl input,body.rtl textarea,body.rtl select{text-align:right}[m
+[32m+[m
+[32m+[m[32m@media(max-width:760px){[m
+ .topline{align-items:flex-start}[m
+ .app-controls{flex-direction:column}[m
+ #novaLanguage{max-width:130px}[m
+[36m@@ -88,15 +98,13 @@[m [mbutton{min-height:44px}[m
+ <header>[m
+ <div class="wrap">[m
+ <div class="topline">[m
+[31m-[m
+ <div>[m
+ <div class="brand">NOVA</div>[m
+[31m-<div class="tag">Your AI Purchasing Agent — Search. Verify. Compare. Negotiate.</div>[m
+[32m+[m[32m<div class="tag" data-i18n="tag">Your AI Purchasing Agent — Search. Verify. Compare. Negotiate.</div>[m
+ </div>[m
+ [m
+ <div class="app-controls">[m
+[31m-[m
+[31m-<select id="novaLanguage" aria-label="Language">[m
+[32m+[m[32m<select id="novaLanguage" aria-label="Language" onchange="novaSetLanguage(this.value)">[m
+ <option value="en">🇬🇧 English</option>[m
+ <option value="ar">🇸🇦 العربية</option>[m
+ <option value="zh">🇨🇳 中文</option>[m
+[36m@@ -111,109 +119,119 @@[m [mbutton{min-height:44px}[m
+ <option value="it">🇮🇹 Italiano</option>[m
+ </select>[m
+ [m
+[31m-<button id="novaInstall" type="button">Install NOVA</button>[m
+[31m-[m
+[32m+[m[32m<button id="novaInstall" type="button" onclick="novaInstallApp()">Install</button>[m
+ </div>[m
+ </div>[m
+ [m
+ <div class="nav">[m
+[31m-<a href="#search">Search</a>[m
+[31m-<a href="#deals">Flash Deals</a>[m
+[31m-<a href="#rfq">RFQ</a>[m
+[31m-<a href="#landed">Landed Cost</a>[m
+[31m-<a href="#negotiation">Negotiation</a>[m
+[31m-<a href="#account">Account</a>[m
+[32m+[m[32m<a href="#search"><span data-i18n="navSearch">Search</span></a>[m
+[32m+[m[32m<a href="#deals"><span data-i18n="navDeals">Flash Deals</span></a>[m
+[32m+[m[32m<a href="#rfq"><span data-i18n="navRFQ">RFQ</span></a>[m
+[32m+[m[32m<a href="#landed"><span data-i18n="navLanded">Landed Cost</span></a>[m
+[32m+[m[32m<a href="#negotiation"><span data-i18n="navNegotiation">Negotiation</span></a>[m
+[32m+[m[32m<a href="#account"><span data-i18n="navAccount">Account</span></a>[m
+ </div>[m
+[31m-[m
+ </div>[m
+ </header>[m
+ [m
+ <main>[m
+ [m
+ <section class="hero">[m
+[31m-<h1>Global procurement intelligence</h1>[m
+[32m+[m[32m<h1><span data-i18n="heroTitle">Global procurement intelligence</span></h1>[m
+[32m+[m
+ <p>[m
+[31m-NOVA searches supplier sources across China, India, Japan, South Korea,[m
+[31m-Europe and North America. It separates evidence from unverified information[m
+[31m-and helps you move from discovery to RFQ and negotiation.[m
+[32m+[m[32mNOVA searches supplier sources across China, India, Japan, South Korea, Europe and North America.[m
+[32m+[m[32mIt separates evidence from unverified information and helps you move from discovery to[m
+[32m+[m[32m<span data-i18n="navRFQ">RFQ</span> and negotiation.[m
+ </p>[m
+ [m
+ <div class="stats">[m
+[32m+[m
+ <div class="stat">[m
+[31m-<small>Network target</small>[m
+[32m+[m[32m<small><span data-i18n="networkTarget">Network target</span></small>[m
+ <b>20M+</b>[m
+[31m-<span class="muted">records target</span>[m
+[32m+[m[32m<span class="muted"><span data-i18n="recordsTarget">records target</span></span>[m
+ </div>[m
+ [m
+ <div class="stat">[m
+[31m-<small>Regions</small>[m
+[32m+[m[32m<small><span data-i18n="regions">Regions</span></small>[m
+ <b>6+</b>[m
+[31m-<span class="muted">major markets</span>[m
+[32m+[m[32m<span class="muted"><span data-i18n="majorMarkets">major markets</span></span>[m
+ </div>[m
+ [m
+ <div class="stat">[m
+[31m-<small>Evidence</small>[m
+[32m+[m[32m<small><span data-i18n="evidence">Evidence</span></small>[m
+ <b>0–50</b>[m
+[31m-<span class="muted">source strength</span>[m
+[32m+[m[32m<span class="muted"><span data-i18n="sourceStrength">source strength</span></span>[m
+ </div>[m
+ [m
+ <div class="stat">[m
+[31m-<small>Deals</small>[m
+[32m+[m[32m<small><span data-i18n="deals">Deals</span></small>[m
+ <b>AI</b>[m
+[31m-<span class="muted">score + confidence</span>[m
+[32m+[m[32m<span class="muted"><span data-i18n="scoreConfidence">score + confidence</span></span>[m
+ </div>[m
+[32m+[m
+ </div>[m
+ </section>[m
+ [m
+ <section id="account" class="card">[m
+[31m-<h2>Account</h2>[m
+[32m+[m
+[32m+[m[32m<h2><span data-i18n="navAccount">Account</span></h2>[m
+ [m
+ <div class="grid">[m
+[32m+[m
+ <div>[m
+[31m-<label>Email</label>[m
+[32m+[m[32m<label><span data-i18n="email">Email</span></label>[m
+ <input id="email" type="email" placeholder="your@email.com">[m
+ </div>[m
+ [m
+ <div>[m
+[31m-<label>Password</label>[m
+[32m+[m[32m<label><span data-i18n="password">Password</span></label>[m
+ <input id="password" type="password" placeholder="Minimum 6 characters">[m
+ </div>[m
+[32m+[m
+ </div>[m
+ [m
+ <div class="actions">[m
+[31m-<button onclick="signup()">Create Account</button>[m
+[31m-<button class="secondary" onclick="login()">Login</button>[m
+[31m-<button class="secondary" onclick="logout()">Logout</button>[m
+[31m-<button class="secondary" onclick="me()">Check Account</button>[m
+[32m+[m[32m<button onclick="signup()"><span data-i18n="createAccount">Create Account</span></button>[m
+[32m+[m[32m<button class="secondary" onclick="login()"><span data-i18n="login">Login</span></button>[m
+[32m+[m[32m<button class="secondary" onclick="logout()"><span data-i18n="logout">Logout</span></button>[m
+[32m+[m[32m<button class="secondary" onclick="me()"><span data-i18n="checkAccount">Check Account</span></button>[m
+ </div>[m
+ [m
+ <div id="accountStatus" class="status"></div>[m
+[32m+[m
+ </section>[m
+ [m
+ <section id="search" class="card">[m
+ [m
+[31m-<h2>🔎 Search global suppliers</h2>[m
+[32m+[m[32m<h2><span data-i18n="searchTitle">🔎 Search global suppliers</span></h2>[m
+ [m
+[31m-<label>What do you want to buy?</label>[m
+[32m+[m[32m<label><span data-i18n="buyQuestion">What do you want to buy?</span></label>[m
+ [m
+ <textarea id="request">1000 stainless steel water bottles with logo</textarea>[m
+ [m
+ <div class="grid">[m
+ [m
+ <div>[m
+[31m-<label>Quantity</label>[m
+[32m+[m[32m<label><span data-i18n="quantity">Quantity</span></label>[m
+ <input id="quantity" type="number" min="1" value="1000">[m
+ </div>[m
+ [m
+ <div>[m
+[31m-<label>Destination</label>[m
+[32m+[m[32m<label><span data-i18n="destination">Destination</span></label>[m
+ <input id="destination" placeholder="Dubai, UAE">[m
+ </div>[m
+ [m
+ </div>[m
+ [m
+[31m-<button class="accent" onclick="searchSuppliers()">Search Suppliers</button>[m
+[31m-<button class="secondary" onclick="network()">Network Status</button>[m
+[32m+[m[32m<butto
