@@ -1,103 +1,3342 @@
-<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#071426"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/nova-icon.svg"><title>NOVA — Global AI Procurement</title><style>body{margin:0;font-family:Arial;background:#f4f7fb;color:#102033}header{background:#071426;color:#fff;padding:16px}.wrap{max-width:1200px;margin:auto;padding:0 16px}.nav{display:flex;gap:6px;flex-wrap:wrap}.nav button{background:transparent;color:#fff;border:0;padding:9px}.hero{background:linear-gradient(120deg,#061222,#0a4772);color:#fff;border-radius:22px;padding:38px;margin-top:18px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.card{background:#fff;border:1px solid #e3e9f0;border-radius:16px;padding:20px;margin-top:16px}.page{display:none}.page.active{display:block}button{cursor:pointer;border-radius:9px;padding:10px 14px;border:0}.primary{background:#1769ff;color:#fff}input,textarea,select{width:100%;padding:11px;box-sizing:border-box;border:1px solid #d5deea;border-radius:9px}.result{background:#fff;border:1px solid #e3e9f0;border-radius:14px;padding:15px;margin:10px 0}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}.metric{background:#f6f8fb;padding:8px;border-radius:8px}@media(max-width:700px){.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}} 
-:root{--n:#071426;--b:#1769ff;--c:#79e8ff;--line:#e3e9f1;--muted:#68778a;--shadow:0 12px 34px rgba(8,27,50,.08)}
-body{background:#f4f7fb;font-family:Inter,Arial,"Noto Sans",sans-serif}.wrap{max-width:1240px;margin:auto;padding:0 18px}
-header{position:sticky;top:0;z-index:50;background:rgba(7,20,38,.98);color:#fff}.head{height:70px;display:flex;align-items:center;gap:18px}.logo{font-size:29px;font-weight:950}.nav{display:flex;gap:3px;flex:1;justify-content:center}.nav button{background:transparent;color:#c9d5e4;border:0;padding:10px 12px;border-radius:9px;font-weight:750}.nav button:hover,.nav button.active{background:#15304f;color:#fff}.tools{display:flex;align-items:center;gap:7px}.lang{background:#10233c;color:#fff;border:1px solid #2d4562;border-radius:8px;padding:8px;max-width:150px}.primary{background:linear-gradient(90deg,#1769ff,#6757f5);color:#fff;border:0;border-radius:10px;padding:11px 17px;font-weight:850}.outline{background:#fff;color:#17324f;border:1px solid #d7e0eb;border-radius:10px;padding:10px 16px;font-weight:800}.mobile{display:none;background:#10233c;color:#fff;border:1px solid #2d4562;border-radius:8px;padding:9px}
-main{padding:22px 0 70px}.hero{border-radius:24px;padding:46px;background:radial-gradient(circle at 78% 20%,rgba(49,209,255,.25),transparent 31%),linear-gradient(120deg,#061221,#0b3157 60%,#07618e);color:#fff}.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:30px}.eyebrow{display:inline-block;padding:7px 11px;border-radius:999px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);font-size:12px;font-weight:900}.hero h1{font-size:51px;line-height:1.05;margin:18px 0 12px}.hero h1 span{color:var(--c)}.hero p{color:#dbeafe;line-height:1.8;font-size:17px}.searchbox{display:flex;background:#fff;padding:6px;border-radius:14px;margin-top:23px}.searchbox input{flex:1;min-width:0;border:0;outline:0;padding:12px}.searchbox select{border:0;border-inline-start:1px solid #e1e7ef;padding:0 10px;min-width:180px}.searchbox button{width:50px;background:var(--b);color:#fff;border:0;border-radius:10px;font-size:22px}.quick{display:flex;gap:7px;flex-wrap:wrap;margin-top:13px}.quick button{background:#fff;color:#19334f;border:0;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:800}.ai{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:19px;padding:21px}.ai button{width:100%;margin-top:7px;background:#fff;color:#17334f;border:0;border-radius:9px;padding:10px;font-weight:800;text-align:start}.ai-box{background:#fff;color:#24354a;border-radius:11px;padding:13px;margin:14px 0}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;margin:17px 0}.stat,.card,.countrybox{background:#fff;border:1px solid var(--line);border-radius:17px;box-shadow:var(--shadow)}.stat{padding:17px}.stat b{display:block;font-size:27px}.muted{color:var(--muted);font-size:13px}.section{margin-top:25px}.section-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;gap:10px}.section-head h2{margin:0;font-size:22px}.section-head p{margin:4px 0;color:var(--muted);font-size:13px}.categories{display:grid;grid-template-columns:repeat(8,1fr);gap:9px}.cat{background:#fff;border:1px solid var(--line);border-radius:13px;padding:12px;text-align:center;font-weight:800;color:#18314d}.cat i{display:block;font-style:normal;font-size:26px;margin-bottom:6px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:11px}.product{background:#fff;border:1px solid var(--line);border-radius:15px;overflow:hidden}.pic{height:100px;display:grid;place-items:center;font-size:52px;background:linear-gradient(135deg,#eef6ff,#d9ebff)}.product-body{padding:13px}.product h3{margin:0 0 4px;font-size:15px}.tools-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:9px}.tool{background:#fff;border:1px solid var(--line);border-radius:13px;padding:14px;text-align:center;color:#18314d}.tool i{font-style:normal;font-size:25px}.tool b{display:block;margin-top:6px;font-size:13px}.coverage{display:grid;grid-template-columns:1.1fr .9fr;gap:15px;margin-top:18px}.coverage-card{padding:21px;background:linear-gradient(135deg,#0b1d35,#0b5b8c);color:#fff;border-radius:18px}.coverage-card h2{margin-top:0}.coverage-card p{color:#dbeafe;line-height:1.7}.countrybox{padding:18px}.countrybox select{width:100%;padding:12px;border:1px solid #d5deea;border-radius:10px}.country-count{font-size:28px;font-weight:900;color:#7ee8ff}
-.card{padding:21px}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.full{grid-column:1/-1}.field label{display:block;font-size:13px;font-weight:850;margin-bottom:6px}.field input,.field textarea,.field select{width:100%;padding:12px;border:1px solid #d5deea;border-radius:10px;outline:0;background:#fff}.field textarea{min-height:105px}.two{display:grid;grid-template-columns:1.5fr .8fr;gap:17px}.result{background:#fff;border:1px solid var(--line);border-radius:15px;padding:15px;margin:10px 0}.result-top{display:flex;gap:12px;align-items:center}.avatar{width:66px;height:66px;border-radius:12px;background:#e7f1ff;display:grid;place-items:center;font-size:30px}.badge{display:inline-block;background:#eaf8f2;color:#08764e;border-radius:999px;padding:4px 8px;font-size:11px;font-weight:900}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:12px}.metric{background:#f6f8fb;border-radius:9px;padding:9px}.metric small{display:block;color:var(--muted);font-size:10px}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:11px}.compare{background:#edf4ff;color:#175bc6;border:0;border-radius:9px;padding:9px 12px;font-weight:800}.dark{background:#102033;color:#fff;border:0;border-radius:9px;padding:10px 14px;font-weight:800}.empty{padding:30px;text-align:center;color:var(--muted)}.copy{white-space:pre-wrap;line-height:1.7;background:#f7f9fc;border-radius:11px;padding:14px}.ok{color:#08764e}.err{color:#b4232a}.table{width:100%;border-collapse:collapse}.table th,.table td{padding:11px;border-bottom:1px solid var(--line);text-align:start}.modal{display:none;position:fixed;inset:0;background:rgba(3,14,27,.65);z-index:80;align-items:center;justify-content:center;padding:18px}.modal.show{display:flex}.modal-card{background:#fff;border-radius:19px;max-width:720px;width:100%;max-height:90vh;overflow:auto;padding:22px}.modal-head{display:flex;justify-content:space-between}.close{border:0;background:#eef2f6;border-radius:8px;padding:8px}.toast{display:none;position:fixed;bottom:18px;left:18px;z-index:100;background:#102033;color:#fff;padding:12px 16px;border-radius:10px}.toast.show{display:block}.toast.ok{background:#08764e}
-@media(max-width:1000px){.nav{display:none}.mobile{display:block}.hero-grid,.two,.coverage{grid-template-columns:1fr}.categories{grid-template-columns:repeat(4,1fr)}.cards{grid-template-columns:repeat(2,1fr)}.tools-grid{grid-template-columns:repeat(3,1fr)}}@media(max-width:650px){.hero{padding:27px 19px}.hero h1{font-size:35px}.stats{grid-template-columns:repeat(2,1fr)}.categories{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.full{grid-column:auto}.metrics{grid-template-columns:repeat(2,1fr)}.tools-grid{grid-template-columns:1fr 1fr}.searchbox{flex-wrap:wrap}.searchbox select{width:100%;border-inline-start:0;border-top:1px solid #e1e7ef;padding:9px}}
-</style></head><body>
-<header><div class="wrap head"><div class="logo">NOVA</div><nav class="nav" id="nav">
-<button data-p="home" data-t="home"></button><button data-p="search" data-t="search"></button><button data-p="rfq" data-t="rfq"></button><button data-p="landed" data-t="landed"></button><button data-p="neg" data-t="neg"></button><button data-p="deals" data-t="deals"></button><button data-p="history" data-t="history"></button><button data-p="account" data-t="account"></button>
-</nav><div class="tools"><select id="lang" class="lang"></select><button class="primary" data-t="start" onclick="go('search')"></button><button class="mobile" onclick="toggleNav()">☰</button></div></div></header>
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071426">
+<meta name="description" content="NOVA Global AI Procurement Platform">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/nova-icon.svg">
+<link rel="apple-touch-icon" href="/nova-icon-192.png">
+
+<title>NOVA — Global AI Procurement</title>
+
+<style>
+:root{
+  --navy:#071426;
+  --navy2:#0b1d35;
+  --blue:#1769ff;
+  --blue2:#6757f5;
+  --cyan:#79e8ff;
+  --bg:#f4f7fb;
+  --card:#fff;
+  --line:#e3e9f1;
+  --text:#102033;
+  --muted:#68778a;
+  --green:#08764e;
+  --greenbg:#eaf8f2;
+  --red:#b4232a;
+  --redbg:#fff0f0;
+  --orange:#a15c00;
+  --shadow:0 12px 34px rgba(8,27,50,.08);
+}
+
+*{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,Arial,"Noto Sans",sans-serif;
+}
+
+button,input,select,textarea{font:inherit}
+
+button{cursor:pointer}
+
+.wrap{
+  width:min(1240px,calc(100% - 30px));
+  margin:auto;
+}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:rgba(7,20,38,.98);
+  color:#fff;
+  box-shadow:0 2px 18px rgba(0,0,0,.12);
+}
+
+.head{
+  min-height:70px;
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  font-size:28px;
+  font-weight:950;
+  letter-spacing:1px;
+  white-space:nowrap;
+}
+
+.logo-mark{
+  width:35px;
+  height:35px;
+  display:grid;
+  place-items:center;
+  border-radius:11px;
+  background:linear-gradient(135deg,var(--blue),var(--cyan));
+  color:#fff;
+  font-size:19px;
+}
+
+.nav{
+  display:flex;
+  flex:1;
+  justify-content:center;
+  gap:3px;
+}
+
+.nav button{
+  border:0;
+  background:transparent;
+  color:#c9d5e4;
+  padding:10px 11px;
+  border-radius:9px;
+  font-weight:750;
+  white-space:nowrap;
+}
+
+.nav button:hover,
+.nav button.active{
+  color:#fff;
+  background:#15304f;
+}
+
+.tools{
+  display:flex;
+  gap:7px;
+  align-items:center;
+}
+
+.lang{
+  max-width:135px;
+  padding:9px 8px;
+  border-radius:8px;
+  border:1px solid #2d4562;
+  background:#10233c;
+  color:#fff;
+}
+
+.primary,.outline,.dark,.danger{
+  border-radius:10px;
+  padding:10px 15px;
+  font-weight:850;
+}
+
+.primary{
+  border:0;
+  background:linear-gradient(90deg,var(--blue),var(--blue2));
+  color:#fff;
+}
+
+.primary:disabled{
+  opacity:.55;
+  cursor:not-allowed;
+}
+
+.outline{
+  border:1px solid #d7e0eb;
+  background:#fff;
+  color:#17324f;
+}
+
+.dark{
+  border:0;
+  background:#102033;
+  color:#fff;
+}
+
+.danger{
+  border:1px solid #f1b9b9;
+  background:#fff3f3;
+  color:var(--red);
+}
+
+.mobile{
+  display:none;
+  background:#10233c;
+  color:#fff;
+  border:1px solid #2d4562;
+  border-radius:8px;
+  padding:9px 11px;
+}
+
+main{padding:22px 0 70px}
+
+.page{display:none}
+.page.active{display:block}
+
+.hero{
+  border-radius:25px;
+  padding:46px;
+  color:#fff;
+  background:
+    radial-gradient(circle at 78% 20%,rgba(49,209,255,.25),transparent 31%),
+    linear-gradient(120deg,#061221,#0b3157 60%,#07618e);
+  box-shadow:0 18px 50px rgba(5,32,61,.16);
+}
+
+.hero-grid{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:30px;
+}
+
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 11px;
+  border-radius:999px;
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.2);
+  font-size:12px;
+  font-weight:900;
+}
+
+.live-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#46e6a4;
+  box-shadow:0 0 0 5px rgba(70,230,164,.12);
+}
+
+.hero h1{
+  font-size:51px;
+  line-height:1.06;
+  margin:18px 0 12px;
+}
+
+.hero h1 span:last-child{color:var(--cyan)}
+
+.hero p{
+  color:#dbeafe;
+  line-height:1.8;
+  font-size:17px;
+}
+
+.searchbox{
+  display:flex;
+  background:#fff;
+  padding:6px;
+  border-radius:14px;
+  margin-top:23px;
+  box-shadow:0 8px 28px rgba(0,0,0,.13);
+}
+
+.searchbox input{
+  flex:1;
+  min-width:0;
+  border:0;
+  outline:0;
+  padding:12px;
+}
+
+.searchbox select{
+  width:190px;
+  border:0;
+  border-inline-start:1px solid #e1e7ef;
+  padding:0 10px;
+  outline:0;
+  background:#fff;
+}
+
+.searchbox button{
+  width:52px;
+  border:0;
+  border-radius:10px;
+  background:var(--blue);
+  color:#fff;
+  font-size:22px;
+}
+
+.quick{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:13px;
+}
+
+.quick button{
+  border:0;
+  border-radius:999px;
+  padding:8px 11px;
+  background:#fff;
+  color:#19334f;
+  font-size:12px;
+  font-weight:800;
+}
+
+.ai{
+  background:rgba(255,255,255,.1);
+  border:1px solid rgba(255,255,255,.2);
+  border-radius:19px;
+  padding:21px;
+  backdrop-filter:blur(10px);
+}
+
+.ai h3{margin-top:0}
+
+.ai-box{
+  background:#fff;
+  color:#24354a;
+  border-radius:11px;
+  padding:14px;
+  margin:14px 0;
+  line-height:1.6;
+}
+
+.ai button{
+  width:100%;
+  margin-top:7px;
+  background:#fff;
+  color:#17334f;
+  border:0;
+  border-radius:9px;
+  padding:10px;
+  font-weight:800;
+  text-align:start;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:11px;
+  margin:17px 0;
+}
+
+.stat,.card,.countrybox{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:17px;
+  box-shadow:var(--shadow);
+}
+
+.stat{padding:17px}
+
+.stat b{
+  display:block;
+  margin:4px 0;
+  font-size:27px;
+}
+
+.muted{
+  color:var(--muted);
+  font-size:13px;
+}
+
+.section{margin-top:25px}
+
+.section-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.section-head h2{
+  margin:0;
+  font-size:22px;
+}
+
+.section-head p{
+  margin:4px 0;
+  color:var(--muted);
+  font-size:13px;
+}
+
+.categories{
+  display:grid;
+  grid-template-columns:repeat(8,1fr);
+  gap:9px;
+}
+
+.cat{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:13px 8px;
+  text-align:center;
+  font-weight:800;
+  color:#18314d;
+}
+
+.cat:hover{
+  transform:translateY(-2px);
+  box-shadow:var(--shadow);
+}
+
+.cat i{
+  display:block;
+  font-style:normal;
+  font-size:27px;
+  margin-bottom:6px;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:11px;
+}
+
+.product{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:15px;
+  overflow:hidden;
+}
+
+.pic{
+  height:100px;
+  display:grid;
+  place-items:center;
+  font-size:52px;
+  background:linear-gradient(135deg,#eef6ff,#d9ebff);
+}
+
+.product-body{padding:13px}
+
+.product h3{
+  margin:0 0 4px;
+  font-size:15px;
+}
+
+.tools-grid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:9px;
+}
+
+.tool{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:14px;
+  text-align:center;
+  color:#18314d;
+}
+
+.tool i{
+  display:block;
+  font-style:normal;
+  font-size:25px;
+}
+
+.tool b{
+  display:block;
+  margin-top:6px;
+  font-size:13px;
+}
+
+.coverage{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:15px;
+  margin-top:18px;
+}
+
+.coverage-card{
+  padding:21px;
+  background:linear-gradient(135deg,#0b1d35,#0b5b8c);
+  color:#fff;
+  border-radius:18px;
+}
+
+.coverage-card h2{margin-top:0}
+
+.coverage-card p{
+  color:#dbeafe;
+  line-height:1.7;
+}
+
+.country-count{
+  font-size:31px;
+  font-weight:950;
+  color:#7ee8ff;
+}
+
+.countrybox{padding:18px}
+
+.countrybox select{
+  width:100%;
+  padding:12px;
+  border:1px solid #d5deea;
+  border-radius:10px;
+  background:#fff;
+}
+
+.card{padding:21px}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+}
+
+.full{grid-column:1/-1}
+
+.field label{
+  display:block;
+  margin-bottom:6px;
+  font-size:13px;
+  font-weight:850;
+}
+
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  padding:12px;
+  border:1px solid #d5deea;
+  border-radius:10px;
+  outline:0;
+  background:#fff;
+  color:#102033;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus{
+  border-color:#7daaff;
+  box-shadow:0 0 0 3px rgba(23,105,255,.08);
+}
+
+.field textarea{
+  min-height:110px;
+  resize:vertical;
+}
+
+.two{
+  display:grid;
+  grid-template-columns:1.5fr .8fr;
+  gap:17px;
+}
+
+.actions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+  margin-top:13px;
+}
+
+.status{
+  padding:10px 2px;
+  min-height:20px;
+}
+
+.result{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:15px;
+  margin:10px 0;
+  box-shadow:var(--shadow);
+}
+
+.result-top{
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+
+.avatar{
+  width:66px;
+  height:66px;
+  flex:0 0 66px;
+  border-radius:12px;
+  background:#e7f1ff;
+  display:grid;
+  place-items:center;
+  font-size:30px;
+}
+
+.result h3{
+  margin:5px 0;
+  overflow-wrap:anywhere;
+}
+
+.badge{
+  display:inline-block;
+  background:var(--greenbg);
+  color:var(--green);
+  border-radius:999px;
+  padding:4px 8px;
+  font-size:11px;
+  font-weight:900;
+}
+
+.badge.warn{
+  background:#fff6e8;
+  color:var(--orange);
+}
+
+.metrics{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:7px;
+  margin-top:12px;
+}
+
+.metric{
+  background:#f6f8fb;
+  border-radius:9px;
+  padding:9px;
+}
+
+.metric small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+  margin-bottom:4px;
+}
+
+.metric b{
+  overflow-wrap:anywhere;
+}
+
+.source-link{
+  display:inline-block;
+  margin-top:9px;
+  color:#175bc6;
+  font-weight:800;
+  text-decoration:none;
+}
+
+.source-link:hover{text-decoration:underline}
+
+.empty{
+  padding:30px;
+  text-align:center;
+  color:var(--muted);
+}
+
+.copy{
+  white-space:pre-wrap;
+  overflow-wrap:anywhere;
+  line-height:1.75;
+  background:#f7f9fc;
+  border-radius:11px;
+  padding:14px;
+}
+
+.ok{color:var(--green)}
+.err{color:var(--red)}
+
+.notice{
+  border:1px solid #dbe6f4;
+  background:#f7fbff;
+  border-radius:12px;
+  padding:12px;
+  line-height:1.6;
+}
+
+.health-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+}
+
+.health-item{
+  padding:13px;
+  border-radius:12px;
+  background:#f6f8fb;
+}
+
+.health-item b{display:block;margin-top:5px}
+
+.connected{color:var(--green)}
+.disconnected{color:var(--red)}
+
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  z-index:200;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  background:rgba(3,14,27,.68);
+}
+
+.modal.show{display:flex}
+
+.modal-card{
+  width:min(760px,100%);
+  max-height:90vh;
+  overflow:auto;
+  padding:22px;
+  border-radius:19px;
+  background:#fff;
+}
+
+.modal-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+}
+
+.close{
+  border:0;
+  border-radius:8px;
+  padding:8px 11px;
+  background:#eef2f6;
+}
+
+.toast{
+  display:none;
+  position:fixed;
+  bottom:18px;
+  inset-inline-start:18px;
+  z-index:300;
+  max-width:min(420px,calc(100% - 36px));
+  padding:12px 16px;
+  border-radius:10px;
+  background:#102033;
+  color:#fff;
+  box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+.toast.show{display:block}
+.toast.success{background:var(--green)}
+.toast.error{background:var(--red)}
+
+.loader{
+  display:inline-block;
+  width:15px;
+  height:15px;
+  margin-inline-end:7px;
+  vertical-align:-2px;
+  border:2px solid #d8e2ee;
+  border-top-color:var(--blue);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:1050px){
+  .nav{display:none}
+  .nav.open{
+    display:flex;
+    position:absolute;
+    top:70px;
+    inset-inline:15px;
+    flex-direction:column;
+    padding:10px;
+    background:#0b1d35;
+    border-radius:12px;
+    box-shadow:0 12px 30px rgba(0,0,0,.25);
+  }
+  .mobile{display:block}
+  .hero-grid,.two,.coverage{grid-template-columns:1fr}
+  .categories{grid-template-columns:repeat(4,1fr)}
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .tools-grid{grid-template-columns:repeat(3,1fr)}
+}
+
+@media(max-width:680px){
+  .wrap{width:min(100% - 20px,1240px)}
+  .head{min-height:64px}
+  .logo{font-size:23px}
+  .logo-mark{width:31px;height:31px}
+  .tools .primary{display:none}
+  .lang{max-width:110px}
+  .hero{padding:27px 19px}
+  .hero h1{font-size:35px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .categories{grid-template-columns:repeat(2,1fr)}
+  .cards{grid-template-columns:1fr 1fr}
+  .grid{grid-template-columns:1fr}
+  .full{grid-column:auto}
+  .metrics{grid-template-columns:repeat(2,1fr)}
+  .tools-grid{grid-template-columns:1fr 1fr}
+  .health-grid{grid-template-columns:1fr 1fr}
+  .searchbox{flex-wrap:wrap}
+  .searchbox select{
+    width:100%;
+    border-inline-start:0;
+    border-top:1px solid #e1e7ef;
+    padding:9px;
+  }
+}
+
+@media(max-width:430px){
+  .cards{grid-template-columns:1fr}
+  .hero h1{font-size:31px}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="wrap head">
+
+  <div class="logo">
+    <span class="logo-mark">N</span>
+    NOVA
+  </div>
+
+  <nav class="nav" id="nav">
+    <button data-page="home" data-i18n="home"></button>
+    <button data-page="search" data-i18n="suppliers"></button>
+    <button data-page="rfq" data-i18n="rfq"></button>
+    <button data-page="landed" data-i18n="landed"></button>
+    <button data-page="negotiation" data-i18n="negotiation"></button>
+    <button data-page="deals" data-i18n="deals"></button>
+    <button data-page="history" data-i18n="purchases"></button>
+    <button data-page="account" data-i18n="account"></button>
+  </nav>
+
+  <div class="tools">
+    <select id="language" class="lang" aria-label="Language"></select>
+
+    <button class="primary" data-i18n="startBuying"
+      onclick="go('search')"></button>
+
+    <button class="mobile"
+      aria-label="Menu"
+      onclick="toggleNav()">☰</button>
+  </div>
+
+</div>
+</header>
+
 <main class="wrap">
+
+<!-- HOME -->
 <section id="home" class="page active">
-<div class="hero"><div class="hero-grid"><div>
-<div class="eyebrow" data-t="badge"></div><h1><span data-t="hero1"></span><br><span data-t="hero2"></span></h1><p data-t="heroText"></p>
-<div class="searchbox"><input id="homeQ" data-ph="searchPh"><select id="homeCountry"></select><button onclick="homeSearch()">⌕</button></div>
-<div class="quick"><button onclick="quick('wheat bulk suppliers')">🌾 <span data-t="wheat"></span></button><button onclick="quick('fertilizer manufacturers')">🧪 <span data-t="fert"></span></button><button onclick="quick('agricultural machinery')">🚜 <span data-t="machinery"></span></button><button onclick="quick('solar panels')">☀️ <span data-t="energy"></span></button><button onclick="quick('vehicles suppliers')">🚗 <span data-t="vehicles"></span></button></div>
-</div><div class="ai"><h3 data-t="ai"></h3><p data-t="aiText"></p><div class="ai-box" data-t="aiPrompt"></div><button data-t="find" onclick="go('search')"></button><button data-t="makeRFQ" onclick="go('rfq')"></button><button data-t="negotiate" onclick="go('neg')"></button></div></div></div>
-<div class="stats"><div class="stat"><small data-t="network"></small><b>20M+</b><span class="muted" data-t="records"></span></div><div class="stat"><small data-t="markets"></small><b>195+</b><span class="muted" data-t="global"></span></div><div class="stat"><small data-t="coverage"></small><b>195+</b><span class="muted" data-t="countries"></span></div><div class="stat"><small data-t="neg"></small><b>24/7</b><span class="muted" data-t="aiText"></span></div></div>
-<div class="section"><div class="section-head"><div><h2 data-t="sectors"></h2><p data-t="chooseSector"></p></div></div><div class="categories" id="cats"></div></div>
-<div class="section"><div class="section-head"><div><h2 data-t="opportunities"></h2></div><button class="outline" data-t="explore" onclick="go('search')"></button></div><div class="cards">
-<div class="product"><div class="pic">🚜</div><div class="product-body"><h3 data-t="agri"></h3><span class="muted" data-t="global"></span></div></div>
-<div class="product"><div class="pic">🌾</div><div class="product-body"><h3 data-t="crops"></h3><span class="muted" data-t="global"></span></div></div>
-<div class="product"><div class="pic">🧪</div><div class="product-body"><h3 data-t="fert"></h3><span class="muted" data-t="global"></span></div></div>
-<div class="product"><div class="pic">💻</div><div class="product-body"><h3 data-t="electronics"></h3><span class="muted" data-t="global"></span></div></div>
-<div class="product"><div class="pic">✈️</div><div class="product-body"><h3 data-t="aviation"></h3><span class="muted" data-t="global"></span></div></div>
-<div class="product"><div class="pic">🚢</div><div class="product-body"><h3 data-t="ships"></h3><span class="muted" data-t="global"></span></div></div>
-<div class="product"><div class="pic">🏢</div><div class="product-body"><h3 data-t="realestate"></h3><span class="muted" data-t="global"></span></div></div>
-<div class="product"><div class="pic">🚗</div><div class="product-body"><h3 data-t="auto"></h3><span class="muted" data-t="global"></span></div></div>
-</div></div>
-<div class="coverage"><div class="coverage-card"><h2 data-t="coverage"></h2><p data-t="coverageText"></p><div class="country-count">195+</div><p data-t="countries"></p></div><div class="countrybox"><h3 data-t="countries"></h3><select id="countryExplorer"></select><p class="muted" data-t="allMarkets"></p></div></div>
-<div class="section"><div class="section-head"><div><h2 data-t="tools"></h2></div></div><div class="tools-grid">
-<button class="tool" onclick="go('rfq')"><i>📄</i><b data-t="rfq"></b><small data-t="makeRFQ"></small></button><button class="tool" onclick="go('search')"><i>🛡️</i><b data-t="verify"></b><small data-t="evidence"></small></button><button class="tool" onclick="go('landed')"><i>🧮</i><b data-t="cost"></b><small data-t="shipping"></small></button><button class="tool" onclick="go('neg')"><i>🤝</i><b data-t="neg"></b><small data-t="ai"></small></button><button class="tool" onclick="go('deals')"><i>🔥</i><b data-t="fastDeals"></b><small data-t="global"></small></button>
-</div></div>
+
+  <div class="hero">
+    <div class="hero-grid">
+
+      <div>
+        <div class="eyebrow">
+          <span class="live-dot"></span>
+          <span data-i18n="verifiedFirst"></span>
+        </div>
+
+        <h1>
+          <span data-i18n="globalProcurement"></span><br>
+          <span data-i18n="poweredAI"></span>
+        </h1>
+
+        <p data-i18n="heroText"></p>
+
+        <div class="searchbox">
+          <input id="homeQuery"
+            data-placeholder="searchPlaceholder">
+
+          <select id="homeCountry"></select>
+
+          <button onclick="homeSearch()"
+            aria-label="Search">⌕</button>
+        </div>
+
+        <div class="quick">
+          <button onclick="quickSearch('wheat bulk suppliers')">
+            🌾 <span data-i18n="wheat"></span>
+          </button>
+
+          <button onclick="quickSearch('fertilizer manufacturers')">
+            🧪 <span data-i18n="fertilizers"></span>
+          </button>
+
+          <button onclick="quickSearch('agricultural machinery manufacturers')">
+            🚜 <span data-i18n="machinery"></span>
+          </button>
+
+          <button onclick="quickSearch('solar panel manufacturers')">
+            ☀️ <span data-i18n="energy"></span>
+          </button>
+
+          <button onclick="quickSearch('vehicle manufacturers exporters')">
+            🚗 <span data-i18n="vehicles"></span>
+          </button>
+        </div>
+      </div>
+
+      <div class="ai">
+        <h3>✦ NOVA AI</h3>
+
+        <p data-i18n="aiAssistant"></p>
+
+        <div class="ai-box"
+          data-i18n="aiExample"></div>
+
+        <button onclick="go('search')">
+          🔎 <span data-i18n="findSuppliers"></span>
+        </button>
+
+        <button onclick="go('rfq')">
+          📄 <span data-i18n="createRFQ"></span>
+        </button>
+
+        <button onclick="go('negotiation')">
+          🤝 <span data-i18n="startNegotiation"></span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="stats">
+
+    <div class="stat">
+      <small data-i18n="actualRecords"></small>
+      <b id="networkRecords">—</b>
+      <span class="muted" data-i18n="databaseRecords"></span>
+    </div>
+
+    <div class="stat">
+      <small data-i18n="globalMarkets"></small>
+      <b>195+</b>
+      <span class="muted" data-i18n="countriesMarkets"></span>
+    </div>
+
+    <div class="stat">
+      <small data-i18n="systemStatus"></small>
+      <b id="onlineState">—</b>
+      <span class="muted" id="healthSmall">—</span>
+    </div>
+
+    <div class="stat">
+      <small>NOVA AI</small>
+      <b id="aiState">—</b>
+      <span class="muted" data-i18n="negotiationAnalysis"></span>
+    </div>
+
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <h2 data-i18n="sectors"></h2>
+        <p data-i18n="chooseSector"></p>
+      </div>
+    </div>
+
+    <div class="categories" id="categories"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div>
+        <h2 data-i18n="globalOpportunities"></h2>
+      </div>
+
+      <button class="outline"
+        onclick="go('search')"
+        data-i18n="explore"></button>
+    </div>
+
+    <div class="cards">
+
+      <div class="product">
+        <div class="pic">🚜</div>
+        <div class="product-body">
+          <h3 data-i18n="agriculture"></h3>
+          <span class="muted" data-i18n="searchRealSources"></span>
+        </div>
+      </div>
+
+      <div class="product">
+        <div class="pic">🌾</div>
+        <div class="product-body">
+          <h3 data-i18n="crops"></h3>
+          <span class="muted" data-i18n="searchRealSources"></span>
+        </div>
+      </div>
+
+      <div class="product">
+        <div class="pic">🧪</div>
+        <div class="product-body">
+          <h3 data-i18n="fertilizers"></h3>
+          <span class="muted" data-i18n="searchRealSources"></span>
+        </div>
+      </div>
+
+      <div class="product">
+        <div class="pic">💻</div>
+        <div class="product-body">
+          <h3 data-i18n="electronics"></h3>
+          <span class="muted" data-i18n="searchRealSources"></span>
+        </div>
+      </div>
+
+      <div class="product">
+        <div class="pic">✈️</div>
+        <div class="product-body">
+          <h3 data-i18n="aviation"></h3>
+          <span class="muted" data-i18n="searchRealSources"></span>
+        </div>
+      </div>
+
+      <div class="product">
+        <div class="pic">🚢</div>
+        <div class="product-body">
+          <h3 data-i18n="marine"></h3>
+          <span class="muted" data-i18n="searchRealSources"></span>
+        </div>
+      </div>
+
+      <div class="product">
+        <div class="pic">🏗️</div>
+        <div class="product-body">
+          <h3 data-i18n="construction"></h3>
+          <span class="muted" data-i18n="searchRealSources"></span>
+        </div>
+      </div>
+
+      <div class="product">
+        <div class="pic">🚗</div>
+        <div class="product-body">
+          <h3 data-i18n="automotive"></h3>
+          <span class="muted" data-i18n="searchRealSources"></span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="coverage">
+
+    <div class="coverage-card">
+      <h2 data-i18n="globalCoverage"></h2>
+      <p data-i18n="coverageText"></p>
+
+      <div class="country-count">195+</div>
+
+      <p data-i18n="countriesMarkets"></p>
+    </div>
+
+    <div class="countrybox">
+      <h3 data-i18n="selectMarket"></h3>
+      <select id="countryExplorer"></select>
+
+      <p class="muted"
+        data-i18n="countryNotice"></p>
+    </div>
+
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <h2 data-i18n="tools"></h2>
+    </div>
+
+    <div class="tools-grid">
+
+      <button class="tool" onclick="go('search')">
+        <i>🔎</i>
+        <b data-i18n="supplierSearch"></b>
+      </button>
+
+      <button class="tool" onclick="go('rfq')">
+        <i>📄</i>
+        <b data-i18n="createRFQ"></b>
+      </button>
+
+      <button class="tool" onclick="go('landed')">
+        <i>🧮</i>
+        <b data-i18n="landed"></b>
+      </button>
+
+      <button class="tool" onclick="go('negotiation')">
+        <i>🤝</i>
+        <b data-i18n="negotiation"></b>
+      </button>
+
+      <button class="tool" onclick="go('deals')">
+        <i>🔥</i>
+        <b data-i18n="deals"></b>
+      </button>
+
+    </div>
+  </div>
+
 </section>
 
-<section id="search" class="page"><div class="section-head"><div><h2 data-t="searchTitle"></h2><p data-t="compareText"></p></div></div><div class="card"><div class="grid"><div class="field full"><label data-t="product"></label><input id="q" data-ph="searchPh"></div><div class="field"><label data-t="quantity"></label><input id="qty" value="500" type="number"></div><div class="field"><label data-t="destination"></label><select id="dest"></select></div></div><div class="actions"><button class="primary" data-t="searchNow" onclick="searchSuppliers()"></button><button class="outline" data-t="home" onclick="go('home')"></button></div></div><div id="status" class="status"></div><div id="results"></div></section>
 
-<section id="rfq" class="page"><div class="section-head"><div><h2 data-t="rfqTitle"></h2><p data-t="rfqText"></p></div></div><div class="two"><div class="card"><div class="grid"><div class="field"><label data-t="product"></label><input id="rp"></div><div class="field"><label data-t="quantity"></label><input id="rq"></div><div class="field"><label data-t="destination"></label><select id="rd"></select></div><div class="field"><label data-t="incoterm"></label><input id="ri" placeholder="FOB / CIF / DDP"></div><div class="field full"><label data-t="requirements"></label><textarea id="rr"></textarea></div></div><button class="primary" data-t="create" onclick="makeRFQ()"></button><div id="rfqStatus"></div></div><div class="card"><h3 data-t="preview"></h3><div id="rfqo" class="empty">—</div></div></div></section>
+<!-- SEARCH -->
+<section id="search" class="page">
 
-<section id="landed" class="page"><div class="section-head"><div><h2 data-t="landedTitle"></h2></div></div><div class="two"><div class="card"><div class="grid"><div class="field"><label data-t="unitPrice"></label><input id="lp" value="245" type="number"></div><div class="field"><label data-t="quantity"></label><input id="lq" value="500" type="number"></div><div class="field"><label data-t="shipping"></label><input id="ls" value="17500" type="number"></div><div class="field"><label data-t="duty"></label><input id="ld" value="2" type="number"></div><div class="field"><label data-t="tax"></label><input id="lt" value="0" type="number"></div><div class="field"><label data-t="local"></label><input id="ll" value="7500" type="number"></div></div><button class="primary" data-t="calculate" onclick="calc()"></button></div><div class="card"><h3 data-t="total"></h3><div id="lo" class="empty">—</div></div></div></section>
+  <div class="section-head">
+    <div>
+      <h2 data-i18n="supplierSearch"></h2>
+      <p data-i18n="searchDescription"></p>
+    </div>
+  </div>
 
-<section id="neg" class="page"><div class="section-head"><div><h2 data-t="negTitle"></h2></div></div><div class="two"><div class="card"><div class="grid"><div class="field"><label data-t="supplier"></label><input id="ns"></div><div class="field"><label data-t="offer"></label><input id="no" type="number"></div><div class="field"><label data-t="target"></label><input id="nt" type="number"></div><div class="field full"><label data-t="reply"></label><textarea id="nr"></textarea></div></div><button class="primary" data-t="analyze" onclick="neg()"></button></div><div class="card"><h3 data-t="decision"></h3><div id="ne" class="empty">—</div></div></div></section>
-<section id="deals" class="page"><div class="section-head"><div><h2 data-t="dealsTitle"></h2></div><button class="primary" data-t="refresh" onclick="deals()"></button></div><div id="do" class="card empty">—</div></section>
-<section id="history" class="page"><div class="section-head"><div><h2 data-t="historyTitle"></h2></div><button class="primary" data-t="refresh" onclick="historyLoad()"></button></div><div id="ho" class="card empty">—</div></section>
-<section id="account" class="page"><div class="section-head"><div><h2 data-t="account"></h2></div></div><div class="card"><div class="grid"><div class="field"><label data-t="email"></label><input id="email" type="email"></div><div class="field"><label data-t="password"></label><input id="pass" type="password"></div></div><div class="actions"><button class="primary" data-t="login" onclick="login()"></button><button class="outline" data-t="signup" onclick="signup()"></button><button class="dark" data-t="logout" onclick="logout()"></button><button class="outline" data-t="check" onclick="checkMe()"></button></div><div id="ao"></div></div><div id="me" class="card empty">—</div></section>
+  <div class="card">
+
+    <div class="grid">
+
+      <div class="field full">
+        <label data-i18n="productRequest"></label>
+        <input id="query"
+          data-placeholder="searchPlaceholder">
+      </div>
+
+      <div class="field">
+        <label data-i18n="quantity"></label>
+        <input id="quantity"
+          type="number"
+          min="0"
+          placeholder="500">
+      </div>
+
+      <div class="field">
+        <label data-i18n="destination"></label>
+        <select id="destination"></select>
+      </div>
+
+    </div>
+
+    <div class="actions">
+      <button id="searchBtn"
+        class="primary"
+        onclick="searchSuppliers()"
+        data-i18n="searchNow"></button>
+
+      <button class="outline"
+        onclick="clearSearch()"
+        data-i18n="clear"></button>
+    </div>
+
+  </div>
+
+  <div id="searchStatus" class="status"></div>
+  <div id="results"></div>
+
+</section>
+
+
+<!-- RFQ -->
+<section id="rfq" class="page">
+
+  <div class="section-head">
+    <div>
+      <h2 data-i18n="createRFQ"></h2>
+      <p data-i18n="rfqDescription"></p>
+    </div>
+  </div>
+
+  <div class="two">
+
+    <div class="card">
+
+      <div class="grid">
+
+        <div class="field">
+          <label data-i18n="product"></label>
+          <input id="rfqProduct">
+        </div>
+
+        <div class="field">
+          <label data-i18n="quantity"></label>
+          <input id="rfqQuantity"
+            type="number"
+            min="0">
+        </div>
+
+        <div class="field">
+          <label data-i18n="destination"></label>
+          <select id="rfqDestination"></select>
+        </div>
+
+        <div class="field">
+          <label>Incoterm</label>
+          <input id="rfqIncoterm"
+            placeholder="FOB / CIF / DDP">
+        </div>
+
+        <div class="field full">
+          <label data-i18n="requirements"></label>
+          <textarea id="rfqRequirements"></textarea>
+        </div>
+
+      </div>
+
+      <div class="actions">
+        <button id="rfqBtn"
+          class="primary"
+          onclick="createRFQ()"
+          data-i18n="generateRFQ"></button>
+
+        <button class="outline"
+          onclick="copyRFQ()"
+          data-i18n="copy"></button>
+      </div>
+
+      <div id="rfqStatus" class="status"></div>
+
+    </div>
+
+    <div class="card">
+      <h3 data-i18n="rfqPreview"></h3>
+      <div id="rfqOutput" class="empty">—</div>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- LANDED COST -->
+<section id="landed" class="page">
+
+  <div class="section-head">
+    <div>
+      <h2 data-i18n="landedCalculator"></h2>
+      <p data-i18n="landedDescription"></p>
+    </div>
+  </div>
+
+  <div class="two">
+
+    <div class="card">
+
+      <div class="grid">
+
+        <div class="field">
+          <label data-i18n="unitPrice"></label>
+          <input id="unitPrice"
+            type="number"
+            min="0"
+            step="any">
+        </div>
+
+        <div class="field">
+          <label data-i18n="quantity"></label>
+          <input id="landedQuantity"
+            type="number"
+            min="0"
+            step="any">
+        </div>
+
+        <div class="field">
+          <label data-i18n="shipping"></label>
+          <input id="shipping"
+            type="number"
+            min="0"
+            step="any">
+        </div>
+
+        <div class="field">
+          <label data-i18n="insurance"></label>
+          <input id="insurance"
+            type="number"
+            min="0"
+            step="any">
+        </div>
+
+        <div class="field">
+          <label data-i18n="duty"></label>
+          <input id="duty"
+            type="number"
+            min="0"
+            step="any">
+        </div>
+
+        <div class="field">
+          <label data-i18n="tax"></label>
+          <input id="tax"
+            type="number"
+            min="0"
+            step="any">
+        </div>
+
+        <div class="field full">
+          <label data-i18n="localDelivery"></label>
+          <input id="localDelivery"
+            type="number"
+            min="0"
+            step="any">
+        </div>
+
+      </div>
+
+      <button id="landedBtn"
+        class="primary"
+        onclick="calculateLanded()"
+        data-i18n="calculate"></button>
+
+    </div>
+
+    <div class="card">
+      <h3 data-i18n="costResult"></h3>
+      <div id="landedOutput" class="empty">—</div>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- NEGOTIATION -->
+<section id="negotiation" class="page">
+
+  <div class="section-head">
+    <div>
+      <h2 data-i18n="aiNegotiation"></h2>
+      <p data-i18n="negotiationDescription"></p>
+    </div>
+  </div>
+
+  <div class="two">
+
+    <div class="card">
+
+      <div class="grid">
+
+        <div class="field">
+          <label data-i18n="supplier"></label>
+          <input id="negSupplier">
+        </div>
+
+        <div class="field">
+          <label data-i18n="currentOffer"></label>
+          <input id="negOffer"
+            type="number"
+            min="0"
+            step="any">
+        </div>
+
+        <div class="field">
+          <label data-i18n="targetPrice"></label>
+          <input id="negTarget"
+            type="number"
+            min="0"
+            step="any">
+        </div>
+
+        <div class="field">
+          <label data-i18n="quantity"></label>
+          <input id="negQuantity"
+            type="number"
+            min="0"
+            step="any">
+        </div>
+
+        <div class="field full">
+          <label data-i18n="supplierReply"></label>
+          <textarea id="negReply"></textarea>
+        </div>
+
+      </div>
+
+      <button id="negBtn"
+        class="primary"
+        onclick="negotiate()"
+        data-i18n="analyzeNegotiate"></button>
+
+    </div>
+
+    <div class="card">
+      <h3 data-i18n="novaDecision"></h3>
+      <div id="negOutput" class="empty">—</div>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- DEALS -->
+<section id="deals" class="page">
+
+  <div class="section-head">
+    <div>
+      <h2 data-i18n="deals"></h2>
+      <p data-i18n="dealsDescription"></p>
+    </div>
+
+    <button class="primary"
+      onclick="loadDeals()"
+      data-i18n="refresh"></button>
+  </div>
+
+  <div id="dealsOutput" class="card empty">—</div>
+
+</section>
+
+
+<!-- HISTORY -->
+<section id="history" class="page">
+
+  <div class="section-head">
+    <div>
+      <h2 data-i18n="purchaseHistory"></h2>
+      <p data-i18n="historyDescription"></p>
+    </div>
+
+    <button class="primary"
+      onclick="loadPurchases()"
+      data-i18n="refresh"></button>
+  </div>
+
+  <div id="historyOutput" class="card empty">—</div>
+
+</section>
+
+
+<!-- ACCOUNT -->
+<section id="account" class="page">
+
+  <div class="section-head">
+    <div>
+      <h2 data-i18n="account"></h2>
+      <p data-i18n="accountDescription"></p>
+    </div>
+  </div>
+
+  <div class="two">
+
+    <div class="card">
+
+      <div class="grid">
+
+        <div class="field">
+          <label data-i18n="email"></label>
+          <input id="email"
+            type="email"
+            autocomplete="email">
+        </div>
+
+        <div class="field">
+          <label data-i18n="password"></label>
+          <input id="password"
+            type="password"
+            autocomplete="current-password">
+        </div>
+
+      </div>
+
+      <div class="actions">
+
+        <button class="primary"
+          onclick="login()"
+          data-i18n="login"></button>
+
+        <button class="outline"
+          onclick="signup()"
+          data-i18n="signup"></button>
+
+        <button class="dark"
+          onclick="logout()"
+          data-i18n="logout"></button>
+
+        <button class="outline"
+          onclick="checkAccount()"
+          data-i18n="checkAccount"></button>
+
+      </div>
+
+      <div id="accountOutput" class="status"></div>
+
+    </div>
+
+    <div class="card">
+
+      <h3 data-i18n="systemConnections"></h3>
+
+      <div class="health-grid">
+
+        <div class="health-item">
+          <small>NOVA</small>
+          <b id="healthNova">—</b>
+        </div>
+
+        <div class="health-item">
+          <small data-i18n="database"></small>
+          <b id="healthDB">—</b>
+        </div>
+
+        <div class="health-item">
+          <small>AI</small>
+          <b id="healthAI">—</b>
+        </div>
+
+        <div class="health-item">
+          <small data-i18n="searchEngine"></small>
+          <b id="healthSearch">—</b>
+        </div>
+
+      </div>
+
+      <div class="notice"
+        style="margin-top:15px"
+        data-i18n="connectionNotice"></div>
+
+    </div>
+
+  </div>
+
+</section>
+
 </main>
-<div id="modal" class="modal" onclick="if(event.target===this)closeModal()"><div class="modal-card"><div class="modal-head"><h2 id="mt">NOVA</h2><button class="close" onclick="closeModal()">✕</button></div><div id="mb"></div></div></div><div id="toast" class="toast"></div>
+
+
+<div id="modal"
+  class="modal"
+  onclick="if(event.target===this) closeModal()">
+
+  <div class="modal-card">
+
+    <div class="modal-head">
+      <h2 id="modalTitle">NOVA</h2>
+
+      <button class="close"
+        onclick="closeModal()">✕</button>
+    </div>
+
+    <div id="modalBody"></div>
+
+  </div>
+
+</div>
+
+<div id="toast" class="toast"></div>
 
 <script>
-const API="";
-const LANGS={
-"ar":{"home":"الرئيسية","search":"الموردون","rfq":"RFQ","landed":"التكلفة النهائية","neg":"التفاوض","deals":"العروض","history":"المشتريات","account":"الحساب","start":"ابدأ الشراء","badge":"● المشتريات العالمية · بيانات موثقة أولاً","hero1":"المشتريات العالمية","hero2":"بذكاء اصطناعي","heroText":"ابحث، تحقق، قارن، أنشئ طلبات عروض الأسعار وتفاوض من منصة NOVA واحدة.","searchPh":"ماذا تريد أن تشتري؟ مثال: 500 طن قمح","allMarkets":"كل الدول والأسواق","ai":"NOVA AI","aiText":"مساعدك الذكي للمشتريات من البحث حتى التفاوض.","aiPrompt":"«أريد 500 طن قمح بجودة غذائية والتسليم إلى بغداد بأفضل سعر من مورد موثوق.»","find":"ابحث عن الموردين","makeRFQ":"أنشئ RFQ","negotiate":"ابدأ التفاوض","sectors":"القطاعات الرئيسية","chooseSector":"اختر قطاعًا لبدء البحث","opportunities":"فرص الشراء العالمية","explore":"استكشف السوق ←","tools":"أدوات التجارة العالمية","verify":"Supplier Verification","cost":"التكلفة النهائية","fastDeals":"العروض السريعة","coverage":"التغطية العالمية","countries":"الدول والأسواق","coverageText":"وصول عالمي إلى 195+ دولة وسوقًا","network":"شبكة الموردين","records":"هدف سجلات عالمية","markets":"أسواق ودول","global":"تغطية عالمية","searchTitle":"البحث عن الموردين","compareText":"قارن السعر وMOQ ومدة التوريد والأدلة.","product":"المنتج أو المادة","quantity":"الكمية","destination":"الدولة / الوجهة","searchNow":"البحث الآن","searching":"جاري البحث عالميًا...","found":"تم العثور على {n} نتيجة","noResults":"لم يتم العثور على نتائج.","price":"السعر","moq":"MOQ","lead":"مدة التوريد","evidence":"الأدلة","confidence":"الثقة","details":"عرض التفاصيل","rfqSend":"إرسال RFQ","source":"المصدر","rfqTitle":"إنشاء طلب عرض سعر RFQ","rfqText":"حوّل احتياجك إلى طلب احترافي للموردين.","requirements":"المتطلبات","incoterm":"شروط التسليم","preview":"المعاينة","create":"إنشاء","creating":"جاري الإنشاء...","created":"✓ تم إنشاء RFQ.","landedTitle":"حساب التكلفة النهائية","unitPrice":"سعر الوحدة USD","shipping":"الشحن USD","duty":"الجمارك %","tax":"الضريبة %","local":"التوصيل المحلي USD","calculate":"احسب التكلفة","total":"الإجمالي","negTitle":"وكيل التفاوض بالذكاء الاصطناعي","supplier":"المورد","offer":"العرض الحالي USD","target":"هدف المشتري USD","reply":"رد المورد","analyze":"تحليل والتفاوض","decision":"قرار NOVA","dealsTitle":"العروض السريعة","refresh":"تحديث","historyTitle":"سجل المشتريات","empty":"لا توجد بيانات بعد.","login":"تسجيل الدخول","signup":"إنشاء حساب","logout":"تسجيل الخروج","email":"البريد الإلكتروني","password":"كلمة المرور","check":"فحص الحساب","language":"Language","english":"English","arabic":"العربية","agri":"Agricultural Machinery","crops":"Strategic Crops","fert":"Fertilizers","electronics":"Electronics","aviation":"Aviation","ships":"Ships & Marine","realestate":"Real Estate & Land","auto":"Automotive","languageName":"العربية"},
-"en":{"home":"Home","search":"Suppliers","rfq":"RFQ","landed":"Landed Cost","neg":"Negotiation","deals":"Deals","history":"Purchases","account":"Account","start":"Start Buying","badge":"● GLOBAL PROCUREMENT · VERIFIED DATA FIRST","hero1":"Global Sourcing","hero2":"Powered by AI","heroText":"Search, verify, compare, create RFQs and negotiate from one NOVA platform.","searchPh":"What do you want to buy? e.g. 500 tons of wheat","allMarkets":"All countries & markets","ai":"NOVA AI","aiText":"Your intelligent procurement assistant from discovery to negotiation.","aiPrompt":"“I need 500 tons of food-grade wheat delivered to Baghdad at the best price from a trusted supplier.”","find":"Find suppliers","makeRFQ":"Create RFQ","negotiate":"Start negotiation","sectors":"Key Industries","chooseSector":"Choose an industry to start searching","opportunities":"Global Trade Opportunities","explore":"Explore Market →","tools":"Global Trade Tools","verify":"Supplier Verification","cost":"Landed Cost","fastDeals":"Flash Deals","coverage":"Global Coverage","countries":"Countries & Markets","coverageText":"Global access across 195+ countries and markets","network":"Supplier Network","records":"Global records target","markets":"Markets & countries","global":"Global coverage","searchTitle":"Search Suppliers","compareText":"Compare price, MOQ, lead time and evidence.","product":"Product or material","quantity":"Quantity","destination":"Country / destination","searchNow":"Search now","searching":"Searching globally...","found":"Found {n} results","noResults":"No results found.","price":"Price","moq":"MOQ","lead":"Lead time","evidence":"Evidence","confidence":"Confidence","details":"View details","rfqSend":"Send RFQ","source":"Source","rfqTitle":"Create RFQ","rfqText":"Turn your requirement into a professional supplier request.","requirements":"Requirements","incoterm":"Incoterm","preview":"Preview","create":"Create","creating":"Creating...","created":"✓ RFQ created.","landedTitle":"Landed Cost Calculator","unitPrice":"Unit price USD","shipping":"International shipping USD","duty":"Duty %","tax":"Tax %","local":"Local delivery USD","calculate":"Calculate landed cost","total":"Total","negTitle":"AI Negotiation Agent","supplier":"Supplier","offer":"Current offer USD","target":"Buyer target USD","reply":"Supplier reply","analyze":"Analyze & negotiate","decision":"NOVA Decision","dealsTitle":"Flash Deals","refresh":"Refresh","historyTitle":"Purchase History","empty":"No data yet.","login":"Log in","signup":"Create account","logout":"Log out","email":"Email","password":"Password","check":"Check account","language":"Language","english":"English","arabic":"Arabic","agri":"Agricultural Machinery","crops":"Strategic Crops","fert":"Fertilizers","electronics":"Electronics","aviation":"Aviation","ships":"Ships & Marine","realestate":"Real Estate & Land","auto":"Automotive","languageName":"English"},
-"fr":{"home":"Accueil","search":"Fournisseurs","rfq":"RFQ","landed":"Coût rendu","neg":"Négociation","deals":"Offres","history":"Achats","account":"Compte","start":"Commencer","badge":"● ACHATS MONDIAUX · DONNÉES VÉRIFIÉES","hero1":"Sourcing mondial","hero2":"Propulsé par l’IA","heroText":"Recherchez, vérifiez, comparez, créez des RFQ et négociez depuis NOVA.","searchPh":"Que voulez-vous acheter ? ex. 500 tonnes de blé","allMarkets":"Tous les pays et marchés","ai":"NOVA AI","aiText":"Votre assistant achats intelligent, de la recherche à la négociation.","aiPrompt":"« Je cherche 500 tonnes de blé alimentaire livrées à Bagdad au meilleur prix. »","find":"Trouver des fournisseurs","makeRFQ":"Créer un RFQ","negotiate":"Négocier","sectors":"Secteurs clés","chooseSector":"Choisissez un secteur","opportunities":"Opportunités mondiales","explore":"Explorer le marché →","tools":"Outils du commerce mondial","verify":"Supplier Verification","cost":"Coût rendu","fastDeals":"Offres flash","coverage":"Couverture mondiale","countries":"Pays et marchés","coverageText":"Accès mondial à plus de 195 pays et marchés","network":"Réseau fournisseurs","records":"Objectif mondial","markets":"Marchés et pays","global":"Couverture mondiale","searchTitle":"Rechercher des fournisseurs","compareText":"Comparez prix, MOQ, délai et preuves.","product":"Produit ou matière","quantity":"Quantité","destination":"Pays / destination","searchNow":"Rechercher","searching":"Recherche mondiale...","found":"{n} résultats trouvés","noResults":"Aucun résultat.","price":"Prix","moq":"MOQ","lead":"Délai","evidence":"Preuves","confidence":"Confiance","details":"Voir les détails","rfqSend":"Envoyer RFQ","source":"Source","rfqTitle":"Créer un RFQ","rfqText":"Transformez votre besoin en demande professionnelle.","requirements":"Exigences","incoterm":"Incoterm","preview":"Aperçu","create":"Créer","creating":"Création...","created":"✓ RFQ créé.","landedTitle":"Calcul du coût rendu","unitPrice":"Prix unitaire USD","shipping":"Expédition USD","duty":"Droits %","tax":"Taxe %","local":"Livraison locale USD","calculate":"Calculer","total":"Total","negTitle":"Agent de négociation IA","supplier":"Fournisseur","offer":"Offre actuelle USD","target":"Objectif acheteur USD","reply":"Réponse fournisseur","analyze":"Analyser et négocier","decision":"Décision NOVA","dealsTitle":"Offres flash","refresh":"Actualiser","historyTitle":"Historique des achats","empty":"Aucune donnée.","login":"Connexion","signup":"Créer un compte","logout":"Déconnexion","email":"E-mail","password":"Mot de passe","check":"Vérifier le compte","language":"Language","english":"Anglais","arabic":"Arabe","agri":"Agricultural Machinery","crops":"Strategic Crops","fert":"Fertilizers","electronics":"Electronics","aviation":"Aviation","ships":"Ships & Marine","realestate":"Real Estate & Land","auto":"Automotive","languageName":"Français"},
-"es":{"home":"Inicio","search":"Proveedores","rfq":"RFQ","landed":"Costo puesto","neg":"Negociación","deals":"Ofertas","history":"Compras","account":"Cuenta","start":"Empezar a comprar","badge":"● COMPRAS GLOBALES · DATOS VERIFICADOS","hero1":"Abastecimiento global","hero2":"Impulsado por IA","heroText":"Busca, verifica, compara, crea RFQ y negocia desde NOVA.","searchPh":"¿Qué quieres comprar? ej. 500 toneladas de trigo","allMarkets":"Todos los países y mercados","ai":"NOVA AI","aiText":"Tu asistente inteligente de compras, de la búsqueda a la negociación.","aiPrompt":"«Necesito 500 toneladas de trigo alimentario entregadas en Bagdad al mejor precio.»","find":"Buscar proveedores","makeRFQ":"Crear RFQ","negotiate":"Iniciar negociación","sectors":"Sectores clave","chooseSector":"Elige un sector","opportunities":"Oportunidades globales","explore":"Explorar mercado →","tools":"Herramientas de comercio global","verify":"Supplier Verification","cost":"Costo puesto","fastDeals":"Ofertas flash","coverage":"Cobertura global","countries":"Países y mercados","coverageText":"Acceso global a más de 195 países y mercados","network":"Red de proveedores","records":"Objetivo de registros","markets":"Mercados y países","global":"Cobertura global","searchTitle":"Buscar proveedores","compareText":"Compara precio, MOQ, plazo y evidencia.","product":"Producto o material","quantity":"Cantidad","destination":"País / destino","searchNow":"Buscar ahora","searching":"Buscando globalmente...","found":"{n} resultados encontrados","noResults":"No se encontraron resultados.","price":"Precio","moq":"MOQ","lead":"Plazo","evidence":"Evidencia","confidence":"Confianza","details":"Ver detalles","rfqSend":"Enviar RFQ","source":"Fuente","rfqTitle":"Crear RFQ","rfqText":"Convierte tu necesidad en una solicitud profesional.","requirements":"Requisitos","incoterm":"Incoterm","preview":"Vista previa","create":"Crear","creating":"Creando...","created":"✓ RFQ creado.","landedTitle":"Calculadora de costo puesto","unitPrice":"Precio unitario USD","shipping":"Envío USD","duty":"Arancel %","tax":"Impuesto %","local":"Entrega local USD","calculate":"Calcular","total":"Total","negTitle":"Agente de negociación IA","supplier":"Proveedor","offer":"Oferta actual USD","target":"Objetivo comprador USD","reply":"Respuesta del proveedor","analyze":"Analizar y negociar","decision":"Decisión NOVA","dealsTitle":"Ofertas flash","refresh":"Actualizar","historyTitle":"Historial de compras","empty":"Sin datos.","login":"Iniciar sesión","signup":"Crear cuenta","logout":"Cerrar sesión","email":"Correo","password":"Contraseña","check":"Comprobar cuenta","language":"Language","english":"Inglés","arabic":"Árabe","agri":"Agricultural Machinery","crops":"Strategic Crops","fert":"Fertilizers","electronics":"Electronics","aviation":"Aviation","ships":"Ships & Marine","realestate":"Real Estate & Land","auto":"Automotive","languageName":"Español"},
-"de":{"home":"Startseite","search":"Lieferanten","rfq":"RFQ","landed":"Landed Cost","neg":"Verhandlung","deals":"Angebote","history":"Einkäufe","account":"Konto","start":"Einkauf starten","badge":"● GLOBALE BESCHAFFUNG · VERIFIZIERTE DATEN","hero1":"Globales Sourcing","hero2":"KI-gestützt","heroText":"Suchen, prüfen, vergleichen, RFQs erstellen und verhandeln – alles in NOVA.","searchPh":"Was möchten Sie kaufen? z. B. 500 Tonnen Weizen","allMarkets":"Alle Länder & Märkte","ai":"NOVA AI","aiText":"Ihr intelligenter Beschaffungsassistent von der Suche bis zur Verhandlung.","aiPrompt":"„Ich brauche 500 Tonnen Lebensmittelweizen nach Bagdad zum besten Preis von einem vertrauenswürdigen Lieferanten.“","find":"Lieferanten finden","makeRFQ":"RFQ erstellen","negotiate":"Verhandlung starten","sectors":"Branchen","chooseSector":"Branche auswählen","opportunities":"Globale Handelschancen","explore":"Markt erkunden →","tools":"Globale Handelswerkzeuge","verify":"Supplier Verification","cost":"Landed Cost","fastDeals":"Flash-Angebote","coverage":"Globale Abdeckung","countries":"Länder & Märkte","coverageText":"Globaler Zugang zu 195+ Ländern und Märkten","network":"Lieferantennetzwerk","records":"Ziel globale Datensätze","markets":"Märkte & Länder","global":"Globale Abdeckung","searchTitle":"Lieferanten suchen","compareText":"Preis, MOQ, Lieferzeit und Nachweise vergleichen.","product":"Produkt oder Material","quantity":"Menge","destination":"Land / Ziel","searchNow":"Jetzt suchen","searching":"Globale Suche...","found":"{n} Ergebnisse gefunden","noResults":"Keine Ergebnisse.","price":"Preis","moq":"MOQ","lead":"Lieferzeit","evidence":"Nachweise","confidence":"Vertrauen","details":"Details ansehen","rfqSend":"RFQ senden","source":"Quelle","rfqTitle":"RFQ erstellen","rfqText":"Anforderung in professionelle Lieferantenanfrage umwandeln.","requirements":"Anforderungen","incoterm":"Incoterm","preview":"Vorschau","create":"Erstellen","creating":"Wird erstellt...","created":"✓ RFQ erstellt.","landedTitle":"Landed-Cost-Rechner","unitPrice":"Stückpreis USD","shipping":"Internationaler Versand USD","duty":"Zoll %","tax":"Steuer %","local":"Lokale Lieferung USD","calculate":"Landed Cost berechnen","total":"Gesamt","negTitle":"KI-Verhandlungsagent","supplier":"Lieferant","offer":"Aktuelles Angebot USD","target":"Käuferziel USD","reply":"Antwort des Lieferanten","analyze":"Analysieren & verhandeln","decision":"NOVA Entscheidung","dealsTitle":"Flash-Angebote","refresh":"Aktualisieren","historyTitle":"Einkaufshistorie","empty":"Noch keine Daten.","login":"Anmelden","signup":"Konto erstellen","logout":"Abmelden","email":"E-Mail","password":"Passwort","check":"Konto prüfen","language":"Language","english":"Englisch","arabic":"Arabisch","agri":"Agricultural Machinery","crops":"Strategic Crops","fert":"Fertilizers","electronics":"Electronics","aviation":"Aviation","ships":"Ships & Marine","realestate":"Real Estate & Land","auto":"Automotive","languageName":"Deutsch"},
-"it":{"home":"Home","search":"Fornitori","rfq":"RFQ","landed":"Costo reso","neg":"Negoziazione","deals":"Offerte","history":"Acquisti","account":"Account","start":"Inizia ad acquistare","badge":"● APPROVVIGIONAMENTO GLOBALE · DATI VERIFICATI","hero1":"Sourcing globale","hero2":"Con IA","heroText":"Cerca, verifica, confronta, crea RFQ e negozia da NOVA.","searchPh":"Cosa vuoi acquistare? es. 500 tonnellate di grano","allMarkets":"Tutti i paesi e mercati","ai":"NOVA AI","aiText":"Il tuo assistente acquisti intelligente dalla ricerca alla negoziazione.","aiPrompt":"«Mi servono 500 tonnellate di grano alimentare consegnate a Baghdad al miglior prezzo.»","find":"Trova fornitori","makeRFQ":"Crea RFQ","negotiate":"Inizia negoziazione","sectors":"Settori chiave","chooseSector":"Scegli un settore","opportunities":"Opportunità globali","explore":"Esplora mercato →","tools":"Strumenti di commercio globale","verify":"Supplier Verification","cost":"Costo reso","fastDeals":"Offerte flash","coverage":"Copertura globale","countries":"Paesi e mercati","coverageText":"Accesso globale a oltre 195 paesi e mercati","network":"Rete fornitori","records":"Obiettivo record globali","markets":"Mercati e paesi","global":"Copertura globale","searchTitle":"Cerca fornitori","compareText":"Confronta prezzo, MOQ, tempi e prove.","product":"Prodotto o materiale","quantity":"Quantità","destination":"Paese / destinazione","searchNow":"Cerca ora","searching":"Ricerca globale...","found":"Trovati {n} risultati","noResults":"Nessun risultato.","price":"Prezzo","moq":"MOQ","lead":"Tempi","evidence":"Prove","confidence":"Affidabilità","details":"Vedi dettagli","rfqSend":"Invia RFQ","source":"Fonte","rfqTitle":"Crea RFQ","rfqText":"Trasforma la richiesta in una domanda professionale.","requirements":"Requisiti","incoterm":"Incoterm","preview":"Anteprima","create":"Crea","creating":"Creazione...","created":"✓ RFQ creato.","landedTitle":"Calcolatore costo reso","unitPrice":"Prezzo unitario USD","shipping":"Spedizione USD","duty":"Dazio %","tax":"Tassa %","local":"Consegna locale USD","calculate":"Calcola costo","total":"Totale","negTitle":"Agente di negoziazione IA","supplier":"Fornitore","offer":"Offerta attuale USD","target":"Obiettivo acquirente USD","reply":"Risposta fornitore","analyze":"Analizza e negozia","decision":"Decisione NOVA","dealsTitle":"Offerte flash","refresh":"Aggiorna","historyTitle":"Cronologia acquisti","empty":"Nessun dato.","login":"Accedi","signup":"Crea account","logout":"Esci","email":"Email","password":"Password","check":"Controlla account","language":"Language","english":"Inglese","arabic":"Arabo","agri":"Agricultural Machinery","crops":"Strategic Crops","fert":"Fertilizers","electronics":"Electronics","aviation":"Aviation","ships":"Ships & Marine","realestate":"Real Estate & Land","auto":"Automotive","languageName":"Italiano"},"tr":{"home":"Ana Sayfa","search":"Tedarikçiler","rfq":"RFQ","landed":"Toplam Maliyet","neg":"Pazarlık","deals":"Fırsatlar","history":"Satın Almalar","account":"Hesap","start":"Satın Almaya Başla","badge":"● KÜRESEL TEDARİK · DOĞRULANMIŞ VERİ","hero1":"Küresel tedarik","hero2":"Yapay zekâ ile","heroText":"NOVA'da ara, doğrula, karşılaştır, RFQ oluştur ve pazarlık yap.","searchPh":"Ne satın almak istiyorsunuz? ör. 500 ton buğday","allMarkets":"Tüm ülkeler ve pazarlar","ai":"NOVA AI","aiText":"Aramadan pazarlığa akıllı satın alma asistanınız.","aiPrompt":"“Bağdat'a teslim 500 ton gıda sınıfı buğdayı en iyi fiyata istiyorum.”","find":"Tedarikçi bul","makeRFQ":"RFQ oluştur","negotiate":"Pazarlığı başlat","sectors":"Ana sektörler","chooseSector":"Sektör seçin","opportunities":"Küresel ticaret fırsatları","explore":"Pazarı keşfet →","tools":"Küresel ticaret araçları","verify":"Supplier Verification","cost":"Toplam maliyet","fastDeals":"Flaş fırsatlar","coverage":"Küresel kapsam","countries":"Ülkeler ve pazarlar","coverageText":"195+ ülke ve pazara küresel erişim","network":"Tedarikçi ağı","records":"Küresel kayıt hedefi","markets":"Pazarlar ve ülkeler","global":"Küresel kapsam","searchTitle":"Tedarikçi ara","compareText":"Fiyat, MOQ, teslim süresi ve kanıtları karşılaştırın.","product":"Ürün veya malzeme","quantity":"Miktar","destination":"Ülke / varış","searchNow":"Şimdi ara","searching":"Küresel aranıyor...","found":"{n} sonuç bulundu","noResults":"Sonuç bulunamadı.","price":"Fiyat","moq":"MOQ","lead":"Teslim süresi","evidence":"Kanıt","confidence":"Güven","details":"Detayları gör","rfqSend":"RFQ gönder","source":"Kaynak","rfqTitle":"RFQ oluştur","rfqText":"İhtiyacınızı profesyonel tedarikçi talebine dönüştürün.","requirements":"Gereksinimler","incoterm":"Incoterm","preview":"Önizleme","create":"Oluştur","creating":"Oluşturuluyor...","created":"✓ RFQ oluşturuldu.","landedTitle":"Toplam maliyet hesaplayıcı","unitPrice":"Birim fiyat USD","shipping":"Uluslararası nakliye USD","duty":"Gümrük %","tax":"Vergi %","local":"Yerel teslimat USD","calculate":"Toplam maliyeti hesapla","total":"Toplam","negTitle":"Yapay zekâ pazarlık ajanı","supplier":"Tedarikçi","offer":"Mevcut teklif USD","target":"Alıcı hedefi USD","reply":"Tedarikçi yanıtı","analyze":"Analiz et ve pazarlık yap","decision":"NOVA kararı","dealsTitle":"Flaş fırsatlar","refresh":"Yenile","historyTitle":"Satın alma geçmişi","empty":"Henüz veri yok.","login":"Giriş yap","signup":"Hesap oluştur","logout":"Çıkış","email":"E-posta","password":"Şifre","check":"Hesabı kontrol et","language":"Language","english":"İngilizce","arabic":"Arapça","agri":"Agricultural Machinery","crops":"Strategic Crops","fert":"Fertilizers","electronics":"Electronics","aviation":"Aviation","ships":"Ships & Marine","realestate":"Real Estate & Land","auto":"Automotive","languageName":"Türkçe"},
-"zh":{"home":"首页","search":"供应商","rfq":"RFQ","landed":"到岸成本","neg":"谈判","deals":"优惠","history":"采购","account":"账户","start":"开始采购","badge":"● 全球采购 · 先验证数据","hero1":"全球采购","hero2":"AI 驱动","heroText":"在 NOVA 中搜索、验证、比较、创建 RFQ 并谈判。","searchPh":"您想采购什么？例如：500 吨小麦","allMarkets":"所有国家和市场","ai":"NOVA AI","aiText":"从搜索到谈判的智能采购助手。","aiPrompt":"“我需要 500 吨食品级小麦，以最佳价格运到巴格达。”","find":"查找供应商","makeRFQ":"创建 RFQ","negotiate":"开始谈判","sectors":"主要行业","chooseSector":"选择行业","opportunities":"全球贸易机会","explore":"探索市场 →","tools":"全球贸易工具","verify":"Supplier Verification","cost":"到岸成本","fastDeals":"限时优惠","coverage":"全球覆盖","countries":"国家和市场","coverageText":"覆盖 195+ 个国家和市场","network":"供应商网络","records":"全球记录目标","markets":"市场和国家","global":"全球覆盖","searchTitle":"搜索供应商","compareText":"比较价格、MOQ、交期和证据。","product":"产品或材料","quantity":"数量","destination":"国家 / 目的地","searchNow":"立即搜索","searching":"正在全球搜索...","found":"找到 {n} 个结果","noResults":"未找到结果。","price":"价格","moq":"MOQ","lead":"交期","evidence":"证据","confidence":"可信度","details":"查看详情","rfqSend":"发送 RFQ","source":"来源","rfqTitle":"创建 RFQ","rfqText":"将需求转为专业供应商询价。","requirements":"要求","incoterm":"贸易术语","preview":"预览","create":"创建","creating":"正在创建...","created":"✓ RFQ 已创建。","landedTitle":"到岸成本计算器","unitPrice":"单价 USD","shipping":"国际运费 USD","duty":"关税 %","tax":"税费 %","local":"本地配送 USD","calculate":"计算到岸成本","total":"总计","negTitle":"AI 谈判代理","supplier":"供应商","offer":"当前报价 USD","target":"买方目标 USD","reply":"供应商回复","analyze":"分析并谈判","decision":"NOVA 决策","dealsTitle":"限时优惠","refresh":"刷新","historyTitle":"采购历史","empty":"暂无数据。","login":"登录","signup":"创建账户","logout":"退出","email":"邮箱","password":"密码","check":"检查账户","language":"Language","english":"英语","arabic":"阿拉伯语","agri":"Agricultural Machinery","crops":"Strategic Crops","fert":"Fertilizers","electronics":"Electronics","aviation":"Aviation","ships":"Ships & Marine","realestate":"Real Estate & Land","auto":"Automotive","languageName":"中文"},
-"ja":{"home":"ホーム","search":"サプライヤー","rfq":"RFQ","landed":"着地原価","neg":"交渉","deals":"案件","history":"購買","account":"アカウント","start":"購買を開始","badge":"● グローバル調達 · 検証済みデータ","hero1":"グローバル調達","hero2":"AI搭載","heroText":"NOVAで検索、検証、比較、RFQ作成、交渉まで。","searchPh":"何を購入しますか？ 例：小麦500トン","allMarkets":"すべての国・市場","ai":"NOVA AI","aiText":"検索から交渉までのスマート購買アシスタント。","aiPrompt":"「食品用小麦500トンをバグダッドへ最良価格で納入してほしい。」","find":"サプライヤーを検索","makeRFQ":"RFQを作成","negotiate":"交渉を開始","sectors":"主要業界","chooseSector":"業界を選択","opportunities":"グローバル取引機会","explore":"市場を見る →","tools":"グローバル取引ツール","verify":"Supplier Verification","cost":"着地原価","fastDeals":"フラッシュ案件","coverage":"グローバルカバレッジ","countries":"国・市場","coverageText":"195以上の国・市場へグローバルアクセス","network":"サプライヤーネットワーク","records":"グローバル記録目標","markets":"市場・国","global":"グローバルカバレッジ","searchTitle":"サプライヤー検索","compareText":"価格、MOQ、納期、証拠を比較。","product":"製品または材料","quantity":"数量","destination":"国 / 目的地","searchNow":"検索","searching":"グローバル検索中...","found":"{n}件の結果","noResults":"結果がありません。","price":"価格","moq":"MOQ","lead":"納期","evidence":"証拠","confidence":"信頼度","details":"詳細を見る","rfqSend":"RFQを送信","source":"ソース","rfqTitle":"RFQを作成","rfqText":"要件をプロ向けのサプライヤー依頼に変換。","requirements":"要件","incoterm":"インコタームズ","preview":"プレビュー","create":"作成","creating":"作成中...","created":"✓ RFQを作成しました。","landedTitle":"着地原価計算","unitPrice":"単価 USD","shipping":"国際送料 USD","duty":"関税 %","tax":"税 %","local":"国内配送 USD","calculate":"着地原価を計算","total":"合計","negTitle":"AI交渉エージェント","supplier":"サプライヤー","offer":"現在の提示 USD","target":"購入者目標 USD","reply":"サプライヤー返信","analyze":"分析して交渉","decision":"NOVA判断","dealsTitle":"フラッシュ案件","refresh":"更新","historyTitle":"購買履歴","empty":"データはありません。","login":"ログイン","signup":"アカウント作成","logout":"ログアウト","email":"メール","password":"パスワード","check":"アカウント確認","language":"Language","english":"英語","arabic":"アラビア語","agri":"Agricultural Machinery","crops":"Strategic Crops","fert":"Fertilizers","electronics":"Electronics","aviation":"Aviation","ships":"Ships & Marine","realestate":"Real Estate & Land","auto":"Automotive","languageName":"日本語"},
-"ko":{"home":"홈","search":"공급업체","rfq":"RFQ","landed":"총비용","neg":"협상","deals":"딜","history":"구매","account":"계정","start":"구매 시작","badge":"● 글로벌 조달 · 검증된 데이터 우선","hero1":"글로벌 소싱","hero2":"AI 기반","heroText":"NOVA에서 검색, 검증, 비교, RFQ 생성 및 협상.","searchPh":"무엇을 구매하시나요? 예: 밀 500톤","allMarkets":"모든 국가 및 시장","ai":"NOVA AI","aiText":"검색부터 협상까지 지능형 구매 도우미.","aiPrompt":"“바그다드로 배송되는 식품용 밀 500톤을 최적 가격으로 원합니다.”","find":"공급업체 찾기","makeRFQ":"RFQ 생성","negotiate":"협상 시작","sectors":"주요 산업","chooseSector":"산업 선택","opportunities":"글로벌 거래 기회","explore":"시장 탐색 →","tools":"글로벌 무역 도구","verify":"Supplier Verification","cost":"총비용","fastDeals":"플래시 딜","coverage":"글로벌 범위","countries":"국가 및 시장","coverageText":"195개 이상의 국가와 시장에 글로벌 접근","network":"공급업체 네트워크","records":"글로벌 기록 목표","markets":"시장 및 국가","global":"글로벌 범위","searchTitle":"공급업체 검색","compareText":"가격, MOQ, 납기, 증거를 비교합니다.","product":"제품 또는 자재","quantity":"수량","destination":"국가 / 목적지","searchNow":"검색","searching":"글로벌 검색 중...","found":"{n}개 결과","noResults":"결과가 없습니다.","price":"가격","moq":"MOQ","lead":"납기","evidence":"증거","confidence":"신뢰도","details":"상세 보기","rfqSend":"RFQ 보내기","source":"출처","rfqTitle":"RFQ 생성","rfqText":"요구사항을 전문 공급업체 요청으로 변환합니다.","requirements":"요구사항","incoterm":"인코텀즈","preview":"미리보기","create":"생성","creating":"생성 중...","created":"✓ RFQ가 생성되었습니다.","landedTitle":"총비용 계산기","unitPrice":"단가 USD","shipping":"국제 운송 USD","duty":"관세 %","tax":"세금 %","local":"현지 배송 USD","calculate":"총비용 계산","total":"총액","negTitle":"AI 협상 에이전트","supplier":"공급업체","offer":"현재 제안 USD","target":"구매자 목표 USD","reply":"공급업체 답변","analyze":"분석 및 협상","decision":"NOVA 결정","dealsTitle":"플래시 딜","refresh":"새로고침","historyTitle":"구매 기록","empty":"데이터가 없습니다.","login":"로그인","signup":"계정 생성","logout":"로그아웃","email":"이메일","password":"비밀번호","check":"계정 확인","language":"Language","english":"영어","arabic":"아랍어","agri":"Agricultural Machinery","crops":"Strategic Crops","fert":"Fertilizers","electronics":"Electronics","aviation":"Aviation","ships":"Ships & Marine","realestate":"Real Estate & Land","auto":"Automotive","languageName":"한국어"},
-"ru":{"home":"Главная","search":"Поставщики","rfq":"RFQ","landed":"Полная стоимость","neg":"Переговоры","deals":"Предложения","history":"Покупки","account":"Аккаунт","start":"Начать закупку","badge":"● ГЛОБАЛЬНЫЕ ЗАКУПКИ · ПРОВЕРЕННЫЕ ДАННЫЕ","hero1":"Глобальный поиск","hero2":"На базе ИИ","heroText":"Ищите, проверяйте, сравнивайте, создавайте RFQ и ведите переговоры в NOVA.","searchPh":"Что вы хотите купить? например 500 тонн пшеницы","allMarkets":"Все страны и рынки","ai":"NOVA AI","aiText":"Умный помощник по закупкам от поиска до переговоров.","aiPrompt":"«Мне нужно 500 тонн пищевой пшеницы с доставкой в Багдад по лучшей цене.»","find":"Найти поставщиков","makeRFQ":"Создать RFQ","negotiate":"Начать переговоры","sectors":"Ключевые отрасли","chooseSector":"Выберите отрасль","opportunities":"Глобальные торговые возможности","explore":"Открыть рынок →","tools":"Глобальные торговые инструменты","verify":"Supplier Verification","cost":"Полная стоимость","fastDeals":"Срочные предложения","coverage":"Глобальное покрытие","countries":"Страны и рынки","coverageText":"Глобальный доступ к 195+ странам и рынкам","network":"Сеть поставщиков","records":"Целевые глобальные записи","markets":"Рынки и страны","global":"Глобальное покрытие","searchTitle":"Поиск поставщиков","compareText":"Сравнивайте цену, MOQ, срок поставки и доказательства.","product":"Товар или материал","quantity":"Количество","destination":"Страна / пункт назначения","searchNow":"Искать","searching":"Глобальный поиск...","found":"Найдено результатов: {n}","noResults":"Результаты не найдены.","price":"Цена","moq":"MOQ","lead":"Срок","evidence":"Доказательства","confidence":"Доверие","details":"Подробнее","rfqSend":"Отправить RFQ","source":"Источник","rfqTitle":"Создать RFQ","rfqText":"Преобразуйте потребность в профессиональный запрос поставщику.","requirements":"Требования","incoterm":"Инкотермс","preview":"Предпросмотр","create":"Создать","creating":"Создание...","created":"✓ RFQ создан.","landedTitle":"Калькулятор полной стоимости","unitPrice":"Цена за единицу USD","shipping":"Международная доставка USD","duty":"Пошлина %","tax":"Налог %","local":"Местная доставка USD","calculate":"Рассчитать","total":"Итого","negTitle":"AI-агент переговоров","supplier":"Поставщик","offer":"Текущее предложение USD","target":"Цель покупателя USD","reply":"Ответ поставщика","analyze":"Анализировать и вести переговоры","decision":"Решение NOVA","dealsTitle":"Срочные предложения","refresh":"Обновить","historyTitle":"История покупок","empty":"Данных пока нет.","login":"Войти","signup":"Создать аккаунт","logout":"Выйти","email":"Эл. почта","password":"Пароль","check":"Проверить аккаунт","language":"Language","english":"Английский","arabic":"Арабский","agri":"Agricultural Machinery","crops":"Strategic Crops","fert":"Fertilizers","electronics":"Electronics","aviation":"Aviation","ships":"Ships & Marine","realestate":"Real Estate & Land","auto":"Automotive","languageName":"Русский"},
-"hi":{"home":"होम","search":"आपूर्तिकर्ता","rfq":"RFQ","landed":"लैंडेड लागत","neg":"बातचीत","deals":"ऑफर","history":"खरीद","account":"खाता","start":"खरीद शुरू करें","badge":"● वैश्विक खरीद · सत्यापित डेटा","hero1":"वैश्विक सोर्सिंग","hero2":"AI द्वारा संचालित","heroText":"NOVA में खोजें, सत्यापित करें, तुलना करें, RFQ बनाएं और बातचीत करें।","searchPh":"आप क्या खरीदना चाहते हैं? जैसे 500 टन गेहूं","allMarkets":"सभी देश और बाजार","ai":"NOVA AI","aiText":"खोज से बातचीत तक आपका स्मार्ट खरीद सहायक।","aiPrompt":"“मुझे बगदाद में सर्वोत्तम कीमत पर 500 टन खाद्य-ग्रेड गेहूं चाहिए।”","find":"आपूर्तिकर्ता खोजें","makeRFQ":"RFQ बनाएं","negotiate":"बातचीत शुरू करें","sectors":"मुख्य उद्योग","chooseSector":"उद्योग चुनें","opportunities":"वैश्विक व्यापार अवसर","explore":"बाजार देखें →","tools":"वैश्विक व्यापार उपकरण","verify":"Supplier Verification","cost":"लैंडेड लागत","fastDeals":"फ्लैश डील","coverage":"वैश्विक कवरेज","countries":"देश और बाजार","coverageText":"195+ देशों और बाजारों तक वैश्विक पहुंच","network":"आपूर्तिकर्ता नेटवर्क","records":"वैश्विक रिकॉर्ड लक्ष्य","markets":"बाजार और देश","global":"वैश्विक कवरेज","searchTitle":"आपूर्तिकर्ता खोजें","compareText":"कीमत, MOQ, समय और प्रमाण की तुलना करें।","product":"उत्पाद या सामग्री","quantity":"मात्रा","destination":"देश / गंतव्य","searchNow":"अभी खोजें","searching":"वैश्विक खोज जारी...","found":"{n} परिणाम मिले","noResults":"कोई परिणाम नहीं मिला।","price":"कीमत","moq":"MOQ","lead":"लीड टाइम","evidence":"प्रमाण","confidence":"विश्वास","details":"विवरण देखें","rfqSend":"RFQ भेजें","source":"स्रोत","rfqTitle":"RFQ बनाएं","rfqText":"अपनी आवश्यकता को पेशेवर सप्लायर अनुरोध में बदलें।","requirements":"आवश्यकताएं","incoterm":"Incoterm","preview":"पूर्वावलोकन","create":"बनाएं","creating":"बनाया जा रहा है...","created":"✓ RFQ बनाया गया।","landedTitle":"लैंडेड लागत कैलकुलेटर","unitPrice":"इकाई मूल्य USD","shipping":"अंतरराष्ट्रीय शिपिंग USD","duty":"शुल्क %","tax":"कर %","local":"स्थानीय डिलीवरी USD","calculate":"लैंडेड लागत गणना","total":"कुल","negTitle":"AI बातचीत एजेंट","supplier":"आपूर्तिकर्ता","offer":"वर्तमान ऑफर USD","target":"खरीदार लक्ष्य USD","reply":"आपूर्तिकर्ता उत्तर","analyze":"विश्लेषण और बातचीत","decision":"NOVA निर्णय","dealsTitle":"फ्लैश डील","refresh":"रिफ्रेश","historyTitle":"खरीद इतिहास","empty":"अभी कोई डेटा नहीं।","login":"लॉग इन","signup":"खाता बनाएं","logout":"लॉग आउट","email":"ईमेल","password":"पासवर्ड","check":"खाता जांचें","language":"Language","english":"अंग्रेज़ी","arabic":"अरबी","agri":"Agricultural Machinery","crops":"Strategic Crops","fert":"Fertilizers","electronics":"Electronics","aviation":"Aviation","ships":"Ships & Marine","realestate":"Real Estate & Land","auto":"Automotive","languageName":"हिन्दी"},
-"pt":{"home":"Início","search":"Fornecedores","rfq":"RFQ","landed":"Custo posto","neg":"Negociação","deals":"Ofertas","history":"Compras","account":"Conta","start":"Começar a comprar","badge":"● COMPRAS GLOBAIS · DADOS VERIFICADOS","hero1":"Sourcing global","hero2":"Com IA","heroText":"Pesquise, verifique, compare, crie RFQs e negocie no NOVA.","searchPh":"O que deseja comprar? ex. 500 toneladas de trigo","allMarkets":"Todos os países e mercados","ai":"NOVA AI","aiText":"Seu assistente inteligente de compras, da pesquisa à negociação.","aiPrompt":"“Preciso de 500 toneladas de trigo alimentar entregues em Bagdá pelo melhor preço.”","find":"Encontrar fornecedores","makeRFQ":"Criar RFQ","negotiate":"Iniciar negociação","sectors":"Setores principais","chooseSector":"Escolha um setor","opportunities":"Oportunidades globais","explore":"Explorar mercado →","tools":"Ferramentas de comércio global","verify":"Supplier Verification","cost":"Custo posto","fastDeals":"Ofertas relâmpago","coverage":"Cobertura global","countries":"Países e mercados","coverageText":"Acesso global a mais de 195 países e mercados","network":"Rede de fornecedores","records":"Meta de registros globais","markets":"Mercados e países","global":"Cobertura global","searchTitle":"Pesquisar fornecedores","compareText":"Compare preço, MOQ, prazo e evidências.","product":"Produto ou material","quantity":"Quantidade","destination":"País / destino","searchNow":"Pesquisar agora","searching":"Pesquisando globalmente...","found":"{n} resultados encontrados","noResults":"Nenhum resultado encontrado.","price":"Preço","moq":"MOQ","lead":"Prazo","evidence":"Evidências","confidence":"Confiança","details":"Ver detalhes","rfqSend":"Enviar RFQ","source":"Fonte","rfqTitle":"Criar RFQ","rfqText":"Transforme sua necessidade em uma solicitação profissional.","requirements":"Requisitos","incoterm":"Incoterm","preview":"Pré-visualização","create":"Criar","creating":"Criando...","created":"✓ RFQ criado.","landedTitle":"Calculadora de custo posto","unitPrice":"Preço unitário USD","shipping":"Frete internacional USD","duty":"Imposto de importação %","tax":"Imposto %","local":"Entrega local USD","calculate":"Calcular custo","total":"Total","negTitle":"Agente de negociação IA","supplier":"Fornecedor","offer":"Oferta atual USD","target":"Meta do comprador USD","reply":"Resposta do fornecedor","analyze":"Analisar e negociar","decision":"Decisão NOVA","dealsTitle":"Ofertas relâmpago","refresh":"Atualizar","historyTitle":"Histórico de compras","empty":"Nenhum dado ainda.","login":"Entrar","signup":"Criar conta","logout":"Sair","email":"E-mail","password":"Senha","check":"Verificar conta","language":"Language","english":"Inglês","arabic":"Árabe","agri":"Agricultural Machinery","crops":"Strategic Crops","fert":"Fertilizers","electronics":"Electronics","aviation":"Aviation","ships":"Ships & Marine","realestate":"Real Estate & Land","auto":"Automotive","languageName":"Português"},
-"pl":{"home":"Strona główna","search":"Dostawcy","rfq":"RFQ","landed":"Koszt dostawy","neg":"Negocjacje","deals":"Oferty","history":"Zakupy","account":"Konto","start":"Rozpocznij zakup","badge":"● GLOBALNE ZAKUPY · ZWERYFIKOWANE DANE","hero1":"Globalny sourcing","hero2":"Napędzane AI","heroText":"Szukaj, weryfikuj, porównuj, twórz RFQ i negocjuj w NOVA.","searchPh":"Co chcesz kupić? np. 500 ton pszenicy","allMarkets":"Wszystkie kraje i rynki","ai":"NOVA AI","aiText":"Inteligentny asystent zakupów od wyszukiwania do negocjacji.","aiPrompt":"„Potrzebuję 500 ton pszenicy spożywczej do Bagdadu w najlepszej cenie.”","find":"Znajdź dostawców","makeRFQ":"Utwórz RFQ","negotiate":"Rozpocznij negocjacje","sectors":"Główne branże","chooseSector":"Wybierz branżę","opportunities":"Globalne możliwości handlowe","explore":"Przeglądaj rynek →","tools":"Narzędzia handlu globalnego","verify":"Supplier Verification","cost":"Koszt dostawy","fastDeals":"Oferty flash","coverage":"Globalny zasięg","countries":"Kraje i rynki","coverageText":"Globalny dostęp do ponad 195 krajów i rynków","network":"Sieć dostawców","records":"Cel globalnych rekordów","markets":"Rynki i kraje","global":"Globalny zasięg","searchTitle":"Szukaj dostawców","compareText":"Porównaj cenę, MOQ, czas i dowody.","product":"Produkt lub materiał","quantity":"Ilość","destination":"Kraj / miejsce docelowe","searchNow":"Szukaj teraz","searching":"Wyszukiwanie globalne...","found":"Znaleziono {n} wyników","noResults":"Brak wyników.","price":"Cena","moq":"MOQ","lead":"Czas dostawy","evidence":"Dowody","confidence":"Zaufanie","details":"Zobacz szczegóły","rfqSend":"Wyślij RFQ","source":"Źródło","rfqTitle":"Utwórz RFQ","rfqText":"Zamień potrzebę w profesjonalne zapytanie.","requirements":"Wymagania","incoterm":"Incoterm","preview":"Podgląd","create":"Utwórz","creating":"Tworzenie...","created":"✓ RFQ utworzony.","landedTitle":"Kalkulator kosztu dostawy","unitPrice":"Cena jednostkowa USD","shipping":"Wysyłka międzynarodowa USD","duty":"Cło %","tax":"Podatek %","local":"Dostawa lokalna USD","calculate":"Oblicz koszt","total":"Suma","negTitle":"Agent negocjacji AI","supplier":"Dostawca","offer":"Bieżąca oferta USD","target":"Cel kupującego USD","reply":"Odpowiedź dostawcy","analyze":"Analizuj i negocjuj","decision":"Decyzja NOVA","dealsTitle":"Oferty flash","refresh":"Odśwież","historyTitle":"Historia zakupów","empty":"Brak danych.","login":"Zaloguj","signup":"Utwórz konto","logout":"Wyloguj","email":"E-mail","password":"Hasło","check":"Sprawdź konto","language":"Language","english":"Angielski","arabic":"Arabski","agri":"Agricultural Machinery","crops":"Strategic Crops","fert":"Fertilizers","electronics":"Electronics","aviation":"Aviation","ships":"Ships & Marine","realestate":"Real Estate & Land","auto":"Automotive","languageName":"Polski"}
+/* ===== الجزء الثاني يوضع هنا مباشرة ===== */const API = "";
+
+const TEXT = {
+ar:{
+home:"الرئيسية",
+suppliers:"الموردون",
+rfq:"طلب عرض سعر",
+landed:"التكلفة النهائية",
+negotiation:"التفاوض",
+deals:"العروض",
+purchases:"المشتريات",
+account:"الحساب",
+startBuying:"ابدأ الشراء",
+verifiedFirst:"المشتريات العالمية · البيانات الموثقة أولاً",
+globalProcurement:"المشتريات العالمية",
+poweredAI:"مدعومة بالذكاء الاصطناعي",
+heroText:"ابحث عن الموردين، تحقق من الأدلة، قارن العروض، أنشئ طلبات عروض الأسعار وحلل التفاوض من منصة NOVA واحدة.",
+searchPlaceholder:"ماذا تريد أن تشتري؟ مثال: 500 طن قمح",
+allCountries:"كل الدول والأسواق",
+wheat:"قمح",
+fertilizers:"الأسمدة",
+machinery:"المعدات",
+energy:"الطاقة",
+vehicles:"المركبات",
+aiAssistant:"مساعد مشتريات ذكي يعتمد على البيانات المتاحة ولا يخترع بيانات الموردين المفقودة.",
+aiExample:"أريد 500 طن قمح غذائي مع أفضل الموردين المتاحين والتسليم إلى العراق.",
+findSuppliers:"البحث عن الموردين",
+createRFQ:"إنشاء طلب عرض سعر",
+startNegotiation:"بدء التفاوض",
+actualRecords:"السجلات الفعلية",
+databaseRecords:"المحفوظة حاليًا في قاعدة NOVA",
+globalMarkets:"الدول والأسواق",
+countriesMarkets:"دولة وسوق حول العالم",
+systemStatus:"حالة النظام",
+online:"متصل",
+offline:"غير متصل",
+negotiationAnalysis:"تحليل المشتريات والتفاوض",
+sectors:"القطاعات الرئيسية",
+chooseSector:"اختر قطاعًا لبدء بحث حقيقي عن الموردين.",
+globalOpportunities:"القطاعات العالمية",
+explore:"استكشف السوق",
+agriculture:"المعدات الزراعية",
+crops:"المحاصيل الاستراتيجية",
+electronics:"الإلكترونيات",
+aviation:"الطيران",
+marine:"السفن والمعدات البحرية",
+construction:"البناء والمواد",
+automotive:"السيارات والمركبات",
+searchRealSources:"البحث عند الطلب من المصادر المتصلة",
+globalCoverage:"التغطية العالمية",
+coverageText:"يمكن اختيار أي دولة أو سوق من القائمة. نتائج الموردين الفعلية تعتمد على مصادر البحث المتصلة بالخادم.",
+selectMarket:"اختر الدولة أو السوق",
+countryNotice:"اختيار الدولة يحدد وجهة طلب الشراء ولا ينشئ بيانات أو موردين وهميين.",
+tools:"أدوات NOVA",
+supplierSearch:"البحث عن الموردين",
+searchDescription:"تعرض NOVA النتائج التي يعيدها الخادم فقط. الحقول غير الموجودة تبقى غير متوفرة.",
+productRequest:"المنتج أو طلب الشراء",
+quantity:"الكمية",
+destination:"الوجهة",
+searchNow:"البحث الآن",
+clear:"مسح",
+searching:"جارٍ البحث في المصادر المتصلة...",
+foundResults:"تم العثور على {n} نتيجة.",
+noResults:"لم تُرجع المصادر المتصلة أي نتائج لهذا البحث.",
+product:"المنتج",
+requirements:"المتطلبات",
+generateRFQ:"إنشاء RFQ بالذكاء الاصطناعي",
+rfqDescription:"أنشئ طلب عرض سعر احترافي اعتمادًا على المعلومات التي تدخلها فقط.",
+rfqPreview:"معاينة طلب عرض السعر",
+generating:"جارٍ الإنشاء...",
+rfqCreated:"تم إنشاء طلب عرض السعر.",
+copy:"نسخ",
+copied:"تم النسخ.",
+landedCalculator:"حاسبة التكلفة النهائية",
+landedDescription:"الحساب يتم على الخادم باستخدام الأرقام التي تدخلها. لا توجد أسعار أو رسوم مفترضة.",
+unitPrice:"سعر الوحدة بالدولار",
+shipping:"الشحن الدولي بالدولار",
+insurance:"التأمين بالدولار",
+duty:"الجمارك %",
+tax:"الضريبة %",
+localDelivery:"التوصيل المحلي بالدولار",
+calculate:"احسب التكلفة",
+costResult:"نتيجة التكلفة",
+goodsCost:"قيمة البضاعة",
+dutyCost:"الجمارك",
+taxCost:"الضرائب",
+totalCost:"الإجمالي",
+unitLanded:"التكلفة النهائية للوحدة",
+aiNegotiation:"وكيل التفاوض بالذكاء الاصطناعي",
+negotiationDescription:"يحلل العرض الحقيقي الذي تدخله ولا ينشئ سعر مورد من تلقاء نفسه.",
+supplier:"المورد",
+currentOffer:"عرض المورد",
+targetPrice:"السعر المستهدف",
+supplierReply:"رد المورد",
+analyzeNegotiate:"تحليل والتفاوض",
+novaDecision:"تحليل NOVA",
+dealsDescription:"تعرض فقط العروض المسجلة فعليًا في قاعدة البيانات.",
+refresh:"تحديث",
+noDeals:"لا توجد عروض مسجلة حاليًا.",
+purchaseHistory:"سجل المشتريات",
+historyDescription:"سجل المشتريات المحفوظ في حسابك.",
+noPurchases:"لا توجد مشتريات محفوظة.",
+accountDescription:"إدارة حساب NOVA والتحقق من الخدمات المتصلة.",
+email:"البريد الإلكتروني",
+password:"كلمة المرور",
+login:"تسجيل الدخول",
+signup:"إنشاء حساب",
+logout:"تسجيل الخروج",
+checkAccount:"فحص الحساب",
+loggedIn:"تم تسجيل الدخول",
+loggedOut:"تم تسجيل الخروج",
+notLoggedIn:"غير مسجل الدخول",
+systemConnections:"اتصالات النظام",
+database:"قاعدة البيانات",
+searchEngine:"محرك البحث",
+connected:"متصل",
+notConnected:"غير متصل",
+connectionNotice:"NOVA لا تعرض الخدمة على أنها متصلة إلا عندما يؤكد الخادم وجود الربط الحقيقي.",
+price:"السعر",
+moq:"الحد الأدنى للطلب",
+leadTime:"مدة التوريد",
+confidence:"الثقة",
+evidence:"الأدلة",
+verified:"موثق",
+notVerified:"غير متحقق",
+source:"المصدر",
+details:"التفاصيل",
+useRFQ:"استخدم في RFQ",
+unknown:"غير متوفر",
+requestFailed:"فشل الطلب",
+invalidInput:"أدخل البيانات المطلوبة أولاً.",
+sourceEvidence:"دليل من صفحة/نتيجة المصدر",
+realDataPolicy:"الحقول غير الموجودة في المصدر لا يتم تخمينها.",
+country:"الدولة",
+certifications:"الشهادات",
+incoterm:"شروط التسليم",
+oem:"OEM / ODM"
+},
+
+en:{
+home:"Home",
+suppliers:"Suppliers",
+rfq:"RFQ",
+landed:"Landed Cost",
+negotiation:"Negotiation",
+deals:"Deals",
+purchases:"Purchases",
+account:"Account",
+startBuying:"Start Buying",
+verifiedFirst:"Global procurement · verified data first",
+globalProcurement:"Global Procurement",
+poweredAI:"Powered by AI",
+heroText:"Search suppliers, inspect evidence, compare offers, create RFQs and analyze negotiations from one NOVA platform.",
+searchPlaceholder:"What do you want to buy? Example: 500 tons of wheat",
+allCountries:"All countries & markets",
+wheat:"Wheat",
+fertilizers:"Fertilizers",
+machinery:"Machinery",
+energy:"Energy",
+vehicles:"Vehicles",
+aiAssistant:"An intelligent procurement assistant that uses available evidence and does not invent missing supplier facts.",
+aiExample:"I need 500 tons of food-grade wheat from the best available suppliers delivered to Iraq.",
+findSuppliers:"Find Suppliers",
+createRFQ:"Create RFQ",
+startNegotiation:"Start Negotiation",
+actualRecords:"Actual Records",
+databaseRecords:"currently stored in NOVA database",
+globalMarkets:"Countries & Markets",
+countriesMarkets:"countries and markets worldwide",
+systemStatus:"System Status",
+online:"Online",
+offline:"Offline",
+negotiationAnalysis:"Procurement and negotiation analysis",
+sectors:"Key Industries",
+chooseSector:"Choose an industry to start a real supplier search.",
+globalOpportunities:"Global Industries",
+explore:"Explore Market",
+agriculture:"Agricultural Machinery",
+crops:"Strategic Crops",
+electronics:"Electronics",
+aviation:"Aviation",
+marine:"Ships & Marine",
+construction:"Construction & Materials",
+automotive:"Automotive",
+searchRealSources:"Search on demand through connected sources",
+globalCoverage:"Global Coverage",
+coverageText:"Any country or market can be selected. Actual supplier results depend on the search sources connected to the server.",
+selectMarket:"Select Country or Market",
+countryNotice:"Selecting a country sets the procurement destination and never creates fake suppliers or data.",
+tools:"NOVA Tools",
+supplierSearch:"Supplier Search",
+searchDescription:"NOVA displays only results returned by the server. Missing fields remain unavailable.",
+productRequest:"Product or Procurement Request",
+quantity:"Quantity",
+destination:"Destination",
+searchNow:"Search Now",
+clear:"Clear",
+searching:"Searching connected sources...",
+foundResults:"Found {n} results.",
+noResults:"Connected sources returned no results for this search.",
+product:"Product",
+requirements:"Requirements",
+generateRFQ:"Generate AI RFQ",
+rfqDescription:"Generate a professional RFQ using only the information you provide.",
+rfqPreview:"RFQ Preview",
+generating:"Generating...",
+rfqCreated:"RFQ created.",
+copy:"Copy",
+copied:"Copied.",
+landedCalculator:"Landed Cost Calculator",
+landedDescription:"The server calculates using your numbers. No prices, duties or taxes are assumed.",
+unitPrice:"Unit Price USD",
+shipping:"International Shipping USD",
+insurance:"Insurance USD",
+duty:"Duty %",
+tax:"Tax %",
+localDelivery:"Local Delivery USD",
+calculate:"Calculate",
+costResult:"Cost Result",
+goodsCost:"Goods",
+dutyCost:"Duty",
+taxCost:"Tax",
+totalCost:"Total",
+unitLanded:"Unit Landed Cost",
+aiNegotiation:"AI Negotiation Agent",
+negotiationDescription:"Analyzes the real offer you enter and does not create a supplier price by itself.",
+supplier:"Supplier",
+currentOffer:"Supplier Offer",
+targetPrice:"Target Price",
+supplierReply:"Supplier Reply",
+analyzeNegotiate:"Analyze & Negotiate",
+novaDecision:"NOVA Analysis",
+dealsDescription:"Only deals actually stored in the database are displayed.",
+refresh:"Refresh",
+noDeals:"No submitted deals are currently available.",
+purchaseHistory:"Purchase History",
+historyDescription:"Purchases stored in your NOVA account.",
+noPurchases:"No purchases stored.",
+accountDescription:"Manage your NOVA account and verify connected services.",
+email:"Email",
+password:"Password",
+login:"Log In",
+signup:"Create Account",
+logout:"Log Out",
+checkAccount:"Check Account",
+loggedIn:"Logged in",
+loggedOut:"Logged out",
+notLoggedIn:"Not logged in",
+systemConnections:"System Connections",
+database:"Database",
+searchEngine:"Search Engine",
+connected:"Connected",
+notConnected:"Not Connected",
+connectionNotice:"NOVA shows a service as connected only when the server confirms the real integration.",
+price:"Price",
+moq:"MOQ",
+leadTime:"Lead Time",
+confidence:"Confidence",
+evidence:"Evidence",
+verified:"Verified",
+notVerified:"Not Verified",
+source:"Source",
+details:"Details",
+useRFQ:"Use in RFQ",
+unknown:"Unavailable",
+requestFailed:"Request failed",
+invalidInput:"Enter the required information first.",
+sourceEvidence:"Evidence from source page/result",
+realDataPolicy:"Fields missing from the source are never guessed.",
+country:"Country",
+certifications:"Certifications",
+incoterm:"Incoterm",
+oem:"OEM / ODM"
+}
 };
-Object.keys(LANGS).forEach(k=>{LANGS[k].wheat={ar:"قمح",fr:"Blé",es:"Trigo",de:"Weizen",it:"Grano",tr:"Buğday",zh:"小麦",ja:"小麦",ko:"밀",ru:"Пшеница",hi:"गेहूं",pt:"Trigo",pl:"Pszenica",en:"Wheat"}[k];LANGS[k].machinery={ar:"معدات",fr:"Machines",es:"Maquinaria",de:"Maschinen",it:"Macchinari",tr:"Makineler",zh:"机械",ja:"機械",ko:"기계",ru:"Машины",hi:"मशीनरी",pt:"Máquinas",pl:"Maszyny",en:"Machinery"}[k];LANGS[k].energy={ar:"طاقة",fr:"Énergie",es:"Energía",de:"Energie",it:"Energia",tr:"Enerji",zh:"能源",ja:"エネルギー",ko:"에너지",ru:"Энергетика",hi:"ऊर्जा",pt:"Energia",pl:"Energia",en:"Energy"}[k];LANGS[k].vehicles={ar:"سيارات",fr:"Véhicules",es:"Vehículos",de:"Fahrzeuge",it:"Veicoli",tr:"Araçlar",zh:"车辆",ja:"車両",ko:"차량",ru:"Транспорт",hi:"वाहन",pt:"Veículos",pl:"Pojazdy",en:"Vehicles"}[k]});
-const COUNTRIES=[["AF","Afghanistan"],["AL","Albania"],["DZ","Algeria"],["AD","Andorra"],["AO","Angola"],["AG","Antigua and Barbuda"],["AR","Argentina"],["AM","Armenia"],["AU","Australia"],["AT","Austria"],["AZ","Azerbaijan"],["BS","Bahamas"],["BH","Bahrain"],["BD","Bangladesh"],["BB","Barbados"],["BY","Belarus"],["BE","Belgium"],["BZ","Belize"],["BJ","Benin"],["BT","Bhutan"],["BO","Bolivia"],["BA","Bosnia and Herzegovina"],["BW","Botswana"],["BR","Brazil"],["BN","Brunei"],["BG","Bulgaria"],["BF","Burkina Faso"],["BI","Burundi"],["CV","Cabo Verde"],["KH","Cambodia"],["CM","Cameroon"],["CA","Canada"],["CF","Central African Republic"],["TD","Chad"],["CL","Chile"],["CN","China"],["CO","Colombia"],["KM","Comoros"],["CG","Republic of the Congo"],["CD","Democratic Republic of the Congo"],["CR","Costa Rica"],["CI","Côte d’Ivoire"],["HR","Croatia"],["CU","Cuba"],["CY","Cyprus"],["CZ","Czechia"],["DK","Denmark"],["DJ","Djibouti"],["DM","Dominica"],["DO","Dominican Republic"],["EC","Ecuador"],["EG","Egypt"],["SV","El Salvador"],["GQ","Equatorial Guinea"],["ER","Eritrea"],["EE","Estonia"],["SZ","Eswatini"],["ET","Ethiopia"],["FJ","Fiji"],["FI","Finland"],["FR","France"],["GA","Gabon"],["GM","Gambia"],["GE","Georgia"],["DE","Germany"],["GH","Ghana"],["GR","Greece"],["GD","Grenada"],["GT","Guatemala"],["GN","Guinea"],["GW","Guinea-Bissau"],["GY","Guyana"],["HT","Haiti"],["HN","Honduras"],["HU","Hungary"],["IS","Iceland"],["IN","India"],["ID","Indonesia"],["IR","Iran"],["IQ","Iraq"],["IE","Ireland"],["IL","Israel"],["IT","Italy"],["JM","Jamaica"],["JP","Japan"],["JO","Jordan"],["KZ","Kazakhstan"],["KE","Kenya"],["KI","Kiribati"],["KP","North Korea"],["KR","South Korea"],["KW","Kuwait"],["KG","Kyrgyzstan"],["LA","Laos"],["LV","Latvia"],["LB","Lebanon"],["LS","Lesotho"],["LR","Liberia"],["LY","Libya"],["LI","Liechtenstein"],["LT","Lithuania"],["LU","Luxembourg"],["MG","Madagascar"],["MW","Malawi"],["MY","Malaysia"],["MV","Maldives"],["ML","Mali"],["MT","Malta"],["MH","Marshall Islands"],["MR","Mauritania"],["MU","Mauritius"],["MX","Mexico"],["FM","Micronesia"],["MD","Moldova"],["MC","Monaco"],["MN","Mongolia"],["ME","Montenegro"],["MA","Morocco"],["MZ","Mozambique"],["MM","Myanmar"],["NA","Namibia"],["NR","Nauru"],["NP","Nepal"],["NL","Netherlands"],["NZ","New Zealand"],["NI","Nicaragua"],["NE","Niger"],["NG","Nigeria"],["MK","North Macedonia"],["NO","Norway"],["OM","Oman"],["PK","Pakistan"],["PW","Palau"],["PA","Panama"],["PG","Papua New Guinea"],["PY","Paraguay"],["PE","Peru"],["PH","Philippines"],["PL","Poland"],["PT","Portugal"],["QA","Qatar"],["RO","Romania"],["RU","Russia"],["RW","Rwanda"],["KN","Saint Kitts and Nevis"],["LC","Saint Lucia"],["VC","Saint Vincent and the Grenadines"],["WS","Samoa"],["SM","San Marino"],["ST","Sao Tome and Principe"],["SA","Saudi Arabia"],["SN","Senegal"],["RS","Serbia"],["SC","Seychelles"],["SL","Sierra Leone"],["SG","Singapore"],["SK","Slovakia"],["SI","Slovenia"],["SB","Solomon Islands"],["SO","Somalia"],["ZA","South Africa"],["SS","South Sudan"],["ES","Spain"],["LK","Sri Lanka"],["SD","Sudan"],["SR","Suriname"],["SE","Sweden"],["CH","Switzerland"],["SY","Syria"],["TJ","Tajikistan"],["TZ","Tanzania"],["TH","Thailand"],["TL","Timor-Leste"],["TG","Togo"],["TO","Tonga"],["TT","Trinidad and Tobago"],["TN","Tunisia"],["TR","Türkiye"],["TM","Turkmenistan"],["TV","Tuvalu"],["UG","Uganda"],["UA","Ukraine"],["AE","United Arab Emirates"],["GB","United Kingdom"],["US","United States"],["UY","Uruguay"],["UZ","Uzbekistan"],["VU","Vanuatu"],["VA","Vatican City"],["VE","Venezuela"],["VN","Vietnam"],["YE","Yemen"],["ZM","Zambia"],["ZW","Zimbabwe"],["PS","Palestine"],["XK","Kosovo"]];
-const CATS=[["🌾","crops","wheat bulk suppliers"],["🚜","agri","agricultural machinery"],["🧪","fert","fertilizer manufacturers"],["💻","electronics","electronics suppliers"],["✈️","aviation","aircraft suppliers"],["🚢","ships","ships marine suppliers"],["🏢","realestate","land real estate"],["🚗","auto","vehicles suppliers"]];
-const $=id=>document.getElementById(id);
-function esc(v){return String(v==null?"":v).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]))}
-function t(k,vars={}){let v=(LANGS[window.novaLang]&&LANGS[window.novaLang][k])||LANGS.en[k]||k;Object.keys(vars).forEach(x=>v=v.replaceAll("{"+x+"}",vars[x]));return v}
-function countryName(code){try{return new Intl.DisplayNames([window.novaLang],{type:"region"}).of(code)||code}catch(e){return (COUNTRIES.find(x=>x[0]===code)||[])[1]||code}}
-function renderCountries(){const opts='<option value="">'+t("allMarkets")+'</option>'+COUNTRIES.map(c=>'<option value="'+c[0]+'">'+esc(countryName(c[0]))+'</option>').join("");["homeCountry","countryExplorer","dest","rd"].forEach(id=>{if($(id))$(id).innerHTML=opts});if($("countryExplorer"))$("countryExplorer").onchange=function(){if(this.value){$("homeCountry").value=this.value;go("search");$("dest").value=this.value}}}
-function applyLang(){document.documentElement.lang=window.novaLang;document.documentElement.dir=window.novaLang==="ar"?"rtl":"ltr";document.querySelectorAll("[data-t]").forEach(e=>e.textContent=t(e.dataset.t));document.querySelectorAll("[data-ph]").forEach(e=>e.placeholder=t(e.dataset.ph));renderCountries();document.title="NOVA — "+t("hero1");$("lang").value=window.novaLang}
-function initLang(){window.novaLang=localStorage.getItem("nova_lang")||"ar";$("lang").innerHTML=Object.keys(LANGS).map(k=>'<option value="'+k+'">'+LANGS[k].languageName+"</option>").join("");$("lang").onchange=function(){window.novaLang=this.value;localStorage.setItem("nova_lang",this.value);applyLang()};applyLang()}
-function renderCats(){$("cats").innerHTML=CATS.map(c=>"<button class=\"cat\" onclick=\"quick('"+esc(c[2])+"')\"><i>"+c[0]+"</i>"+esc(t(c[1]))+"</button>").join("")}
-function go(id){document.querySelectorAll(".page").forEach(x=>x.classList.remove("active"));$(id).classList.add("active");document.querySelectorAll(".nav button").forEach(x=>x.classList.toggle("active",x.dataset.p===id));scrollTo({top:0,behavior:"smooth"});if(id==="deals")deals();if(id==="history")historyLoad()}
-document.querySelectorAll("[data-p]").forEach(b=>b.onclick=()=>go(b.dataset.p));
-function toggleNav(){const n=$("nav");n.style.display=n.style.display==="flex"?"none":"flex"}
-function toast(m,ok=false){const x=$("toast");x.textContent=m;x.className="toast show"+(ok?" ok":"");setTimeout(()=>x.className="toast",3000)}
-const api=(p,o={})=>fetch(p,{credentials:"include",headers:{"Content-Type":"application/json"},...o}).then(async r=>{let d={};try{d=await r.json()}catch(e){}if(!r.ok)throw Error(d.error||d.message||"Request failed");return d});
-function quick(q){$("homeQ").value=q;go("search");$("q").value=q;searchSuppliers()}
-function homeSearch(){const q=$("homeQ").value.trim();if(!q)return;go("search");$("q").value=q;if($("homeCountry").value)$("dest").value=$("homeCountry").value;searchSuppliers()}
-async function searchSuppliers(){try{$("status").textContent=t("searching");const d=await api("/api/search",{method:"POST",body:JSON.stringify({request:$("q").value,quantity:Number($("qty").value),destination:$("dest").value})});const a=d.results||d.suppliers||[];$("status").textContent=t("found",{n:a.length});$("results").innerHTML=a.length?a.map(resultCard).join(""):'<div class="card empty">'+t("noResults")+"</div>"}catch(e){$("status").innerHTML='<span class="err">'+esc(e.message)+"</span>"}}
-function resultCard(s){const raw=encodeURIComponent(JSON.stringify(s));return '<div class="result"><div class="result-top"><div class="avatar">🏭</div><div style="flex:1"><span class="badge">'+esc(s.country||"GLOBAL")+'</span><h3>'+esc(s.supplier||s.company||s.title||"Supplier")+'</h3><div class="muted">'+esc(s.title||s.product||"")+'</div></div></div><p class="muted">'+esc(s.snippet||s.description||"")+'</p><div class="metrics"><div class="metric"><small>'+t("price")+'</small><b>'+esc(s.price??"—")+'</b></div><div class="metric"><small>'+t("moq")+'</small><b>'+esc(s.moq??"—")+'</b></div><div class="metric"><small>'+t("lead")+'</small><b>'+esc(s.leadTime??"—")+'</b></div><div class="metric"><small>'+t("confidence")+'</small><b>'+esc(s.confidence??0)+'</b></div></div><div class="actions"><button class="primary" onclick="showSupplier(\''+raw+'\')">'+t("details")+'</button><button class="compare" onclick="useRFQ(\''+raw+'\')">'+t("rfqSend")+'</button></div></div>'}
-function obj(x){try{return JSON.parse(decodeURIComponent(x))}catch(e){return{}}}
-function showSupplier(x){const s=obj(x);$("mt").textContent=s.supplier||s.company||"NOVA";$("mb").innerHTML='<p>'+esc(s.snippet||s.description||"")+'</p><div class="metrics"><div class="metric"><small>'+t("price")+'</small><b>'+esc(s.price??"—")+'</b></div><div class="metric"><small>'+t("moq")+'</small><b>'+esc(s.moq??"—")+'</b></div><div class="metric"><small>'+t("lead")+'</small><b>'+esc(s.leadTime??"—")+'</b></div><div class="metric"><small>'+t("confidence")+'</small><b>'+esc(s.confidence??0)+'</b></div></div><div class="actions"><button class="primary" onclick="useRFQ(\''+x+'\');closeModal()">'+t("rfqSend")+'</button></div>';$("modal").classList.add("show")}
-function closeModal(){$("modal").classList.remove("show")}
-function useRFQ(x){const s=obj(x);$("rp").value=s.product||s.title||"";$("rr").value=t("supplier")+": "+(s.supplier||s.company||"")+"\n"+t("price")+": "+(s.price??"")+"\n"+t("moq")+": "+(s.moq??"");go("rfq")}
-async function makeRFQ(){$("rfqStatus").textContent=t("creating");try{const d=await api("/api/rfq",{method:"POST",body:JSON.stringify({product:$("rp").value,quantity:$("rq").value,destination:$("rd").value,requirements:$("rr").value,incoterm:$("ri").value})});$("rfqo").textContent=d.rfq||d.result||d.message||JSON.stringify(d);$("rfqStatus").textContent=t("created")}catch(e){$("rfqStatus").textContent=e.message}}
-async function calc(){const b={unitPrice:+$("lp").value||0,quantity:+$("lq").value||0,shipping:+$("ls").value||0,duty:+$("ld").value||0,tax:+$("lt").value||0,localDelivery:+$("ll").value||0};try{const d=await api("/api/landed-cost",{method:"POST",body:JSON.stringify(b)});$("lo").textContent=JSON.stringify(d.result||d,null,2)}catch(e){const g=b.unitPrice*b.quantity,du=g*b.duty/100,tx=(g+b.shipping+du)*b.tax/100;$("lo").textContent=t("total")+": $"+(g+b.shipping+du+tx+b.localDelivery).toFixed(2)}}
-async function neg(){try{const d=await api("/api/negotiate",{method:"POST",body:JSON.stringify({supplier:$("ns").value,currentOffer:$("no").value,buyerTarget:$("nt").value,supplierReply:$("nr").value})});$("ne").textContent=typeof d.result==="string"?d.result:JSON.stringify(d.result||d,null,2)}catch(e){$("ne").textContent=e.message}}
-async function deals(){try{const d=await api("/api/deals");$("do").textContent=JSON.stringify(d,null,2)}catch(e){$("do").textContent=e.message}}
-async function historyLoad(){try{const d=await api("/api/purchases");$("ho").textContent=JSON.stringify(d,null,2)}catch(e){$("ho").textContent=e.message}}
-async function login(){try{const d=await api("/api/login",{method:"POST",body:JSON.stringify({email:$("email").value,password:$("pass").value})});$("ao").textContent=d.message||t("login")}catch(e){$("ao").textContent=e.message}}
-async function signup(){try{const d=await api("/api/signup",{method:"POST",body:JSON.stringify({email:$("email").value,password:$("pass").value})});$("ao").textContent=d.message||t("signup")}catch(e){$("ao").textContent=e.message}}
-async function logout(){try{const d=await api("/api/logout",{method:"POST",body:"{}"});$("ao").textContent=d.message||t("logout")}catch(e){$("ao").textContent=e.message}}
-async function checkMe(){try{const d=await api("/api/me");$("me").textContent=JSON.stringify(d,null,2)}catch(e){$("me").textContent=e.message}}
-renderCats();initLang();
+
+
+/* =========================================================
+   COUNTRIES — GLOBAL
+========================================================= */
+
+const COUNTRIES = [
+["AF","Afghanistan"],["AL","Albania"],["DZ","Algeria"],
+["AD","Andorra"],["AO","Angola"],["AG","Antigua and Barbuda"],
+["AR","Argentina"],["AM","Armenia"],["AU","Australia"],
+["AT","Austria"],["AZ","Azerbaijan"],["BS","Bahamas"],
+["BH","Bahrain"],["BD","Bangladesh"],["BB","Barbados"],
+["BY","Belarus"],["BE","Belgium"],["BZ","Belize"],
+["BJ","Benin"],["BT","Bhutan"],["BO","Bolivia"],
+["BA","Bosnia and Herzegovina"],["BW","Botswana"],
+["BR","Brazil"],["BN","Brunei"],["BG","Bulgaria"],
+["BF","Burkina Faso"],["BI","Burundi"],["CV","Cabo Verde"],
+["KH","Cambodia"],["CM","Cameroon"],["CA","Canada"],
+["CF","Central African Republic"],["TD","Chad"],["CL","Chile"],
+["CN","China"],["CO","Colombia"],["KM","Comoros"],
+["CG","Republic of the Congo"],
+["CD","Democratic Republic of the Congo"],
+["CR","Costa Rica"],["CI","Côte d’Ivoire"],["HR","Croatia"],
+["CU","Cuba"],["CY","Cyprus"],["CZ","Czechia"],
+["DK","Denmark"],["DJ","Djibouti"],["DM","Dominica"],
+["DO","Dominican Republic"],["EC","Ecuador"],["EG","Egypt"],
+["SV","El Salvador"],["GQ","Equatorial Guinea"],["ER","Eritrea"],
+["EE","Estonia"],["SZ","Eswatini"],["ET","Ethiopia"],
+["FJ","Fiji"],["FI","Finland"],["FR","France"],
+["GA","Gabon"],["GM","Gambia"],["GE","Georgia"],
+["DE","Germany"],["GH","Ghana"],["GR","Greece"],
+["GD","Grenada"],["GT","Guatemala"],["GN","Guinea"],
+["GW","Guinea-Bissau"],["GY","Guyana"],["HT","Haiti"],
+["HN","Honduras"],["HU","Hungary"],["IS","Iceland"],
+["IN","India"],["ID","Indonesia"],["IR","Iran"],
+["IQ","Iraq"],["IE","Ireland"],["IT","Italy"],
+["JM","Jamaica"],["JP","Japan"],["JO","Jordan"],
+["KZ","Kazakhstan"],["KE","Kenya"],["KI","Kiribati"],
+["KP","North Korea"],["KR","South Korea"],["KW","Kuwait"],
+["KG","Kyrgyzstan"],["LA","Laos"],["LV","Latvia"],
+["LB","Lebanon"],["LS","Lesotho"],["LR","Liberia"],
+["LY","Libya"],["LI","Liechtenstein"],["LT","Lithuania"],
+["LU","Luxembourg"],["MG","Madagascar"],["MW","Malawi"],
+["MY","Malaysia"],["MV","Maldives"],["ML","Mali"],
+["MT","Malta"],["MH","Marshall Islands"],["MR","Mauritania"],
+["MU","Mauritius"],["MX","Mexico"],["FM","Micronesia"],
+["MD","Moldova"],["MC","Monaco"],["MN","Mongolia"],
+["ME","Montenegro"],["MA","Morocco"],["MZ","Mozambique"],
+["MM","Myanmar"],["NA","Namibia"],["NR","Nauru"],
+["NP","Nepal"],["NL","Netherlands"],["NZ","New Zealand"],
+["NI","Nicaragua"],["NE","Niger"],["NG","Nigeria"],
+["MK","North Macedonia"],["NO","Norway"],["OM","Oman"],
+["PK","Pakistan"],["PW","Palau"],["PS","Palestine"],
+["PA","Panama"],["PG","Papua New Guinea"],["PY","Paraguay"],
+["PE","Peru"],["PH","Philippines"],["PL","Poland"],
+["PT","Portugal"],["QA","Qatar"],["RO","Romania"],
+["RU","Russia"],["RW","Rwanda"],["KN","Saint Kitts and Nevis"],
+["LC","Saint Lucia"],["VC","Saint Vincent and the Grenadines"],
+["WS","Samoa"],["SM","San Marino"],
+["ST","Sao Tome and Principe"],["SA","Saudi Arabia"],
+["SN","Senegal"],["RS","Serbia"],["SC","Seychelles"],
+["SL","Sierra Leone"],["SG","Singapore"],["SK","Slovakia"],
+["SI","Slovenia"],["SB","Solomon Islands"],["SO","Somalia"],
+["ZA","South Africa"],["SS","South Sudan"],["ES","Spain"],
+["LK","Sri Lanka"],["SD","Sudan"],["SR","Suriname"],
+["SE","Sweden"],["CH","Switzerland"],["SY","Syria"],
+["TJ","Tajikistan"],["TZ","Tanzania"],["TH","Thailand"],
+["TL","Timor-Leste"],["TG","Togo"],["TO","Tonga"],
+["TT","Trinidad and Tobago"],["TN","Tunisia"],["TR","Türkiye"],
+["TM","Turkmenistan"],["TV","Tuvalu"],["UG","Uganda"],
+["UA","Ukraine"],["AE","United Arab Emirates"],
+["GB","United Kingdom"],["US","United States"],
+["UY","Uruguay"],["UZ","Uzbekistan"],["VU","Vanuatu"],
+["VA","Vatican City"],["VE","Venezuela"],["VN","Vietnam"],
+["YE","Yemen"],["ZM","Zambia"],["ZW","Zimbabwe"],["XK","Kosovo"]
+];
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+const $ = id => document.getElementById(id);
+
+let currentLang =
+  localStorage.getItem("nova_language") || "ar";
+
+function tr(key, vars = {}) {
+  let value =
+    TEXT[currentLang]?.[key] ??
+    TEXT.en[key] ??
+    key;
+
+  for (const [k,v] of Object.entries(vars)) {
+    value = value.replaceAll(`{${k}}`, String(v));
+  }
+
+  return value;
+}
+
+function esc(value) {
+  return String(value ?? "")
+    .replace(/[&<>"']/g, c => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[c]));
+}
+
+function formatNumber(value, decimals = 2) {
+  const n = Number(value);
+
+  if (!Number.isFinite(n)) return tr("unknown");
+
+  return new Intl.NumberFormat(
+    currentLang === "ar" ? "ar-IQ" : "en-US",
+    {maximumFractionDigits:decimals}
+  ).format(n);
+}
+
+function money(value, currency = "USD") {
+  const n = Number(value);
+
+  if (!Number.isFinite(n)) return tr("unknown");
+
+  try {
+    return new Intl.NumberFormat(
+      currentLang === "ar" ? "ar-IQ" : "en-US",
+      {
+        style:"currency",
+        currency:currency || "USD",
+        maximumFractionDigits:2
+      }
+    ).format(n);
+  } catch {
+    return `${formatNumber(n)} ${currency || "USD"}`;
+  }
+}
+
+function countryName(code) {
+  if (!code) return tr("unknown");
+
+  try {
+    return new Intl.DisplayNames(
+      [currentLang === "ar" ? "ar" : "en"],
+      {type:"region"}
+    ).of(code) || code;
+  } catch {
+    return COUNTRIES.find(x => x[0] === code)?.[1] || code;
+  }
+}
+
+function setBusy(button, busy) {
+  if (!button) return;
+
+  button.disabled = busy;
+
+  if (busy) {
+    button.dataset.original = button.innerHTML;
+    button.innerHTML = `<span class="loader"></span>${esc(tr("generating"))}`;
+  } else if (button.dataset.original) {
+    button.innerHTML = button.dataset.original;
+  }
+}
+
+function toast(message, type = "") {
+  const el = $("toast");
+
+  el.textContent = message;
+  el.className =
+    `toast show ${type === "success" ? "success" :
+    type === "error" ? "error" : ""}`;
+
+  clearTimeout(window.__toastTimer);
+
+  window.__toastTimer = setTimeout(() => {
+    el.className = "toast";
+  }, 3500);
+}
+
+async function api(path, options = {}) {
+
+  const config = {
+    credentials:"include",
+    ...options,
+    headers:{
+      ...(options.body ? {"Content-Type":"application/json"} : {}),
+      ...(options.headers || {})
+    }
+  };
+
+  let response;
+
+  try {
+    response = await fetch(API + path, config);
+  } catch {
+    throw new Error(
+      currentLang === "ar"
+        ? "تعذر الاتصال بخادم NOVA."
+        : "Could not connect to NOVA server."
+    );
+  }
+
+  let data = null;
+
+  try {
+    data = await response.json();
+  } catch {
+    throw new Error(
+      currentLang === "ar"
+        ? `استجابة غير صالحة من الخادم (${response.status}).`
+        : `Invalid server response (${response.status}).`
+    );
+  }
+
+  if (!response.ok) {
+    throw new Error(
+      data?.error ||
+      data?.message ||
+      `${tr("requestFailed")} (${response.status})`
+    );
+  }
+
+  return data;
+}
+
+
+/* =========================================================
+   LANGUAGE
+========================================================= */
+
+function applyLanguage() {
+
+  document.documentElement.lang = currentLang;
+  document.documentElement.dir =
+    currentLang === "ar" ? "rtl" : "ltr";
+
+  document.querySelectorAll("[data-i18n]").forEach(el => {
+    el.textContent = tr(el.dataset.i18n);
+  });
+
+  document.querySelectorAll("[data-placeholder]").forEach(el => {
+    el.placeholder = tr(el.dataset.placeholder);
+  });
+
+  $("language").value = currentLang;
+
+  renderCountries();
+  renderCategories();
+
+  document.title =
+    currentLang === "ar"
+      ? "NOVA — المشتريات العالمية بالذكاء الاصطناعي"
+      : "NOVA — Global AI Procurement";
+}
+
+function initLanguage() {
+
+  $("language").innerHTML = `
+    <option value="ar">العربية</option>
+    <option value="en">English</option>
+  `;
+
+  $("language").value = currentLang;
+
+  $("language").addEventListener("change", e => {
+    currentLang = e.target.value;
+    localStorage.setItem("nova_language", currentLang);
+    applyLanguage();
+  });
+
+  applyLanguage();
+}
+
+
+/* =========================================================
+   COUNTRIES
+========================================================= */
+
+function renderCountries() {
+
+  const selected = {};
+
+  [
+    "homeCountry",
+    "countryExplorer",
+    "destination",
+    "rfqDestination"
+  ].forEach(id => {
+    if ($(id)) selected[id] = $(id).value;
+  });
+
+  const options =
+    `<option value="">${esc(tr("allCountries"))}</option>` +
+    COUNTRIES.map(([code]) =>
+      `<option value="${esc(code)}">${esc(countryName(code))}</option>`
+    ).join("");
+
+  [
+    "homeCountry",
+    "countryExplorer",
+    "destination",
+    "rfqDestination"
+  ].forEach(id => {
+
+    const el = $(id);
+
+    if (!el) return;
+
+    el.innerHTML = options;
+
+    if (selected[id]) {
+      el.value = selected[id];
+    }
+  });
+
+  $("countryExplorer").onchange = function() {
+
+    if (!this.value) return;
+
+    $("homeCountry").value = this.value;
+    $("destination").value = this.value;
+
+    go("search");
+  };
+}
+
+
+/* =========================================================
+   CATEGORIES
+========================================================= */
+
+const CATEGORIES = [
+  ["🌾","crops","wheat grain bulk manufacturer supplier"],
+  ["🚜","agriculture","agricultural machinery manufacturer"],
+  ["🧪","fertilizers","fertilizer manufacturer supplier"],
+  ["💻","electronics","electronics manufacturer OEM supplier"],
+  ["✈️","aviation","aircraft aviation parts manufacturer supplier"],
+  ["🚢","marine","marine equipment ship supplier manufacturer"],
+  ["🏗️","construction","construction materials manufacturer supplier"],
+  ["🚗","automotive","vehicle automotive manufacturer exporter"]
+];
+
+function renderCategories() {
+
+  $("categories").innerHTML =
+    CATEGORIES.map(([icon,key,query]) => `
+      <button class="cat"
+        data-query="${esc(query)}">
+        <i>${icon}</i>
+        ${esc(tr(key))}
+      </button>
+    `).join("");
+
+  $("categories")
+    .querySelectorAll("[data-query]")
+    .forEach(button => {
+
+      button.onclick = () =>
+        quickSearch(button.dataset.query);
+    });
+}
+
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+function go(page) {
+
+  document.querySelectorAll(".page")
+    .forEach(el => el.classList.remove("active"));
+
+  const target = $(page);
+
+  if (!target) return;
+
+  target.classList.add("active");
+
+  document.querySelectorAll("[data-page]")
+    .forEach(button => {
+      button.classList.toggle(
+        "active",
+        button.dataset.page === page
+      );
+    });
+
+  $("nav").classList.remove("open");
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+  if (page === "deals") loadDeals();
+  if (page === "history") loadPurchases();
+  if (page === "account") {
+    checkAccount();
+    checkHealth();
+  }
+}
+
+function toggleNav() {
+  $("nav").classList.toggle("open");
+}
+
+document.querySelectorAll("[data-page]")
+  .forEach(button => {
+    button.onclick = () => go(button.dataset.page);
+  });
+
+
+/* =========================================================
+   HOME SEARCH
+========================================================= */
+
+function quickSearch(query) {
+
+  $("homeQuery").value = query;
+  $("query").value = query;
+
+  const country = $("homeCountry").value;
+
+  if (country) {
+    $("destination").value = country;
+  }
+
+  go("search");
+  searchSuppliers();
+}
+
+function homeSearch() {
+
+  const query = $("homeQuery").value.trim();
+
+  if (!query) {
+    toast(tr("invalidInput"), "error");
+    return;
+  }
+
+  $("query").value = query;
+
+  if ($("homeCountry").value) {
+    $("destination").value = $("homeCountry").value;
+  }
+
+  go("search");
+  searchSuppliers();
+}
+
+$("homeQuery").addEventListener("keydown", e => {
+  if (e.key === "Enter") homeSearch();
+});
+
+$("query").addEventListener("keydown", e => {
+  if (e.key === "Enter") searchSuppliers();
+});
+
+
+/* =========================================================
+   REAL SUPPLIER SEARCH
+========================================================= */
+
+async function searchSuppliers() {
+
+  const request = $("query").value.trim();
+  const quantity = Number($("quantity").value || 0);
+  const destination = $("destination").value;
+
+  if (!request) {
+    toast(tr("invalidInput"), "error");
+    return;
+  }
+
+  const button = $("searchBtn");
+
+  button.disabled = true;
+
+  $("searchStatus").innerHTML =
+    `<span class="loader"></span>${esc(tr("searching"))}`;
+
+  $("results").innerHTML = "";
+
+  try {
+
+    const data = await api("/api/search", {
+      method:"POST",
+      body:JSON.stringify({
+        request,
+        quantity,
+        destination
+      })
+    });
+
+    const results =
+      Array.isArray(data.results)
+        ? data.results
+        : Array.isArray(data.suppliers)
+          ? data.suppliers
+          : [];
+
+    $("searchStatus").textContent =
+      tr("foundResults",{n:results.length});
+
+    if (!results.length) {
+
+      $("results").innerHTML =
+        `<div class="card empty">${esc(tr("noResults"))}</div>`;
+
+      return;
+    }
+
+    $("results").innerHTML =
+      results.map(renderSupplier).join("");
+
+  } catch (error) {
+
+    $("searchStatus").innerHTML =
+      `<span class="err">${esc(error.message)}</span>`;
+
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function renderSupplier(supplier) {
+
+  const name =
+    supplier.title ||
+    supplier.name ||
+    supplier.supplier ||
+    supplier.company ||
+    tr("unknown");
+
+  const verified = Boolean(supplier.verified);
+
+  const encoded =
+    encodeURIComponent(JSON.stringify(supplier));
+
+  const price =
+    supplier.price !== null &&
+    supplier.price !== undefined
+      ? money(
+          supplier.price,
+          supplier.currency || "USD"
+        )
+      : tr("unknown");
+
+  const moq =
+    supplier.moq !== null &&
+    supplier.moq !== undefined
+      ? formatNumber(supplier.moq)
+      : tr("unknown");
+
+  const lead =
+    supplier.leadTime ||
+    supplier.lead_time ||
+    tr("unknown");
+
+  const confidence =
+    supplier.confidence !== null &&
+    supplier.confidence !== undefined
+      ? `${formatNumber(supplier.confidence,0)}%`
+      : tr("unknown");
+
+  return `
+    <article class="result">
+
+      <div class="result-top">
+
+        <div class="avatar">🏭</div>
+
+        <div style="flex:1;min-width:0">
+
+          <span class="badge ${verified ? "" : "warn"}">
+            ${esc(
+              verified
+                ? tr("verified")
+                : tr("notVerified")
+            )}
+          </span>
+
+          <h3>${esc(name)}</h3>
+
+          <div class="muted">
+            ${esc(
+              supplier.country
+                ? countryName(supplier.country)
+                : tr("unknown")
+            )}
+          </div>
+
+        </div>
+
+      </div>
+
+      ${
+        supplier.snippet
+          ? `<p class="muted">${esc(supplier.snippet)}</p>`
+          : ""
+      }
+
+      <div class="metrics">
+
+        <div class="metric">
+          <small>${esc(tr("price"))}</small>
+          <b>${esc(price)}</b>
+        </div>
+
+        <div class="metric">
+          <small>${esc(tr("moq"))}</small>
+          <b>${esc(moq)}</b>
+        </div>
+
+        <div class="metric">
+          <small>${esc(tr("leadTime"))}</small>
+          <b>${esc(lead)}</b>
+        </div>
+
+        <div class="metric">
+          <small>${esc(tr("confidence"))}</small>
+          <b>${esc(confidence)}</b>
+        </div>
+
+      </div>
+
+      ${
+        supplier.url
+          ? `<a class="source-link"
+               href="${esc(supplier.url)}"
+               target="_blank"
+               rel="noopener noreferrer">
+               🔗 ${esc(tr("source"))}
+             </a>`
+          : ""
+      }
+
+      <div class="actions">
+
+        <button class="primary"
+          onclick="showSupplier('${encoded}')">
+          ${esc(tr("details"))}
+        </button>
+
+        <button class="outline"
+          onclick="supplierToRFQ('${encoded}')">
+          ${esc(tr("useRFQ"))}
+        </button>
+
+      </div>
+
+    </article>
+  `;
+}
+
+function decodeSupplier(encoded) {
+  try {
+    return JSON.parse(
+      decodeURIComponent(encoded)
+    );
+  } catch {
+    return {};
+  }
+}
+
+function showSupplier(encoded) {
+
+  const s = decodeSupplier(encoded);
+
+  const name =
+    s.title ||
+    s.name ||
+    s.supplier ||
+    s.company ||
+    "NOVA";
+
+  $("modalTitle").textContent = name;
+
+  $("modalBody").innerHTML = `
+
+    <div class="notice">
+      ${esc(tr("realDataPolicy"))}
+    </div>
+
+    <div class="metrics" style="margin-top:14px">
+
+      <div class="metric">
+        <small>${esc(tr("price"))}</small>
+        <b>${
+          s.price != null
+            ? esc(money(s.price,s.currency || "USD"))
+            : esc(tr("unknown"))
+        }</b>
+      </div>
+
+      <div class="metric">
+        <small>${esc(tr("moq"))}</small>
+        <b>${
+          s.moq != null
+            ? esc(formatNumber(s.moq))
+            : esc(tr("unknown"))
+        }</b>
+      </div>
+
+      <div class="metric">
+        <small>${esc(tr("leadTime"))}</small>
+        <b>${esc(s.leadTime || s.lead_time || tr("unknown"))}</b>
+      </div>
+
+      <div class="metric">
+        <small>${esc(tr("confidence"))}</small>
+        <b>${
+          s.confidence != null
+            ? esc(`${formatNumber(s.confidence,0)}%`)
+            : esc(tr("unknown"))
+        }</b>
+      </div>
+
+    </div>
+
+    <div class="copy" style="margin-top:14px">
+${esc(tr("country"))}: ${esc(s.country ? countryName(s.country) : tr("unknown"))}
+${esc(tr("incoterm"))}: ${esc(s.incoterm || tr("unknown"))}
+${esc(tr("certifications"))}: ${esc(s.certifications || tr("unknown"))}
+${esc(tr("oem"))}: ${esc(s.oem_odm || tr("unknown"))}
+${esc(tr("evidence"))}: ${esc(s.verification || tr("unknown"))}
+    </div>
+
+    ${
+      s.snippet
+        ? `<p>${esc(s.snippet)}</p>`
+        : ""
+    }
+
+    <div class="actions">
+
+      <button class="primary"
+        onclick="supplierToRFQ('${encoded}');closeModal()">
+        ${esc(tr("useRFQ"))}
+      </button>
+
+      ${
+        s.url
+          ? `<a class="outline"
+               style="text-decoration:none"
+               target="_blank"
+               rel="noopener noreferrer"
+               href="${esc(s.url)}">
+               ${esc(tr("source"))}
+             </a>`
+          : ""
+      }
+
+    </div>
+  `;
+
+  $("modal").classList.add("show");
+}
+
+function closeModal() {
+  $("modal").classList.remove("show");
+}
+
+function supplierToRFQ(encoded) {
+
+  const s = decodeSupplier(encoded);
+
+  $("rfqProduct").value =
+    $("query").value ||
+    s.product ||
+    "";
+
+  $("rfqQuantity").value =
+    $("quantity").value || "";
+
+  if ($("destination").value) {
+    $("rfqDestination").value =
+      $("destination").value;
+  }
+
+  const name =
+    s.title ||
+    s.name ||
+    s.supplier ||
+    s.company ||
+    "";
+
+  const lines = [];
+
+  if (name) {
+    lines.push(`${tr("supplier")}: ${name}`);
+  }
+
+  if (s.url) {
+    lines.push(`${tr("source")}: ${s.url}`);
+  }
+
+  if (s.price != null) {
+    lines.push(
+      `${tr("price")}: ${s.price} ${s.currency || "USD"}`
+    );
+  }
+
+  if (s.moq != null) {
+    lines.push(`${tr("moq")}: ${s.moq}`);
+  }
+
+  if (s.leadTime || s.lead_time) {
+    lines.push(
+      `${tr("leadTime")}: ${s.leadTime || s.lead_time}`
+    );
+  }
+
+  $("rfqRequirements").value =
+    lines.join("\n");
+
+  go("rfq");
+}
+
+function clearSearch() {
+  $("query").value = "";
+  $("quantity").value = "";
+  $("destination").value = "";
+  $("searchStatus").textContent = "";
+  $("results").innerHTML = "";
+}
+
+
+/* =========================================================
+   RFQ
+========================================================= */
+
+async function createRFQ() {
+
+  const product = $("rfqProduct").value.trim();
+  const quantity = Number($("rfqQuantity").value || 0);
+  const destination = $("rfqDestination").value;
+  const requirements = $("rfqRequirements").value.trim();
+  const incoterm = $("rfqIncoterm").value.trim();
+
+  if (!product) {
+    toast(tr("invalidInput"),"error");
+    return;
+  }
+
+  const button = $("rfqBtn");
+
+  button.disabled = true;
+  $("rfqStatus").textContent = tr("generating");
+
+  try {
+
+    const data = await api("/api/rfq",{
+      method:"POST",
+      body:JSON.stringify({
+        product,
+        quantity,
+        destination,
+        requirements:
+          [
+            requirements,
+            incoterm
+              ? `Incoterm requested: ${incoterm}`
+              : ""
+          ].filter(Boolean).join("\n")
+      })
+    });
+
+    const message =
+      data.message ||
+      data.result ||
+      data.rfq;
+
+    if (!message) {
+      throw new Error(
+        currentLang === "ar"
+          ? "لم يُرجع الخادم نص RFQ."
+          : "Server returned no RFQ text."
+      );
+    }
+
+    $("rfqOutput").className = "copy";
+    $("rfqOutput").textContent = message;
+
+    $("rfqStatus").innerHTML =
+      `<span class="ok">${esc(tr("rfqCreated"))}</span>`;
+
+  } catch (error) {
+
+    $("rfqStatus").innerHTML =
+      `<span class="err">${esc(error.message)}</span>`;
+
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function copyRFQ() {
+
+  const text = $("rfqOutput").textContent.trim();
+
+  if (!text || text === "—") return;
+
+  try {
+    await navigator.clipboard.writeText(text);
+    toast(tr("copied"),"success");
+  } catch {
+    toast(
+      currentLang === "ar"
+        ? "تعذر النسخ تلقائيًا."
+        : "Automatic copy failed.",
+      "error"
+    );
+  }
+}
+
+
+/* =========================================================
+   LANDED COST — SERVER ONLY
+========================================================= */
+
+async function calculateLanded() {
+
+  const body = {
+    unitPrice:Number($("unitPrice").value || 0),
+    quantity:Number($("landedQuantity").value || 0),
+    shipping:Number($("shipping").value || 0),
+    insurance:Number($("insurance").value || 0),
+    dutyPercent:Number($("duty").value || 0),
+    taxPercent:Number($("tax").value || 0),
+    localDelivery:Number($("localDelivery").value || 0)
+  };
+
+  if (body.quantity <= 0 || body.unitPrice < 0) {
+    toast(tr("invalidInput"),"error");
+    return;
+  }
+
+  const button = $("landedBtn");
+  button.disabled = true;
+
+  $("landedOutput").className = "empty";
+  $("landedOutput").innerHTML =
+    `<span class="loader"></span>`;
+
+  try {
+
+    const data = await api("/api/landed-cost",{
+      method:"POST",
+      body:JSON.stringify(body)
+    });
+
+    $("landedOutput").className = "";
+
+    $("landedOutput").innerHTML = `
+
+      <div class="metrics">
+
+        <div class="metric">
+          <small>${esc(tr("goodsCost"))}</small>
+          <b>${esc(money(data.goods))}</b>
+        </div>
+
+        <div class="metric">
+          <small>${esc(tr("shipping"))}</small>
+          <b>${esc(money(data.shipping))}</b>
+        </div>
+
+        <div class="metric">
+          <small>${esc(tr("dutyCost"))}</small>
+          <b>${esc(money(data.duty))}</b>
+        </div>
+
+        <div class="metric">
+          <small>${esc(tr("taxCost"))}</small>
+          <b>${esc(money(data.tax))}</b>
+        </div>
+
+      </div>
+
+      <div class="card" style="margin-top:13px">
+        <div class="muted">${esc(tr("totalCost"))}</div>
+        <div style="font-size:30px;font-weight:950">
+          ${esc(money(data.total))}
+        </div>
+
+        <div style="margin-top:8px">
+          ${esc(tr("unitLanded"))}:
+          <b>${esc(money(data.unitLanded))}</b>
+        </div>
+      </div>
+
+      ${
+        data.status
+          ? `<p class="muted">${esc(data.status)}</p>`
+          : ""
+      }
+    `;
+
+  } catch (error) {
+
+    /* لا يوجد حساب وهمي احتياطي */
+    $("landedOutput").className = "empty err";
+    $("landedOutput").textContent = error.message;
+
+  } finally {
+    button.disabled = false;
+  }
+}
+
+
+/* =========================================================
+   NEGOTIATION
+   أسماء الحقول هنا مطابقة للـ worker.js الحالي:
+   supplier / offer / quantity / target / reply
+========================================================= */
+
+async function negotiate() {
+
+  const supplier = $("negSupplier").value.trim();
+  const offer = $("negOffer").value.trim();
+  const target = $("negTarget").value.trim();
+  const quantity = $("negQuantity").value.trim();
+  const reply = $("negReply").value.trim();
+
+  if (!supplier || !offer) {
+    toast(tr("invalidInput"),"error");
+    return;
+  }
+
+  const button = $("negBtn");
+
+  button.disabled = true;
+
+  $("negOutput").className = "empty";
+  $("negOutput").innerHTML =
+    `<span class="loader"></span>`;
+
+  try {
+
+    const data = await api("/api/negotiate",{
+      method:"POST",
+      body:JSON.stringify({
+        supplier,
+        offer,
+        quantity,
+        target,
+        reply
+      })
+    });
+
+    const result = data.result;
+
+    if (!result) {
+      throw new Error(
+        currentLang === "ar"
+          ? "لم يُرجع الذكاء الاصطناعي تحليلاً."
+          : "AI returned no negotiation analysis."
+      );
+    }
+
+    $("negOutput").className = "copy";
+    $("negOutput").textContent =
+      typeof result === "string"
+        ? result
+        : JSON.stringify(result,null,2);
+
+  } catch (error) {
+
+    $("negOutput").className = "empty err";
+    $("negOutput").textContent = error.message;
+
+  } finally {
+    button.disabled = false;
+  }
+}
+
+
+/* =========================================================
+   DEALS — DATABASE ONLY
+========================================================= */
+
+async function loadDeals() {
+
+  $("dealsOutput").className = "card empty";
+  $("dealsOutput").innerHTML =
+    `<span class="loader"></span>`;
+
+  try {
+
+    const data = await api("/api/deals");
+
+    const deals =
+      Array.isArray(data.deals)
+        ? data.deals
+        : [];
+
+    if (!deals.length) {
+
+      $("dealsOutput").className = "card empty";
+      $("dealsOutput").textContent = tr("noDeals");
+      return;
+    }
+
+    $("dealsOutput").className = "";
+
+    $("dealsOutput").innerHTML =
+      deals.map(deal => `
+
+        <article class="result">
+
+          <div class="result-top">
+
+            <div class="avatar">🔥</div>
+
+            <div>
+              <span class="badge">
+                ${esc(deal.country || "GLOBAL")}
+              </span>
+
+              <h3>${esc(deal.product || tr("unknown"))}</h3>
+
+              <div class="muted">
+                ${esc(deal.company || tr("unknown"))}
+              </div>
+            </div>
+
+          </div>
+
+          ${
+            deal.description
+              ? `<p>${esc(deal.description)}</p>`
+              : ""
+          }
+
+          <div class="metrics">
+
+            <div class="metric">
+              <small>${esc(tr("price"))}</small>
+              <b>${
+                deal.price != null
+                  ? esc(money(deal.price,deal.currency || "USD"))
+                  : esc(tr("unknown"))
+              }</b>
+            </div>
+
+            <div class="metric">
+              <small>${esc(tr("quantity"))}</small>
+              <b>${esc(formatNumber(deal.quantity))}</b>
+            </div>
+
+            <div class="metric">
+              <small>${esc(tr("moq"))}</small>
+              <b>${esc(formatNumber(deal.moq))}</b>
+            </div>
+
+            <div class="metric">
+              <small>Expiry</small>
+              <b>${esc(deal.expires_at || tr("unknown"))}</b>
+            </div>
+
+          </div>
+
+          ${
+            deal.url
+              ? `<a class="source-link"
+                   href="${esc(deal.url)}"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                   🔗 ${esc(tr("source"))}
+                 </a>`
+              : ""
+          }
+
+        </article>
+
+      `).join("");
+
+  } catch (error) {
+
+    $("dealsOutput").className = "card empty err";
+    $("dealsOutput").textContent = error.message;
+  }
+}
+
+
+/* =========================================================
+   PURCHASE HISTORY
+========================================================= */
+
+async function loadPurchases() {
+
+  $("historyOutput").className = "card empty";
+  $("historyOutput").innerHTML =
+    `<span class="loader"></span>`;
+
+  try {
+
+    const data = await api("/api/purchases");
+
+    const purchases =
+      Array.isArray(data.purchases)
+        ? data.purchases
+        : [];
+
+    if (!purchases.length) {
+
+      $("historyOutput").className = "card empty";
+      $("historyOutput").textContent =
+        tr("noPurchases");
+
+      return;
+    }
+
+    $("historyOutput").className = "";
+
+    $("historyOutput").innerHTML =
+      purchases.map(p => `
+
+        <article class="result">
+
+          <div class="result-top">
+
+            <div class="avatar">🧾</div>
+
+            <div>
+              <h3>${esc(p.product || tr("unknown"))}</h3>
+
+              <div class="muted">
+                ${esc(p.supplier || tr("unknown"))}
+              </div>
+            </div>
+
+          </div>
+
+          <div class="metrics">
+
+            <div class="metric">
+              <small>${esc(tr("quantity"))}</small>
+              <b>${esc(formatNumber(p.quantity))}</b>
+            </div>
+
+            <div class="metric">
+              <small>${esc(tr("unitPrice"))}</small>
+              <b>${esc(money(p.unit_price))}</b>
+            </div>
+
+            <div class="metric">
+              <small>${esc(tr("shipping"))}</small>
+              <b>${esc(money(p.shipping))}</b>
+            </div>
+
+            <div class="metric">
+              <small>${esc(tr("landed"))}</small>
+              <b>${esc(money(p.landed_cost))}</b>
+            </div>
+
+          </div>
+
+          ${
+            p.supplier_url
+              ? `<a class="source-link"
+                   href="${esc(p.supplier_url)}"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                   🔗 ${esc(tr("source"))}
+                 </a>`
+              : ""
+          }
+
+        </article>
+
+      `).join("");
+
+  } catch (error) {
+
+    $("historyOutput").className =
+      "card empty err";
+
+    $("historyOutput").textContent =
+      error.message;
+  }
+}
+
+
+/* =========================================================
+   ACCOUNT
+========================================================= */
+
+function accountCredentials() {
+
+  return {
+    email:$("email").value.trim(),
+    password:$("password").value
+  };
+}
+
+async function login() {
+
+  const credentials = accountCredentials();
+
+  if (!credentials.email || !credentials.password) {
+    toast(tr("invalidInput"),"error");
+    return;
+  }
+
+  try {
+
+    const data = await api("/api/login",{
+      method:"POST",
+      body:JSON.stringify(credentials)
+    });
+
+    $("accountOutput").innerHTML =
+      `<span class="ok">
+        ${esc(tr("loggedIn"))}: ${esc(data.email || credentials.email)}
+      </span>`;
+
+    $("password").value = "";
+
+    toast(tr("loggedIn"),"success");
+
+  } catch (error) {
+
+    $("accountOutput").innerHTML =
+      `<span class="err">${esc(error.message)}</span>`;
+  }
+}
+
+async function signup() {
+
+  const credentials = accountCredentials();
+
+  if (
+    !credentials.email ||
+    credentials.password.length < 6
+  ) {
+    toast(
+      currentLang === "ar"
+        ? "أدخل بريدًا صحيحًا وكلمة مرور من 6 أحرف على الأقل."
+        : "Enter a valid email and a password of at least 6 characters.",
+      "error"
+    );
+    return;
+  }
+
+  try {
+
+    const data = await api("/api/signup",{
+      method:"POST",
+      body:JSON.stringify(credentials)
+    });
+
+    $("accountOutput").innerHTML =
+      `<span class="ok">
+        ${esc(tr("loggedIn"))}: ${esc(data.email || credentials.email)}
+      </span>`;
+
+    $("password").value = "";
+
+    toast(tr("loggedIn"),"success");
+
+  } catch (error) {
+
+    $("accountOutput").innerHTML =
+      `<span class="err">${esc(error.message)}</span>`;
+  }
+}
+
+async function logout() {
+
+  try {
+
+    await api("/api/logout",{
+      method:"POST"
+    });
+
+    $("accountOutput").innerHTML =
+      `<span>${esc(tr("loggedOut"))}</span>`;
+
+    toast(tr("loggedOut"),"success");
+
+  } catch (error) {
+
+    $("accountOutput").innerHTML =
+      `<span class="err">${esc(error.message)}</span>`;
+  }
+}
+
+async function checkAccount() {
+
+  try {
+
+    const data = await api("/api/me");
+
+    if (data.loggedIn && data.user) {
+
+      $("accountOutput").innerHTML =
+        `<span class="ok">
+          ${esc(tr("loggedIn"))}: ${esc(data.user.email || "")}
+        </span>`;
+
+    } else {
+
+      $("accountOutput").textContent =
+        tr("notLoggedIn");
+    }
+
+  } catch (error) {
+
+    $("accountOutput").innerHTML =
+      `<span class="err">${esc(error.message)}</span>`;
+  }
+}
+
+
+/* =========================================================
+   HEALTH
+========================================================= */
+
+function healthValue(element,value) {
+
+  element.textContent =
+    value
+      ? tr("connected")
+      : tr("notConnected");
+
+  element.className =
+    value
+      ? "connected"
+      : "disconnected";
+}
+
+async function checkHealth() {
+
+  try {
+
+    const data = await api("/api/health");
+
+    healthValue(
+      $("healthNova"),
+      Boolean(data.ok)
+    );
+
+    healthValue(
+      $("healthDB"),
+      Boolean(data.database)
+    );
+
+    healthValue(
+      $("healthAI"),
+      Boolean(data.ai)
+    );
+
+    healthValue(
+      $("healthSearch"),
+      Boolean(data.yep)
+    );
+
+    $("onlineState").textContent =
+      data.ok
+        ? tr("online")
+        : tr("offline");
+
+    $("onlineState").className =
+      data.ok
+        ? "connected"
+        : "disconnected";
+
+    $("aiState").textContent =
+      data.ai
+        ? tr("online")
+        : tr("offline");
+
+    $("aiState").className =
+      data.ai
+        ? "connected"
+        : "disconnected";
+
+    $("healthSmall").textContent =
+      data.database
+        ? tr("connected")
+        : tr("notConnected");
+
+  } catch {
+
+    ["healthNova","healthDB","healthAI","healthSearch"]
+      .forEach(id => {
+        healthValue($(id),false);
+      });
+
+    $("onlineState").textContent =
+      tr("offline");
+
+    $("onlineState").className =
+      "disconnected";
+
+    $("aiState").textContent =
+      tr("offline");
+
+    $("aiState").className =
+      "disconnected";
+
+    $("healthSmall").textContent =
+      tr("notConnected");
+  }
+}
+
+
+/* =========================================================
+   REAL NETWORK COUNT
+========================================================= */
+
+async function loadNetwork() {
+
+  try {
+
+    const data = await api("/api/network");
+
+    $("networkRecords").textContent =
+      formatNumber(
+        Number(data.actualRecords || 0),
+        0
+      );
+
+  } catch {
+
+    $("networkRecords").textContent = "—";
+  }
+}
+
+
+/* =========================================================
+   INIT
+========================================================= */
+
+async function initNOVA() {
+
+  initLanguage();
+
+  await Promise.allSettled([
+    checkHealth(),
+    loadNetwork()
+  ]);
+}
+
+initNOVA();
+
 </script>
-</body></html>
+</body>
+</html>
