@@ -1,623 +1,548 @@
 
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#030914">
-<title>NOVA | Global Procurement Intelligence</title>
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#f5f8fc">
+<title>NOVA | Global Trade Intelligence</title>
 <style>
-:root{
- --bg:#030914;--panel:#081a30;--line:#1c4566;
- --blue:#087bff;--cyan:#24dcff;--green:#29e6a4;
- --gold:#ffc45e;--text:#eff8ff;--muted:#91abc3;
- --radius:18px
-}
+:root{color-scheme:light;--blue:#1769ff;--navy:#17324f;--text:#26384d;--muted:#68788d;--line:#dce5ef;--bg:#f5f8fc;--white:#fff;--green:#08764e;--shadow:0 8px 26px #17324f0c}
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{
- margin:0;background:radial-gradient(ellipse at 50% -15%,#123d69,transparent 48%),var(--bg);
- color:var(--text);font-family:"IBM Plex Sans Arabic",sans-serif;min-height:100vh
-}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,Arial,"Noto Sans",sans-serif}
 button,input,select,textarea{font:inherit}
-button{cursor:pointer;color:inherit}
-a{color:inherit;text-decoration:none}
-button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--cyan);outline-offset:3px}
-.topbar{
- min-height:72px;display:flex;align-items:center;gap:16px;padding:12px 22px;
- background:#030b17ed;border-bottom:1px solid var(--line);
- position:sticky;top:0;z-index:20;backdrop-filter:blur(18px)
-}
-.brand{display:flex;align-items:center;gap:10px;min-width:210px}
-.brandmark{
- width:43px;height:43px;border:2px solid #29caff;border-radius:50%;
- display:grid;place-items:center;color:#4be7ff;font-size:21px;
- box-shadow:0 0 22px #008bff75,inset 0 0 15px #008bff50
-}
-.brandname{font:800 27px Inter,sans-serif;letter-spacing:1.4px}
-.brand small{display:block;font:600 9px Inter,sans-serif;color:#9db9d4;letter-spacing:.6px}
-.topsearch{flex:1;display:flex;max-width:500px;background:#07192e;border:1px solid #205a87;border-radius:12px;overflow:hidden}
-.topsearch input{flex:1;min-width:0;background:transparent;border:0;padding:12px;color:white;outline:0}
-.topsearch button,.primary{border:0;background:linear-gradient(110deg,#087bff,#08caff);font-weight:700;padding:11px 16px}
-.toplinks{display:flex;gap:15px;font-size:12px;color:#bdd1e4}
-.toplinks a:hover{color:var(--cyan)}
-.topactions{display:flex;align-items:center;gap:8px}
-.iconbtn,.pillbtn,.secondary{border:1px solid var(--line);background:#07182b;border-radius:11px;padding:10px 12px}
-.iconbtn{width:39px;height:39px;padding:0;border-radius:50%}
-.primary{border-radius:11px;color:white;box-shadow:0 0 20px #008bff32}
-.layout{display:grid;grid-template-columns:215px minmax(0,1fr);max-width:1900px;margin:auto}
-.sidebar{padding:16px 11px;border-left:1px solid var(--line);background:#030d1bc9;min-height:calc(100vh - 72px)}
-.nav{display:grid;gap:5px;position:sticky;top:90px}
-.nav a{display:flex;gap:11px;align-items:center;padding:12px;border-radius:11px;color:#a9c2d9;font-size:12px;border:1px solid transparent}
-.nav a i{width:20px;text-align:center;color:#63ceff;font-size:15px}
-.nav a.active,.nav a:hover{background:linear-gradient(90deg,#087bff2e,#09d7ff0b);border-color:#1769a1;color:white}
-.procard{margin-top:20px;padding:14px;border:1px solid #80622e;border-radius:14px;background:linear-gradient(135deg,#30240e,#08192c 75%)}
-.procard strong{color:#ffd276}.procard p{font-size:11px;color:#b5c7d9;line-height:1.7}
-.main{padding:15px;min-width:0}
-.hero{display:grid;grid-template-columns:1fr 1.35fr 1fr;gap:12px}
-.card{background:linear-gradient(145deg,#0a2038ed,#040f20f5);border:1px solid var(--line);border-radius:var(--radius);box-shadow:inset 0 1px #ffffff08,0 12px 35px #0003;min-width:0}
-.hero-copy{padding:23px;display:flex;flex-direction:column;justify-content:center}
-.eyebrow{display:inline-flex;align-self:flex-start;gap:7px;align-items:center;border:1px solid #1d648d;background:#052442;border-radius:30px;padding:7px 10px;color:#80e1ff;font-size:10px}
-.hero h1{font-size:clamp(32px,3.2vw,50px);line-height:1.2;margin:18px 0 10px}
-.gradient{background:linear-gradient(100deg,#fff,#5be8ff 55%,#298cff);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero-copy p{font-size:13px;line-height:1.9;color:#b5cbe0}
-.hero-buttons{display:flex;gap:8px;flex-wrap:wrap}
-.secondary{font-weight:600}
-.searchbox{display:flex;margin-top:15px;border:1px solid #226b9b;border-radius:12px;overflow:hidden;background:#06162a}
-.searchbox input{flex:1;min-width:0;padding:12px;border:0;outline:0;background:transparent;color:white}
-.searchbox button{border:0;background:var(--blue);padding:0 15px}
-.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
-.chip{background:#06192e;border:1px solid #24577a;border-radius:22px;padding:7px 9px;font-size:10px;color:#c4d9eb}
-.chip.active,.chip:hover{border-color:var(--cyan);background:#075078}
-.earth{
- position:relative;overflow:hidden;min-height:355px;
- background:#020a15 url("https://images.unsplash.com/photo-1614730321146-b6fa6a46bcb4?auto=format&fit=crop&w=1600&q=90") center/cover;
- isolation:isolate
-}
-.earth:before{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(90deg,#020b17 0%,transparent 30%,transparent 70%,#020b17 100%),linear-gradient(0deg,#031021,transparent 45%,#031021)}
-.earth:after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse,transparent 25%,#02091475 85%);pointer-events:none}
-.earth-title{position:absolute;top:15px;right:15px;z-index:2;font-size:11px}
-.live{color:var(--green);font-size:10px}
-.live:before{content:"";display:inline-block;width:7px;height:7px;background:var(--green);border-radius:50%;margin-left:6px;box-shadow:0 0 10px var(--green)}
-.route{position:absolute;z-index:1;top:30%;left:14%;width:70%;height:40%;border-top:2px dashed var(--cyan);border-radius:50%;transform:rotate(-20deg);filter:drop-shadow(0 0 5px var(--cyan));animation:pulse 4s infinite}
-.route.r2{top:37%;left:23%;width:60%;border-color:#ffbd55;transform:rotate(25deg);animation-delay:1s}
-.route.r3{top:20%;left:30%;width:45%;border-color:var(--green);transform:rotate(-48deg);animation-delay:2s}
-.orb{position:absolute;z-index:3;background:#03182ded;border:1px solid #398cba;border-radius:11px;padding:8px 10px;font-size:10px;box-shadow:0 0 20px #008cff28;animation:float 5s infinite}
-.orb i{color:#6ce8ff;margin-left:5px}.orb.a{top:25%;left:7%}.orb.b{top:50%;right:6%;animation-delay:1s}.orb.c{bottom:17%;left:35%;animation-delay:2s}
-.earth-controls{position:absolute;bottom:12px;right:12px;left:12px;display:flex;flex-wrap:wrap;gap:5px;z-index:4}
-.earth-controls button{background:#06182bea;border:1px solid #1b5c87;border-radius:8px;padding:7px 9px;font-size:10px}
-.earth-controls button.active{background:#087bff;border-color:#45d9ff}
-.ai-card{padding:17px;display:flex;flex-direction:column;gap:12px}
-.ai-head{display:flex;align-items:center;gap:10px}
-.ai-avatar{width:46px;height:46px;flex-shrink:0;border-radius:15px;background:radial-gradient(circle at 30% 20%,#53f2ff,#0756b8 50%,#07172b);display:grid;place-items:center;font-size:23px;box-shadow:0 0 24px #008cff55}
-.ai-head h3{margin:0;font-size:18px}.ai-head p{margin:3px 0 0;color:var(--muted);font-size:10px}
-.ai-msg{padding:12px;border:1px solid #1d4d72;border-radius:12px;background:#06172a;color:#c8dceb;font-size:12px;line-height:1.8;flex:1}
-.ai-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.ai-actions button{border:1px solid #235a83;background:#071c32;border-radius:9px;padding:9px 5px;font-size:10px}
-.ai-actions button:hover{border-color:var(--cyan)}
-.metrics{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:9px;margin:12px 0}
-.metric{padding:13px 10px;display:flex;align-items:center;gap:9px}
-.metric-icon{width:39px;height:39px;flex-shrink:0;border-radius:12px;background:#07365a;color:#32cfff;display:grid;place-items:center;font-size:17px}
-.metric strong{display:block;font:800 20px Inter,sans-serif}.metric span{display:block;font-size:10px;color:#a9c2d9;margin-top:4px}
-.dashboard{display:grid;grid-template-columns:1fr 1.4fr 1fr;gap:12px}
-.panel{padding:14px}
-.panel-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
-.panel-head h2{font-size:14px;margin:0}.panel-head a{font-size:10px;color:#4bdcff}
-.market-row{display:grid;grid-template-columns:28px 1fr auto;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid #15314b;font-size:11px}
-.flag{font-size:19px}.muted{color:var(--muted);font-size:10px}
-.map-panel{padding:0;overflow:hidden}
-.map-toolbar{padding:12px;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
-.tabs{display:flex;gap:5px;flex-wrap:wrap}.tabs button{background:#07192d;border:1px solid #23577e;border-radius:8px;padding:7px 9px;font-size:10px}
-.tabs button.active{background:#087bff;border-color:#46c9ff}
-.map-view{height:275px;position:relative;overflow:hidden;background:#041323}
-.map-view img{width:100%;height:100%;object-fit:cover;opacity:.76;filter:saturate(1.3) contrast(1.08)}
-.map-view:after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,#061628,transparent 60%)}
-.map-overlay{position:absolute;inset:0;z-index:2;pointer-events:none}
-.pin{position:absolute;width:14px;height:14px;background:#087bff;border:2px solid #b1f5ff;border-radius:50%;box-shadow:0 0 15px #00baff;animation:ping 2s infinite}
-.p1{top:29%;left:30%}.p2{top:47%;left:61%}.p3{top:63%;left:44%}.p4{top:24%;left:74%}
-.map-route{position:absolute;left:29%;top:31%;width:44%;height:36%;border-top:2px dashed var(--cyan);border-radius:50%;transform:rotate(17deg)}
-.legend{display:flex;gap:12px;flex-wrap:wrap;padding:10px 12px;color:#a9c4da;font-size:10px}
-.suppliers{display:grid;gap:8px}
-.supplier{display:grid;grid-template-columns:43px 1fr auto;gap:8px;align-items:center;padding:9px;border:1px solid #183a57;border-radius:11px;background:#06172a}
-.supplier img{width:43px;height:43px;object-fit:cover;border-radius:9px}
-.supplier h4{margin:0 0 4px;font-size:11px}.supplier p{margin:0;color:var(--muted);font-size:9px}
-.supplier button{border:1px solid #24608a;background:#08203a;border-radius:8px;padding:7px;font-size:10px}
-.lower{display:grid;grid-template-columns:1.1fr 1fr 1fr;gap:12px;margin-top:12px}
-.fields{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.field label{display:block;font-size:10px;color:#a9c4d9;margin-bottom:5px}
-.field input,.field select,.field textarea{width:100%;border:1px solid #245276;border-radius:9px;background:#041326;color:white;padding:10px;outline:0}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--cyan)}
-.result{margin-top:12px;padding:12px;border-radius:11px;background:#073044;border:1px solid #1d7e91;display:flex;justify-content:space-between;gap:8px}
-.result small{display:block;color:#a5c7d8;font-size:10px}.result strong{font:800 20px Inter,sans-serif;color:#68f1ff}
-.deals{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.deal{overflow:hidden;border:1px solid #1a3b57;border-radius:11px;background:#06172a}
-.deal img{width:100%;height:85px;object-fit:cover}.deal-body{padding:9px}
-.deal h4{font-size:11px;margin:0 0 5px}.deal p{font-size:10px;color:var(--muted)}
-.deal button{width:100%;border:1px solid #2377a7;background:#08233e;border-radius:8px;padding:7px;font-size:10px}
-.track-form{display:flex;gap:7px;padding:0 12px 12px}.track-form input{flex:1;min-width:0;background:#041326;border:1px solid #245276;border-radius:9px;padding:10px;color:white}
-.track-form button{border:0;border-radius:9px;padding:0 14px;background:#087bff}
-.track-status{display:none;margin:0 12px 12px;padding:12px;background:#06172a;border:1px solid #245276;border-radius:10px;font-size:11px;line-height:1.8}
-.footer{text-align:center;color:#7895af;font-size:10px;padding:25px}
-.toast{position:fixed;bottom:20px;left:20px;z-index:99;padding:13px 18px;background:#092b43;border:1px solid #25c9ff;border-radius:12px;display:none;max-width:90vw;font-size:12px}
-.modal{position:fixed;inset:0;background:#000a;z-index:80;display:none;align-items:center;justify-content:center;padding:20px}
-.modal.open{display:flex}.modal-box{width:min(620px,100%);background:#06172a;border:1px solid #237db2;border-radius:18px;padding:20px}
-.modal-head{display:flex;justify-content:space-between;align-items:center}.modal-head h3{margin:0}
-.close{background:transparent;border:0;font-size:22px}.modal-actions{display:flex;gap:8px;margin-top:15px}
-.modal-actions button{flex:1;padding:11px;border-radius:10px}
-.mobile-menu{display:none}
-@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
-@keyframes pulse{0%,100%{opacity:.45}50%{opacity:1}}
-@keyframes ping{0%,100%{box-shadow:0 0 8px #00baff}50%{box-shadow:0 0 23px #00eaff}}
-@media(max-width:1350px){
- .toplinks{display:none}.hero{grid-template-columns:1fr 1.2fr}
- .ai-card{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr}
- .ai-actions{grid-column:2;grid-row:1/3;align-content:center}
- .metrics{grid-template-columns:repeat(3,1fr)}
- .dashboard{grid-template-columns:1fr 1.3fr}
- .dashboard>.panel:last-child{grid-column:1/-1}
- .lower{grid-template-columns:1fr 1fr}
- .lower>.panel:last-child{grid-column:1/-1}
-}
-@media(max-width:900px){
- .topbar{flex-wrap:wrap;padding:10px;gap:9px}.brand{min-width:0}
- .topsearch{order:3;flex-basis:100%;max-width:none}
- .topactions .pillbtn{display:none}.layout{display:block}
- .sidebar{display:none;position:fixed;top:65px;bottom:0;right:0;width:245px;z-index:50;overflow:auto}
- .sidebar.open{display:block}.mobile-menu{display:grid}
- .main{padding:9px}.hero{grid-template-columns:1fr}
- .earth{min-height:330px;grid-row:1}.hero-copy{grid-row:2}.ai-card{grid-row:3;display:flex}
- .metrics{grid-template-columns:repeat(2,1fr)}
- .dashboard,.lower{grid-template-columns:1fr}
- .dashboard>.panel:last-child,.lower>.panel:last-child{grid-column:auto}
-}
-@media(max-width:480px){
- .brandname{font-size:21px}.metrics{gap:6px}
- .metric{padding:9px 7px;gap:6px}.metric-icon{width:32px;height:32px;font-size:14px}
- .metric strong{font-size:16px}.metric span{font-size:9px}
- .hero h1{font-size:34px}.earth{min-height:290px}
- .deals{grid-template-columns:1fr 1fr}
-}
+button{cursor:pointer}
+header{position:sticky;top:0;z-index:10;background:#fff;border-bottom:1px solid var(--line);box-shadow:0 3px 14px #17324f0a}
+.wrap{width:min(1240px,94%);margin:auto}
+.head{min-height:70px;display:flex;align-items:center;gap:18px;justify-content:space-between}
+.logo{font-size:30px;font-weight:950;letter-spacing:1px;color:var(--blue)}
+nav{display:flex;gap:5px;flex-wrap:wrap}
+nav button,.secondary{background:#fff;color:var(--navy);border:1px solid var(--line);border-radius:9px;padding:9px 12px}
+nav button:hover,.secondary:hover{background:#edf4ff;border-color:#b9d1fa}
+select,input,textarea{width:100%;padding:12px;border:1px solid #ccd8e7;border-radius:10px;background:#fff;color:var(--text);outline-color:var(--blue)}
+button.primary{background:linear-gradient(100deg,#1769ff,#4c62ed);color:#fff;border:0;border-radius:10px;padding:12px 17px;font-weight:800}
+button.primary:disabled{opacity:.6;cursor:wait}
+main{padding:22px 0 60px}
+.hero{padding:clamp(22px,4vw,46px);border:1px solid #d8e7f8;border-radius:24px;background:linear-gradient(120deg,#fff,#eaf4ff 65%,#e5f8f7);box-shadow:var(--shadow)}
+.eyebrow{display:inline-block;padding:6px 11px;border-radius:99px;background:#e4efff;color:#1558d6;font-weight:800;font-size:12px}
+h1{font-size:clamp(32px,5vw,52px);line-height:1.12;margin:16px 0 12px;color:var(--navy)}
+h1 span{color:var(--blue)}
+h2{font-size:22px;color:var(--navy);margin:0 0 8px}
+h3{color:var(--navy)}
+p{line-height:1.7}
+.muted{color:var(--muted);font-size:13px}
+.searchbar{display:grid;grid-template-columns:1fr 190px auto;gap:9px;margin-top:22px}
+.quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.quick button{border:1px solid var(--line);background:#fff;color:var(--navy);border-radius:99px;padding:8px 12px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:17px 0}
+.stat,.panel,.result,.section-card{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow)}
+.stat{padding:16px}.stat b{display:block;font-size:23px;color:var(--blue)}
+.panel{padding:20px;margin-top:18px}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}
+.field label{display:block;font-size:13px;font-weight:800;margin:0 0 6px}
+.field textarea{min-height:100px;resize:vertical}
+.full{grid-column:1/-1}
+.status{padding:12px;border-radius:10px;background:#eef5ff;color:#174f9b;margin:12px 0;overflow-wrap:anywhere}
+.status.error{background:#fff0f0;color:#a4212a}
+.status.good{background:#eaf8f0;color:#08764e}
+#results{margin-top:14px}
+.result{padding:17px;margin:12px 0}
+.result-top{display:flex;gap:12px;align-items:center}
+.avatar{width:52px;height:52px;flex:none;display:grid;place-items:center;border-radius:13px;background:#eaf2ff;font-size:25px}
+.result h3{margin:0 0 5px}
+.badge{display:inline-block;padding:4px 8px;border-radius:99px;background:#eaf8f0;color:#08764e;font-size:11px;font-weight:800}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:13px}
+.metric{background:#f4f7fb;padding:10px;border-radius:9px;min-width:0;overflow-wrap:anywhere}
+.metric small{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}
+.empty{text-align:center;padding:25px;background:#fff;border:1px dashed #cbd8e7;border-radius:13px;color:var(--muted)}
+.page{display:none}.page.active{display:block}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;text-align:start;border-bottom:1px solid var(--line)}
+.footer{padding:25px 0;color:var(--muted);text-align:center;font-size:12px}
+[hidden]{display:none!important}
+@media(max-width:800px){.head{padding:10px 0;align-items:flex-start;flex-direction:column;gap:8px}nav{width:100%}.searchbar{grid-template-columns:1fr}.stats{grid-template-columns:repeat(2,1fr)}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:520px){nav button{flex:1;font-size:12px;padding:8px 5px}.grid{grid-template-columns:1fr}.full{grid-column:auto}.hero{padding:22px}.result-top{align-items:flex-start}}
 </style>
 </head>
 <body>
-<div class="app">
-<header class="topbar">
- <button class="iconbtn mobile-menu" id="mobileMenu" aria-label="القائمة"><i class="fa-solid fa-bars"></i></button>
- <a class="brand" href="#home"><span class="brandmark"><i class="fa-solid fa-globe"></i></span><span><span class="brandname">NOVA</span><small>GLOBAL PROCUREMENT INTELLIGENCE</small></span></a>
- <form class="topsearch" id="globalSearch"><input id="globalQuery" placeholder="ابحث عن منتج أو مورد أو سوق..." aria-label="البحث العالمي"><button aria-label="بحث"><i class="fa-solid fa-magnifying-glass"></i></button></form>
- <nav class="toplinks"><a href="#markets">الأسواق</a><a href="#suppliers">الموردون</a><a href="#tracking">التتبع</a><a href="#cost">التكلفة النهائية</a><a href="#deals">الصفقات</a></nav>
- <div class="topactions"><button class="pillbtn" id="langBtn"><i class="fa-solid fa-globe"></i> العربية</button><button class="iconbtn" id="themeBtn" aria-label="الوضع"><i class="fa-solid fa-moon"></i></button><button class="iconbtn" id="notifyBtn" aria-label="الإشعارات"><i class="fa-regular fa-bell"></i></button><button class="pillbtn" id="loginBtn">تسجيل الدخول</button><button class="primary" id="signupBtn">ابدأ مجاناً <i class="fa-solid fa-arrow-left"></i></button></div>
+<header>
+ <div class="wrap head">
+  <div class="logo">NOVA<span style="color:#17324f">.</span></div>
+  <nav aria-label="Main navigation">
+   <button onclick="showPage('home')" data-i="home">الرئيسية</button>
+   <button onclick="showPage('search')" data-i="search">البحث</button>
+   <button onclick="showPage('rfq')" data-i="rfq">طلب عرض سعر</button>
+   <button onclick="showPage('cost')" data-i="costTab">التكلفة</button>
+   <button onclick="showPage('transport')" data-i="transport">النقل والشحن</button>
+  </nav>
+  <div style="display:flex;gap:8px;width:min(100%,250px)">
+   <select id="language" aria-label="Language" onchange="setLanguage(this.value)">
+    <option value="ar">العربية</option><option value="en">English</option>
+    <option value="fr">Français</option><option value="es">Español</option>
+    <option value="de">Deutsch</option><option value="it">Italiano</option>
+    <option value="tr">Türkçe</option><option value="zh">中文</option>
+    <option value="ja">日本語</option><option value="ko">한국어</option>
+    <option value="ru">Русский</option><option value="hi">हिन्दी</option>
+    <option value="pt">Português</option><option value="pl">Polski</option>
+   </select>
+  </div>
+ </div>
 </header>
-<div class="layout">
-<aside class="sidebar" id="sidebar"><nav class="nav">
- <a class="active" href="#home"><i class="fa-solid fa-house"></i> الرئيسية</a>
- <a href="#search"><i class="fa-solid fa-magnifying-glass"></i> البحث عن موردين</a>
- <a href="#rfq"><i class="fa-solid fa-file-signature"></i> طلبات الأسعار RFQ</a>
- <a href="#negotiation"><i class="fa-solid fa-handshake"></i> التفاوض الذكي</a>
- <a href="#deals"><i class="fa-solid fa-tags"></i> الصفقات</a>
- <a href="#markets"><i class="fa-solid fa-earth-americas"></i> الأسواق العالمية</a>
- <a href="#cost"><i class="fa-solid fa-calculator"></i> حساب التكلفة النهائية</a>
- <a href="#tracking"><i class="fa-solid fa-truck-fast"></i> تتبع الشحنات</a>
- <a href="#suppliers"><i class="fa-solid fa-users"></i> الموردون</a>
- <a href="#reports"><i class="fa-solid fa-chart-line"></i> التحليلات والتقارير</a>
- <a href="#ai"><i class="fa-solid fa-robot"></i> الذكاء الاصطناعي</a>
- <a href="#account"><i class="fa-solid fa-gear"></i> الحساب والإعدادات</a>
- </nav><div class="procard"><strong><i class="fa-solid fa-crown"></i> NOVA Pro</strong><p>أدوات متقدمة لتحليل الأسواق والمقارنة وإدارة المشتريات.</p><button class="pillbtn" style="width:100%" id="proBtn">استكشف المزايا</button></div>
-</aside>
-<main class="main" id="home">
-
-<section class="hero" id="search">
- <div class="card hero-copy">
-  <span class="eyebrow"><i class="fa-solid fa-sparkles"></i> ذكاء اصطناعي للتجارة العالمية</span>
-  <h1>العالم التجاري<br><span class="gradient">بين يديك</span></h1>
-  <p>اكتشف الموردين، قارن الأسعار والتكاليف، أنشئ طلبات عروض الأسعار، وأدر مشترياتك العالمية من منصة واحدة.</p>
-  <div class="hero-buttons">
-   <button class="primary" id="startSearch">ابدأ البحث مجاناً <i class="fa-solid fa-arrow-left"></i></button>
-   <button class="secondary" id="howBtn"><i class="fa-regular fa-circle-play"></i> كيف تعمل NOVA؟</button>
+<main class="wrap">
+<section id="home" class="page active">
+ <div class="hero">
+  <span class="eyebrow" data-i="eyebrow">منصة التجارة والتوريد العالمية</span>
+  <h1><span>NOVA</span> <span data-i="heroTitle">ذكاء التجارة العالمية</span></h1>
+  <p data-i="heroText">ابحث عن الموردين، قارن العروض، أنشئ طلبات الأسعار وتابع احتياجات الشحن من مكان واحد.</p>
+  <div class="searchbar">
+   <input id="homeQuery" data-ph="searchPlaceholder" placeholder="ما المنتج الذي تبحث عنه؟" onkeydown="if(event.key==='Enter')runSearch('home')">
+   <select id="homeDestination" aria-label="Destination">
+    <option value="Iraq">العراق · Iraq</option><option value="United Arab Emirates">الإمارات</option>
+    <option value="Saudi Arabia">السعودية</option><option value="Turkey">تركيا</option>
+    <option value="China">الصين</option><option value="Germany">ألمانيا</option>
+    <option value="United States">الولايات المتحدة</option><option value="">كل الوجهات</option>
+   </select>
+   <button class="primary" onclick="runSearch('home')" data-i="searchButton">ابحث الآن</button>
   </div>
-  <form class="searchbox" id="heroSearch">
-   <input id="heroQuery" placeholder="ما المنتج الذي تبحث عنه؟">
-   <button aria-label="بحث"><i class="fa-solid fa-magnifying-glass"></i></button>
-  </form>
-  <div class="chips" id="categories">
-   <button class="chip active" data-category="الكل">جميع الفئات</button>
-   <button class="chip" data-category="المواد الغذائية"><i class="fa-solid fa-wheat-awn"></i> الغذاء</button>
-   <button class="chip" data-category="الصناعة"><i class="fa-solid fa-industry"></i> الصناعة</button>
-   <button class="chip" data-category="الآلات"><i class="fa-solid fa-gears"></i> الآلات</button>
-   <button class="chip" data-category="الإلكترونيات"><i class="fa-solid fa-microchip"></i> الإلكترونيات</button>
-   <button class="chip" data-category="الزراعة"><i class="fa-solid fa-leaf"></i> الزراعة</button>
-   <button class="chip" data-category="مواد البناء">مواد البناء</button>
-   <button class="chip" data-category="المنسوجات">المنسوجات</button>
+  <div class="quick">
+   <button onclick="quickSearch('solar panels')" >☀️ Solar panels</button>
+   <button onclick="quickSearch('food wheat')">🌾 Wheat</button>
+   <button onclick="quickSearch('industrial machinery')">⚙️ Machinery</button>
+   <button onclick="quickSearch('shipping containers')">🚢 Shipping</button>
   </div>
  </div>
-
- <div class="card earth">
-  <div class="earth-title"><i class="fa-solid fa-earth-americas"></i> شبكة التجارة العالمية <span class="live">واجهة عرض</span></div>
-  <div class="route"></div><div class="route r2"></div><div class="route r3"></div>
-  <div class="orb a"><i class="fa-solid fa-plane"></i> المسارات الجوية<br><b>ربط بيانات الطيران مطلوب</b></div>
-  <div class="orb b"><i class="fa-solid fa-truck-fast"></i> الشحن البري<br><b>تتبع برقم الشحنة</b></div>
-  <div class="orb c"><i class="fa-solid fa-ship"></i> الشحن البحري<br><b>ربط بيانات السفن مطلوب</b></div>
-  <div class="earth-controls">
-   <button class="active" data-layer="all">الكل</button>
-   <button data-layer="air"><i class="fa-solid fa-plane"></i> الطائرات</button>
-   <button data-layer="sea"><i class="fa-solid fa-ship"></i> السفن</button>
-   <button data-layer="road"><i class="fa-solid fa-truck"></i> الطرق</button>
-   <button data-layer="rail"><i class="fa-solid fa-train"></i> السكك الحديدية</button>
-   <button data-layer="ports"><i class="fa-solid fa-anchor"></i> الموانئ</button>
-  </div>
+ <div class="stats">
+  <div class="stat"><b>195+</b><span data-i="countries">دولة وسوق مستهدف</span></div>
+  <div class="stat"><b>14</b><span data-i="languages">لغة للواجهة</span></div>
+  <div class="stat"><b>RFQ</b><span data-i="rfqStat">طلبات عروض الأسعار</span></div>
+  <div class="stat"><b>AI</b><span data-i="aiStat">أدوات مساعدة ذكية</span></div>
  </div>
-
- <div class="card ai-card" id="ai">
-  <div class="ai-head">
-   <div class="ai-avatar"><i class="fa-solid fa-robot"></i></div>
-   <div><h3>NOVA AI</h3><p>مساعد المشتريات العالمية</p></div>
-   <span class="live" style="margin-right:auto">جاهز</span>
-  </div>
-  <div class="ai-msg" id="aiMessage">مرحباً بك في NOVA. أخبرني بالمنتج والكمية وبلد الوصول، وسأساعدك في تجهيز طلب الشراء. النتائج الحقيقية تتطلب ربط مصادر البيانات.</div>
-  <div class="ai-actions">
-   <button data-ai="ابحث عن موردين لمنتجي"><i class="fa-solid fa-users"></i> البحث عن موردين</button>
-   <button data-ai="ساعدني في حساب التكلفة النهائية"><i class="fa-solid fa-calculator"></i> حساب التكلفة</button>
-   <button data-ai="أنشئ طلب عرض سعر احترافي"><i class="fa-solid fa-file-signature"></i> إنشاء RFQ</button>
-   <button data-ai="أريد مقارنة الأسواق والموردين"><i class="fa-solid fa-chart-column"></i> تحليل السوق</button>
-  </div>
-  <form class="searchbox" id="aiForm">
-   <input id="aiInput" placeholder="اكتب طلبك هنا...">
-   <button aria-label="إرسال"><i class="fa-solid fa-paper-plane"></i></button>
-  </form>
+ <div class="panel">
+  <h2 data-i="homeSearchTitle">ابحث عن الموردين عالميًا</h2>
+  <p class="muted" data-i="homeSearchText">ستظهر النتائج التي تعيدها خدمة البحث المتصلة بالمنصة.</p>
+  <button class="primary" onclick="showPage('search')" data-i="openSearch">فتح البحث المتقدم</button>
  </div>
 </section>
 
-<section class="metrics">
- <div class="card metric"><div class="metric-icon"><i class="fa-solid fa-earth-americas"></i></div><div><strong>عالمي</strong><span>بحث في الأسواق</span></div></div>
- <div class="card metric"><div class="metric-icon"><i class="fa-solid fa-users"></i></div><div><strong>متعدد</strong><span>موردون ومنتجون</span></div></div>
- <div class="card metric"><div class="metric-icon"><i class="fa-solid fa-box"></i></div><div><strong>متنوع</strong><span>فئات المنتجات</span></div></div>
- <div class="card metric"><div class="metric-icon"><i class="fa-solid fa-calculator"></i></div><div><strong>360°</strong><span>حساب التكلفة</span></div></div>
- <div class="card metric"><div class="metric-icon"><i class="fa-solid fa-truck-fast"></i></div><div><strong>متعدد</strong><span>أنماط النقل</span></div></div>
- <div class="card metric"><div class="metric-icon"><i class="fa-solid fa-shield-halved"></i></div><div><strong>شفافية</strong><span>تحقق من المصدر</span></div></div>
-</section>
-
-<section class="dashboard">
- <div class="card panel" id="markets">
-  <div class="panel-head"><h2><i class="fa-solid fa-chart-line" style="color:var(--cyan)"></i> الأسواق العالمية</h2><a href="#search">ابحث ←</a></div>
-  <div class="market-row"><span class="flag">🇨🇳</span><div><b>الصين</b><div class="muted">التصنيع والتوريد</div></div><span class="muted">السوق</span></div>
-  <div class="market-row"><span class="flag">🇮🇳</span><div><b>الهند</b><div class="muted">الصناعة والمنسوجات</div></div><span class="muted">السوق</span></div>
-  <div class="market-row"><span class="flag">🇹🇷</span><div><b>تركيا</b><div class="muted">مواد البناء والمنتجات</div></div><span class="muted">السوق</span></div>
-  <div class="market-row"><span class="flag">🇩🇪</span><div><b>ألمانيا</b><div class="muted">المعدات والهندسة</div></div><span class="muted">السوق</span></div>
-  <div class="market-row"><span class="flag">🇺🇸</span><div><b>الولايات المتحدة</b><div class="muted">التقنيات والمنتجات</div></div><span class="muted">السوق</span></div>
-  <button class="secondary" id="allMarkets" style="width:100%;margin-top:12px">استكشف الأسواق</button>
- </div>
-
- <div class="card map-panel" id="tracking">
-  <div class="map-toolbar"><h2><i class="fa-solid fa-satellite-dish" style="color:var(--cyan)"></i> مركز تتبع الشحنات</h2><span class="live">واجهة التتبع</span></div>
-  <div class="map-toolbar">
-   <div class="tabs" id="trackTabs">
-    <button class="active" data-type="all">الكل</button>
-    <button data-type="air">الطائرات</button>
-    <button data-type="sea">السفن</button>
-    <button data-type="road">الشاحنات</button>
-    <button data-type="rail">القطارات</button>
-   </div>
-   <button class="pillbtn" id="satelliteBtn"><i class="fa-solid fa-layer-group"></i> طبقات الخريطة</button>
+<section id="search" class="page">
+ <div class="panel">
+  <div class="section-head"><div><h2 data-i="searchTitle">البحث عن الموردين</h2><p class="muted" data-i="searchDesc">أدخل تفاصيل المنتج والوجهة لبدء البحث.</p></div></div>
+  <div class="grid">
+   <div class="field full"><label for="query" data-i="productLabel">المنتج أو المادة</label><input id="query" placeholder="مثال: 500 طن قمح غذائي" data-ph="searchPlaceholder" onkeydown="if(event.key==='Enter')runSearch('search')"></div>
+   <div class="field"><label for="quantity" data-i="quantityLabel">الكمية</label><input id="quantity" placeholder="مثال: 500 طن" data-ph="quantityPlaceholder"></div>
+   <div class="field"><label for="destination" data-i="destinationLabel">بلد التسليم</label><input id="destination" value="Iraq" placeholder="Iraq" data-ph="destinationPlaceholder"></div>
+   <div class="field full"><button id="searchBtn" class="primary" onclick="runSearch('search')" data-i="searchButton">ابحث الآن</button></div>
   </div>
-  <div class="map-view">
-   <img src="https://images.unsplash.com/photo-1524666041070-9b8768338532?auto=format&fit=crop&w=1200&q=85" alt="صورة توضيحية للخريطة العالمية">
-   <div class="map-overlay"><span class="map-route"></span><i class="pin p1"></i><i class="pin p2"></i><i class="pin p3"></i><i class="pin p4"></i></div>
-  </div>
-  <div class="legend">
-   <span><i class="fa-solid fa-plane" style="color:#5adfff"></i> الطيران</span>
-   <span><i class="fa-solid fa-ship" style="color:#ffba59"></i> السفن</span>
-   <span><i class="fa-solid fa-truck" style="color:#28e5a3"></i> الشاحنات</span>
-   <span><i class="fa-solid fa-train" style="color:#d99aff"></i> القطارات</span>
-   <span class="muted">الخريطة الحالية توضيحية وليست بثاً مباشراً</span>
-  </div>
-  <form class="track-form" id="trackForm">
-   <input id="trackingNumber" placeholder="رقم الشحنة أو بوليصة الشحن">
-   <button>تتبع</button>
-  </form>
-  <div class="track-status" id="trackStatus"></div>
- </div>
-
- <div class="card panel" id="suppliers">
-  <div class="panel-head"><h2><i class="fa-solid fa-user-shield" style="color:var(--cyan)"></i> دليل الموردين</h2><a href="#search">البحث ←</a></div>
-  <p class="muted" style="line-height:1.8">ابحث عن المصنعين والموردين حسب المنتج والبلد. تحقق من البيانات قبل إتمام أي عملية شراء.</p>
-  <div class="suppliers" id="supplierResults">
-   <div class="supplier">
-    <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=160&q=80" alt="مستودع">
-    <div><h4>ابدأ البحث عن مورد</h4><p>اكتب اسم المنتج في مربع البحث</p></div>
-    <button class="supplier-search" onclick="document.querySelector('#heroQuery').focus()">بحث</button>
-   </div>
-  </div>
+  <div id="searchStatus" class="status" role="status" hidden></div>
+  <div id="results" aria-live="polite"><div class="empty" data-i="searchEmpty">أدخل منتجًا لعرض النتائج.</div></div>
  </div>
 </section>
 
-<section class="lower">
- <div class="card panel" id="cost">
-  <div class="panel-head"><h2><i class="fa-solid fa-calculator" style="color:var(--cyan)"></i> حاسبة التكلفة النهائية</h2></div>
-  <div class="fields">
-   <div class="field"><label>سعر الوحدة USD</label><input type="number" id="unitPrice" value="285" min="0" step=".01"></div>
-   <div class="field"><label>الكمية</label><input type="number" id="quantity" value="500" min="1"></div>
-   <div class="field"><label>الشحن USD</label><input type="number" id="shipping" value="1000" min="0"></div>
-   <div class="field"><label>التأمين USD</label><input type="number" id="insurance" value="100" min="0"></div>
-   <div class="field"><label>الجمارك %</label><input type="number" id="duty" value="5" min="0" max="100"></div>
-   <div class="field"><label>رسوم إضافية USD</label><input type="number" id="fees" value="0" min="0"></div>
+<section id="rfq" class="page">
+ <div class="panel">
+  <h2 data-i="rfqTitle">إنشاء طلب عرض سعر RFQ</h2>
+  <p class="muted" data-i="rfqDesc">أرسل متطلباتك إلى خدمة NOVA المتصلة.</p>
+  <div class="grid">
+   <div class="field"><label for="rfqProduct" data-i="productLabel">المنتج أو المادة</label><input id="rfqProduct"></div>
+   <div class="field"><label for="rfqQuantity" data-i="quantityLabel">الكمية</label><input id="rfqQuantity"></div>
+   <div class="field"><label for="rfqDestination" data-i="destinationLabel">بلد التسليم</label><input id="rfqDestination" value="Iraq"></div>
+   <div class="field"><label for="rfqIncoterm">Incoterm</label><select id="rfqIncoterm"><option>FOB</option><option>CIF</option><option>EXW</option><option>DAP</option><option>DDP</option></select></div>
+   <div class="field full"><label for="rfqDetails" data-i="detailsLabel">المواصفات والتفاصيل</label><textarea id="rfqDetails"></textarea></div>
+   <div class="field full"><button class="primary" onclick="sendRFQ()" data-i="sendRFQ">إرسال طلب السعر</button></div>
   </div>
-  <button class="primary" id="calcCost" style="width:100%;margin-top:12px">احسب التكلفة</button>
-  <div class="result"><div><small>الإجمالي التقديري</small><strong id="totalCost">$0.00</strong></div><div><small>تكلفة الوحدة</small><strong id="landedUnit">$0.00</strong></div></div>
-  <p class="muted">حساب تقديري؛ لا يشمل أي رسوم لم تُدخلها.</p>
- </div>
-
- <div class="card panel" id="deals">
-  <div class="panel-head"><h2><i class="fa-solid fa-bolt" style="color:var(--gold)"></i> فرص الشراء</h2></div>
-  <div class="deals">
-   <article class="deal"><img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=500&q=80" alt="منتجات زراعية"><div class="deal-body"><h4>منتجات زراعية</h4><p>أرسل طلبك لتلقي عروض</p><button data-rfq="منتجات زراعية">اطلب عرض سعر</button></div></article>
-   <article class="deal"><img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=500&q=80" alt="معدات"><div class="deal-body"><h4>معدات صناعية</h4><p>حدد المواصفات والكمية</p><button data-rfq="معدات صناعية">اطلب عرض سعر</button></div></article>
-   <article class="deal"><img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=500&q=80" alt="إلكترونيات"><div class="deal-body"><h4>إلكترونيات</h4><p>قارن العروض عند وصولها</p><button data-rfq="إلكترونيات">اطلب عرض سعر</button></div></article>
-   <article class="deal"><img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=500&q=80" alt="مواد بناء"><div class="deal-body"><h4>مواد البناء</h4><p>أرسل متطلبات الشراء</p><button data-rfq="مواد البناء">اطلب عرض سعر</button></div></article>
-  </div>
- </div>
-
- <div class="card panel" id="rfq">
-  <div class="panel-head"><h2><i class="fa-solid fa-file-signature" style="color:var(--cyan)"></i> إنشاء طلب عرض سعر</h2></div>
-  <div class="field"><label>المنتج المطلوب</label><input id="rfqProduct" placeholder="مثال: قفازات نيتريل"></div>
-  <div class="fields" style="margin-top:10px">
-   <div class="field"><label>الكمية</label><input id="rfqQty" type="number" min="1" value="1000"></div>
-   <div class="field"><label>وجهة التسليم</label><input id="rfqDest" value="العراق"></div>
-  </div>
-  <div class="field" style="margin-top:10px"><label>المواصفات</label><textarea id="rfqReq" rows="4" placeholder="المادة، المقاس، التعبئة، الشهادات..."></textarea></div>
-  <button class="primary" id="createRfq" style="width:100%;margin-top:12px">إنشاء طلب عرض السعر</button>
+  <div id="rfqStatus" class="status" hidden></div>
  </div>
 </section>
 
-<div class="footer">NOVA · Global Procurement Intelligence · تحقق من الموردين والأسعار ومصادر التتبع قبل اتخاذ قرار الشراء.</div>
-</main></div></div>
-
-<div class="modal" id="modal">
- <div class="modal-box">
-  <div class="modal-head"><h3 id="modalTitle">NOVA</h3><button class="close" id="closeModal">×</button></div>
-  <div id="modalContent"></div>
-  <div class="modal-actions"><button class="secondary" id="cancelModal">إلغاء</button><button class="primary" id="confirmModal">متابعة</button></div>
+<section id="cost" class="page">
+ <div class="panel">
+  <h2 data-i="costTitle">حاسبة التكلفة الواصلة</h2>
+  <p class="muted" data-i="costDesc">حساب تقديري اعتمادًا على الأرقام التي تدخلها، وليس عرض شحن ملزمًا.</p>
+  <div class="grid">
+   <div class="field"><label for="unitPrice" data-i="unitPrice">سعر الوحدة بالدولار</label><input id="unitPrice" type="number" min="0" value="0"></div>
+   <div class="field"><label for="costQuantity" data-i="quantityLabel">الكمية</label><input id="costQuantity" type="number" min="0" value="1"></div>
+   <div class="field"><label for="shippingCost" data-i="shippingCost">الشحن بالدولار</label><input id="shippingCost" type="number" min="0" value="0"></div>
+   <div class="field"><label for="duty" data-i="duty">الجمارك %</label><input id="duty" type="number" min="0" value="0"></div>
+   <div class="field"><label for="tax" data-i="tax">الضريبة %</label><input id="tax" type="number" min="0" value="0"></div>
+   <div class="field"><label for="localCost" data-i="localCost">التوصيل المحلي بالدولار</label><input id="localCost" type="number" min="0" value="0"></div>
+   <div class="field full"><button class="primary" onclick="calculateCost()" data-i="calculate">احسب التكلفة</button></div>
+  </div>
+  <div id="costResult" class="status" hidden></div>
  </div>
-</div>
-<div class="toast" id="toast" role="status"></div>
+</section>
+
+<section id="transport" class="page">
+ <div class="panel">
+  <h2 data-i="transportTitle">النقل والشحن</h2>
+  <p class="muted" data-i="transportDesc">ابحث في جداول النقل المتاحة أو أرسل طلب حجز مساحة شحن.</p>
+  <div class="grid">
+   <div class="field"><label for="transportMode" data-i="transportMode">وسيلة النقل</label><select id="transportMode"><option value="ship">سفينة / ميناء</option><option value="train">قطار</option><option value="air">طائرة / مطار</option><option value="truck">شاحنة</option></select></div>
+   <div class="field"><label for="transportFrom" data-i="from">من</label><input id="transportFrom"></div>
+   <div class="field"><label for="transportTo" data-i="to">إلى</label><input id="transportTo"></div>
+   <div class="field"><label for="transportDate" data-i="date">التاريخ المطلوب</label><input id="transportDate" type="date"></div>
+   <div class="field full"><button class="primary" onclick="findTransport()" data-i="findSchedules">البحث عن الجداول</button></div>
+  </div>
+  <div id="transportStatus" class="status" hidden></div>
+  <div id="transportResults"></div>
+ </div>
+ <div class="panel">
+  <h2 data-i="freightTitle">طلب مساحة شحن</h2>
+  <div class="grid">
+   <div class="field"><label for="freightWeight" data-i="weight">الوزن بالكيلوغرام</label><input id="freightWeight" type="number" min="1"></div>
+   <div class="field"><label for="freightVolume" data-i="volume">الحجم بالمتر المكعب</label><input id="freightVolume" type="number" min="0"></div>
+   <div class="field"><label for="freightContact" data-i="contact">وسيلة التواصل</label><input id="freightContact"></div>
+   <div class="field full"><label for="freightDesc" data-i="detailsLabel">تفاصيل الشحنة</label><textarea id="freightDesc"></textarea></div>
+   <div class="field full"><button class="primary" onclick="requestFreight()" data-i="sendFreight">إرسال طلب الشحن</button></div>
+  </div>
+  <div id="freightStatus" class="status" hidden></div>
+ </div>
+</section>
+<footer class="footer">NOVA · Global Trade & Procurement</footer>
+</main>
 
 <script>
-const $=s=>document.querySelector(s);
-const $$=s=>[...document.querySelectorAll(s)];
-let selectedCategory="الكل",selectedTrack="all",modalAction=null;
+"use strict";
 
-function toast(message){
- const t=$("#toast");t.textContent=message;t.style.display="block";
- clearTimeout(window.__toastTimer);
- window.__toastTimer=setTimeout(()=>t.style.display="none",4000);
+/* NOVA API: يستخدم نفس نطاق الموقع الحالي */
+const API_BASE = "";
+const $ = id => document.getElementById(id);
+let currentLanguage = "ar";
+
+const TEXT = {
+ar:{
+home:"الرئيسية",search:"البحث",rfq:"طلب عرض سعر",costTab:"التكلفة",transport:"النقل والشحن",
+eyebrow:"منصة التجارة والتوريد العالمية",heroTitle:"ذكاء التجارة العالمية",
+heroText:"ابحث عن الموردين، قارن العروض، أنشئ طلبات الأسعار وتابع احتياجات الشحن من مكان واحد.",
+searchPlaceholder:"ما المنتج الذي تبحث عنه؟",countries:"دولة وسوق مستهدف",languages:"لغة للواجهة",
+rfqStat:"طلبات عروض الأسعار",aiStat:"أدوات مساعدة ذكية",homeSearchTitle:"ابحث عن الموردين عالميًا",
+homeSearchText:"ستظهر النتائج التي تعيدها خدمة البحث المتصلة بالمنصة.",openSearch:"فتح البحث المتقدم",
+searchTitle:"البحث عن الموردين",searchDesc:"أدخل تفاصيل المنتج والوجهة لبدء البحث.",
+productLabel:"المنتج أو المادة",quantityLabel:"الكمية",quantityPlaceholder:"مثال: 500 طن",
+destinationLabel:"بلد التسليم",destinationPlaceholder:"Iraq",searchButton:"ابحث الآن",
+searchEmpty:"أدخل منتجًا لعرض النتائج.",rfqTitle:"إنشاء طلب عرض سعر RFQ",
+rfqDesc:"أرسل متطلباتك إلى خدمة NOVA المتصلة.",detailsLabel:"المواصفات والتفاصيل",
+sendRFQ:"إرسال طلب السعر",costTitle:"حاسبة التكلفة الواصلة",
+costDesc:"حساب تقديري اعتمادًا على الأرقام التي تدخلها، وليس عرض شحن ملزمًا.",
+unitPrice:"سعر الوحدة بالدولار",shippingCost:"الشحن بالدولار",duty:"الجمارك %",
+tax:"الضريبة %",localCost:"التوصيل المحلي بالدولار",calculate:"احسب التكلفة",
+transportTitle:"النقل والشحن",transportDesc:"ابحث في جداول النقل المتاحة أو أرسل طلب حجز مساحة شحن.",
+transportMode:"وسيلة النقل",from:"من",to:"إلى",date:"التاريخ المطلوب",
+findSchedules:"البحث عن الجداول",freightTitle:"طلب مساحة شحن",weight:"الوزن بالكيلوغرام",
+volume:"الحجم بالمتر المكعب",contact:"وسيلة التواصل",sendFreight:"إرسال طلب الشحن",
+loading:"جارٍ الاتصال بخدمة البحث…",found:"عدد النتائج:",noResults:"لم تصل نتائج من مزود البحث.",
+searchError:"تعذر تنفيذ البحث.",source:"المصدر",price:"السعر",moq:"الحد الأدنى للطلب",
+lead:"مدة التوريد",country:"الدولة",product:"المنتج",details:"التفاصيل",openSource:"فتح المصدر",
+createRFQ:"طلب عرض سعر",noSource:"لم يُرفق رابط للمصدر",unknown:"غير متوفر",
+check:"فحص الخدمة",healthOk:"استجابة الخدمة:",apiError:"استجابة غير ناجحة من الخادم.",
+noProvider:"لم يتم العثور على نتائج. قد تكون خدمة البحث أو مفتاحها غير مهيأ.",
+rfqSent:"تم إرسال الطلب إلى الخدمة.",costTotal:"التكلفة التقديرية الإجمالية",
+costPerUnit:"التكلفة التقديرية للوحدة",invalid:"يرجى إدخال قيم صحيحة.",
+transportSent:"تم إرسال طلب الشحن إلى الخدمة.",transportUnavailable:"خدمة الجداول غير متاحة أو لم تُرجع نتائج.",
+schedule:"جدول النقل",status:"الحالة",departure:"المغادرة",arrival:"الوصول",
+required:"يرجى إكمال الحقول المطلوبة.",networkError:"تعذر الاتصال. تحقق من اتصال الإنترنت والخادم."
+},
+en:{
+home:"Home",search:"Search",rfq:"Request a quote",costTab:"Landed cost",transport:"Transport",
+eyebrow:"GLOBAL TRADE & SOURCING",heroTitle:"Global trade intelligence",
+heroText:"Find suppliers, compare offers, create RFQs and manage freight needs in one place.",
+searchPlaceholder:"What product are you looking for?",countries:"Target countries and markets",
+languages:"Interface languages",rfqStat:"Requests for quotation",aiStat:"Smart tools",
+homeSearchTitle:"Find suppliers worldwide",homeSearchText:"Results returned by the connected search service appear here.",
+openSearch:"Advanced search",searchTitle:"Supplier search",searchDesc:"Enter product and destination details.",
+productLabel:"Product or material",quantityLabel:"Quantity",quantityPlaceholder:"e.g. 500 tons",
+destinationLabel:"Delivery destination",destinationPlaceholder:"Iraq",searchButton:"Search",
+searchEmpty:"Enter a product to see results.",rfqTitle:"Create RFQ",rfqDesc:"Send your requirements to the connected NOVA service.",
+detailsLabel:"Specifications and details",sendRFQ:"Submit RFQ",costTitle:"Landed cost calculator",
+costDesc:"An estimate based on your inputs, not a binding freight quote.",unitPrice:"Unit price USD",
+shippingCost:"Shipping USD",duty:"Customs duty %",tax:"Tax %",localCost:"Local delivery USD",
+calculate:"Calculate cost",transportTitle:"Transport and freight",
+transportDesc:"Search available schedules or request cargo space.",transportMode:"Transport mode",
+from:"From",to:"To",date:"Requested date",findSchedules:"Search schedules",
+freightTitle:"Request cargo space",weight:"Weight in kilograms",volume:"Volume in cubic meters",
+contact:"Contact details",sendFreight:"Submit freight request",loading:"Contacting search service…",
+found:"Results:",noResults:"The search provider returned no results.",searchError:"Search failed.",
+source:"Source",price:"Price",moq:"Minimum order",lead:"Lead time",country:"Country",
+product:"Product",details:"Details",openSource:"Open source",createRFQ:"Request a quote",
+noSource:"No source link supplied",unknown:"Not provided",check:"Check service",
+healthOk:"Service response:",apiError:"The server returned an unsuccessful response.",
+noProvider:"No results found. The search service or its key may not be configured.",
+rfqSent:"Request submitted to the service.",costTotal:"Estimated total cost",
+costPerUnit:"Estimated cost per unit",invalid:"Enter valid values.",
+transportSent:"Freight request submitted.",transportUnavailable:"Schedules unavailable or no results returned.",
+schedule:"Transport schedule",status:"Status",departure:"Departure",arrival:"Arrival",
+required:"Complete the required fields.",networkError:"Connection failed. Check the internet and server."
+},
+fr:{
+home:"Accueil",search:"Recherche",rfq:"Demande de devis",costTab:"Coût rendu",transport:"Transport",
+eyebrow:"COMMERCE MONDIAL",heroTitle:"Intelligence commerciale mondiale",
+heroText:"Trouvez des fournisseurs, comparez les offres et gérez le transport.",
+searchPlaceholder:"Quel produit recherchez-vous ?",countries:"Pays et marchés",languages:"Langues",
+rfqStat:"Demandes de devis",aiStat:"Outils intelligents",homeSearchTitle:"Fournisseurs mondiaux",
+homeSearchText:"Les résultats du service de recherche connecté apparaîtront ici.",openSearch:"Recherche avancée",
+searchTitle:"Recherche de fournisseurs",searchDesc:"Saisissez le produit et la destination.",
+productLabel:"Produit ou matière",quantityLabel:"Quantité",quantityPlaceholder:"Ex. : 500 tonnes",
+destinationLabel:"Destination",destinationPlaceholder:"Irak",searchButton:"Rechercher",
+searchEmpty:"Saisissez un produit.",rfqTitle:"Créer une demande de devis",rfqDesc:"Envoyez vos exigences au service NOVA.",
+detailsLabel:"Spécifications et détails",sendRFQ:"Envoyer la demande",costTitle:"Calcul du coût rendu",
+costDesc:"Estimation indicative basée sur vos données.",unitPrice:"Prix unitaire USD",
+shippingCost:"Transport USD",duty:"Droits de douane %",tax:"Taxe %",localCost:"Livraison locale USD",
+calculate:"Calculer",transportTitle:"Transport et fret",transportDesc:"Recherchez des horaires ou demandez de l'espace cargo.",
+transportMode:"Mode de transport",from:"De",to:"Vers",date:"Date souhaitée",findSchedules:"Rechercher les horaires",
+freightTitle:"Demande d'espace cargo",weight:"Poids en kg",volume:"Volume en m³",contact:"Contact",
+sendFreight:"Envoyer la demande",loading:"Recherche en cours…",found:"Résultats :",noResults:"Aucun résultat reçu.",
+searchError:"Échec de la recherche.",source:"Source",price:"Prix",moq:"Commande minimale",lead:"Délai",
+country:"Pays",product:"Produit",details:"Détails",openSource:"Ouvrir la source",createRFQ:"Demander un devis",
+noSource:"Aucun lien source fourni",unknown:"Non indiqué",check:"Vérifier le service",
+healthOk:"Réponse du service :",apiError:"Réponse serveur incorrecte.",
+noProvider:"Aucun résultat. Le service de recherche ou sa clé n'est peut-être pas configuré.",
+rfqSent:"Demande envoyée.",costTotal:"Coût total estimé",costPerUnit:"Coût estimé par unité",
+invalid:"Saisissez des valeurs valides.",transportSent:"Demande de fret envoyée.",
+transportUnavailable:"Horaires indisponibles.",schedule:"Horaire",status:"Statut",departure:"Départ",arrival:"Arrivée",
+required:"Complétez les champs requis.",networkError:"Connexion impossible."
+},
+es:{
+home:"Inicio",search:"Buscar",rfq:"Solicitar cotización",costTab:"Costo total",transport:"Transporte",
+eyebrow:"COMERCIO GLOBAL",heroTitle:"Inteligencia comercial global",
+heroText:"Encuentra proveedores, compara ofertas y gestiona envíos.",
+searchPlaceholder:"¿Qué producto buscas?",countries:"Países y mercados",languages:"Idiomas",
+rfqStat:"Solicitudes de cotización",aiStat:"Herramientas inteligentes",homeSearchTitle:"Proveedores globales",
+homeSearchText:"Aquí aparecerán los resultados del servicio conectado.",openSearch:"Búsqueda avanzada",
+searchTitle:"Buscar proveedores",searchDesc:"Introduce producto y destino.",productLabel:"Producto o material",
+quantityLabel:"Cantidad",quantityPlaceholder:"Ej. 500 toneladas",destinationLabel:"Destino",
+destinationPlaceholder:"Irak",searchButton:"Buscar",searchEmpty:"Introduce un producto.",
+rfqTitle:"Crear solicitud de cotización",rfqDesc:"Envía tus requisitos al servicio NOVA.",
+detailsLabel:"Detalles y especificaciones",sendRFQ:"Enviar solicitud",costTitle:"Calculadora de costo total",
+costDesc:"Estimación basada en los datos introducidos.",unitPrice:"Precio unitario USD",
+shippingCost:"Envío USD",duty:"Arancel %",tax:"Impuesto %",localCost:"Entrega local USD",
+calculate:"Calcular",transportTitle:"Transporte y carga",transportDesc:"Consulta horarios o solicita espacio de carga.",
+transportMode:"Medio de transporte",from:"Desde",to:"Hasta",date:"Fecha solicitada",
+findSchedules:"Buscar horarios",freightTitle:"Solicitar espacio de carga",weight:"Peso en kg",
+volume:"Volumen en m³",contact:"Contacto",sendFreight:"Enviar solicitud",loading:"Buscando…",
+found:"Resultados:",noResults:"No se recibieron resultados.",searchError:"La búsqueda falló.",
+source:"Fuente",price:"Precio",moq:"Pedido mínimo",lead:"Plazo",country:"País",product:"Producto",
+details:"Detalles",openSource:"Abrir fuente",createRFQ:"Solicitar cotización",noSource:"Sin enlace de fuente",
+unknown:"No disponible",check:"Comprobar servicio",healthOk:"Respuesta del servicio:",
+apiError:"Respuesta incorrecta del servidor.",noProvider:"Sin resultados; puede faltar la configuración del buscador.",
+rfqSent:"Solicitud enviada.",costTotal:"Costo total estimado",costPerUnit:"Costo estimado por unidad",
+invalid:"Introduce valores válidos.",transportSent:"Solicitud de carga enviada.",
+transportUnavailable:"Horarios no disponibles.",schedule:"Horario",status:"Estado",departure:"Salida",arrival:"Llegada",
+required:"Completa los campos obligatorios.",networkError:"No se pudo conectar."
 }
-function escapeHTML(value){
- return String(value).replace(/[&<>"']/g,c=>({
- "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[c]));
-}
-async function api(path,data){
- const response=await fetch(path,{
-  method:data?"POST":"GET",
-  headers:data?{"Content-Type":"application/json"}:{},
-  body:data?JSON.stringify(data):undefined,
-  credentials:"include"
- });
- const result=await response.json().catch(()=>({error:"استجابة غير صالحة"}));
- if(!response.ok)throw new Error(result.error||result.message||("HTTP "+response.status));
- return result;
-}
-function openModal(title,html,action){
- $("#modalTitle").textContent=title;
- $("#modalContent").innerHTML=html;
- modalAction=action||null;
- $("#modal").classList.add("open");
-}
-function closeModal(){$("#modal").classList.remove("open");modalAction=null}
-$("#closeModal").onclick=$("#cancelModal").onclick=closeModal;
-$("#confirmModal").onclick=async()=>{
- try{if(modalAction)await modalAction();closeModal()}
- catch(error){toast(error.message||"تعذر إكمال الطلب")}
 };
 
-$("#mobileMenu").onclick=()=>$("#sidebar").classList.toggle("open");
-$$(".nav a").forEach(link=>link.addEventListener("click",()=>{
- $$(".nav a").forEach(item=>item.classList.remove("active"));
- link.classList.add("active");
- $("#sidebar").classList.remove("open");
-}));
-
-$("#categories").addEventListener("click",event=>{
- const button=event.target.closest("[data-category]");
- if(!button)return;
- selectedCategory=button.dataset.category;
- $$(".chip").forEach(item=>item.classList.toggle("active",item===button));
- $("#heroQuery").placeholder="ابحث ضمن "+selectedCategory;
- $("#heroQuery").focus();
-});
-
-async function runSearch(query){
- query=query.trim();
- if(!query){toast("اكتب اسم المنتج أو المورد أولاً");return}
- $("#globalQuery").value=query;
- $("#heroQuery").value=query;
- openModal("البحث العالمي",
- `<p style="line-height:1.9;color:#bed1e3">طلب البحث: <b>${escapeHTML(query)}</b><br>الفئة: ${escapeHTML(selectedCategory)}<br><small>ستعرض النتائج التي يعيدها مصدر البيانات المتصل فقط.</small></p>`,
- async()=>{
-  try{
-   const data=await api("/api/search",{
-    request:query,
-    category:selectedCategory,
-    quantity:Number($("#quantity").value)||1,
-    destination:$("#rfqDest").value||"العراق"
-   });
-   renderSearch(data);
-   toast("اكتمل طلب البحث");
-  }catch(error){toast("لم يكتمل البحث: "+error.message)}
+/* Use complete Arabic/English/French/Spanish dictionaries and safe English fallback
+   for additional languages; the selector remains available for all 14 languages. */
+const LANG_NAMES={ar:"العربية",en:"English",fr:"Français",es:"Español",de:"Deutsch",it:"Italiano",tr:"Türkçe",zh:"中文",ja:"日本語",ko:"한국어",ru:"Русский",hi:"हिन्दी",pt:"Português",pl:"Polski"};
+function tr(key){
+ const dict=TEXT[currentLanguage]||TEXT.en;
+ return dict[key]||TEXT.en[key]||TEXT.ar[key]||key;
+}
+function setLanguage(lang){
+ currentLanguage=lang;
+ document.documentElement.lang=lang;
+ document.documentElement.dir=lang==="ar"?"rtl":"ltr";
+ document.querySelectorAll("[data-i]").forEach(el=>{
+   const key=el.dataset.i;
+   if(tr(key)) el.textContent=tr(key);
  });
+ document.querySelectorAll("[data-ph]").forEach(el=>el.placeholder=tr(el.dataset.ph));
+ try{localStorage.setItem("nova-language",lang)}catch(e){}
 }
-$("#globalSearch").onsubmit=event=>{event.preventDefault();runSearch($("#globalQuery").value)};
-$("#heroSearch").onsubmit=event=>{event.preventDefault();runSearch($("#heroQuery").value)};
-$("#startSearch").onclick=()=>{$("#heroQuery").focus();$("#search").scrollIntoView({behavior:"smooth"})};
+try{
+ const saved=localStorage.getItem("nova-language");
+ if(saved&&LANG_NAMES[saved]){$("language").value=saved;currentLanguage=saved}
+}catch(e){}
+setLanguage(currentLanguage);
 
-function renderSearch(data){
- const items=Array.isArray(data.results)?data.results:
-  Array.isArray(data.suppliers)?data.suppliers:[];
- if(!items.length){
-  $("#supplierResults").innerHTML="<p class='muted'>لم يُرجع مصدر البيانات نتائج مؤكدة. تحقق من إعدادات البحث أو جرّب مصدراً آخر.</p>";
-  $("#suppliers").scrollIntoView({behavior:"smooth"});return;
- }
- $("#supplierResults").innerHTML=items.slice(0,8).map(item=>`
-  <div class="supplier">
-   <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=160&q=80" alt="مستودع">
-   <div><h4>${escapeHTML(item.name||item.company||item.supplier||"مورد")}</h4>
-   <p>${escapeHTML(item.country||item.location||"الموقع غير محدد")}</p>
-   <p>${escapeHTML(item.source||"تحقق من المصدر")}</p></div>
-   <button data-contact="${escapeHTML(item.name||item.company||"مورد")}">تفاصيل</button>
-  </div>`).join("");
- $("#suppliers").scrollIntoView({behavior:"smooth"});
+function showPage(id){
+ document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));
+ window.scrollTo({top:0,behavior:"smooth"});
 }
-$("#supplierResults").addEventListener("click",event=>{
- const button=event.target.closest("[data-contact]");
- if(button)toast("تحقق من تفاصيل المورد ومصدره قبل الشراء: "+button.dataset.contact);
-});
-
-$("#aiForm").onsubmit=async event=>{
- event.preventDefault();
- const query=$("#aiInput").value.trim();
- if(!query)return;
- $("#aiMessage").textContent="جارٍ إرسال طلبك إلى مساعد NOVA...";
- try{
-  const data=await api("/api/ai",{message:query,request:query});
-  $("#aiMessage").textContent=data.reply||data.answer||data.message||"استلم الخادم الطلب دون نص جواب.";
- }catch(error){
-  $("#aiMessage").textContent="لم يتم الاتصال بمسار المساعد. تحقق من ربط /api/ai في Worker.";
-  toast(error.message);
+function showStatus(id,message,type=""){
+ const el=$(id);el.hidden=false;el.className="status "+type;el.textContent=message;
+}
+function esc(value){
+ return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function money(value){
+ if(value===null||value===undefined||value==="")return tr("unknown");
+ if(typeof value==="number")return new Intl.NumberFormat(currentLanguage,{maximumFractionDigits:2}).format(value);
+ return String(value);
+}
+async function api(path,options={}){
+ const headers={"Accept":"application/json",...(options.headers||{})};
+ if(options.body)headers["Content-Type"]="application/json";
+ const response=await fetch(API_BASE+path,{...options,headers,credentials:"same-origin"});
+ const raw=await response.text();
+ let data={};
+ try{data=raw?JSON.parse(raw):{}}catch{data={message:raw.slice(0,400)}}
+ if(!response.ok)throw new Error(data.error||data.message||("HTTP "+response.status));
+ if(data&&data.ok===false)throw new Error(data.error||data.message||tr("apiError"));
+ return data;
+}
+function quickSearch(q){
+ $("homeQuery").value=q;
+ $("query").value=q;
+ $("destination").value=$("homeDestination").value||"Iraq";
+ showPage("search");
+ runSearch("search");
+}
+function normalizeResults(data){
+ if(Array.isArray(data))return data;
+ if(Array.isArray(data?.results))return data.results;
+ if(Array.isArray(data?.suppliers))return data.suppliers;
+ if(Array.isArray(data?.items))return data.items;
+ if(Array.isArray(data?.data))return data.data;
+ return [];
+}
+function getField(item,keys){
+ for(const key of keys){
+  const v=item?.[key];
+  if(v!==undefined&&v!==null&&v!=="")return v;
  }
- $("#aiInput").value="";
-};
-$$("[data-ai]").forEach(button=>button.onclick=()=>{
- $("#aiInput").value=button.dataset.ai;
- $("#aiInput").focus();
-});
-
-$("#calcCost").onclick=async()=>{
- const price=Number($("#unitPrice").value)||0;
- const quantity=Number($("#quantity").value)||0;
- const shipping=Number($("#shipping").value)||0;
- const insurance=Number($("#insurance").value)||0;
- const duty=(Number($("#duty").value)||0)/100;
- const fees=Number($("#fees").value)||0;
- if(quantity<=0||price<0||shipping<0||insurance<0||fees<0||duty<0){
-  toast("تحقق من إدخال أرقام صحيحة");return;
- }
- const subtotal=price*quantity;
- let total=subtotal+shipping+insurance+fees+(subtotal*duty);
- $("#totalCost").textContent=total.toLocaleString("en-US",{style:"currency",currency:"USD"});
- $("#landedUnit").textContent=(total/quantity).toLocaleString("en-US",{style:"currency",currency:"USD"});
+ return "";
+}
+function resultCard(item,index){
+ const name=getField(item,["name","supplier","supplier_name","company","company_name","title","product_name"])||("Supplier "+(index+1));
+ const product=getField(item,["product","product_name","title","description"]);
+ const country=getField(item,["country","country_name","origin","location"]);
+ const price=getField(item,["price","unit_price","price_text","priceRange","price_range"]);
+ const moq=getField(item,["moq","minimum_order","minimumOrder","min_order_quantity"]);
+ const lead=getField(item,["lead_time","leadTime","delivery_time","delivery"]);
+ const url=getField(item,["url","source_url","website","link","product_url"]);
+ const desc=getField(item,["description","summary","snippet"]);
+ const safeUrl=validUrl(url);
+ return `<article class="result">
+  <div class="result-top"><div class="avatar">🏭</div><div style="min-width:0;flex:1">
+   <h3>${esc(name)}</h3><div class="muted">${esc(product||tr("product"))}${country?" · "+esc(country):""}</div>
+  </div><span class="badge">${esc(getField(item,["verified","is_verified"])?"Verified":"Search result")}</span></div>
+  ${desc?`<p>${esc(desc)}</p>`:""}
+  <div class="metrics">
+   <div class="metric"><small>${tr("price")}</small><b>${esc(money(price))}</b></div>
+   <div class="metric"><small>${tr("moq")}</small><b>${esc(money(moq))}</b></div>
+   <div class="metric"><small>${tr("lead")}</small><b>${esc(money(lead))}</b></div>
+   <div class="metric"><small>${tr("country")}</small><b>${esc(country||tr("unknown"))}</b></div>
+  </div>
+  <div class="actions">
+   ${safeUrl?`<button class="secondary" onclick="openSource('${safeUrl}')">${tr("openSource")}</button>`:`<span class="muted">${tr("noSource")}</span>`}
+   <button class="primary" onclick="prefillRFQ('${encodeURIComponent(String(product||name))}')">${tr("createRFQ")}</button>
+  </div>
+ </article>`;
+}
+function validUrl(value){
  try{
-  const data=await api("/api/landed-cost",{
-   unit_price:price,quantity,shipping,insurance,customs_rate:duty*100,fees
+  const u=new URL(String(value||""));
+  return ["https:","http:"].includes(u.protocol)?u.href:"";
+ }catch{return "";}
+}
+function openSource(url){
+ const safe=validUrl(url);
+ if(safe)window.open(safe,"_blank","noopener,noreferrer");
+}
+function prefillRFQ(value){
+ let product="";
+ try{product=decodeURIComponent(value)}catch{product=value}
+ $("rfqProduct").value=product;
+ $("rfqQuantity").value=$("quantity").value||"";
+ $("rfqDestination").value=$("destination").value||"Iraq";
+ showPage("rfq");
+}
+async function runSearch(source){
+ const query=(source==="home"?$("homeQuery").value:$("query").value).trim();
+ const quantity=$("quantity").value.trim();
+ const destination=source==="home"?$("homeDestination").value:$("destination").value.trim();
+ if(!query){showPage("search");showStatus("searchStatus",tr("required"),"error");$("query").focus();return}
+ $("query").value=query;
+ showPage("search");
+ const btn=$("searchBtn");btn.disabled=true;btn.textContent=tr("loading");
+ $("results").innerHTML=`<div class="empty">${tr("loading")}</div>`;
+ showStatus("searchStatus",tr("loading"));
+ try{
+  const data=await api("/api/search",{
+   method:"POST",
+   body:JSON.stringify({request:query,quantity,destination})
   });
-  if(data.total!==undefined)$("#totalCost").textContent=Number(data.total).toLocaleString("en-US",{style:"currency",currency:"USD"});
-  if(data.unit_cost!==undefined)$("#landedUnit").textContent=Number(data.unit_cost).toLocaleString("en-US",{style:"currency",currency:"USD"});
+  const items=normalizeResults(data);
+  if(items.length){
+   showStatus("searchStatus",tr("found")+" "+items.length,"good");
+   $("results").innerHTML=items.map(resultCard).join("");
+  }else{
+   const detail=data.error||data.message||data.warning||tr("noProvider");
+   showStatus("searchStatus",detail,"error");
+   $("results").innerHTML=`<div class="empty"><h3>${tr("noResults")}</h3><p>${esc(detail)}</p><button class="secondary" onclick="checkSearchHealth()">${tr("check")}</button></div>`;
+  }
  }catch(error){
-  /* تبقى النتيجة المحلية التقديرية ظاهرة */
+  showStatus("searchStatus",tr("searchError")+" "+error.message,"error");
+  $("results").innerHTML=`<div class="empty"><h3>${tr("searchError")}</h3><p>${esc(error.message)}</p><button class="secondary" onclick="checkSearchHealth()">${tr("check")}</button></div>`;
+ }finally{
+  btn.disabled=false;btn.textContent=tr("searchButton");
  }
-};
-
-$("#trackTabs").onclick=event=>{
- const button=event.target.closest("[data-type]");
- if(!button)return;
- selectedTrack=button.dataset.type;
- $$("#trackTabs button").forEach(item=>item.classList.toggle("active",item===button));
- toast("اخترت "+button.textContent.trim()+". يلزم مزود تتبع حقيقي لعرض المواقع الحية.");
-};
-$$("[data-layer]").forEach(button=>button.onclick=()=>{
- $$("[data-layer]").forEach(item=>item.classList.toggle("active",item===button));
- toast("الطبقة المحددة: "+button.textContent.trim()+". هذه المسارات رسومية وليست مواقع حية.");
-});
-$("#satelliteBtn").onclick=()=>toast("لخريطة فضائية فعلية مع الطرق والسكك والمطارات، اربط مزود خرائط جغرافية. الصورة الحالية توضيحية.");
-
-$("#trackForm").onsubmit=async event=>{
- event.preventDefault();
- const number=$("#trackingNumber").value.trim();
- if(!number){toast("أدخل رقم الشحنة");return}
- const status=$("#trackStatus");
- status.style.display="block";
- status.textContent="جارٍ التحقق من مصدر التتبع...";
- try{
-  const data=await api("/api/tracking",{tracking_number:number,type:selectedTrack});
-  status.textContent=data.status_text||data.status||JSON.stringify(data);
- }catch(error){
-  status.textContent="لم تصل استجابة مؤكدة من /api/tracking. لم يتم اختلاق موقع الشحنة. رقم التتبع: "+number;
-  toast(error.message);
- }
-};
-
-function showRFQ(product){
- $("#rfqProduct").value=product||$("#heroQuery").value||"";
- $("#rfq").scrollIntoView({behavior:"smooth"});
 }
-$$("[data-rfq]").forEach(button=>button.onclick=()=>showRFQ(button.dataset.rfq));
-
-$("#createRfq").onclick=async()=>{
- const product=$("#rfqProduct").value.trim();
- const quantity=Number($("#rfqQty").value);
- const destination=$("#rfqDest").value.trim();
- const requirements=$("#rfqReq").value.trim();
- if(!product||quantity<=0||!destination){toast("أدخل المنتج والكمية ووجهة التسليم");return}
+async function checkSearchHealth(){
  try{
-  const data=await api("/api/rfq",{product,quantity,destination,requirements});
-  openModal("طلب عرض السعر",
-   `<div class="field"><label>نص الطلب</label><textarea id="rfqOutput" rows="9">${escapeHTML(data.message||data.rfq||"لم يُرجع الخادم نص الطلب.")}</textarea></div>`,
-   async()=>{
-    await navigator.clipboard.writeText($("#rfqOutput").value);
-    toast("تم نسخ طلب عرض السعر");
-   });
- }catch(error){toast("تعذر إنشاء الطلب: "+error.message)}
-};
-
-$("#loginBtn").onclick=()=>openModal("تسجيل الدخول",`
- <div class="field"><label>البريد الإلكتروني</label><input id="authEmail" type="email" placeholder="name@example.com"></div>
- <div class="field"><label>كلمة المرور</label><input id="authPassword" type="password"></div>`,
- async()=>{
-  const data=await api("/api/login",{email:$("#authEmail").value,password:$("#authPassword").value});
-  toast(data.message||"تم إرسال الطلب");
- });
-$("#signupBtn").onclick=()=>openModal("إنشاء حساب NOVA",`
- <div class="field"><label>الاسم</label><input id="authName" placeholder="الاسم الكامل"></div>
- <div class="field"><label>البريد الإلكتروني</label><input id="authEmail" type="email" placeholder="name@example.com"></div>
- <div class="field"><label>كلمة المرور</label><input id="authPassword" type="password" placeholder="أنشئ كلمة مرور قوية"></div>`,
- async()=>{
-  const data=await api("/api/signup",{
-   name:$("#authName").value,email:$("#authEmail").value,password:$("#authPassword").value
-  });
-  toast(data.message||"تم إرسال الطلب");
- });
-
-$("#langBtn").onclick=()=>toast("العربية هي اللغة الحالية. يلزم إضافة قاموس كامل لتفعيل جميع اللغات.");
-$("#themeBtn").onclick=()=>{
- const light=document.body.classList.toggle("light");
- document.body.style.setProperty("--bg",light?"#eaf4fc":"#030914");
- document.body.style.setProperty("--text",light?"#092039":"#eff8ff");
- toast(light?"تم تغيير الخلفية":"تمت استعادة الخلفية الداكنة");
-};
-$("#notifyBtn").onclick=()=>toast("لا توجد إشعارات جديدة من الخادم.");
-$("#howBtn").onclick=()=>openModal("كيف تعمل NOVA؟",`
- <p style="line-height:2;color:#bed1e3">
-  ١. ابحث عن منتج أو مورد.<br>
-  ٢. قارن بيانات المصدر والمواصفات.<br>
-  ٣. أنشئ طلب عرض سعر (RFQ).<br>
-  ٤. احسب التكلفة النهائية.<br>
-  ٥. تابع الشحنة عند توفر مزود تتبع متصل.
- </p>`);
-$("#allMarkets").onclick=()=>toast("اختر السوق في البحث، ثم ابحث عن الموردين.");
-$("#proBtn").onclick=()=>toast("تفعيل الاشتراكات يتطلب ربط نظام الدفع والخطط في الخادم.");
+  const data=await api("/api/health");
+  showStatus("searchStatus",tr("healthOk")+" "+JSON.stringify(data),"good");
+ }catch(e){showStatus("searchStatus",tr("apiError")+" "+e.message,"error")}
+}
+async function sendRFQ(){
+ const body={
+  product:$("rfqProduct").value.trim(),
+  request:$("rfqProduct").value.trim(),
+  quantity:$("rfqQuantity").value.trim(),
+  destination:$("rfqDestination").value.trim(),
+  incoterm:$("rfqIncoterm").value,
+  requirements:$("rfqDetails").value.trim(),
+  details:$("rfqDetails").value.trim()
+ };
+ if(!body.product||!body.quantity||!body.destination){showStatus("rfqStatus",tr("required"),"error");return}
+ try{
+  const data=await api("/api/rfq",{method:"POST",body:JSON.stringify(body)});
+  showStatus("rfqStatus",data.message||tr("rfqSent"),"good");
+ }catch(e){showStatus("rfqStatus",e.message,"error")}
+}
+function calculateCost(){
+ const p=Number($("unitPrice").value),q=Number($("costQuantity").value),
+ ship=Number($("shippingCost").value),d=Number($("duty").value),
+ tax=Number($("tax").value),local=Number($("localCost").value);
+ if([p,q,ship,d,tax,local].some(x=>!Number.isFinite(x)||x<0)||q<=0){
+  showStatus("costResult",tr("invalid"),"error");return;
+ }
+ const goods=p*q,customs=goods*d/100,vat=(goods+customs)*tax/100;
+ const total=goods+ship+customs+vat+local;
+ showStatus("costResult",`${tr("costTotal")}: $${total.toLocaleString(undefined,{maximumFractionDigits:2})} · ${tr("costPerUnit")}: $${(total/q).toLocaleString(undefined,{maximumFractionDigits:2})}`,"good");
+}
+async function findTransport(){
+ const body={mode:$("transportMode").value,from:$("transportFrom").value.trim(),to:$("transportTo").value.trim(),date:$("transportDate").value};
+ if(!body.from||!body.to){showStatus("transportStatus",tr("required"),"error");return}
+ showStatus("transportStatus",tr("loading"));
+ $("transportResults").innerHTML="";
+ try{
+  const data=await api("/api/transport-schedules",{method:"POST",body:JSON.stringify(body)});
+  const rows=normalizeResults(data);
+  if(!rows.length){showStatus("transportStatus",tr("transportUnavailable"),"error");return}
+  showStatus("transportStatus",tr("found")+" "+rows.length,"good");
+  $("transportResults").innerHTML=`<div style="overflow-x:auto"><table><thead><tr><th>${tr("from")}</th><th>${tr("to")}</th><th>${tr("departure")}</th><th>${tr("arrival")}</th><th>${tr("status")}</th></tr></thead><tbody>${rows.map(r=>`<tr><td>${esc(getField(r,["from","origin"])||"—")}</td><td>${esc(getField(r,["to","destination"])||"—")}</td><td>${esc(getField(r,["departure","departure_time"])||"—")}</td><td>${esc(getField(r,["arrival","arrival_time"])||"—")}</td><td>${esc(r.status||"—")}</td></tr>`).join("")}</tbody></table></div>`;
+ }catch(e){showStatus("transportStatus",tr("transportUnavailable")+" "+e.message,"error")}
+}
+async function requestFreight(){
+ const body={
+  mode:$("transportMode").value,
+  from:$("transportFrom").value.trim(),
+  to:$("transportTo").value.trim(),
+  readyDate:$("transportDate").value,
+  weightKg:$("freightWeight").value,
+  volumeM3:$("freightVolume").value,
+  contact:$("freightContact").value.trim(),
+  description:$("freightDesc").value.trim()
+ };
+ if(!body.from||!body.to||!body.weightKg||!body.contact){showStatus("freightStatus",tr("required"),"error");return}
+ try{
+  const data=await api("/api/freight-booking",{method:"POST",body:JSON.stringify(body)});
+  showStatus("freightStatus",data.message||tr("transportSent"),"good");
+ }catch(e){showStatus("freightStatus",e.message,"error")}
+}
 </script>
 </body>
 </html>
