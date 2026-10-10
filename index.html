@@ -1,620 +1,111 @@
-
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#071b35">
-<meta name="description" content="NOVA Global Procurement and Trade Intelligence">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#071a34"><meta name="description" content="NOVA Global Procurement and Trade Intelligence">
 <title>NOVA — المشتريات العالمية الذكية</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="anonymous">
 <style>
-:root{--navy:#071a34;--navy2:#0d2b4d;--blue:#1265f5;--cyan:#36d7e8;--green:#07976e;--bg:#f1f5fa;--line:#e0e7ef;--text:#172b43;--muted:#718096;--shadow:0 5px 18px #0a254414}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font-family:"Segoe UI",Arial,sans-serif;font-size:13px}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #6ec9ff;outline-offset:2px}
-a{color:inherit}
-.wrap{width:min(1700px,calc(100% - 24px));margin:auto}
-header{background:#07182ff7;color:white;position:sticky;top:0;z-index:100;border-bottom:1px solid #ffffff1c;backdrop-filter:blur(12px)}
-.head{display:flex;align-items:center;gap:16px;min-height:57px}
-.brand{font-size:24px;font-weight:950;letter-spacing:1px;min-width:145px}
-.brand small{display:block;font-size:8px;letter-spacing:.4px;color:#a9c2dd;font-weight:500}
-.brand b{color:#47dbe7}
-.nav{display:flex;align-items:center;gap:2px;flex:1;justify-content:center}
-.nav button{border:0;background:transparent;color:#dce8f7;padding:10px 9px;border-radius:7px;white-space:nowrap;font-size:11px;font-weight:750}
-.nav button:hover,.nav button.active{background:#1769ff;color:#fff}
-.headtools{display:flex;align-items:center;gap:7px}
-select,input,textarea{color:#172b43}
-.lang{max-width:95px;background:#102a49;color:#fff;border:1px solid #35516e;padding:8px;border-radius:8px}
-.btn{border:0;border-radius:8px;padding:10px 13px;font-weight:800}
-.primary{background:linear-gradient(135deg,#1769ff,#0754d9);color:white;box-shadow:0 4px 12px #1769ff24}
-.secondary{background:#eaf2ff;color:#1455bc;border:1px solid #d5e4ff}
-.ghost{background:white;color:#29415b;border:1px solid #dbe4ed}
-.mobile{display:none;background:#102a49;color:white;border:1px solid #35516e;border-radius:8px;padding:8px}
-main{padding:10px 0 45px}
-.page{display:none}.page.active{display:block}
-.hero{position:relative;isolation:isolate;overflow:hidden;min-height:315px;border-radius:18px;color:white;padding:20px 24px;background:linear-gradient(90deg,#06152deF 0%,#062343d9 43%,#092b4d9c 100%),url("https://images.unsplash.com/photo-1494412519320-aa613dfb7738?auto=format&fit=crop&w=2200&q=85") center 52%/cover,#06182f;box-shadow:0 12px 35px #071b3530}
-.hero:after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 54% 45%,#1caeff26,transparent 35%);pointer-events:none}
-.hero-grid{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(280px,.72fr);gap:20px;align-items:center;min-height:275px;position:relative}
-.hero-copy{position:relative;z-index:2}
-.eyebrow{display:inline-flex;gap:7px;align-items:center;border:1px solid #b4e8ff44;background:#04162caa;padding:6px 10px;border-radius:30px;font-size:11px;color:#dff9ff}
-.dot{width:7px;height:7px;background:#38e6a3;border-radius:50%;box-shadow:0 0 0 4px #38e6a320}
-h1{font-size:clamp(30px,3.3vw,49px);line-height:1.16;margin:12px 0;text-shadow:0 3px 18px #0004}
-h1 span{color:#34d6da}
-.hero-copy>p{font-size:13px;line-height:1.8;color:#d7e6f5;max-width:650px}
-.globe{position:absolute;width:min(37%,420px);aspect-ratio:1;top:50%;left:38%;transform:translateY(-50%);opacity:.78;pointer-events:none;z-index:0;filter:drop-shadow(0 0 20px #38d5ff38)}
-.globe svg{width:100%;height:100%}
-.orbit{transform-origin:250px 250px;animation:orbit 38s linear infinite}
-@keyframes orbit{to{transform:rotate(360deg)}}
-.searchbox{display:flex;align-items:center;gap:5px;background:white;border-radius:10px;padding:5px;margin-top:17px;box-shadow:0 6px 24px #0003;position:relative;z-index:3}
-.searchbox input{flex:1;min-width:70px;border:0;outline:0;padding:11px;background:transparent}
-.searchbox select{max-width:155px;min-width:110px;border:0;border-inline-start:1px solid #e0e7ef;background:white;padding:10px}
-.searchbox button{font-size:19px;padding:8px 14px}
-.quick{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px;position:relative;z-index:2}
-.quick button{background:#fffffff2;color:#233c55;border:1px solid #dfe8f0;border-radius:8px;padding:7px 10px;font-size:10px;font-weight:800}
-.ai-panel{position:relative;z-index:3;padding:16px;border:1px solid #a4dfff48;background:#071b35d9;border-radius:15px;backdrop-filter:blur(10px);box-shadow:0 12px 28px #0003}
-.ai-title{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:16px;font-weight:900}
-.online{font-size:10px;color:#5df0b5}
-.ai-panel p{font-size:11px;color:#c7d9eb;line-height:1.8}
-.ai-example{background:#fff;color:#43566b;border-radius:8px;padding:11px;line-height:1.8;font-size:11px;margin:10px 0}
-.ai-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.ai-actions button{border:1px solid #b8ddf32b;background:#123250;color:white;text-align:start;border-radius:8px;padding:9px 7px;font-size:10px;font-weight:800}
-.stats{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px;margin:10px 0}
-.stat{display:flex;gap:8px;align-items:center;min-width:0;padding:10px;background:white;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}
-.stat-icon{width:31px;height:31px;flex-shrink:0;display:grid;place-items:center;background:#eaf4ff;color:#1769ff;border-radius:9px;font-size:17px}
-.stat small{display:block;color:var(--muted);font-size:9px}
-.stat strong{display:block;font-size:18px;margin:2px 0}
-.stat em{display:block;font-style:normal;color:var(--muted);font-size:9px}
-.section{margin-top:15px}
-.section-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:9px}
-.section-head h2{font-size:16px;margin:0}
-.section-head p{font-size:10px;color:var(--muted);margin:4px 0 0}
-.categories{display:grid;grid-template-columns:repeat(10,minmax(0,1fr));gap:7px}
-.cat{padding:0;overflow:hidden;border:1px solid var(--line);background:white;border-radius:9px;text-align:start;box-shadow:var(--shadow);font-size:10px;font-weight:800}
-.cat-art{height:61px;display:grid;place-items:center;background:linear-gradient(145deg,#dcecff,#f2f8ff);font-size:27px}
-.cat-label{display:block;padding:8px 7px}
-.dashboard{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(210px,.83fr) minmax(210px,.83fr) minmax(190px,.7fr);gap:7px;align-items:stretch;margin-top:13px}
-.panel{background:white;border:1px solid var(--line);border-radius:11px;min-width:0;overflow:hidden;box-shadow:var(--shadow)}
-.panel-head{display:flex;align-items:center;justify-content:space-between;gap:5px;padding:10px;border-bottom:1px solid #edf1f6}
-.panel-head h3{font-size:12px;margin:0}
-.panel-body{padding:9px}
-.supplier-row{display:grid;grid-template-columns:57px minmax(0,1fr);gap:9px;padding:9px 0;border-bottom:1px solid #edf1f6}
-.supplier-row:last-child{border-bottom:0}
-.supplier-art{display:grid;place-items:center;min-height:61px;background:linear-gradient(145deg,#e1efff,#f5f9ff);border-radius:7px;font-size:27px}
-.supplier-name{font-weight:850;font-size:11px;overflow-wrap:anywhere}
-.supplier-meta{color:var(--muted);font-size:9px;margin-top:4px;line-height:1.6}
-.supplier-price{font-size:13px;font-weight:950;margin-top:6px}
-.supplier-actions{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
-.supplier-actions button{font-size:9px;padding:6px}
-.pill{display:inline-block;padding:4px 6px;border-radius:20px;background:#e6f7ee;color:#08774f;font-size:9px;font-weight:800}
-.field{display:flex;flex-direction:column;gap:4px;min-width:0;margin-bottom:8px}
-.field label{font-size:10px;font-weight:800;color:#53667b}
-.field input,.field select,.field textarea{width:100%;min-width:0;border:1px solid #dce5ef;border-radius:7px;padding:8px;background:#fff;font-size:11px}
-.field textarea{min-height:62px;resize:vertical}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.full{grid-column:1/-1}
-.metrics{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:9px 0}
-.metric{padding:7px;border-radius:7px;background:#f4f7fb;min-width:0}
-.metric small{display:block;color:var(--muted);font-size:9px}
-.metric b{display:block;font-size:11px;margin-top:4px;overflow-wrap:anywhere}
-.total-box{padding:11px;border-radius:8px;background:#e7f8ef;color:#08774e;margin:9px 0}
-.total-box small{display:block;font-size:10px}.total-box strong{display:block;font-size:20px;margin:4px 0}
-.result-list{max-height:570px;overflow:auto}
-.status{font-size:11px;line-height:1.7;margin:7px 0;color:var(--muted);overflow-wrap:anywhere}
-.status.error{color:#b4232a}.status.success{color:#08774e}
-.empty{padding:17px;text-align:center;color:var(--muted);font-size:11px}
-.source-link{color:#145bc8;font-size:10px;font-weight:800;display:inline-block;margin-top:5px}
-.subdash{display:grid;grid-template-columns:1.15fr 1.15fr 1fr;gap:8px;margin-top:10px}
-.market-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
-.market-card{overflow:hidden;border:1px solid var(--line);border-radius:9px;background:white}
-.market-art{display:grid;place-items:center;min-height:55px;background:linear-gradient(140deg,#deecff,#f5f9ff);font-size:25px}
-.market-card div:last-child{padding:7px;font-size:10px;font-weight:800}
-.map-placeholder{position:relative;min-height:190px;border-radius:8px;overflow:hidden;background:radial-gradient(ellipse at 50% 50%,#d8f0f0,#c7e3e7 55%,#d6e6e8);border:1px solid #c6dce4}
-.map-grid{position:absolute;inset:0;background-image:linear-gradient(#fff8 1px,transparent 1px),linear-gradient(90deg,#fff8 1px,transparent 1px);background-size:25px 25px}
-.map-label{position:absolute;top:10px;left:10px;background:#ffffffdb;border-radius:6px;padding:6px;font-size:10px}
-.map-note{position:absolute;bottom:9px;right:9px;left:9px;background:#fffffff0;border-radius:7px;padding:9px;font-size:10px;line-height:1.6}
-.table-scroll{overflow:auto}
-table{width:100%;border-collapse:collapse;font-size:10px;white-space:nowrap}
-th,td{text-align:start;padding:8px 6px;border-bottom:1px solid #edf1f6}
-th{color:#52657b;background:#f7f9fc}
-.badge{display:inline-block;padding:4px 6px;border-radius:6px;background:#e8f8ef;color:#08764e}
-.tools-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
-.tool{display:flex;align-items:center;gap:9px;text-align:start;background:white;border:1px solid var(--line);border-radius:9px;padding:12px;font-size:11px;font-weight:800}
-.tool i{font-style:normal;font-size:20px}
-.page-card{background:white;border:1px solid var(--line);border-radius:12px;padding:16px;box-shadow:var(--shadow)}
-.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
-.health-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-.health-item{background:#f5f8fc;border-radius:8px;padding:10px;font-size:11px}
-.connected{color:#08764e}.disconnected{color:#b4232a}
-.loading{display:inline-block;width:14px;height:14px;border:2px solid #dce8f5;border-top-color:#1769ff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle}
-@keyframes spin{to{transform:rotate(360deg)}}
-.toast{display:none;position:fixed;z-index:300;bottom:16px;right:16px;max-width:calc(100% - 32px);padding:12px 16px;border-radius:9px;background:#102b49;color:white;box-shadow:0 10px 30px #0003}
-.toast.show{display:block}.toast.error{background:#b4232a}.toast.success{background:#08764e}
-footer{margin-top:25px;padding:17px 0;border-top:1px solid var(--line);color:var(--muted);font-size:10px}
-@media(max-width:1350px){.nav{display:none}.nav.open{display:flex;position:absolute;top:57px;right:10px;left:10px;flex-direction:column;align-items:stretch;background:#07182f;padding:10px;border-radius:10px;box-shadow:0 12px 30px #0004}.mobile{display:block}.dashboard{grid-template-columns:repeat(3,minmax(0,1fr))}.dashboard .suppliers-panel{grid-column:span 2}.categories{grid-template-columns:repeat(5,minmax(0,1fr))}.stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:850px){.hero{padding:16px}.hero-grid{grid-template-columns:1fr}.globe{width:75%;left:10%;opacity:.25}.ai-panel{max-width:none}.dashboard{grid-template-columns:1fr 1fr}.dashboard .suppliers-panel{grid-column:1/-1}.subdash{grid-template-columns:1fr 1fr}.subdash .wide{grid-column:1/-1}.market-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.tools-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:540px){.wrap{width:calc(100% - 14px)}.head{gap:6px;min-height:53px}.brand{font-size:20px;min-width:auto}.brand small{font-size:7px}.headtools .primary{display:none}.lang{max-width:85px}.hero{padding:14px}.hero-grid{gap:12px}.hero h1{font-size:31px}.hero-copy>p{font-size:11px}.searchbox{flex-wrap:wrap}.searchbox input{flex-basis:55%}.searchbox select{max-width:none;flex:1}.stats{grid-template-columns:1fr 1fr}.stat{padding:7px}.stat strong{font-size:15px}.categories{grid-template-columns:repeat(3,minmax(0,1fr))}.dashboard{grid-template-columns:1fr}.dashboard .suppliers-panel{grid-column:auto}.subdash{grid-template-columns:1fr}.subdash .wide{grid-column:auto}.market-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.tools-grid{grid-template-columns:1fr 1fr}.health-grid{grid-template-columns:1fr 1fr}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.ai-actions{grid-template-columns:1fr 1fr}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;scroll-behavior:auto!important}}
+:root{--navy:#071a34;--navy2:#0e2c4d;--blue:#1769ff;--cyan:#36d8e8;--green:#078b65;--bg:#f1f5fa;--line:#dfe7f0;--text:#172b43;--muted:#748397;--shadow:0 5px 18px #0a254414}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Segoe UI",Arial,sans-serif;font-size:13px}button,input,select,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #77caff;outline-offset:2px}a{color:inherit}.wrap{width:min(1600px,calc(100% - 24px));margin:auto}
+header{position:sticky;top:0;z-index:100;background:#06172df5;color:#fff;border-bottom:1px solid #ffffff20;backdrop-filter:blur(14px)}.head{display:flex;align-items:center;gap:13px;min-height:62px;flex-wrap:wrap}.brand{min-width:150px;font-size:25px;line-height:1;font-weight:950}.brand b{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,#1769ff,#35dae7);margin-inline-end:5px}.brand small{display:block;font-size:8px;font-weight:500;color:#a8c2dc;letter-spacing:.5px;margin-top:5px}.nav{display:flex;align-items:center;justify-content:center;gap:3px;flex:1;flex-wrap:wrap}.nav button{border:0;border-radius:8px;background:transparent;color:#d5e4f6;padding:9px 8px;font-size:11px;font-weight:750;white-space:nowrap}.nav button:hover,.nav button.active{background:#1769ff;color:white}.headtools{display:flex;align-items:center;gap:6px}.lang{background:#102945;color:#fff;border:1px solid #34526f;border-radius:8px;padding:8px;max-width:145px}.btn{border:0;border-radius:8px;padding:9px 12px;font-weight:800;transition:filter .15s,transform .15s}.btn:hover{filter:brightness(1.06);transform:translateY(-1px)}.primary{background:linear-gradient(135deg,#1769ff,#0956dd);color:white;box-shadow:0 4px 12px #1769ff26}.secondary{background:#e9f1ff;color:#1458bf;border:1px solid #d5e3fa}.ghost{background:#fff;color:#2d435d;border:1px solid #dce5ef}
+main{padding:12px 0 40px}.page{display:none}.page.active{display:block}.hero{position:relative;isolation:isolate;overflow:hidden;min-height:350px;padding:20px 24px;border-radius:17px;color:white;background:linear-gradient(90deg,#031126eb 0%,#061c38c9 52%,#071e39d9 100%),radial-gradient(circle at 70% 45%,#0b4676 0%,#06182f 68%);box-shadow:0 12px 34px #061a3430}.hero:after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 55% 42%,#159efb25,transparent 40%);pointer-events:none}.hero-grid{position:relative;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(270px,.72fr);align-items:center;gap:22px;min-height:305px}.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border:1px solid #a4e5ff55;background:#04172ac4;border-radius:30px;color:#d9f7ff;font-size:10px;font-weight:800}.dot{width:7px;height:7px;border-radius:50%;background:#42e7a2;box-shadow:0 0 0 4px #42e7a225}h1{font-size:clamp(30px,3.3vw,51px);line-height:1.15;letter-spacing:-.6px;margin:14px 0;text-shadow:0 4px 22px #0006}h1 span{display:block;color:#40dce3}.hero-copy>p{font-size:13px;line-height:1.85;color:#d5e6f7;max-width:650px}.searchbox{display:flex;align-items:center;gap:4px;margin-top:17px;padding:5px;background:white;border:1px solid #dceaf8;border-radius:11px;box-shadow:0 8px 26px #0003}.searchbox input{flex:1;min-width:85px;border:0;outline:0;padding:11px;background:transparent;color:#1e334d}.searchbox select{max-width:180px;min-width:100px;border:0;border-inline-start:1px solid #e2e8f0;background:#fff;color:#354a60;padding:10px}.quick{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.quick button{border:1px solid #e1e8f2;background:#ffffffef;color:#203850;border-radius:8px;padding:7px 10px;font-size:10px;font-weight:850}.globe{position:absolute;z-index:-1;width:min(44%,465px);left:32%;top:50%;transform:translateY(-50%);opacity:.56;pointer-events:none;filter:drop-shadow(0 0 25px #37d8ff36)}.globe svg{width:100%;height:100%}.globe-orbit{transform-origin:250px 250px;animation:orbit 48s linear infinite}@keyframes orbit{to{transform:rotate(360deg)}}.ai-panel{position:relative;z-index:2;padding:15px;border:1px solid #a8e0ff49;background:#071b35df;border-radius:14px;box-shadow:0 12px 32px #0004;backdrop-filter:blur(9px)}.ai-title{display:flex;align-items:center;justify-content:space-between;gap:7px;font-size:16px;font-weight:900}.online{font-size:10px;color:#5cefb1}.ai-panel p{font-size:11px;color:#c8d9e9;line-height:1.75}.ai-example{padding:10px;border-radius:8px;background:white;color:#47596c;line-height:1.8;font-size:11px;margin:10px 0}.ai-actions{display:grid;grid-template-columns:1fr 1fr;gap:6px}.ai-actions button{background:#112f4f;color:white;border:1px solid #c2e5ff30;text-align:start;border-radius:8px;padding:9px 7px;font-size:10px;font-weight:800}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:10px 0}.stat{display:flex;align-items:center;gap:9px;padding:11px;background:white;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}.stat-icon{display:grid;place-items:center;width:37px;height:37px;border-radius:9px;background:#eaf3ff;color:#1769ff;font-size:20px}.stat small{display:block;color:var(--muted);font-size:10px}.stat strong{display:block;font-size:17px;margin:3px 0}.section{margin-top:14px}.section-head{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px}.section-head h2{font-size:17px;margin:0}.section-head p{font-size:11px;color:var(--muted);margin:4px 0 0}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.panel,.page-card{background:white;border:1px solid var(--line);border-radius:10px;min-width:0;overflow:hidden;box-shadow:var(--shadow)}.panel-head{display:flex;align-items:center;justify-content:space-between;gap:6px;padding:11px;border-bottom:1px solid #edf1f6}.panel-head h3{font-size:12px;margin:0}.panel-body{padding:11px}.field{display:flex;flex-direction:column;gap:4px;min-width:0;margin-bottom:9px}.field label{font-size:11px;font-weight:800;color:#53667b}.field input,.field select,.field textarea{width:100%;min-width:0;border:1px solid #dce5ef;border-radius:7px;padding:9px;background:white;color:var(--text);font-size:12px}.field textarea{min-height:70px;resize:vertical}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}.full{grid-column:1/-1}.actions{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.result-list{max-height:500px;overflow:auto}.result{padding:12px;border:1px solid var(--line);border-radius:9px;margin-top:8px;background:white}.result h3{font-size:13px;margin:0 0 6px;overflow-wrap:anywhere}.result p{font-size:11px;color:var(--muted);line-height:1.6}.supplier-row{display:grid;grid-template-columns:44px minmax(0,1fr);gap:9px;padding:9px 0;border-bottom:1px solid #edf1f6}.supplier-art{display:grid;place-items:center;min-height:48px;background:linear-gradient(145deg,#e0efff,#f6f9ff);border-radius:7px;font-size:23px}.supplier-name{font-size:12px;font-weight:900;overflow-wrap:anywhere}.supplier-meta,.status{font-size:11px;color:var(--muted);line-height:1.7;margin:5px 0;overflow-wrap:anywhere}.status.error{color:#b4232a}.status.success{color:#08774e}.pill{display:inline-block;padding:4px 7px;border-radius:20px;background:#e6f7ee;color:#08774f;font-size:10px;font-weight:800}.metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:9px 0}.metric{padding:8px;border-radius:7px;background:#f4f7fb;min-width:0}.metric small{display:block;font-size:10px;color:var(--muted)}.metric b{display:block;font-size:12px;margin-top:4px;overflow-wrap:anywhere}.total-box{padding:12px;border-radius:8px;background:#e7f8ef;color:#08774e;margin:9px 0}.total-box small{display:block;font-size:11px}.total-box strong{display:block;font-size:22px;margin:4px 0}.market-grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}.market-card{padding:9px;border:1px solid var(--line);border-radius:8px;background:white;text-align:start;font-weight:800;font-size:11px;color:var(--text);min-width:0}.market-card:hover{border-color:#8ebaff;transform:translateY(-2px)}.map-controls{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}.layer-btn{border:1px solid #d6e2ee;background:white;color:#29445f;padding:8px 10px;border-radius:8px;font-weight:800;font-size:11px}.layer-btn.active{background:#e8f1ff;border-color:#8db5ff;color:#0959d5}.map-canvas{height:390px;background:#dceaf4;border:1px solid #c6d7e5;border-radius:10px;overflow:hidden}.table-scroll{overflow:auto;background:white;border:1px solid var(--line);border-radius:9px;margin-top:10px}table{border-collapse:collapse;width:100%;font-size:11px}th,td{text-align:start;padding:10px;border-bottom:1px solid #edf1f6;white-space:nowrap}th{background:#f7f9fc;color:#53667b}.source-link{display:inline-block;margin-top:5px;color:#145bc8;font-size:11px;font-weight:800}.hidden{display:none!important}footer{margin-top:25px;padding:18px 0;border-top:1px solid var(--line);color:var(--muted);font-size:11px}.toast{display:none;position:fixed;bottom:15px;right:15px;max-width:min(500px,calc(100% - 30px));background:#102b49;color:white;padding:13px 17px;border-radius:9px;z-index:1000;box-shadow:0 8px 25px #0003}.toast.show{display:block}
+@media(max-width:1050px){.head{padding:9px 0}.nav{order:3;flex-basis:100%;justify-content:flex-start;overflow-x:auto;flex-wrap:nowrap}.nav button{white-space:nowrap}.hero-grid{grid-template-columns:1fr}.ai-panel{max-width:620px}.globe{width:80%;left:10%;opacity:.25}.stats{grid-template-columns:repeat(2,1fr)}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.market-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:600px){.wrap{width:calc(100% - 14px)}.brand{font-size:21px}.headtools{margin-inline-start:auto}.lang{max-width:132px}.hero{padding:15px;min-height:0}.hero-grid{min-height:0}.hero-copy>p{font-size:12px}.searchbox{flex-wrap:wrap}.searchbox input{flex-basis:100%}.searchbox select{flex:1}.stats{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}.market-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.map-canvas{height:320px}}
 </style>
 </head>
 <body>
-<header>
-<div class="wrap head">
-  <div class="brand">NOVA <b>✦</b><small>GLOBAL PROCUREMENT & TRADE INTELLIGENCE</small></div>
-  <nav class="nav" id="nav">
-    <button data-page="home" data-t="home"></button>
-    <button data-page="search" data-t="suppliers"></button>
-    <button data-page="rfq" data-t="rfq"></button>
-    <button data-page="landed" data-t="landed"></button>
-    <button data-page="negotiation" data-t="negotiation"></button>
-    <button data-page="deals" data-t="deals"></button>
-    <button data-page="tracking" data-t="tracking"></button>
-    <button data-page="markets" data-t="markets"></button>
-    <button data-page="account" data-t="account"></button>
-  </nav>
-  <div class="headtools">
-    <select id="language" class="lang" aria-label="Language"><option value="ar">العربية</option><option value="en">English</option></select>
-    <button class="btn primary" onclick="go('search')" data-t="startBuying"></button>
-    <button class="mobile" onclick="toggleNav()" aria-label="Menu">☰</button>
-  </div>
-</div>
-</header>
-
-<main class="wrap">
+<header><div class="wrap head">
+<div class="brand"><b>✦</b> NOVA <small>GLOBAL PROCUREMENT INTELLIGENCE</small></div>
+<nav class="nav" id="nav"><button class="active" data-page="home" data-i="home"></button><button data-page="search" data-i="suppliers"></button><button data-page="rfq" data-i="rfq"></button><button data-page="landed" data-i="landed"></button><button data-page="negotiation" data-i="negotiation"></button><button data-page="deals" data-i="deals"></button><button data-page="tracking" data-i="tracking"></button><button data-page="markets" data-i="markets"></button><button data-page="purchases" data-i="purchases"></button><button data-page="account" data-i="account"></button></nav>
+<div class="headtools"><select id="language" class="lang" aria-label="Interface language" onchange="novaSetLanguage(this.value)"><option value="ar">🇸🇦 العربية</option><option value="en">🇬🇧 English</option><option value="fr">🇫🇷 Français</option><option value="es">🇪🇸 Español</option><option value="de">🇩🇪 Deutsch</option><option value="zh-CN">🇨🇳 中文</option><option value="ja">🇯🇵 日本語</option><option value="ru">🇷🇺 Русский</option><option value="tr">🇹🇷 Türkçe</option><option value="hi">🇮🇳 हिन्दी</option><option value="pt">🇧🇷 Português</option><option value="it">🇮🇹 Italiano</option></select><button class="btn primary" onclick="go('search')" data-i="startBuying"></button></div>
+</div></header>
+<main class="wrap"><div id="translationStatus" class="status" aria-live="polite"></div>
 <section id="home" class="page active">
-<div class="hero">
-<div class="globe" aria-hidden="true">
-<svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
-<defs><radialGradient id="gf" cx="35%" cy="28%" r="78%"><stop offset="0" stop-color="#a5f4ff" stop-opacity=".5"/><stop offset=".6" stop-color="#167ad8" stop-opacity=".18"/><stop offset="1" stop-color="#06152d" stop-opacity=".8"/></radialGradient><clipPath id="gc"><circle cx="250" cy="250" r="155"/></clipPath></defs>
-<circle cx="250" cy="250" r="195" fill="none" stroke="#5ee6ff" stroke-opacity=".25"/>
-<circle class="orbit" cx="250" cy="250" r="178" fill="none" stroke="#67eaff" stroke-opacity=".65" stroke-dasharray="3 9" stroke-width="2"/>
-<circle cx="250" cy="250" r="155" fill="url(#gf)" stroke="#89e9ff" stroke-width="2"/>
-<g clip-path="url(#gc)" fill="none" stroke="#8cecff" stroke-opacity=".5">
-<ellipse cx="250" cy="250" rx="62" ry="155"/><ellipse cx="250" cy="250" rx="118" ry="155"/><ellipse cx="250" cy="250" rx="155" ry="53"/><ellipse cx="250" cy="250" rx="155" ry="104"/>
-<path d="M95 250H405M100 195H400M100 305H400M250 95V405"/>
-<path d="M118 145L180 166 203 207 184 242 208 270 191 310 220 354M266 102L287 145 320 163 328 199 363 222 345 254 367 289 342 325 306 344 291 386"/>
-</g>
-<g fill="none" stroke="#64dcff" stroke-width="1.5"><path d="M167 190Q250 110 326 204T300 316"/><path d="M167 190Q175 275 300 316"/><path d="M326 204Q230 250 211 335"/><ellipse cx="250" cy="250" rx="214" ry="73" transform="rotate(-28 250 250)"/><ellipse cx="250" cy="250" rx="214" ry="73" transform="rotate(46 250 250)" stroke-dasharray="4 8"/></g>
-<g fill="#b9f6ff"><circle cx="167" cy="190" r="6"/><circle cx="326" cy="204" r="6"/><circle cx="300" cy="316" r="6"/><circle cx="211" cy="335" r="5"/></g>
-</svg>
-</div>
-<div class="hero-grid">
-<div class="hero-copy">
-<div class="eyebrow"><span class="dot"></span><span data-t="eyebrow"></span></div>
-<h1><span data-t="hero1"></span><span data-t="hero2"></span></h1>
-<p data-t="heroText"></p>
-<div class="searchbox">
-<input id="homeQuery" data-p="searchPlaceholder">
-<select id="homeCountry" aria-label="Destination"></select>
-<button class="btn primary" onclick="homeSearch()" aria-label="Search">⌕</button>
-</div>
-<div class="quick">
-<button onclick="quickSearch('wheat grain bulk suppliers')">🌾 <span data-t="agri"></span></button>
-<button onclick="quickSearch('food products manufacturers')">🥬 <span data-t="food"></span></button>
-<button onclick="quickSearch('industrial materials manufacturers')">🏭 <span data-t="industrial"></span></button>
-<button onclick="quickSearch('agricultural machinery manufacturers')">🚜 <span data-t="machinery"></span></button>
-<button onclick="quickSearch('vehicle manufacturers exporters')">🚗 <span data-t="vehicles"></span></button>
-</div>
-</div>
-<aside class="ai-panel">
-<div class="ai-title">✦ NOVA AI <span class="online">● <span data-t="online"></span></span></div>
-<p data-t="aiText"></p>
-<div class="ai-example" data-t="aiExample"></div>
-<div class="ai-actions">
-<button onclick="go('search')">🔎 <span data-t="find"></span></button>
-<button onclick="go('landed')">🧮 <span data-t="landed"></span></button>
-<button onclick="go('rfq')">📄 <span data-t="rfq"></span></button>
-<button onclick="go('negotiation')">🤝 <span data-t="negotiation"></span></button>
-<button onclick="go('tracking')">🚢 <span data-t="tracking"></span></button>
-<button onclick="go('markets')">🌐 <span data-t="markets"></span></button>
-</div>
-</aside>
-</div>
-</div>
-
-<div class="stats">
-<div class="stat"><span class="stat-icon">♙</span><div><small data-t="records"></small><strong id="networkRecords">—</strong><em data-t="databaseRecords"></em></div></div>
-<div class="stat"><span class="stat-icon">◎</span><div><small data-t="countries"></small><strong>195+</strong><em data-t="marketsWorldwide"></em></div></div>
-<div class="stat"><span class="stat-icon">◉</span><div><small data-t="systemStatus"></small><strong id="onlineState">—</strong><em id="healthSmall">—</em></div></div>
-<div class="stat"><span class="stat-icon">✧</span><div><small>NOVA AI</small><strong id="aiState">—</strong><em data-t="aiStatus"></em></div></div>
-<div class="stat"><span class="stat-icon">🛡</span><div><small data-t="evidence"></small><strong>✓</strong><em data-t="evidenceSub"></em></div></div>
-<div class="stat"><span class="stat-icon">🌍</span><div><small data-t="coverage"></small><strong>Global</strong><em data-t="coverageSub"></em></div></div>
-</div>
-
-<div class="section">
-<div class="section-head"><div><h2 data-t="sectors"></h2><p data-t="sectorsSub"></p></div></div>
-<div class="categories" id="categories"></div>
-</div>
-
-<div class="dashboard">
-<section class="panel suppliers-panel">
-<div class="panel-head"><h3>🔎 <span data-t="supplierResults"></span></h3><button class="btn secondary" onclick="go('search')" data-t="allResults"></button></div>
-<div class="panel-body">
-<div class="field"><input id="dashQuery" data-p="searchPlaceholder"></div>
-<div class="actions"><button class="btn primary" onclick="dashboardSearch()" data-t="search"></button><select id="dashCountry" aria-label="Destination"></select></div>
-<div id="dashResults" class="result-list"><div class="empty" data-t="searchPrompt"></div></div>
-</div>
+<div class="hero"><div class="globe" aria-hidden="true"><svg viewBox="0 0 500 500"><defs><radialGradient id="sea"><stop stop-color="#1c9bc6" stop-opacity=".65"/><stop offset="1" stop-color="#0b2a52" stop-opacity=".05"/></radialGradient><clipPath id="sphere"><circle cx="250" cy="250" r="190"/></clipPath></defs><circle cx="250" cy="250" r="195" fill="url(#sea)" stroke="#43dff3" stroke-opacity=".75" stroke-width="2"/><g fill="none" stroke="#70e9ff" stroke-opacity=".5"><ellipse cx="250" cy="250" rx="85" ry="190"/><ellipse cx="250" cy="250" rx="145" ry="190"/><ellipse cx="250" cy="250" rx="190" ry="70"/><ellipse cx="250" cy="250" rx="190" ry="130"/><path d="M60 250H440M250 60V440"/></g><g clip-path="url(#sphere)" fill="#5be6d8" fill-opacity=".5" stroke="#a4f5ff" stroke-opacity=".6"><path d="M105 130l25-25 35 7 12 20 29 4 8 19-18 19-4 28-20 13-9 31-18-8-6-26-20-13-2-30-20-12zM195 244l23 5 14 24-5 27 16 28-7 35-20 29-11-24-7-33-19-28 3-30zM251 107l28-14 32 11 9 21 29 4 23 24-15 24-29-4-17 17-25-5-14-26-25-9zM302 220l30-18 36 14 17 29-10 30-24 14-9 35-26 21-20-28 4-31-18-24z"/></g><g class="globe-orbit" fill="none" stroke="#42e3f1" stroke-width="2" stroke-dasharray="5 8"><ellipse cx="250" cy="250" rx="220" ry="100" transform="rotate(-25 250 250)"/><ellipse cx="250" cy="250" rx="220" ry="100" transform="rotate(42 250 250)"/></g><g fill="#e5ffff"><circle cx="95" cy="186" r="5"/><circle cx="356" cy="132" r="5"/><circle cx="337" cy="335" r="5"/><circle cx="169" cy="372" r="5"/></g></svg></div>
+<div class="hero-grid"><div class="hero-copy"><span class="eyebrow"><span class="dot"></span><span data-i="eyebrow"></span></span><h1><span data-i="heroTitle"></span><span data-i="heroTitle2"></span></h1><p data-i="heroText"></p><div class="searchbox"><input id="heroQuery" data-p="searchPlaceholder"><select id="homeCountry" aria-label="Destination country"></select><button class="btn primary" onclick="heroSearch()">⌕</button></div><div class="quick"><button onclick="quickSearch('bulk wheat grain suppliers')">🌾 <span data-i="agriculture"></span></button><button onclick="quickSearch('food manufacturers wholesale')">🥬 <span data-i="food"></span></button><button onclick="quickSearch('industrial materials manufacturers')">🏭 <span data-i="industrial"></span></button><button onclick="quickSearch('agricultural machinery exporters')">🚜 <span data-i="machinery"></span></button><button onclick="quickSearch('vehicle exporters')">🚗 <span data-i="vehicles"></span></button></div></div>
+<aside class="ai-panel"><div class="ai-title">✦ NOVA AI <span class="online">● <span data-i="online"></span></span></div><p data-i="aiText"></p><div class="ai-example" data-i="aiExample"></div><div class="ai-actions"><button onclick="go('search')">🔎 <span data-i="findSuppliers"></span></button><button onclick="go('landed')">🧮 <span data-i="landed"></span></button><button onclick="go('rfq')">📄 <span data-i="rfq"></span></button><button onclick="go('negotiation')">🤝 <span data-i="negotiation"></span></button><button onclick="go('tracking')">🚢 <span data-i="tracking"></span></button><button onclick="go('markets')">🌐 <span data-i="markets"></span></button></div></aside></div></div>
+<div class="stats"><div class="stat"><span class="stat-icon">🌍</span><div><small data-i="marketsWorldwide"></small><strong>250+</strong><small data-i="countriesCoverage"></small></div></div><div class="stat"><span class="stat-icon">🔎</span><div><small data-i="sourcing"></small><strong>NOVA AI</strong><small data-i="evidenceFirst"></small></div></div><div class="stat"><span class="stat-icon">📊</span><div><small data-i="costPlanning"></small><strong>360°</strong><small data-i="landed"></small></div></div><div class="stat"><span class="stat-icon">🚚</span><div><small data-i="logistics"></small><strong>4</strong><small data-i="transportModes"></small></div></div></div>
+<div class="section"><div class="section-head"><div><h2 data-i="quickTools"></h2><p data-i="quickToolsSub"></p></div></div><div class="grid"><section class="panel"><div class="panel-head"><h3>🔎 <span data-i="supplierResults"></span></h3></div><div class="panel-body"><div class="field"><label data-i="productRequest"></label><input id="dashQuery" data-p="searchPlaceholder"></div><div class="field"><label data-i="destination"></label><select id="dashCountry"></select></div><button class="btn primary" onclick="dashboardSearch()" data-i="search"></button><div id="dashResults" class="result-list"></div></div></section><section class="panel"><div class="panel-head"><h3>🚢 <span data-i="shipmentTracking"></span></h3></div><div class="panel-body"><p class="status" data-i="trackingDisclaimer"></p><button class="btn secondary" onclick="go('tracking')" data-i="openTracking"></button><div id="miniMapStatus" class="status"></div></div></section><section class="panel"><div class="panel-head"><h3>🌐 <span data-i="globalMarketsTitle"></span></h3></div><div class="panel-body"><p class="status" data-i="marketDisclaimer"></p><button class="btn secondary" onclick="go('markets')" data-i="viewMarkets"></button></div></section></div></div>
 </section>
-
-<section class="panel">
-<div class="panel-head"><h3>🏢 <span data-t="supplierDetails"></span></h3><span class="pill" data-t="evidenceFirst"></span></div>
-<div class="panel-body" id="supplierDetails"><div class="empty" data-t="selectSupplier"></div></div>
-</section>
-
-<section class="panel">
-<div class="panel-head"><h3>🧮 <span data-t="landedCalc"></span></h3></div>
-<div class="panel-body">
-<div class="form-grid">
-<div class="field"><label data-t="unitPrice"></label><input id="unitPrice" type="number" min="0" value="245"></div>
-<div class="field"><label data-t="quantity"></label><input id="landedQuantity" type="number" min="1" value="500"></div>
-<div class="field"><label data-t="shipping"></label><input id="shipping" type="number" min="0" value="35"></div>
-<div class="field"><label data-t="insurance"></label><input id="insurance" type="number" min="0" value="2"></div>
-<div class="field"><label data-t="dutyPercent"></label><input id="duty" type="number" min="0" value="5"></div>
-<div class="field"><label data-t="taxPercent"></label><input id="tax" type="number" min="0" value="0"></div>
-<div class="field full"><label data-t="localDelivery"></label><input id="localDelivery" type="number" min="0" value="15"></div>
-</div>
-<div id="landedOutput"></div>
-<button class="btn primary" style="width:100%" onclick="calculateLanded()" data-t="calculate"></button>
-</div>
-</section>
-
-<section class="panel">
-<div class="panel-head"><h3>📄 <span data-t="rfq"></span></h3></div>
-<div class="panel-body">
-<div class="field"><label data-t="product"></label><input id="rfqProduct"></div>
-<div class="field"><label data-t="quantity"></label><input id="rfqQuantity" type="number" min="1" value="500"></div>
-<div class="field"><label data-t="destination"></label><select id="rfqDestination"></select></div>
-<div class="field"><label data-t="incoterm"></label><select id="rfqIncoterm"><option>FOB</option><option>CIF</option><option>EXW</option><option>DAP</option><option>DDP</option><option>FCA</option></select></div>
-<div class="field"><label data-t="requirements"></label><textarea id="rfqRequirements"></textarea></div>
-<button class="btn primary" style="width:100%" onclick="createRFQ()" data-t="submitRFQ"></button>
-<div id="rfqOutput" class="status"></div>
-</div>
-</section>
-
-<section class="panel">
-<div class="panel-head"><h3>🤝 <span data-t="aiNegotiation"></span></h3></div>
-<div class="panel-body">
-<div class="ai-title">✦ NOVA AI <span class="online">● <span data-t="ready"></span></span></div>
-<p class="status" data-t="negotiationNote"></p>
-<div class="field"><label data-t="supplier"></label><input id="negSupplier"></div>
-<div class="field"><label data-t="currentOffer"></label><input id="negOffer" type="number" min="0"></div>
-<div class="field"><label data-t="targetPrice"></label><input id="negTarget" type="number" min="0"></div>
-<div class="field"><label data-t="quantity"></label><input id="negQuantity" type="number" min="1" value="500"></div>
-<div class="field"><label data-t="supplierReply"></label><textarea id="negReply"></textarea></div>
-<button class="btn primary" style="width:100%" onclick="negotiate()" data-t="analyze"></button>
-<div id="negOutput" class="status"></div>
-</div>
-</section>
-</div>
-
-<div class="subdash">
-<section class="panel">
-<div class="panel-head"><h3>🛍 <span data-t="openMarket"></span></h3><button class="btn secondary" onclick="go('markets')" data-t="viewAll"></button></div>
-<div class="panel-body"><div class="market-grid" id="marketCards"></div></div>
-</section>
-<section class="panel">
-<div class="panel-head"><h3>🚢 <span data-t="shipmentTracking"></span></h3><button class="btn secondary" onclick="go('tracking')" data-t="details"></button></div>
-<div class="panel-body">
-<div class="map-placeholder"><div class="map-grid"></div><div class="map-label">🌐 NOVA Logistics</div><div class="map-note" id="trackingPreview" data-t="trackingNotConnected"></div></div>
-<div class="status" data-t="trackingDisclaimer"></div>
-</div>
-</section>
-<section class="panel wide">
-<div class="panel-head"><h3>🛳 <span data-t="vesselMonitor"></span></h3><span class="pill" data-t="providerRequired"></span></div>
-<div class="table-scroll"><table><thead><tr><th data-t="vessel"></th><th data-t="route"></th><th data-t="eta"></th><th data-t="status"></th></tr></thead><tbody id="vesselRows"><tr><td colspan="4" class="empty" data-t="trackingNotConnected"></td></tr></tbody></table></div>
-</section>
-</div>
-
-<div class="section">
-<div class="section-head"><div><h2 data-t="quickTools"></h2><p data-t="quickToolsSub"></p></div></div>
-<div class="tools-grid">
-<button class="tool" onclick="go('search')"><i>🔎</i><span data-t="suppliers"></span></button>
-<button class="tool" onclick="go('rfq')"><i>📄</i><span data-t="rfq"></span></button>
-<button class="tool" onclick="go('landed')"><i>🧮</i><span data-t="landed"></span></button>
-<button class="tool" onclick="go('negotiation')"><i>🤝</i><span data-t="negotiation"></span></button>
-<button class="tool" onclick="go('tracking')"><i>🚢</i><span data-t="tracking"></span></button>
-</div>
-</div>
-</section>
-
-<section id="search" class="page">
-<div class="section-head"><div><h2 data-t="supplierResults"></h2><p data-t="searchDesc"></p></div></div>
-<div class="page-card">
-<div class="form-grid">
-<div class="field full"><label data-t="productRequest"></label><input id="query" data-p="searchPlaceholder"></div>
-<div class="field"><label data-t="quantity"></label><input id="quantity" type="number" min="0" value="500"></div>
-<div class="field"><label data-t="destination"></label><select id="destination"></select></div>
-</div>
-<div class="actions"><button id="searchBtn" class="btn primary" onclick="searchSuppliers()" data-t="search"></button><button class="btn ghost" onclick="clearSearch()" data-t="clear"></button></div>
-<div id="searchStatus" class="status"></div>
-</div>
-<div id="results"></div>
-</section>
-
-<section id="rfq" class="page">
-<div class="section-head"><h2 data-t="createRFQ"></h2></div>
-<div class="page-card">
-<div class="form-grid">
-<div class="field full"><label data-t="product"></label><input id="rfqProduct2"></div>
-<div class="field"><label data-t="quantity"></label><input id="rfqQuantity2" type="number" min="1"></div>
-<div class="field"><label data-t="destination"></label><select id="rfqDestination2"></select></div>
-<div class="field"><label data-t="incoterm"></label><select id="rfqIncoterm2"><option>FOB</option><option>CIF</option><option>EXW</option><option>DAP</option><option>DDP</option></select></div>
-<div class="field full"><label data-t="requirements"></label><textarea id="rfqRequirements2"></textarea></div>
-</div>
-<button class="btn primary" onclick="createRFQFromPage()" data-t="submitRFQ"></button><div id="rfqOutput2" class="status"></div>
-</div>
-</section>
-
-<section id="landed" class="page">
-<div class="section-head"><h2 data-t="landedCalc"></h2></div>
-<div class="page-card"><p data-t="landedDisclaimer"></p><button class="btn primary" onclick="calculateLanded()" data-t="calculate"></button><div id="landedPageOutput" class="status"></div></div>
-</section>
-
-<section id="negotiation" class="page">
-<div class="section-head"><h2 data-t="aiNegotiation"></h2></div>
-<div class="page-card"><p data-t="negotiationNote"></p><button class="btn primary" onclick="negotiate()" data-t="analyze"></button><div id="negPageOutput" class="status"></div></div>
-</section>
-
-<section id="deals" class="page">
-<div class="section-head"><h2 data-t="deals"></h2><button class="btn secondary" onclick="loadDeals()" data-t="refresh"></button></div><div id="dealsOutput" class="page-card"></div>
-</section>
-
-<section id="markets" class="page">
-<div class="section-head"><div><h2 data-t="globalMarketsTitle"></h2><p data-t="marketDisclaimer"></p></div></div>
-<div class="page-card"><div class="market-grid" id="marketCardsPage"></div><hr>
-<div class="field"><label data-t="chooseDestination"></label><select id="countryExplorer"></select></div>
-<div class="actions"><button class="btn primary" onclick="searchSelectedMarket()" data-t="searchMarket"></button></div>
-</div>
-</section>
-
-<section id="tracking" class="page">
-<div class="section-head"><div><h2 data-t="trackingTitle"></h2><p data-t="trackingDisclaimer"></p></div></div>
-<div class="dashboard" style="grid-template-columns:repeat(2,minmax(0,1fr))">
-<div class="panel"><div class="panel-head"><h3>🚢 <span data-t="vesselMonitor"></span></h3></div><div class="panel-body"><div class="map-placeholder"><div class="map-grid"></div><div class="map-label">🌐 Global Logistics</div><div class="map-note" data-t="trackingNotConnected"></div></div><div id="trackingStatus" class="status"></div></div></div>
-<div class="panel"><div class="panel-head"><h3>📦 <span data-t="trackShipment"></span></h3></div><div class="panel-body"><div class="field"><label data-t="trackingNumber"></label><input id="trackingNumber" placeholder="Enter carrier tracking number"></div><div class="field"><label data-t="carrier"></label><select id="carrier"><option value="">Select carrier</option><option>DHL</option><option>FedEx</option><option>UPS</option><option>Maersk</option><option>MSC</option><option>Other</option></select></div><button class="btn primary" onclick="trackShipment()" data-t="checkTracking"></button><div id="trackOutput" class="status"></div><p class="status" data-t="trackingProviderNote"></p></div></div>
-<div class="panel"><div class="panel-head"><h3>✈️ <span data-t="airTracking"></span></h3></div><div class="panel-body"><p data-t="trackingProviderNote"></p><span class="pill" data-t="providerRequired"></span></div></div>
-<div class="panel"><div class="panel-head"><h3>🚆 <span data-t="railTracking"></span></h3></div><div class="panel-body"><p data-t="trackingProviderNote"></p><span class="pill" data-t="providerRequired"></span></div></div>
-</div>
-</section>
-
-<section id="account" class="page">
-<div class="section-head"><h2 data-t="account"></h2></div>
-<div class="page-card">
-<div class="form-grid"><div class="field"><label data-t="email"></label><input id="email" type="email" autocomplete="email"></div><div class="field"><label data-t="password"></label><input id="password" type="password" autocomplete="current-password"></div></div>
-<div class="actions"><button class="btn primary" onclick="login()" data-t="login"></button><button class="btn secondary" onclick="signup()" data-t="signup"></button><button class="btn ghost" onclick="logout()" data-t="logout"></button></div>
-<div id="accountOutput" class="status"></div><h3 data-t="systemHealth"></h3>
-<div class="health-grid"><div class="health-item"><span data-t="platform"></span><br><strong id="healthNova">—</strong></div><div class="health-item"><span data-t="database"></span><br><strong id="healthDB">—</strong></div><div class="health-item"><span data-t="aiService"></span><br><strong id="healthAI">—</strong></div><div class="health-item"><span data-t="searchService"></span><br><strong id="healthSearch">—</strong></div></div>
-</div>
-</section>
-<footer>NOVA — <span data-t="footer"></span></footer>
-</main>
-<div class="toast" id="toast" role="status"></div>
+<section id="search" class="page"><div class="section-head"><div><h2 data-i="supplierResults"></h2><p data-i="searchDesc"></p></div></div><div class="page-card"><div class="form-grid"><div class="field full"><label data-i="productRequest"></label><input id="query" data-p="searchPlaceholder"></div><div class="field"><label data-i="quantity"></label><input id="quantity" type="number" min="1" value="500"></div><div class="field"><label data-i="destination"></label><select id="destination"></select></div></div><div class="actions"><button class="btn primary" onclick="searchSuppliers()" data-i="search"></button><button class="btn ghost" onclick="clearSearch()" data-i="clear"></button></div><div id="searchStatus" class="status"></div><div id="results" class="result-list"></div></div></section>
+<section id="rfq" class="page"><div class="section-head"><h2 data-i="rfq"></h2></div><div class="page-card" style="padding:15px"><div class="form-grid"><div class="field"><label data-i="product"></label><input id="rfqProduct"></div><div class="field"><label data-i="quantity"></label><input id="rfqQuantity" type="number" min="1" value="500"></div><div class="field"><label data-i="destination"></label><select id="rfqDestination"></select></div><div class="field"><label data-i="incoterm"></label><select id="rfqIncoterm"><option>FOB</option><option>CIF</option><option>EXW</option><option>DAP</option><option>DDP</option><option>FCA</option></select></div><div class="field full"><label data-i="requirements"></label><textarea id="rfqRequirements"></textarea></div></div><button class="btn primary" onclick="createRFQ()" data-i="submitRFQ"></button><div id="rfqOutput" class="status"></div></div></section>
+<section id="landed" class="page"><div class="section-head"><h2 data-i="landedCalc"></h2></div><div class="page-card" style="padding:15px"><p class="status" data-i="landedDisclaimer"></p><div class="form-grid"><div class="field"><label data-i="unitPrice"></label><input id="unitPrice" type="number" min="0" value="245"></div><div class="field"><label data-i="quantity"></label><input id="landedQuantity" type="number" min="1" value="500"></div><div class="field"><label data-i="shipping"></label><input id="shipping" type="number" min="0" value="800"></div><div class="field"><label data-i="insurance"></label><input id="insurance" type="number" min="0" value="100"></div><div class="field"><label data-i="dutyPercent"></label><input id="duty" type="number" min="0" value="5"></div><div class="field"><label data-i="taxPercent"></label><input id="tax" type="number" min="0" value="0"></div><div class="field full"><label data-i="localDelivery"></label><input id="localDelivery" type="number" min="0" value="150"></div></div><button class="btn primary" onclick="calculateLanded()" data-i="calculate"></button><div id="landedOutput"></div></div></section>
+<section id="negotiation" class="page"><div class="section-head"><h2 data-i="aiNegotiation"></h2></div><div class="page-card" style="padding:15px"><p class="status" data-i="negotiationNote"></p><div class="form-grid"><div class="field"><label data-i="supplier"></label><input id="negSupplier"></div><div class="field"><label data-i="currentOffer"></label><input id="negOffer" type="number" min="0"></div><div class="field"><label data-i="targetPrice"></label><input id="negTarget" type="number" min="0"></div><div class="field"><label data-i="quantity"></label><input id="negQuantity" type="number" min="1" value="500"></div><div class="field full"><label data-i="supplierReply"></label><textarea id="negReply"></textarea></div></div><button class="btn primary" onclick="negotiate()" data-i="analyze"></button><div id="negOutput" class="status"></div></div></section>
+<section id="deals" class="page"><div class="section-head"><h2 data-i="deals"></h2><button class="btn secondary" onclick="loadDeals()" data-i="refresh"></button></div><div id="dealsOutput" class="page-card" style="padding:15px"></div></section>
+<section id="purchases" class="page"><div class="section-head"><h2 data-i="purchases"></h2><button class="btn secondary" onclick="loadPurchases()" data-i="refresh"></button></div><div id="purchasesOutput" class="page-card" style="padding:15px"></div></section>
+<section id="markets" class="page"><div class="section-head"><div><h2 data-i="globalMarketsTitle"></h2><p data-i="marketDisclaimer"></p></div></div><div class="page-card" style="padding:15px"><div class="field"><label data-i="chooseDestination"></label><select id="countryExplorer"></select></div><button class="btn primary" onclick="searchSelectedMarket()" data-i="searchMarket"></button><div id="marketCards" class="market-grid" style="margin-top:12px"></div></div></section>
+<section id="tracking" class="page"><div class="section-head"><div><h2 data-i="trackingTitle"></h2><p data-i="trackingDisclaimer"></p></div><button class="btn primary" onclick="refreshTracking()" data-i="refreshMap"></button></div><div class="page-card" style="padding:12px"><div class="map-controls"><button class="layer-btn active" data-layer="aircraft" onclick="toggleLayer('aircraft',this)">✈️ <span data-i="aircraft"></span></button><button class="layer-btn active" data-layer="vessels" onclick="toggleLayer('vessels',this)">🚢 <span data-i="vessels"></span></button><button class="layer-btn active" data-layer="trains" onclick="toggleLayer('trains',this)">🚆 <span data-i="trains"></span></button><button class="layer-btn active" data-layer="road" onclick="toggleLayer('road',this)">🚚 <span data-i="road"></span></button></div><div id="mainMap" class="map-canvas"></div><div id="trackingStatus" class="status" data-i="trackingDisclaimer"></div><div class="grid" style="margin-top:10px"><section class="panel"><div class="panel-head"><h3 data-i="trackShipment"></h3></div><div class="panel-body"><div class="field"><label data-i="trackingNumber"></label><input id="trackingNumber" placeholder="Container / airway bill / parcel ID"></div><div class="field"><label data-i="carrier"></label><select id="carrier"><option value="">—</option><option>DHL</option><option>FedEx</option><option>UPS</option><option>Maersk</option><option>MSC</option><option>Other</option></select></div><button class="btn primary" onclick="trackShipment()" data-i="checkTracking"></button><div id="trackOutput" class="status"></div></div></section><section class="panel"><div class="panel-head"><h3>✈️ <span data-i="aircraftFeed"></span></h3></div><div class="panel-body"><p class="status" data-i="aircraftNote"></p><a href="https://api.adsb.lol/docs" target="_blank" rel="noopener noreferrer" data-i="openProvider" class="source-link"></a></div></section><section class="panel"><div class="panel-head"><h3>🚢 <span data-i="vesselFeed"></span></h3></div><div class="panel-body"><p class="status" data-i="vesselNote"></p><a href="https://www.aisstream.io/" target="_blank" rel="noopener noreferrer" class="source-link" data-i="openProvider"></a></div></section></div><div class="table-scroll"><table><thead><tr><th data-i="transport"></th><th data-i="name"></th><th data-i="location"></th><th data-i="speed"></th><th data-i="updated"></th></tr></thead><tbody id="trackingTable"><tr><td colspan="5" data-i="noLiveData"></td></tr></tbody></table></div></div></section>
+<section id="account" class="page"><div class="section-head"><h2 data-i="account"></h2></div><div class="page-card" style="padding:15px"><div class="form-grid"><div class="field"><label data-i="email"></label><input id="email" type="email" autocomplete="email"></div><div class="field"><label data-i="password"></label><input id="password" type="password" autocomplete="current-password"></div></div><div class="actions"><button class="btn primary" onclick="login()" data-i="login"></button><button class="btn secondary" onclick="signup()" data-i="signup"></button><button class="btn ghost" onclick="logout()" data-i="logout"></button></div><div id="accountOutput" class="status"></div><h3 data-i="systemHealth"></h3><div class="metrics"><div class="metric"><small data-i="platform"></small><b id="healthNova">—</b></div><div class="metric"><small data-i="database"></small><b id="healthDB">—</b></div><div class="metric"><small data-i="aiService"></small><b id="healthAI">—</b></div><div class="metric"><small data-i="searchService"></small><b id="healthSearch">—</b></div></div></div></section>
+<footer>NOVA © <span id="year"></span> — <span data-i="footer"></span></footer></main><div id="toast" class="toast"></div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin="anonymous"></script>
 <script>
-
-"use strict";
-
-const $ = id => document.getElementById(id);
-let lang = "ar";
-let lastSuppliers = [];
-
-const T = {
-ar:{
-home:"الرئيسية",suppliers:"الموردون",rfq:"طلب عرض سعر",landed:"التكلفة النهائية",negotiation:"التفاوض الذكي",deals:"الصفقات",tracking:"التتبع",markets:"الأسواق",account:"الحساب",startBuying:"ابدأ الشراء",
-eyebrow:"المشتريات العالمية · المصادر أولاً",hero1:"المشتريات العالمية",hero2:"مدعومة بالذكاء الاصطناعي",heroText:"ابحث عن الموردين، افحص المصادر، قارن العروض، أنشئ طلبات الأسعار وحلّل التفاوض من منصة واحدة.",
-searchPlaceholder:"ماذا تريد شراءه؟ مثال: 500 طن من القمح",agri:"محاصيل زراعية",food:"منتجات غذائية",industrial:"مواد صناعية",machinery:"معدات وآليات",vehicles:"السيارات",online:"متصل",aiText:"مساعد مشتريات ذكي يستخدم المصادر المتاحة ولا يختلق حقائق الموردين.",aiExample:"أحتاج إلى 500 طن من القمح الغذائي مع التوصيل إلى العراق. ابحث عن عروض يمكن التحقق منها.",find:"البحث عن الموردين",records:"السجلات الفعلية",databaseRecords:"في قاعدة البيانات",countries:"الدول والأسواق",marketsWorldwide:"تغطية عالمية",systemStatus:"حالة النظام",aiStatus:"تحليل المشتريات",evidence:"المصادر",evidenceSub:"تحقق قبل الشراء",coverage:"الانتشار",coverageSub:"أسواق متعددة",sectors:"القطاعات الرئيسية",sectorsSub:"اختر قطاعاً لبدء البحث",supplierResults:"نتائج البحث عن الموردين",allResults:"كل النتائج",supplierDetails:"تفاصيل المورد",evidenceFirst:"المصادر أولاً",search:"بحث",searchPrompt:"اكتب طلبك للبحث عن الموردين",selectSupplier:"اختر مورداً لعرض تفاصيله",landedCalc:"حساب التكلفة النهائية",unitPrice:"سعر الوحدة (USD)",quantity:"الكمية",shipping:"الشحن (USD)",insurance:"التأمين (USD)",dutyPercent:"الرسوم الجمركية (%)",taxPercent:"الضريبة (%)",localDelivery:"التوصيل المحلي (USD)",calculate:"احسب التكلفة",rfq:"طلب عرض سعر",product:"المنتج",destination:"بلد الوجهة",incoterm:"شروط التسليم",requirements:"المواصفات والمتطلبات",submitRFQ:"إنشاء طلب عرض سعر",aiNegotiation:"التفاوض الذكي",ready:"جاهز للتحليل",negotiationNote:"يقدم الذكاء الاصطناعي اقتراحات تفاوضية بناءً على البيانات المدخلة؛ لا يرسل عروضاً للمورد تلقائياً.",supplier:"اسم المورد",currentOffer:"العرض الحالي للوحدة",targetPrice:"السعر المستهدف للوحدة",supplierReply:"رد المورد (اختياري)",analyze:"تحليل التفاوض",openMarket:"السوق المفتوح للمنتجات",viewAll:"عرض الكل",shipmentTracking:"تتبع الشحنات",trackingNotConnected:"التتبع الحي غير متصل بمزوّد بيانات في هذه النسخة.",trackingDisclaimer:"لا تعرض هذه اللوحة مواقع أو أوقات وصول حية ما لم يتم ربط مزوّد تتبع فعلي.",vesselMonitor:"مراقبة السفن والناقلات",vessel:"السفينة",route:"المسار",eta:"الوصول المتوقع",status:"الحالة",quickTools:"أدوات المشتريات",quickToolsSub:"الوصول السريع إلى وظائف NOVA",supplierSearch:"البحث عن الموردين",createRFQ:"إنشاء طلب عرض سعر",searchDesc:"ابحث في المصادر التي يدعمها الخادم حالياً.",productRequest:"المنتج أو طلب الشراء",clear:"مسح",loading:"جارٍ التحميل…",noResults:"لم يتم العثور على نتائج من المصدر المتاح.",noSource:"لا يوجد رابط مصدر",price:"السعر",moq:"الحد الأدنى للطلب",country:"الدولة",source:"فتح المصدر",searchFailed:"تعذر الاتصال بخدمة البحث.",landedDisclaimer:"هذا تقدير حسابي، وليس عرض شحن أو تخليص جمركي ملزماً.",landedTotal:"إجمالي التكلفة التقديرية",unitLanded:"التكلفة لكل وحدة",goods:"قيمة البضاعة",landedStatus:"يجب التحقق من الرسوم والشحن والضرائب قبل الدفع.",createRFQ:"إنشاء طلب عرض سعر",rfqSuccess:"تم إنشاء الطلب.",negSuccess:"تم إعداد تحليل التفاوض.",deals:"الصفقات",refresh:"تحديث",noDeals:"لا توجد صفقات متاحة.",globalMarketsTitle:"الأسواق العالمية",marketDisclaimer:"الفئات المعروضة اختصارات للبحث، وليست دليلاً على وجود عروض مؤكدة.",chooseDestination:"اختر سوق الوجهة",searchMarket:"البحث في هذا السوق",trackingTitle:"مركز التتبع اللوجستي",trackShipment:"الاستعلام عن شحنة",trackingNumber:"رقم التتبع",carrier:"شركة الشحن",checkTracking:"التحقق من التتبع",trackingProviderNote:"يلزم ربط API شركة الشحن أو مزوّد تجميعي للحصول على بيانات حقيقية.",providerRequired:"يلزم مزوّد بيانات",airTracking:"تتبع الشحن الجوي",railTracking:"تتبع الشحن بالقطارات",account:"الحساب",email:"البريد الإلكتروني",password:"كلمة المرور",login:"تسجيل الدخول",signup:"إنشاء حساب",logout:"تسجيل الخروج",systemHealth:"حالة الخدمات",platform:"المنصة",database:"قاعدة البيانات",aiService:"خدمة الذكاء الاصطناعي",searchService:"خدمة البحث",footer:"ذكاء المشتريات والتجارة العالمية",invalid:"تحقق من البيانات المدخلة.",loginFirst:"سجّل الدخول أولاً.",loggedOut:"تم تسجيل الخروج.",networkError:"تعذر الوصول إلى الخادم.",connected:"متصل",offline:"غير متصل",notConnected:"غير متصل",success:"تم بنجاح",error:"خطأ",allCountries:"كل الدول والأسواق",unknown:"غير متوفر",noDescription:"لا يوجد وصف متاح",details:"التفاصيل",searching:"جارٍ البحث…",trackingUnavailable:"لا يوجد مسار تتبع مهيأ على الخادم حالياً."
-},
-en:{
-home:"Home",suppliers:"Suppliers",rfq:"RFQ",landed:"Landed cost",negotiation:"AI negotiation",deals:"Deals",tracking:"Tracking",markets:"Markets",account:"Account",startBuying:"Start buying",
-eyebrow:"GLOBAL PROCUREMENT · EVIDENCE FIRST",hero1:"Global Procurement",hero2:"Powered by AI",heroText:"Search suppliers, inspect sources, compare offers, create RFQs and analyze negotiations from one platform.",
-searchPlaceholder:"What do you want to buy? Example: 500 tons of wheat",agri:"Agriculture",food:"Food products",industrial:"Industrial materials",machinery:"Machinery",vehicles:"Vehicles",online:"Online",aiText:"An intelligent procurement assistant that uses available sources and does not invent supplier facts.",aiExample:"I need 500 tons of food-grade wheat delivered to Iraq. Find verifiable offers.",find:"Find suppliers",records:"Actual records",databaseRecords:"In the database",countries:"Countries & markets",marketsWorldwide:"Worldwide",systemStatus:"System status",aiStatus:"Procurement analysis",evidence:"Evidence",evidenceSub:"Verify before buying",coverage:"Coverage",coverageSub:"Multiple markets",sectors:"Key industries",sectorsSub:"Choose a sector to search",supplierResults:"Supplier search results",allResults:"All results",supplierDetails:"Supplier details",evidenceFirst:"Evidence first",search:"Search",searchPrompt:"Enter a product request to search",selectSupplier:"Select a supplier to see details",landedCalc:"Landed cost calculator",unitPrice:"Unit price (USD)",quantity:"Quantity",shipping:"Shipping (USD)",insurance:"Insurance (USD)",dutyPercent:"Customs duty (%)",taxPercent:"Tax (%)",localDelivery:"Local delivery (USD)",calculate:"Calculate cost",product:"Product",destination:"Destination country",incoterm:"Incoterm",requirements:"Specifications and requirements",submitRFQ:"Create RFQ",aiNegotiation:"AI negotiation",ready:"Ready to analyze",negotiationNote:"AI provides negotiation suggestions based on your inputs; it does not automatically send offers to suppliers.",supplier:"Supplier name",currentOffer:"Current unit offer",targetPrice:"Target unit price",supplierReply:"Supplier reply (optional)",analyze:"Analyze negotiation",openMarket:"Open product market",viewAll:"View all",shipmentTracking:"Shipment tracking",trackingNotConnected:"Live tracking is not connected to a data provider in this version.",trackingDisclaimer:"This panel does not show live locations or ETAs unless an actual tracking provider is connected.",vesselMonitor:"Vessel and tanker monitor",vessel:"Vessel",route:"Route",eta:"ETA",status:"Status",quickTools:"Procurement tools",quickToolsSub:"Quick access to NOVA functions",supplierSearch:"Supplier search",createRFQ:"Create RFQ",searchDesc:"Search sources currently supported by the server.",productRequest:"Product or purchase request",clear:"Clear",loading:"Loading…",noResults:"No results from the available source.",noSource:"No source link",price:"Price",moq:"Minimum order",country:"Country",source:"Open source",searchFailed:"Could not connect to search.",landedDisclaimer:"This is a mathematical estimate, not a binding freight or customs quote.",landedTotal:"Estimated landed total",unitLanded:"Landed cost per unit",goods:"Goods value",landedStatus:"Verify freight, customs and taxes before payment.",rfqSuccess:"Request created.",negSuccess:"Negotiation analysis generated.",refresh:"Refresh",noDeals:"No deals are available.",globalMarketsTitle:"Global markets",marketDisclaimer:"These categories are search shortcuts, not evidence of confirmed offers.",chooseDestination:"Choose destination market",searchMarket:"Search this market",trackingTitle:"Logistics tracking centre",trackShipment:"Shipment lookup",trackingNumber:"Tracking number",carrier:"Carrier",checkTracking:"Check tracking",trackingProviderNote:"A carrier API or aggregator is required for real tracking data.",providerRequired:"Data provider required",airTracking:"Air freight tracking",railTracking:"Rail freight tracking",account:"Account",email:"Email",password:"Password",login:"Log in",signup:"Create account",logout:"Log out",systemHealth:"Service health",platform:"Platform",database:"Database",aiService:"AI service",searchService:"Search service",footer:"Global procurement and trade intelligence",invalid:"Check the entered information.",loginFirst:"Please sign in first.",loggedOut:"Signed out.",networkError:"Could not reach the server.",connected:"Connected",offline:"Offline",notConnected:"Not connected",success:"Success",error:"Error",allCountries:"All countries and markets",unknown:"Unavailable",noDescription:"No description available",details:"Details",searching:"Searching…",trackingUnavailable:"No tracking route is configured on the server."
-}
+const $=id=>document.getElementById(id);
+const L10N={
+ar:{home:"الرئيسية",suppliers:"الموردون",rfq:"طلب عرض سعر",landed:"التكلفة النهائية",negotiation:"التفاوض الذكي",deals:"الصفقات",tracking:"تتبع النقل",markets:"الأسواق",purchases:"المشتريات",account:"الحساب",startBuying:"ابدأ الشراء",eyebrow:"منصة المشتريات والتجارة العالمية",heroTitle:"تجارتك العالمية",heroTitle2:"بذكاء NOVA",heroText:"اكتشف الموردين، قارن التكاليف، جهّز طلبات عروض الأسعار، وخطّط للشحن من منصة واحدة.",searchPlaceholder:"ما المنتج الذي تبحث عنه؟",agriculture:"الزراعة",food:"المنتجات الغذائية",industrial:"المواد الصناعية",machinery:"الآلات",vehicles:"المركبات",online:"متصل",aiText:"مساعد ذكي لتنظيم عمليات التوريد، يعتمد على البيانات المتاحة ولا يفترض معلومات غير مؤكدة عن الموردين.",aiExample:"أحتاج إلى 500 طن من القمح الغذائي للتسليم في العراق. ابحث عن عروض ومصادر يمكن التحقق منها.",findSuppliers:"اكتشاف الموردين",marketsWorldwide:"الأسواق العالمية",countriesCoverage:"الدول والمناطق المتاحة",sourcing:"المشتريات الذكية",evidenceFirst:"تحقق من المصادر قبل الشراء",costPlanning:"تخطيط التكلفة",logistics:"الخدمات اللوجستية",transportModes:"جوي وبحري وبري وسكك حديد",quickTools:"أدوات المشتريات",quickToolsSub:"الوصول السريع إلى وظائف NOVA",supplierResults:"نتائج بحث الموردين",productRequest:"المنتج أو طلب الشراء",destination:"بلد الوجهة",search:"بحث",clear:"مسح",searchDesc:"تعتمد النتائج على مصادر البحث المتصلة بالخادم.",quantity:"الكمية",loading:"جارٍ التحميل…",searchPrompt:"أدخل المنتج لبدء البحث",noResults:"لا توجد نتائج من المصدر المتاح.",supplierDetails:"تفاصيل المورد",selectSupplier:"اختر موردًا لعرض التفاصيل",price:"السعر",moq:"الحد الأدنى للطلب",source:"فتح المصدر",details:"التفاصيل",product:"المنتج",incoterm:"شرط التسليم",requirements:"المواصفات والمتطلبات",submitRFQ:"إنشاء طلب عرض سعر",rfqSuccess:"تم تجهيز طلب عرض السعر.",landedCalc:"حاسبة التكلفة النهائية",unitPrice:"سعر الوحدة (USD)",shipping:"الشحن (USD)",insurance:"التأمين (USD)",dutyPercent:"الرسوم الجمركية (%)",taxPercent:"الضرائب (%)",localDelivery:"التوصيل المحلي (USD)",calculate:"احسب التكلفة",landedDisclaimer:"تقدير حسابي أولي وليس عرض شحن أو تخليص ملزمًا.",landedTotal:"إجمالي التكلفة التقديرية",unitLanded:"تكلفة الوحدة بعد الوصول",goods:"قيمة البضاعة",landedStatus:"تحقق من أجور النقل والرسوم والضرائب قبل الدفع.",aiNegotiation:"التفاوض الذكي",negotiationNote:"اقتراحات تفاوض بناءً على المدخلات. لا تُرسل المنصة عروضًا إلى المورد تلقائيًا.",supplier:"اسم المورد",currentOffer:"السعر المعروض للوحدة",targetPrice:"السعر المستهدف",supplierReply:"رد المورد (اختياري)",analyze:"تحليل التفاوض",negSuccess:"اكتمل تحليل التفاوض.",noDeals:"لا توجد صفقات متاحة حاليًا.",refresh:"تحديث",globalMarketsTitle:"الأسواق العالمية",marketDisclaimer:"تحديد دولة لا يعني توفر عروض مباشرة أو مؤكدة في السوق.",chooseDestination:"اختر سوق الوجهة",searchMarket:"البحث في السوق المحدد",viewMarkets:"استكشاف الأسواق",shipmentTracking:"تتبع الشحنات",trackingTitle:"مركز تتبع النقل العالمي",trackingDisclaimer:"تُعرض مواقع النقل الحقيقية فقط إذا كانت مصادر البيانات متصلة ومهيأة. لا تُعرض مواقع تجريبية على أنها مباشرة.",refreshMap:"تحديث الحركة",aircraft:"الطائرات",vessels:"السفن",trains:"القطارات",road:"الشاحنات",trackShipment:"الاستعلام عن شحنة",trackingNumber:"رقم التتبع / الحاوية / بوليصة الشحن",carrier:"شركة النقل",checkTracking:"التحقق من الشحنة",aircraftFeed:"مصدر بيانات الطائرات",aircraftNote:"قد تُستخدم ADSB.lol للطائرات عند تهيئة مسار الخادم؛ التوفر وحدود الخدمة متغيرة.",vesselFeed:"مصدر بيانات السفن",vesselNote:"تتطلب بيانات السفن مزود AIS ورمز API محفوظًا كسر في Cloudflare.",openProvider:"زيارة مزود البيانات ↗",transport:"وسيلة النقل",name:"الاسم أو المعرّف",location:"الموقع",speed:"السرعة",updated:"آخر تحديث",noLiveData:"لم تُحمّل بيانات حية بعد.",trackingNotConfigured:"مصدر هذا النوع من التتبع غير مهيأ.",email:"البريد الإلكتروني",password:"كلمة المرور",login:"تسجيل الدخول",signup:"إنشاء حساب",logout:"تسجيل الخروج",systemHealth:"حالة الخدمات",platform:"المنصة",database:"قاعدة البيانات",aiService:"خدمة الذكاء الاصطناعي",searchService:"خدمة البحث",connected:"متصل",notConnected:"غير متصل",invalid:"تحقق من البيانات المدخلة.",footer:"ذكاء المشتريات والتجارة العالمية",allCountries:"كل الدول والأسواق",networkError:"تعذر الاتصال بالخادم.",unknown:"غير متوفر",noDescription:"لا يوجد وصف متاح",mapError:"تعذر تحميل الخريطة. افحص اتصال الإنترنت.",trackingUnavailable:"خدمة تتبع الشحنة غير مهيأة في الخادم.",count:"النتائج",live:"بيانات حقيقية",loadingTranslation:"جارٍ ترجمة الواجهة…",translationFailed:"تعذر الوصول إلى خدمة الترجمة. تحقق من الاتصال بالإنترنت.",emptyDestination:"اختر بلد الوجهة",noPurchases:"لا توجد مشتريات مسجلة.",loginFirst:"سجل الدخول أولًا.",success:"تم بنجاح",error:"خطأ",estimateOnly:"تقدير محلي تقريبي",negLocal:"تعذر الاتصال بخدمة التفاوض؛ هذه توصية أولية محلية فقط.",worldMarkets:"الأسواق والدول",globalSearch:"البحث عن منتجات وموردين",openTracking:"فتح مركز التتبع"},
+en:{home:"Home",suppliers:"Suppliers",rfq:"Request a quote",landed:"Landed cost",negotiation:"Smart negotiation",deals:"Deals",tracking:"Transport tracking",markets:"Markets",purchases:"Purchases",account:"Account",startBuying:"Start buying",eyebrow:"Global procurement and trade platform",heroTitle:"Your global trade",heroTitle2:"powered by NOVA",heroText:"Discover suppliers, compare costs, prepare RFQs and plan shipping from one workspace.",searchPlaceholder:"What product are you looking for?",agriculture:"Agriculture",food:"Food products",industrial:"Industrial materials",machinery:"Machinery",vehicles:"Vehicles",online:"Online",aiText:"An intelligent sourcing assistant that relies on available evidence and does not invent supplier facts.",aiExample:"I need 500 tons of food-grade wheat delivered to Iraq. Find offers and sources that can be verified.",findSuppliers:"Find suppliers",marketsWorldwide:"Global markets",countriesCoverage:"Available countries and regions",sourcing:"Smart sourcing",evidenceFirst:"Verify sources before purchase",costPlanning:"Cost planning",logistics:"Logistics",transportModes:"Air, sea, road and rail",quickTools:"Procurement tools",quickToolsSub:"Quick access to NOVA functions",supplierResults:"Supplier search results",productRequest:"Product or purchase request",destination:"Destination country",search:"Search",clear:"Clear",searchDesc:"Results depend on search sources connected to the server.",quantity:"Quantity",loading:"Loading…",searchPrompt:"Enter a product to start searching",noResults:"No results from the available source.",supplierDetails:"Supplier details",selectSupplier:"Select a supplier to view details",price:"Price",moq:"Minimum order quantity",source:"Open source",details:"Details",product:"Product",incoterm:"Incoterm",requirements:"Specifications and requirements",submitRFQ:"Create RFQ",rfqSuccess:"RFQ prepared.",landedCalc:"Landed cost calculator",unitPrice:"Unit price (USD)",shipping:"Shipping (USD)",insurance:"Insurance (USD)",dutyPercent:"Customs duty (%)",taxPercent:"Tax (%)",localDelivery:"Local delivery (USD)",calculate:"Calculate cost",landedDisclaimer:"An initial arithmetic estimate, not a binding shipping or customs quote.",landedTotal:"Estimated landed total",unitLanded:"Landed cost per unit",goods:"Goods value",landedStatus:"Verify freight charges, duties and taxes before payment.",aiNegotiation:"Smart negotiation",negotiationNote:"Suggestions based on your inputs. The platform does not automatically send offers to suppliers.",supplier:"Supplier name",currentOffer:"Current unit offer",targetPrice:"Target price",supplierReply:"Supplier reply (optional)",analyze:"Analyze negotiation",negSuccess:"Negotiation analysis completed.",noDeals:"No deals are currently available.",refresh:"Refresh",globalMarketsTitle:"Global markets",marketDisclaimer:"Selecting a country does not mean live or confirmed offers are available.",chooseDestination:"Choose destination market",searchMarket:"Search selected market",viewMarkets:"Explore markets",shipmentTracking:"Shipment tracking",trackingTitle:"Global transport tracking centre",trackingDisclaimer:"Only real transport positions are shown when data sources are connected and configured. Demo positions are never presented as live.",refreshMap:"Refresh movement",aircraft:"Aircraft",vessels:"Vessels",trains:"Trains",road:"Trucks",trackShipment:"Shipment lookup",trackingNumber:"Tracking / container / airway bill number",carrier:"Carrier",checkTracking:"Check shipment",aircraftFeed:"Aircraft data source",aircraftNote:"ADSB.lol may be used for aircraft when the server route is configured; availability and limits vary.",vesselFeed:"Vessel data source",vesselNote:"Vessel positions require an AIS provider and an API key stored as a Cloudflare secret.",openProvider:"Visit data provider ↗",transport:"Transport",name:"Name or ID",location:"Location",speed:"Speed",updated:"Last update",noLiveData:"Live data has not been loaded yet.",trackingNotConfigured:"This tracking source is not configured.",email:"Email",password:"Password",login:"Log in",signup:"Create account",logout:"Log out",systemHealth:"Service health",platform:"Platform",database:"Database",aiService:"AI service",searchService:"Search service",connected:"Connected",notConnected:"Not connected",invalid:"Check the information entered.",footer:"Global procurement and trade intelligence",allCountries:"All countries and markets",networkError:"Could not contact the server.",unknown:"Unavailable",noDescription:"No description available",mapError:"Could not load the map. Check your internet connection.",trackingUnavailable:"Shipment tracking is not configured on the server.",count:"results",live:"Live data",loadingTranslation:"Translating interface…",translationFailed:"Translation service unavailable. Check your internet connection.",emptyDestination:"Choose a destination country",noPurchases:"No purchases recorded.",loginFirst:"Please sign in first.",success:"Success",error:"Error",estimateOnly:"Approximate local estimate",negLocal:"Negotiation service unavailable; this is only an initial local suggestion.",worldMarkets:"Global markets and countries",globalSearch:"Search products and suppliers",openTracking:"Open tracking centre"}
 };
-
-function t(k){return T[lang][k]||T.en[k]||k;}
-function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
-function toast(msg,type=""){const e=$("toast");e.textContent=msg;e.className="toast show "+type;clearTimeout(toast.timer);toast.timer=setTimeout(()=>e.className="toast",3800);}
-function setStatus(id,msg,type=""){const e=$(id);if(e){e.textContent=msg||"";e.className="status "+type;}}
-function fmt(v){if(v===null||v===undefined||v==="")return t("unknown");const n=Number(v);return Number.isFinite(n)?new Intl.NumberFormat(lang==="ar"?"ar-IQ":"en-US",{maximumFractionDigits:2}).format(n):esc(v);}
-function money(v,currency="USD"){if(v===null||v===undefined||v==="")return t("unknown");const n=Number(v);if(!Number.isFinite(n))return esc(v);return new Intl.NumberFormat(lang==="ar"?"ar-IQ":"en-US",{style:"currency",currency,maximumFractionDigits:2}).format(n);}
-
-const CODES=("AF AL DZ AD AO AG AR AM AU AT AZ BS BH BD BB BY BE BZ BJ BT BO BA BW BR BN BG BF BI KH CM CA CV CF TD CL CN CO KM CG CD CR CI HR CU CY CZ DK DJ DM DO EC EG SV GQ ER EE SZ ET FJ FI FR GA GM GE DE GH GR GD GT GN GW GY HT HN HU IS IN ID IR IQ IE IL IT JM JP JO KZ KE KI KP KR KW KG LA LV LB LS LR LY LI LT LU MG MW MY MV ML MT MH MR MU MX FM MD MC MN ME MA MZ MM NA NR NP NL NZ NI NE NG MK NO OM PK PW PA PG PY PE PH PL PT QA RO RU RW KN LC VC WS SM ST SA SN RS SC SL SG SK SI SB SO ZA SS ES LK SD SR SE CH SY TW TJ TZ TH TL TG TO TT TN TR TM TV UG UA AE GB US UY UZ VU VA VE VN YE ZM ZW").split(" ");
-function countryName(code){try{return new Intl.DisplayNames([lang==="ar"?"ar":"en"],{type:"region"}).of(code)||code;}catch{return code;}}
-function fillCountries(){
-const ids=["homeCountry","dashCountry","destination","rfqDestination","rfqDestination2","countryExplorer"];
-ids.forEach(id=>{const el=$(id);if(!el)return;const prev=el.value;el.innerHTML=`<option value="">${esc(t("allCountries"))}</option>`+CODES.map(c=>`<option value="${c}">${esc(countryName(c))}</option>`).join("");if(prev)el.value=prev;});
-}
-const CATS=[["🌾","agri","wheat grain bulk supplier"],["🥬","food","food products manufacturers"],["🏭","industrial","industrial materials manufacturer"],["🚜","machinery","agricultural machinery manufacturers"],["🚗","vehicles","vehicle manufacturer exporters"],["⚙️","industrial","industrial equipment suppliers"],["🏘️","markets","commercial real estate"],["🚢","tracking","international freight logistics"],["💻","markets","electronics OEM manufacturers"],["✈️","tracking","air freight services"]];
-function renderCats(){
-$("categories").innerHTML=CATS.map(([ico,k,q])=>`<button class="cat" data-query="${esc(q)}"><div class="cat-art">${ico}</div><span class="cat-label">${esc(t(k))}</span></button>`).join("");
-$("categories").querySelectorAll("[data-query]").forEach(b=>b.onclick=()=>quickSearch(b.dataset.query));
-}
-const MARKET=[["🌾","agri","wheat bulk suppliers"],["🥬","food","food manufacturers"],["🏭","industrial","industrial suppliers"],["🚜","machinery","machinery exporters"],["🚗","vehicles","vehicle exporters"],["⚙️","industrial","industrial equipment"],["🏘️","markets","commercial property"],["🚢","tracking","freight forwarders"],["💻","markets","electronics OEM"],["✈️","tracking","air freight"]];
-function renderMarkets(){
-const html=MARKET.map(([ico,k,q])=>`<button class="market-card" data-query="${esc(q)}"><div class="market-art">${ico}</div><div>${esc(t(k))}</div></button>`).join("");
-["marketCards","marketCardsPage"].forEach(id=>{const e=$(id);if(e){e.innerHTML=html;e.querySelectorAll("[data-query]").forEach(b=>b.onclick=()=>quickSearch(b.dataset.query));}});
-}
-function applyLang(){
-document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";
-document.querySelectorAll("[data-t]").forEach(e=>e.textContent=t(e.dataset.t));
-document.querySelectorAll("[data-p]").forEach(e=>e.placeholder=t(e.dataset.p));
-$("language").value=lang;fillCountries();renderCats();renderMarkets();
-}
-$("language").addEventListener("change",e=>{lang=e.target.value==="en"?"en":"ar";try{localStorage.setItem("nova_lang",lang);}catch{}applyLang();});
-try{const l=localStorage.getItem("nova_lang");if(l==="ar"||l==="en")lang=l;}catch{}
-
-async function api(path,options={}){
-let r;
-try{r=await fetch(path,{...options,credentials:"same-origin",headers:{"Accept":"application/json",...(options.body?{"Content-Type":"application/json"}:{}),...(options.headers||{})}});}
-catch{throw new Error(t("networkError"));}
-const raw=await r.text();let d={};
-try{d=raw?JSON.parse(raw):{};}catch{throw new Error(r.ok?"Invalid JSON response":`HTTP ${r.status}`);}
-if(!r.ok||d.error)throw new Error(d.error||`HTTP ${r.status}`);
-return d;
-}
-function go(id){
-document.querySelectorAll(".page").forEach(e=>e.classList.toggle("active",e.id===id));
-document.querySelectorAll("[data-page]").forEach(e=>e.classList.toggle("active",e.dataset.page===id));
-$("nav").classList.remove("open");window.scrollTo({top:0,behavior:"smooth"});
-if(id==="deals")loadDeals();if(id==="account")checkAccount();
-}
-document.querySelectorAll("[data-page]").forEach(b=>b.onclick=()=>go(b.dataset.page));
-function toggleNav(){$("nav").classList.toggle("open");}
-function homeSearch(){$("dashQuery").value=$("homeQuery").value;go("home");runSearch($("dashQuery").value,$("homeCountry").value,"dashResults");}
-function quickSearch(q){$("homeQuery").value=q;$("dashQuery").value=q;$("query").value=q;go("home");runSearch(q,$("homeCountry").value,"dashResults");}
-function dashboardSearch(){runSearch($("dashQuery").value,$("dashCountry").value,"dashResults");}
-function extractResults(d){if(Array.isArray(d))return d;for(const k of ["results","suppliers","items","organic","data"])if(Array.isArray(d?.[k]))return d[k];return [];}
-function priceText(s){const p=s.price??s.unit_price;if(p===null||p===undefined||p==="")return t("unknown");return typeof p==="number"?money(p,s.currency||"USD"):String(p);}
-function card(s,i){
-const name=s.title||s.name||s.company||s.supplier||t("unknown");
-const url=s.url||s.link||"";
-const snippet=s.snippet||s.description||"";
-const country=s.country||s.region||"";
-return `<article class="supplier-row"><div class="supplier-art">${["🌾","🏭","🚜","🚢","⚙️"][i%5]}</div><div><div class="supplier-name">${esc(name)}</div><div class="supplier-meta">${esc(country)} ${s.verification?("· "+esc(s.verification)):""}</div><div class="supplier-price">${esc(priceText(s))}</div><div class="supplier-meta">MOQ: ${esc(fmt(s.moq))} · ${esc(s.leadTime||t("unknown"))}</div><div class="supplier-actions"><button class="btn primary" data-detail="${i}">${esc(t("details"))}</button><button class="btn secondary" data-rfq="${i}">${esc(t("rfq"))}</button><button class="btn ghost" data-neg="${i}">🤝</button></div>${url&&/^https?:\/\//i.test(url)?`<a class="source-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">↗ ${esc(t("source"))}</a>`:`<div class="supplier-meta">${esc(t("noSource"))}</div>`}</div></article>`;
-}
-function renderResults(results,target){
-const el=$(target);
-if(!results.length){el.innerHTML=`<div class="empty">${esc(t("noResults"))}</div>`;return;}
-el.innerHTML=results.map(card).join("");
-el.querySelectorAll("[data-detail]").forEach(b=>b.onclick=()=>showSupplier(results[Number(b.dataset.detail)]));
-el.querySelectorAll("[data-rfq]").forEach(b=>b.onclick=()=>prefillRFQ(results[Number(b.dataset.rfq)]));
-el.querySelectorAll("[data-neg]").forEach(b=>b.onclick=()=>prefillNeg(results[Number(b.dataset.neg)]));
-}
-async function runSearch(query,destination,target){
-query=String(query||"").trim();
-if(!query){toast(t("searchPrompt"),"error");return;}
-const el=$(target);el.innerHTML=`<div class="empty"><span class="loading"></span> ${esc(t("searching"))}</div>`;
-try{
-/* The existing Worker accepts "request". Add destination to the query text so the search provider receives the intended market. */
-const fullQuery=destination?`${query} supplier in ${countryName(destination)} ${destination}`:query;
-const d=await api("/api/search",{method:"POST",body:JSON.stringify({request:fullQuery})});
-lastSuppliers=extractResults(d);renderResults(lastSuppliers,target);
-if(target==="dashResults"&&lastSuppliers.length)showSupplier(lastSuppliers[0]);
-if(target==="results")setStatus("searchStatus",`${lastSuppliers.length} · ${t("supplierResults")}`,"success");
-}catch(e){el.innerHTML=`<div class="empty">${esc(e.message)}</div>`;if(target==="results")setStatus("searchStatus",e.message,"error");}
-}
-function searchSuppliers(){runSearch($("query").value,$("destination").value,"results");}
-function clearSearch(){$("query").value="";$("results").innerHTML="";setStatus("searchStatus","");}
-function showSupplier(s){
-const name=s.title||s.name||s.company||s.supplier||t("unknown");
-const url=s.url||s.link||"";
-$("supplierDetails").innerHTML=`<div class="supplier-art" style="font-size:35px">🏢</div><h3>${esc(name)}</h3><span class="pill">${esc(s.verification||t("evidenceFirst"))}</span><p class="status">${esc(s.snippet||s.description||t("noDescription"))}</p><div class="metrics"><div class="metric"><small>${esc(t("country"))}</small><b>${esc(s.country||s.region||t("unknown"))}</b></div><div class="metric"><small>${esc(t("price"))}</small><b>${esc(priceText(s))}</b></div><div class="metric"><small>${esc(t("moq"))}</small><b>${esc(fmt(s.moq))}</b></div><div class="metric"><small>${esc(t("status"))}</small><b>${esc(s.confidence??t("unknown"))}</b></div></div>${url&&/^https?:\/\//i.test(url)?`<a class="source-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">↗ ${esc(t("source"))}</a>`:""}<div class="actions"><button class="btn primary" id="detailRFQ">${esc(t("rfq"))}</button><button class="btn secondary" id="detailNeg">🤝 ${esc(t("negotiation"))}</button></div>`;
-$("detailRFQ").onclick=()=>prefillRFQ(s);$("detailNeg").onclick=()=>prefillNeg(s);
-}
-function prefillRFQ(s){
-const name=s.title||s.name||s.company||s.supplier||"";
-const product=$("dashQuery").value||$("query").value||name;
-$("rfqProduct").value=product;$("rfqProduct2").value=product;
-$("rfqQuantity").value=$("quantity").value||500;$("rfqQuantity2").value=$("quantity").value||500;
-go("rfq");
-}
-function prefillNeg(s){
-$("negSupplier").value=s.title||s.name||s.company||s.supplier||"";
-$("negOffer").value=Number(s.price)||"";
-$("negTarget").value="";$("negQuantity").value=$("quantity").value||500;
-go("negotiation");
-}
-async function createRFQ(){
-const product=$("rfqProduct").value.trim(),quantity=Number($("rfqQuantity").value);
-if(!product||quantity<1){toast(t("invalid"),"error");return;}
-$("rfqOutput").textContent=t("loading");
-try{
-const d=await api("/api/rfq",{method:"POST",body:JSON.stringify({product,quantity,destination:$("rfqDestination").value,incoterm:$("rfqIncoterm").value,requirements:$("rfqRequirements").value})});
-const text=d.result||d.rfq||d.text||d.message||d.id||JSON.stringify(d);
-$("rfqOutput").textContent=typeof text==="string"?text:JSON.stringify(text,null,2);
-toast(t("rfqSuccess"),"success");
-}catch(e){$("rfqOutput").textContent=e.message;}
-}
-function createRFQFromPage(){
-$("rfqProduct").value=$("rfqProduct2").value;$("rfqQuantity").value=$("rfqQuantity2").value;
-$("rfqDestination").value=$("rfqDestination2").value;$("rfqIncoterm").value=$("rfqIncoterm2").value;
-$("rfqRequirements").value=$("rfqRequirements2").value;createRFQ();
-}
-async function calculateLanded(){
-const b={unitPrice:Number($("unitPrice").value),quantity:Number($("landedQuantity").value),shipping:Number($("shipping").value)||0,insurance:Number($("insurance").value)||0,dutyPercent:Number($("duty").value)||0,taxPercent:Number($("tax").value)||0,localDelivery:Number($("localDelivery").value)||0};
-if(!Number.isFinite(b.unitPrice)||b.unitPrice<0||b.quantity<1){toast(t("invalid"),"error");return;}
-["landedOutput","landedPageOutput"].forEach(id=>{if($(id))$(id).textContent=t("loading");});
-try{
-const d=await api("/api/landed-cost",{method:"POST",body:JSON.stringify(b)});
-const v=d.result||d;
-const fields=[["goods",v.goods],["shipping",v.shipping],["insurance",v.insurance],["duty",v.duty],["tax",v.tax],["localDelivery",v.localDelivery],["landedTotal",v.total],["unitLanded",v.unitLanded]];
-const html=`<div class="total-box"><small>${esc(t("landedTotal"))}</small><strong>${esc(money(v.total))}</strong><small>${esc(t("unitLanded"))}: ${esc(money(v.unitLanded))}</small></div><div class="metrics">${fields.filter(x=>x[1]!==undefined&&x[1]!==null).map(([k,n])=>`<div class="metric"><small>${esc(t(k)||k)}</small><b>${esc(money(n))}</b></div>`).join("")}</div><p class="status">${esc(t("landedStatus"))}</p>`;
-["landedOutput","landedPageOutput"].forEach(id=>{if($(id))$(id).innerHTML=html;});
-}catch(e){["landedOutput","landedPageOutput"].forEach(id=>{if($(id))$(id).textContent=e.message;});}
-}
-async function negotiate(){
-const supplier=$("negSupplier").value.trim(),offer=Number($("negOffer").value);
-if(!supplier||!Number.isFinite(offer)||offer<=0){toast(t("invalid"),"error");return;}
-["negOutput","negPageOutput"].forEach(id=>{if($(id))$(id).textContent=t("loading");});
-try{
-const d=await api("/api/negotiate",{method:"POST",body:JSON.stringify({supplier,offer,target:Number($("negTarget").value)||0,quantity:Number($("negQuantity").value)||1,reply:$("negReply").value.trim()})});
-const r=d.result??d;
-const text=typeof r==="string"?r:JSON.stringify(r,null,2);
-["negOutput","negPageOutput"].forEach(id=>{if($(id))$(id).textContent=text;});
-}catch(e){["negOutput","negPageOutput"].forEach(id=>{if($(id))$(id).textContent=e.message;});}
-}
-async function loadDeals(){
-$("dealsOutput").textContent=t("loading");
-try{
-const d=await api("/api/deals");const rows=Array.isArray(d.deals)?d.deals:[];
-if(!rows.length){$("dealsOutput").textContent=t("noDeals");return;}
-$("dealsOutput").innerHTML=rows.map(x=>`<article class="supplier-row"><div class="supplier-art">🔥</div><div><strong>${esc(x.product||t("unknown"))}</strong><p>${esc(x.company||"")} · ${esc(x.country||"")}</p><strong>${esc(x.price!=null?money(x.price,x.currency||"USD"):t("unknown"))}</strong><p>${esc(x.description||"")}</p>${x.url&&/^https?:\/\//i.test(x.url)?`<a class="source-link" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">${esc(t("source"))}</a>`:""}</div></article>`).join("");
-}catch(e){$("dealsOutput").textContent=e.message;}
-}
-async function login(){
-const email=$("email").value.trim(),password=$("password").value;
-if(!email||!password){toast(t("invalid"),"error");return;}
-try{const d=await api("/api/login",{method:"POST",body:JSON.stringify({email,password})});$("accountOutput").textContent=`${t("success")}: ${d.email||email}`;toast(t("success"),"success");}
-catch(e){$("accountOutput").textContent=e.message;}
-}
-async function signup(){
-const email=$("email").value.trim(),password=$("password").value;
-if(!email||password.length<6){toast(t("invalid"),"error");return;}
-try{const d=await api("/api/signup",{method:"POST",body:JSON.stringify({email,password})});$("accountOutput").textContent=`${t("success")}: ${d.email||email}`;toast(t("success"),"success");}
-catch(e){$("accountOutput").textContent=e.message;}
-}
-async function logout(){
-try{await api("/api/logout",{method:"POST"});$("accountOutput").textContent=t("loggedOut");}
-catch(e){$("accountOutput").textContent=e.message;}
-}
-async function checkAccount(){
-try{const d=await api("/api/me");$("accountOutput").textContent=d.loggedIn?`${t("connected")}: ${d.user?.email||""}`:t("loginFirst");}
-catch(e){$("accountOutput").textContent=e.message;}
-}
-function health(id,yes){$(id).textContent=yes?t("connected"):t("notConnected");$(id).className=yes?"connected":"disconnected";}
-async function checkHealth(){
-try{
-const d=await api("/api/health");
-health("healthNova",!!d.ok);health("healthDB",!!d.database);health("healthAI",!!d.ai);health("healthSearch",!!d.yep);
-$("onlineState").textContent=d.ok?t("connected"):t("offline");$("aiState").textContent=d.ai?t("connected"):t("offline");
-$("healthSmall").textContent=d.database?t("connected"):t("notConnected");
-}catch{
-["healthNova","healthDB","healthAI","healthSearch"].forEach(id=>health(id,false));
-$("onlineState").textContent=t("offline");$("aiState").textContent=t("offline");$("healthSmall").textContent=t("notConnected");
-}
-}
-async function loadNetwork(){
-try{const d=await api("/api/network");$("networkRecords").textContent=fmt(d.actualRecords||0);}
-catch{$("networkRecords").textContent="—";}
-}
-async function trackShipment(){
-const number=$("trackingNumber").value.trim();
-if(!number){$("trackOutput").textContent=t("invalid");return;}
-/* The current Worker has no tracking API route. Do not display fabricated carrier data. */
-$("trackOutput").textContent=t("trackingUnavailable");
-$("trackingStatus").textContent=t("trackingProviderNote");
-}
-function searchSelectedMarket(){
-const code=$("countryExplorer").value;
-$("homeCountry").value=code;$("dashCountry").value=code;
-$("dashQuery").value="manufacturers suppliers exporters";
-go("home");dashboardSearch();
-}
-async function init(){
-applyLang();
-await Promise.allSettled([checkHealth(),loadNetwork()]);
-}
-init();
+let lang="ar",mainMap=null,markers={},activeLayers={aircraft:true,vessels:true,trains:true,road:true},lastResults=[];
+const LOCALES={ar:"ar-IQ",en:"en-US",fr:"fr-FR",es:"es-ES",de:"de-DE","zh-CN":"zh-CN",ja:"ja-JP",ru:"ru-RU",tr:"tr-TR",hi:"hi-IN",pt:"pt-BR",it:"it-IT"};
+const SUPPORTED=new Set(Object.keys(LOCALES));
+function t(k){return (L10N[lang]&&L10N[lang][k])||L10N.en[k]||k}
+function esc(v){return String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])).replace(/'/g,"&#39;")}
+function fmt(v){let n=Number(v);return Number.isFinite(n)?new Intl.NumberFormat(LOCALES[lang]||"en-US",{maximumFractionDigits:2}).format(n):esc(v??"—")}
+function money(v,c="USD"){let n=Number(v);return Number.isFinite(n)?new Intl.NumberFormat(LOCALES[lang]||"en-US",{style:"currency",currency:c,maximumFractionDigits:2}).format(n):esc(v??t("unknown"))}
+function toast(msg,type=""){const e=$("toast");e.textContent=msg;e.className="toast show "+type;clearTimeout(toast.timer);toast.timer=setTimeout(()=>e.className="toast",4000)}
+async function api(path,options={}){let r;try{r=await fetch(path,{...options,credentials:"same-origin",headers:{Accept:"application/json",...(options.body?{"Content-Type":"application/json"}:{}),...(options.headers||{})}})}catch{throw new Error(t("networkError"))}let raw=await r.text(),d={};try{d=raw?JSON.parse(raw):{}}catch{throw new Error(r.ok?"Invalid server response":"HTTP "+r.status)}if(!r.ok||d.error)throw new Error(d.error||"HTTP "+r.status);return d}
+const CODES=("AD AE AF AG AI AL AM AO AQ AR AS AT AU AW AX AZ BA BB BD BE BF BG BH BI BJ BL BM BN BO BQ BR BS BT BV BW BY BZ CA CC CD CF CG CH CI CK CL CM CN CO CR CU CV CW CX CY CZ DE DJ DK DM DO DZ EC EE EG EH ER ES ET FI FJ FK FM FO FR GA GB GD GE GF GG GH GI GL GM GN GP GQ GR GS GT GU GW GY HK HM HN HR HT HU ID IE IL IM IN IO IQ IR IS IT JE JM JO JP KE KG KH KI KM KN KP KR KW KY KZ LA LB LC LI LK LR LS LT LU LV LY MA MC MD ME MF MG MH MK ML MM MN MO MP MQ MR MS MT MU MV MW MX MY MZ NA NC NE NF NG NI NL NO NP NR NU NZ OM PA PE PF PG PH PK PL PM PN PR PS PT PW PY QA RE RO RS RU RW SA SB SC SD SE SG SH SI SJ SK SL SM SN SO SR SS ST SV SX SY SZ TC TD TF TG TH TJ TK TL TM TN TO TR TT TV TW TZ UA UG UM US UY UZ VA VC VE VG VI VN VU WF WS XK YE YT ZA ZM ZW").split(" ");
+function cname(code){try{return new Intl.DisplayNames([lang],{type:"region"}).of(code)||code}catch{return code}}
+function fillCountries(){["homeCountry","dashCountry","destination","rfqDestination","countryExplorer"].forEach(id=>{const e=$(id);if(!e)return;const v=e.value;e.innerHTML=`<option value="">${esc(t("allCountries"))}</option>`+CODES.map(c=>`<option value="${c}">${esc(cname(c))}</option>`).join("");e.value=v})}
+const TRANSLATE_URL="https://translate.googleapis.com/translate_a/single",sourceTexts=new Map(),sourceAttrs=new Map(),cache=new Map(),inflight=new Map();let generation=0,jobs=[],running=0,observer=null,translationWarned=false;const MAX_TRANSLATIONS=4;
+try{Object.entries(JSON.parse(localStorage.getItem("nova_translation_cache_v2")||"{}")).forEach(([k,v])=>{if(typeof v==="string")cache.set(k,v)})}catch{}
+function persistCache(){try{localStorage.setItem("nova_translation_cache_v2",JSON.stringify(Object.fromEntries([...cache.entries()].slice(-1500))))}catch{}}
+function eligible(s){return !!s&&/[\p{L}]/u.test(s)&&s.trim().length>0&&!/^https?:\/\//i.test(s.trim())}
+function skipNode(n){const p=n.parentElement;if(!p||p.closest("script,style,noscript,code,pre,textarea,[contenteditable='true'],[data-no-translate]"))return true;if(p.tagName==="OPTION")return true;if((lang==="ar"||lang==="en")&&p.closest("[data-i]"))return true;return false}
+async function translateString(text,target){const key=target+"\u0000"+text;if(cache.has(key))return cache.get(key);if(inflight.has(key))return inflight.get(key);const task=(async()=>{try{const r=await fetch("/api/translate",{method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json",Accept:"application/json"},body:JSON.stringify({text,source:"auto",target})});if(r.ok){const d=await r.json(),v=d.translation??d.translatedText??d.translated_text??d.result??d.text;if(typeof v==="string"&&v.trim()){cache.set(key,v);persistCache();return v}}}catch{}const url=TRANSLATE_URL+"?client=gtx&sl=auto&tl="+encodeURIComponent(target)+"&dt=t&q="+encodeURIComponent(text);const r=await fetch(url,{mode:"cors",credentials:"omit"});if(!r.ok)throw Error("Translation HTTP "+r.status);const d=await r.json();const v=Array.isArray(d?.[0])?d[0].map(a=>a?.[0]||"").join(""):"";if(!v.trim())throw Error("Empty translation");cache.set(key,v);persistCache();return v})();inflight.set(key,task);try{return await task}finally{inflight.delete(key)}}
+function enqueue(job){jobs.push(job);pump()}
+function pump(){while(running<MAX_TRANSLATIONS&&jobs.length){const j=jobs.shift();running++;(async()=>{try{const value=await translateString(j.text,j.target);if(j.version===generation)j.apply(value)}catch{if(!translationWarned){translationWarned=true;const s=$("translationStatus");if(s)s.textContent=t("translationFailed");toast(t("translationFailed"),"error")}}finally{running--;pump()}})()}}
+function translateNode(node,target,version){if(!node||!node.isConnected||skipNode(node))return;let source=sourceTexts.has(node)?sourceTexts.get(node):node.nodeValue;if(!sourceTexts.has(node))sourceTexts.set(node,source);if(!eligible(source))return;const trimmed=source.trim(),lead=source.slice(0,source.indexOf(trimmed)),tail=source.slice(source.indexOf(trimmed)+trimmed.length),key=target+"\u0000"+trimmed;if(cache.has(key)){node.nodeValue=lead+cache.get(key)+tail;return}enqueue({text:trimmed,target,version,apply:v=>{if(node.isConnected&&sourceTexts.get(node)===source)node.nodeValue=lead+v+tail}})}
+function translateAttr(el,attr,target,version){if(!el||!el.hasAttribute(attr)||(attr==="placeholder"&&el.hasAttribute("data-p")))return;let a=sourceAttrs.get(el);if(!a){a={};sourceAttrs.set(el,a)}if(!(attr in a))a[attr]=el.getAttribute(attr);const source=a[attr];if(!eligible(source))return;const key=target+"\u0000"+source.trim();if(cache.has(key)){el.setAttribute(attr,cache.get(key));return}enqueue({text:source.trim(),target,version,apply:v=>{if(el.isConnected&&sourceAttrs.get(el)?.[attr]===source)el.setAttribute(attr,v)}})}
+function scan(root,target,version){if(!root)return;if(root.nodeType===Node.TEXT_NODE){translateNode(root,target,version);return}if(root.nodeType===Node.ELEMENT_NODE&&root.matches("script,style,noscript,code,pre,textarea,[contenteditable='true'],[data-no-translate]"))return;if(root.nodeType===Node.ELEMENT_NODE){["placeholder","title","aria-label"].forEach(a=>translateAttr(root,a,target,version));root.querySelectorAll("*").forEach(el=>{if(!el.matches("script,style,noscript,code,pre,textarea,[contenteditable='true'],[data-no-translate]"))["placeholder","title","aria-label"].forEach(a=>translateAttr(el,a,target,version))})}const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);let n;while((n=w.nextNode()))translateNode(n,target,version)}
+function restoreSources(){for(const [n,s]of sourceTexts)if(n.isConnected&&!((lang==="ar"||lang==="en")&&n.parentElement?.closest("[data-i]")))n.nodeValue=s;for(const [el,attrs]of sourceAttrs){if(!el.isConnected)continue;for(const [k,v]of Object.entries(attrs))if(!(k==="placeholder"&&el.hasAttribute("data-p"))&&v!==null)el.setAttribute(k,v)}}
+function renderMarketCards(){const e=$("marketCards");if(!e)return;const featured=["CN","IN","US","DE","TR","AE","SA","IQ","GB","IT","FR","JP","KR","VN","TH","MY","ID","BR","MX","EG","ZA","PL","NL","CA","AU","SG","PK","BD","ES","RU","QA","KW"];e.innerHTML=featured.map(c=>`<button class="market-card" data-country="${c}" data-no-translate>🌐 ${esc(cname(c))}</button>`).join("");e.querySelectorAll("[data-country]").forEach(b=>b.onclick=()=>{$("countryExplorer").value=b.dataset.country;searchSelectedMarket()})}
+function applyLang(){document.documentElement.lang=lang;document.documentElement.dir=lang==="ar"?"rtl":"ltr";document.body.style.direction=lang==="ar"?"rtl":"ltr";document.querySelectorAll("[data-i]").forEach(e=>e.textContent=t(e.dataset.i));document.querySelectorAll("[data-p]").forEach(e=>e.placeholder=t(e.dataset.p));$("language").value=lang;fillCountries();renderMarketCards();document.title=({ar:"NOVA — المشتريات العالمية الذكية",en:"NOVA — Global Procurement Intelligence",fr:"NOVA — Achats mondiaux",es:"NOVA — Compras globales",de:"NOVA — Globale Beschaffung","zh-CN":"NOVA — 全球采购",ja:"NOVA — グローバル調達",ru:"NOVA — Глобальные закупки",tr:"NOVA — Küresel Tedarik",hi:"NOVA — वैश्विक खरीद",pt:"NOVA — Compras globais",it:"NOVA — Approvvigionamento globale"})[lang]||"NOVA — Global Procurement"}
+function translatePage(){const v=generation;jobs=[];scan(document.body,lang,v);if(observer)observer.observe(document.body,{childList:true,subtree:true})}
+function novaSetLanguage(target){if(!SUPPORTED.has(target))return;generation++;if(observer)observer.disconnect();restoreSources();lang=target;try{localStorage.setItem("nova_language",lang)}catch{}applyLang();translationWarned=false;$("translationStatus").textContent=lang==="en"||lang==="ar"?"":t("loadingTranslation");translatePage()}
+window.novaSetLanguage=novaSetLanguage;
+function installObserver(){observer=new MutationObserver(records=>{for(const r of records)if(r.type==="childList")r.addedNodes.forEach(n=>scan(n,lang,generation))});observer.observe(document.body,{childList:true,subtree:true})}
+try{const saved=localStorage.getItem("nova_language");if(SUPPORTED.has(saved))lang=saved}catch{}
+function go(id){document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===id));document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===id));if(id==="tracking")setTimeout(()=>{if(mainMap)mainMap.invalidateSize()},160);window.scrollTo({top:0,behavior:"smooth"})}
+document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.page)));
+function status(id,msg,type=""){const e=$(id);if(e){e.textContent=msg||"";e.className="status "+type}}
+async function search(query,dest,target){query=String(query||"").trim();if(!query){toast(t("searchPrompt"),"error");return}const box=$(target);box.innerHTML=`<div class="status">${esc(t("loading"))}</div>`;try{const request=dest?`${query} suppliers in ${cname(dest)} ${dest}`:query;const d=await api("/api/search",{method:"POST",body:JSON.stringify({request,quantity:Number($("quantity")?.value||500),destination:dest||""})});const arr=Array.isArray(d.results)?d.results:Array.isArray(d.suppliers)?d.suppliers:Array.isArray(d.items)?d.items:Array.isArray(d.organic)?d.organic:Array.isArray(d.data?.results)?d.data.results:[];lastResults=arr;renderResults(arr,target);if(target==="results")status("searchStatus",arr.length?`${arr.length} ${t("count")}`:t("noResults"),arr.length?"success":"")}catch(e){box.innerHTML=`<div class="status error">${esc(e.message)} — ${esc(t("searchDesc"))}</div>`}}
+function renderResults(arr,target){const box=$(target);if(!arr.length){box.innerHTML=`<div class="status">${esc(t("noResults"))}</div>`;return}box.innerHTML=arr.slice(0,50).map((x,i)=>{const title=x.title||x.name||x.company||x.supplier||t("unknown"),url=x.url||x.link||"",desc=x.snippet||x.description||t("noDescription"),price=x.price??x.unitPrice??x.displayed_price;return `<article class="result"><h3>${esc(title)}</h3><p>${esc(desc)}</p><div class="supplier-meta">${esc(x.country||x.location||"")}</div>${price!=null?`<p><b>${esc(t("price"))}: ${esc(price)} ${esc(x.currency||"")}</b></p>`:""}${url&&/^https?:\/\//i.test(url)?`<a class="source-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">${esc(t("source"))} ↗</a>`:""}<div class="actions"><button class="btn secondary" onclick="useSupplier(${i})">${esc(t("details"))}</button></div></article>`}).join("")}
+function useSupplier(i){const x=lastResults[i];if(!x)return;$("negSupplier").value=x.title||x.name||x.company||x.supplier||"";if(x.price)$("negOffer").value=Number(String(x.price).replace(/[^\d.]/g,""))||"";go("negotiation")}
+function searchSuppliers(){search($("query").value,$("destination").value,"results")}
+function dashboardSearch(){search($("dashQuery").value,$("dashCountry").value,"dashResults")}
+function quickSearch(q){$("heroQuery").value=q;$("query").value=q;go("search");searchSuppliers()}
+function heroSearch(){const q=$("heroQuery").value.trim();if(!q){toast(t("searchPrompt"),"error");return}$("query").value=q;$("destination").value=$("homeCountry").value;go("search");searchSuppliers()}
+function clearSearch(){$("query").value="";$("results").innerHTML="";status("searchStatus","")}
+async function createRFQ(){const product=$("rfqProduct").value.trim(),quantity=Number($("rfqQuantity").value);if(!product||quantity<1){toast(t("invalid"),"error");return}status("rfqOutput",t("loading"));try{const d=await api("/api/rfq",{method:"POST",body:JSON.stringify({product,quantity,destination:$("rfqDestination").value,incoterm:$("rfqIncoterm").value,requirements:$("rfqRequirements").value})});$("rfqOutput").textContent=JSON.stringify(d.result||d.rfq||d.message||d,null,2);toast(t("rfqSuccess"),"success")}catch(e){status("rfqOutput",e.message,"error")}}
+async function calculateLanded(){const b={unitPrice:Number($("unitPrice").value),quantity:Number($("landedQuantity").value),shipping:Number($("shipping").value)||0,insurance:Number($("insurance").value)||0,dutyPercent:Number($("duty").value)||0,taxPercent:Number($("tax").value)||0,localDelivery:Number($("localDelivery").value)||0};if(!Number.isFinite(b.unitPrice)||b.unitPrice<0||b.quantity<1){toast(t("invalid"),"error");return}let v;try{const d=await api("/api/landed-cost",{method:"POST",body:JSON.stringify(b)});v=d.result||d}catch{const goods=b.unitPrice*b.quantity,duty=goods*b.dutyPercent/100,tax=(goods+duty)*b.taxPercent/100;v={goods,shipping:b.shipping,insurance:b.insurance,duty,tax,localDelivery:b.localDelivery,total:goods+b.shipping+b.insurance+duty+tax+b.localDelivery,estimateOnly:true}}if(v.total==null){v.total=(v.goods??b.unitPrice*b.quantity)+(v.shipping??b.shipping)+(v.insurance??b.insurance)+(v.duty??0)+(v.tax??0)+(v.localDelivery??b.localDelivery);v.unitLanded=v.total/b.quantity}const e=$("landedOutput");e.innerHTML=`<div class="total-box"><small>${esc(t("landedTotal"))}${v.estimateOnly?" · "+esc(t("estimateOnly")):""}</small><strong>${esc(money(v.total))}</strong><small>${esc(t("unitLanded"))}: ${esc(money(v.unitLanded??v.total/b.quantity))}</small></div><div class="metrics">${[["goods",v.goods??b.unitPrice*b.quantity],["shipping",v.shipping??b.shipping],["insurance",v.insurance??b.insurance],["dutyPercent",v.duty],["taxPercent",v.tax],["localDelivery",v.localDelivery??b.localDelivery]].filter(a=>a[1]!=null).map(a=>`<div class="metric"><small>${esc(t(a[0]))}</small><b>${esc(money(a[1]))}</b></div>`).join("")}</div><p class="status">${esc(t("landedStatus"))}</p>`}
+async function negotiate(){const supplier=$("negSupplier").value.trim(),offer=Number($("negOffer").value),target=Number($("negTarget").value)||0,quantity=Number($("negQuantity").value)||1,reply=$("negReply").value.trim();if(!supplier||!Number.isFinite(offer)||offer<=0){toast(t("invalid"),"error");return}status("negOutput",t("loading"));try{const d=await api("/api/negotiate",{method:"POST",body:JSON.stringify({supplier,offer,target,quantity,reply})});$("negOutput").textContent=typeof d.result==="string"?d.result:JSON.stringify(d.result??d,null,2)}catch{const gap=target>0?((offer-target)/offer*100):0;$("negOutput").textContent=`${t("negLocal")}\n${t("currentOffer")}: ${money(offer)}\n${t("targetPrice")}: ${money(target||offer)}\n${t("quantity")}: ${fmt(quantity)}\n${target>0?gap.toFixed(1)+"%":""}\n${t("negotiationNote")}`}}
+async function loadDeals(){const e=$("dealsOutput");e.innerHTML=`<p class="status">${esc(t("loading"))}</p>`;try{const d=await api("/api/deals"),arr=Array.isArray(d.deals)?d.deals:[];e.innerHTML=arr.length?arr.map(x=>`<article class="supplier-row"><div class="supplier-art">🔥</div><div><strong>${esc(x.product||t("unknown"))}</strong><p>${esc(x.company||"")} · ${esc(x.country||"")}</p><b>${esc(x.price!=null?money(x.price,x.currency||"USD"):t("unknown"))}</b><p>${esc(x.description||"")}</p>${x.url&&/^https?:\/\//i.test(x.url)?`<a class="source-link" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">${esc(t("source"))}</a>`:""}</div></article>`).join(""):`<p class="status">${esc(t("noDeals"))}</p>`}catch(err){e.textContent=err.message}}
+async function loadPurchases(){const e=$("purchasesOutput");e.innerHTML=`<p class="status">${esc(t("loading"))}</p>`;try{const d=await api("/api/purchases"),arr=Array.isArray(d.purchases)?d.purchases:[];e.innerHTML=arr.length?arr.map(x=>`<article class="supplier-row"><div class="supplier-art">🧾</div><div><strong>${esc(x.product||t("unknown"))}</strong><p>${esc(x.supplier||"")}</p><div class="metrics"><div class="metric"><small>${esc(t("quantity"))}</small><b>${esc(fmt(x.quantity))}</b></div><div class="metric"><small>${esc(t("landedTotal"))}</small><b>${esc(money(x.landed_cost))}</b></div></div></div></article>`).join(""):`<p class="status">${esc(t("noPurchases"))}</p>`}catch(err){e.textContent=err.message}}
+async function accountAction(path){const email=$("email").value.trim(),password=$("password").value;if(!email||!password){toast(t("invalid"),"error");return}try{const d=await api(path,{method:"POST",body:JSON.stringify({email,password})});$("accountOutput").textContent=JSON.stringify(d,null,2);toast(t("success"),"success")}catch(e){status("accountOutput",e.message,"error")}}
+function login(){return accountAction("/api/login")}function signup(){return accountAction("/api/signup")}
+async function logout(){try{const d=await api("/api/logout",{method:"POST"});$("accountOutput").textContent=JSON.stringify(d,null,2)}catch(e){status("accountOutput",e.message,"error")}}
+function health(id,ok){$(id).textContent=ok?t("connected"):t("notConnected")}
+async function checkHealth(){try{const d=await api("/api/health");health("healthNova",!!d.ok);health("healthDB",!!d.database);health("healthAI",!!d.ai);health("healthSearch",!!d.yep)}catch{["healthNova","healthDB","healthAI","healthSearch"].forEach(id=>health(id,false))}}
+function initMap(){if(typeof L==="undefined"){status("trackingStatus",t("mapError"),"error");return}mainMap=L.map("mainMap",{worldCopyJump:true,scrollWheelZoom:false}).setView([25,40],2);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:18,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'}).addTo(mainMap);Object.keys(activeLayers).forEach(k=>markers[k]=L.layerGroup().addTo(mainMap))}
+function toggleLayer(key,button){activeLayers[key]=!activeLayers[key];button.classList.toggle("active",activeLayers[key]);if(mainMap&&markers[key]){if(activeLayers[key])markers[key].addTo(mainMap);else mainMap.removeLayer(markers[key])}}
+function pointOf(p){const lat=Number(p.lat??p.latitude??p.LAT),lon=Number(p.lon??p.lng??p.longitude??p.LON);return Number.isFinite(lat)&&Number.isFinite(lon)&&lat>=-90&&lat<=90&&lon>=-180&&lon<=180?{lat,lon}:null}
+function iconFor(type){return {aircraft:"✈️",vessels:"🚢",trains:"🚆",road:"🚚"}[type]||"•"}
+async function refreshTracking(){if(!mainMap)initMap();if(!mainMap){toast(t("mapError"),"error");return}status("trackingStatus",t("loading"));const b=mainMap.getBounds(),bbox=[b.getSouth(),b.getWest(),b.getNorth(),b.getEast()].join(","),types=Object.keys(activeLayers).filter(k=>activeLayers[k]),rows=[];const responses=await Promise.allSettled(types.map(async type=>{const d=await api(`/api/tracking/${type}?bbox=${encodeURIComponent(bbox)}`);if(d.configured===false)return {type,items:[],message:d.message||t("trackingNotConfigured")};const a=Array.isArray(d.positions)?d.positions:Array.isArray(d.states)?d.states:Array.isArray(d.results)?d.results:[];return {type,items:a.map(p=>({p,xy:pointOf(p)})).filter(x=>x.xy),message:d.message||""}}));responses.forEach((r,i)=>{const type=types[i];markers[type].clearLayers();if(r.status!=="fulfilled"){rows.push(`<tr><td>${esc(t(type))}</td><td colspan="4">${esc(r.reason?.message||t("trackingNotConfigured"))}</td></tr>`);return}if(r.value.message)rows.push(`<tr><td>${esc(t(type))}</td><td colspan="4">${esc(r.value.message)}</td></tr>`);r.value.items.forEach(({p,xy})=>{const name=p.name||p.callsign||p.flight||p.shipName||p.ShipName||p.vehicle_id||p.id||p.mmsi||p.MMSI||iconFor(type),speed=p.speed??p.velocity??p.Sog??p.SPEED??"—",updated=p.timestamp??p.last_seen??p.lastUpdate??"—";const mark=L.marker([xy.lat,xy.lon]).bindPopup(`<b>${esc(name)}</b><br>${esc(t(type))}<br>${xy.lat.toFixed(4)}, ${xy.lon.toFixed(4)}<br>${esc(t("speed"))}: ${esc(speed)}`);markers[type].addLayer(mark);rows.push(`<tr><td>${iconFor(type)} ${esc(t(type))}</td><td>${esc(name)}</td><td>${xy.lat.toFixed(3)}, ${xy.lon.toFixed(3)}</td><td>${esc(speed)}</td><td>${esc(updated)}</td></tr>`)})});$("trackingTable").innerHTML=rows.length?rows.join(""):`<tr><td colspan="5">${esc(t("noLiveData"))}</td></tr>`;status("trackingStatus",rows.length?`${rows.length} · ${t("live")}`:t("noLiveData"))}
+async function trackShipment(){const id=$("trackingNumber").value.trim(),carrier=$("carrier").value;if(!id){toast(t("invalid"),"error");return}status("trackOutput",t("loading"));try{const d=await api(`/api/tracking/shipment?tracking=${encodeURIComponent(id)}&carrier=${encodeURIComponent(carrier)}`);$("trackOutput").textContent=JSON.stringify(d.result??d,null,2)}catch(e){status("trackOutput",e.message,"error")}}
+function searchSelectedMarket(){const c=$("countryExplorer").value;if(!c){toast(t("emptyDestination"),"error");return}$("homeCountry").value=c;$("dashCountry").value=c;$("query").value="manufacturers suppliers exporters";$("destination").value=c;go("search");searchSuppliers()}
+function startup(){const ids=["homeCountry","dashCountry","destination","rfqDestination","countryExplorer"];ids.forEach(id=>{const e=$(id);if(!e)return;e.innerHTML=`<option value="">${esc(t("allCountries"))}</option>`+CODES.map(c=>`<option value="${c}">${esc(cname(c))}</option>`).join("");if(id!=="countryExplorer")e.value="IQ"});$("year").textContent=new Date().getFullYear();applyLang();installObserver();translatePage();initMap();checkHealth()}
+startup();
 </script>
 </body>
 </html>
