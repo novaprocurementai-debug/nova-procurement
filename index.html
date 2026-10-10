@@ -1,3342 +1,858 @@
+
 <!doctype html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#071426">
-<meta name="description" content="NOVA Global AI Procurement Platform">
-<link rel="manifest" href="/manifest.webmanifest">
-<link rel="icon" href="/nova-icon.svg">
-<link rel="apple-touch-icon" href="/nova-icon-192.png">
-
-<title>NOVA — Global AI Procurement</title>
-
+<meta name="theme-color" content="#06172d">
+<meta name="description" content="NOVA — Global AI Procurement and Trade Intelligence">
+<title>NOVA — Global Procurement AI</title>
 <style>
-:root{
-  --navy:#071426;
-  --navy2:#0b1d35;
-  --blue:#1769ff;
-  --blue2:#6757f5;
-  --cyan:#79e8ff;
-  --bg:#f4f7fb;
-  --card:#fff;
-  --line:#e3e9f1;
-  --text:#102033;
-  --muted:#68778a;
-  --green:#08764e;
-  --greenbg:#eaf8f2;
-  --red:#b4232a;
-  --redbg:#fff0f0;
-  --orange:#a15c00;
-  --shadow:0 12px 34px rgba(8,27,50,.08);
-}
-
+:root{--navy:#06172d;--navy2:#0a2545;--blue:#1769ff;--cyan:#48d9f4;--green:#07966c;--bg:#f2f6fb;--line:#e0e8f1;--text:#13243a;--muted:#718096;--shadow:0 8px 26px #092a4b12}
 *{box-sizing:border-box}
-
 html{scroll-behavior:smooth}
-
-body{
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Inter,Arial,"Noto Sans",sans-serif;
-}
-
+body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,"Segoe UI",Arial,sans-serif}
 button,input,select,textarea{font:inherit}
-
 button{cursor:pointer}
-
-.wrap{
-  width:min(1240px,calc(100% - 30px));
-  margin:auto;
-}
-
-header{
-  position:sticky;
-  top:0;
-  z-index:100;
-  background:rgba(7,20,38,.98);
-  color:#fff;
-  box-shadow:0 2px 18px rgba(0,0,0,.12);
-}
-
-.head{
-  min-height:70px;
-  display:flex;
-  align-items:center;
-  gap:16px;
-}
-
-.logo{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  font-size:28px;
-  font-weight:950;
-  letter-spacing:1px;
-  white-space:nowrap;
-}
-
-.logo-mark{
-  width:35px;
-  height:35px;
-  display:grid;
-  place-items:center;
-  border-radius:11px;
-  background:linear-gradient(135deg,var(--blue),var(--cyan));
-  color:#fff;
-  font-size:19px;
-}
-
-.nav{
-  display:flex;
-  flex:1;
-  justify-content:center;
-  gap:3px;
-}
-
-.nav button{
-  border:0;
-  background:transparent;
-  color:#c9d5e4;
-  padding:10px 11px;
-  border-radius:9px;
-  font-weight:750;
-  white-space:nowrap;
-}
-
-.nav button:hover,
-.nav button.active{
-  color:#fff;
-  background:#15304f;
-}
-
-.tools{
-  display:flex;
-  gap:7px;
-  align-items:center;
-}
-
-.lang{
-  max-width:135px;
-  padding:9px 8px;
-  border-radius:8px;
-  border:1px solid #2d4562;
-  background:#10233c;
-  color:#fff;
-}
-
-.primary,.outline,.dark,.danger{
-  border-radius:10px;
-  padding:10px 15px;
-  font-weight:850;
-}
-
-.primary{
-  border:0;
-  background:linear-gradient(90deg,var(--blue),var(--blue2));
-  color:#fff;
-}
-
-.primary:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-}
-
-.outline{
-  border:1px solid #d7e0eb;
-  background:#fff;
-  color:#17324f;
-}
-
-.dark{
-  border:0;
-  background:#102033;
-  color:#fff;
-}
-
-.danger{
-  border:1px solid #f1b9b9;
-  background:#fff3f3;
-  color:var(--red);
-}
-
-.mobile{
-  display:none;
-  background:#10233c;
-  color:#fff;
-  border:1px solid #2d4562;
-  border-radius:8px;
-  padding:9px 11px;
-}
-
-main{padding:22px 0 70px}
-
-.page{display:none}
-.page.active{display:block}
-
-.hero{
-  border-radius:25px;
-  padding:46px;
-  color:#fff;
-  background:
-    radial-gradient(circle at 78% 20%,rgba(49,209,255,.25),transparent 31%),
-    linear-gradient(120deg,#061221,#0b3157 60%,#07618e);
-  box-shadow:0 18px 50px rgba(5,32,61,.16);
-}
-
-.hero-grid{
-  display:grid;
-  grid-template-columns:1.2fr .8fr;
-  gap:30px;
-}
-
-.eyebrow{
-  display:inline-flex;
-  align-items:center;
-  gap:7px;
-  padding:7px 11px;
-  border-radius:999px;
-  background:rgba(255,255,255,.1);
-  border:1px solid rgba(255,255,255,.2);
-  font-size:12px;
-  font-weight:900;
-}
-
-.live-dot{
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:#46e6a4;
-  box-shadow:0 0 0 5px rgba(70,230,164,.12);
-}
-
-.hero h1{
-  font-size:51px;
-  line-height:1.06;
-  margin:18px 0 12px;
-}
-
-.hero h1 span:last-child{color:var(--cyan)}
-
-.hero p{
-  color:#dbeafe;
-  line-height:1.8;
-  font-size:17px;
-}
-
-.searchbox{
-  display:flex;
-  background:#fff;
-  padding:6px;
-  border-radius:14px;
-  margin-top:23px;
-  box-shadow:0 8px 28px rgba(0,0,0,.13);
-}
-
-.searchbox input{
-  flex:1;
-  min-width:0;
-  border:0;
-  outline:0;
-  padding:12px;
-}
-
-.searchbox select{
-  width:190px;
-  border:0;
-  border-inline-start:1px solid #e1e7ef;
-  padding:0 10px;
-  outline:0;
-  background:#fff;
-}
-
-.searchbox button{
-  width:52px;
-  border:0;
-  border-radius:10px;
-  background:var(--blue);
-  color:#fff;
-  font-size:22px;
-}
-
-.quick{
-  display:flex;
-  gap:7px;
-  flex-wrap:wrap;
-  margin-top:13px;
-}
-
-.quick button{
-  border:0;
-  border-radius:999px;
-  padding:8px 11px;
-  background:#fff;
-  color:#19334f;
-  font-size:12px;
-  font-weight:800;
-}
-
-.ai{
-  background:rgba(255,255,255,.1);
-  border:1px solid rgba(255,255,255,.2);
-  border-radius:19px;
-  padding:21px;
-  backdrop-filter:blur(10px);
-}
-
-.ai h3{margin-top:0}
-
-.ai-box{
-  background:#fff;
-  color:#24354a;
-  border-radius:11px;
-  padding:14px;
-  margin:14px 0;
-  line-height:1.6;
-}
-
-.ai button{
-  width:100%;
-  margin-top:7px;
-  background:#fff;
-  color:#17334f;
-  border:0;
-  border-radius:9px;
-  padding:10px;
-  font-weight:800;
-  text-align:start;
-}
-
-.stats{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:11px;
-  margin:17px 0;
-}
-
-.stat,.card,.countrybox{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:17px;
-  box-shadow:var(--shadow);
-}
-
-.stat{padding:17px}
-
-.stat b{
-  display:block;
-  margin:4px 0;
-  font-size:27px;
-}
-
-.muted{
-  color:var(--muted);
-  font-size:13px;
-}
-
-.section{margin-top:25px}
-
-.section-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  margin-bottom:12px;
-}
-
-.section-head h2{
-  margin:0;
-  font-size:22px;
-}
-
-.section-head p{
-  margin:4px 0;
-  color:var(--muted);
-  font-size:13px;
-}
-
-.categories{
-  display:grid;
-  grid-template-columns:repeat(8,1fr);
-  gap:9px;
-}
-
-.cat{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:13px;
-  padding:13px 8px;
-  text-align:center;
-  font-weight:800;
-  color:#18314d;
-}
-
-.cat:hover{
-  transform:translateY(-2px);
-  box-shadow:var(--shadow);
-}
-
-.cat i{
-  display:block;
-  font-style:normal;
-  font-size:27px;
-  margin-bottom:6px;
-}
-
-.cards{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:11px;
-}
-
-.product{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:15px;
-  overflow:hidden;
-}
-
-.pic{
-  height:100px;
-  display:grid;
-  place-items:center;
-  font-size:52px;
-  background:linear-gradient(135deg,#eef6ff,#d9ebff);
-}
-
-.product-body{padding:13px}
-
-.product h3{
-  margin:0 0 4px;
-  font-size:15px;
-}
-
-.tools-grid{
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:9px;
-}
-
-.tool{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:13px;
-  padding:14px;
-  text-align:center;
-  color:#18314d;
-}
-
-.tool i{
-  display:block;
-  font-style:normal;
-  font-size:25px;
-}
-
-.tool b{
-  display:block;
-  margin-top:6px;
-  font-size:13px;
-}
-
-.coverage{
-  display:grid;
-  grid-template-columns:1.1fr .9fr;
-  gap:15px;
-  margin-top:18px;
-}
-
-.coverage-card{
-  padding:21px;
-  background:linear-gradient(135deg,#0b1d35,#0b5b8c);
-  color:#fff;
-  border-radius:18px;
-}
-
-.coverage-card h2{margin-top:0}
-
-.coverage-card p{
-  color:#dbeafe;
-  line-height:1.7;
-}
-
-.country-count{
-  font-size:31px;
-  font-weight:950;
-  color:#7ee8ff;
-}
-
-.countrybox{padding:18px}
-
-.countrybox select{
-  width:100%;
-  padding:12px;
-  border:1px solid #d5deea;
-  border-radius:10px;
-  background:#fff;
-}
-
-.card{padding:21px}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:14px;
-}
-
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #48b7ff;outline-offset:2px}
+a{color:inherit}
+header{position:sticky;top:0;z-index:100;background:#06172df7;color:#fff;border-bottom:1px solid #ffffff18;backdrop-filter:blur(16px)}
+.wrap{width:min(1540px,calc(100% - 28px));margin:auto}
+.head{min-height:68px;display:flex;align-items:center;gap:20px}
+.brand{display:flex;align-items:center;gap:10px;min-width:175px;font-size:25px;font-weight:950;letter-spacing:1px}
+.brand-mark{display:grid;place-items:center;width:39px;height:39px;border-radius:12px;background:linear-gradient(135deg,#1769ff,#46e0e7);box-shadow:0 0 24px #219aff44}
+.brand small{display:block;font-size:9px;font-weight:500;letter-spacing:.3px;color:#9bb7d3;margin-top:2px}
+.nav{display:flex;align-items:center;gap:3px;flex:1;justify-content:center}
+.nav button,.head-action{border:0;background:transparent;color:#d5e3f4;border-radius:9px;padding:10px 11px;font-size:12px;font-weight:750;white-space:nowrap}
+.nav button:hover,.nav button.active{background:#1769ff;color:white}
+.head-actions{display:flex;align-items:center;gap:7px}
+.lang{background:#102b4a;color:white;border:1px solid #31516f;border-radius:9px;padding:9px;max-width:110px}
+.btn{border:0;border-radius:10px;padding:11px 16px;font-weight:800;transition:transform .16s,filter .16s,box-shadow .16s}
+.btn:hover{filter:brightness(1.04);transform:translateY(-1px)}
+.btn:disabled{opacity:.55;cursor:wait;transform:none}
+.primary{background:linear-gradient(135deg,#1769ff,#0a50d8);color:#fff;box-shadow:0 5px 15px #1769ff25}
+.secondary{background:#eaf2ff;color:#1654bb;border:1px solid #d4e3ff}
+.ghost{background:#fff;color:#25415e;border:1px solid #dce5ef}
+.dark-btn{background:#0b2543;color:#fff}
+.mobile{display:none;background:#102b4a;color:#fff;border:1px solid #31516f;border-radius:9px;padding:9px 12px}
+main{padding:17px 0 60px}
+.page{display:none}.page.active{display:block}
+.hero{position:relative;isolation:isolate;overflow:hidden;min-height:430px;padding:34px;border-radius:23px;color:white;background:linear-gradient(90deg,#031124f5 0%,#062344dc 48%,#092d4d83 100%),url("https://images.unsplash.com/photo-1494412519320-aa613dfb7738?auto=format&fit=crop&w=2200&q=85") center/cover,#071a31;box-shadow:0 18px 55px #05213c30}
+.hero:after{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(ellipse at 63% 43%,#1cbfff2c,transparent 34%),linear-gradient(0deg,#03122655,transparent 60%);pointer-events:none}
+.hero-grid{position:relative;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(280px,.78fr);gap:26px;align-items:center;min-height:360px}
+.hero-copy{position:relative;z-index:2;max-width:780px}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;border:1px solid #9bdfff52;background:#04192e9c;border-radius:30px;padding:8px 12px;color:#d5f7ff;font-size:12px;font-weight:800}
+.dot{width:8px;height:8px;border-radius:50%;background:#38e5a3;box-shadow:0 0 0 5px #38e5a322}
+h1{font-size:clamp(35px,4vw,59px);line-height:1.08;letter-spacing:-1.2px;margin:20px 0 13px;text-shadow:0 5px 30px #0005}
+h1 span{display:block;color:#39d7db}
+.hero-copy>p{max-width:650px;line-height:1.85;color:#d5e8fa;font-size:16px}
+.searchbox{display:flex;align-items:center;gap:5px;margin-top:23px;padding:6px;background:white;border:1px solid #d9e9f7;border-radius:13px;box-shadow:0 10px 35px #0003}
+.searchbox input{min-width:0;flex:1;border:0;outline:0;padding:12px;color:#13243a;background:transparent}
+.searchbox select{max-width:185px;min-width:120px;border:0;border-inline-start:1px solid #e2e8f0;padding:10px;background:#fff;color:#344a60}
+.searchbox .btn{font-size:21px;padding:9px 16px}
+.quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.quick button{border:1px solid #ffffff4c;background:#fffffff0;color:#1b3550;border-radius:30px;padding:9px 13px;font-size:12px;font-weight:850;box-shadow:0 5px 15px #0002}
+.quick button:hover{transform:translateY(-2px)}
+.globe{position:absolute;z-index:0;top:50%;left:38%;width:min(42%,480px);aspect-ratio:1;transform:translateY(-50%);opacity:.7;pointer-events:none;filter:drop-shadow(0 0 24px #37cfff35)}
+.globe svg{width:100%;height:100%}
+.globe-spin{transform-origin:250px 250px;animation:spinGlobe 42s linear infinite}
+@keyframes spinGlobe{to{transform:rotate(360deg)}}
+@keyframes pulse{50%{opacity:1}}
+.ai-panel{position:relative;z-index:3;border:1px solid #9edfff47;border-radius:19px;padding:20px;background:#061a30c9;box-shadow:0 20px 50px #0003;backdrop-filter:blur(13px)}
+.ai-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.ai-head h2{font-size:19px;margin:0}
+.online{color:#62edb1;font-size:11px;font-weight:800}
+.ai-panel p{font-size:13px;line-height:1.8;color:#c7d8ea}
+.ai-example{padding:13px;border-radius:11px;background:#fff;color:#42566c;font-size:12px;line-height:1.8;margin:14px 0}
+.ai-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ai-actions button{padding:11px 9px;border:1px solid #c7e7ff35;border-radius:9px;background:#102f4f;color:#f0f8ff;font-size:12px;font-weight:800;text-align:start}
+.ai-actions button:hover{background:#17476e}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:13px 0 20px}
+.stat{display:flex;align-items:center;gap:11px;min-width:0;padding:15px;background:white;border:1px solid var(--line);border-radius:13px;box-shadow:var(--shadow)}
+.stat-icon{display:grid;place-items:center;flex-shrink:0;width:40px;height:40px;border-radius:12px;background:#eaf4ff;color:#1769ff;font-size:20px}
+.stat small{display:block;color:var(--muted);font-size:11px}
+.stat strong{display:block;margin:3px 0;font-size:22px}
+.stat .sub{font-size:10px;color:var(--muted)}
+.section{margin-top:22px}
+.section-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.section-head h2{font-size:19px;margin:0 0 4px}
+.section-head p{font-size:12px;color:var(--muted);margin:0}
+.categories{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:9px}
+.cat{overflow:hidden;text-align:start;padding:0;border:1px solid var(--line);border-radius:13px;background:white;color:var(--text);box-shadow:var(--shadow);font-weight:800;font-size:12px}
+.cat-art{display:grid;place-items:center;min-height:75px;font-size:30px;background:linear-gradient(145deg,#dcecff,#f2f7ff)}
+.cat span{display:block;padding:10px 9px}
+.cat:hover{border-color:#8dbbff;transform:translateY(-2px)}
+.workspace{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(280px,.8fr) minmax(260px,.72fr);gap:12px;align-items:start}
+.panel{min-width:0;background:#fff;border:1px solid var(--line);border-radius:15px;box-shadow:var(--shadow);overflow:hidden}
+.panel-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:15px;border-bottom:1px solid #edf1f6}
+.panel-head h3{font-size:14px;margin:0}
+.panel-body{padding:14px}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:5px 8px;border-radius:20px;background:#e8f8f0;color:#08764e;font-size:10px;font-weight:800}
+.field{display:flex;flex-direction:column;gap:6px;min-width:0}
+.field label{font-size:12px;font-weight:800;color:#41556c}
+.field input,.field select,.field textarea{width:100%;min-width:0;border:1px solid #dce5ef;border-radius:9px;padding:11px;background:white;color:#172b43}
+.field textarea{resize:vertical;min-height:88px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
 .full{grid-column:1/-1}
-
-.field label{
-  display:block;
-  margin-bottom:6px;
-  font-size:13px;
-  font-weight:850;
-}
-
-.field input,
-.field textarea,
-.field select{
-  width:100%;
-  padding:12px;
-  border:1px solid #d5deea;
-  border-radius:10px;
-  outline:0;
-  background:#fff;
-  color:#102033;
-}
-
-.field input:focus,
-.field textarea:focus,
-.field select:focus{
-  border-color:#7daaff;
-  box-shadow:0 0 0 3px rgba(23,105,255,.08);
-}
-
-.field textarea{
-  min-height:110px;
-  resize:vertical;
-}
-
-.two{
-  display:grid;
-  grid-template-columns:1.5fr .8fr;
-  gap:17px;
-}
-
-.actions{
-  display:flex;
-  gap:7px;
-  flex-wrap:wrap;
-  margin-top:13px;
-}
-
-.status{
-  padding:10px 2px;
-  min-height:20px;
-}
-
-.result{
-  background:#fff;
-  border:1px solid var(--line);
-  border-radius:15px;
-  padding:15px;
-  margin:10px 0;
-  box-shadow:var(--shadow);
-}
-
-.result-top{
-  display:flex;
-  gap:12px;
-  align-items:center;
-}
-
-.avatar{
-  width:66px;
-  height:66px;
-  flex:0 0 66px;
-  border-radius:12px;
-  background:#e7f1ff;
-  display:grid;
-  place-items:center;
-  font-size:30px;
-}
-
-.result h3{
-  margin:5px 0;
-  overflow-wrap:anywhere;
-}
-
-.badge{
-  display:inline-block;
-  background:var(--greenbg);
-  color:var(--green);
-  border-radius:999px;
-  padding:4px 8px;
-  font-size:11px;
-  font-weight:900;
-}
-
-.badge.warn{
-  background:#fff6e8;
-  color:var(--orange);
-}
-
-.metrics{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:7px;
-  margin-top:12px;
-}
-
-.metric{
-  background:#f6f8fb;
-  border-radius:9px;
-  padding:9px;
-}
-
-.metric small{
-  display:block;
-  color:var(--muted);
-  font-size:10px;
-  margin-bottom:4px;
-}
-
-.metric b{
-  overflow-wrap:anywhere;
-}
-
-.source-link{
-  display:inline-block;
-  margin-top:9px;
-  color:#175bc6;
-  font-weight:800;
-  text-decoration:none;
-}
-
-.source-link:hover{text-decoration:underline}
-
-.empty{
-  padding:30px;
-  text-align:center;
-  color:var(--muted);
-}
-
-.copy{
-  white-space:pre-wrap;
-  overflow-wrap:anywhere;
-  line-height:1.75;
-  background:#f7f9fc;
-  border-radius:11px;
-  padding:14px;
-}
-
-.ok{color:var(--green)}
-.err{color:var(--red)}
-
-.notice{
-  border:1px solid #dbe6f4;
-  background:#f7fbff;
-  border-radius:12px;
-  padding:12px;
-  line-height:1.6;
-}
-
-.health-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:10px;
-}
-
-.health-item{
-  padding:13px;
-  border-radius:12px;
-  background:#f6f8fb;
-}
-
-.health-item b{display:block;margin-top:5px}
-
-.connected{color:var(--green)}
-.disconnected{color:var(--red)}
-
-.modal{
-  display:none;
-  position:fixed;
-  inset:0;
-  z-index:200;
-  align-items:center;
-  justify-content:center;
-  padding:18px;
-  background:rgba(3,14,27,.68);
-}
-
-.modal.show{display:flex}
-
-.modal-card{
-  width:min(760px,100%);
-  max-height:90vh;
-  overflow:auto;
-  padding:22px;
-  border-radius:19px;
-  background:#fff;
-}
-
-.modal-head{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-}
-
-.close{
-  border:0;
-  border-radius:8px;
-  padding:8px 11px;
-  background:#eef2f6;
-}
-
-.toast{
-  display:none;
-  position:fixed;
-  bottom:18px;
-  inset-inline-start:18px;
-  z-index:300;
-  max-width:min(420px,calc(100% - 36px));
-  padding:12px 16px;
-  border-radius:10px;
-  background:#102033;
-  color:#fff;
-  box-shadow:0 10px 30px rgba(0,0,0,.2);
-}
-
-.toast.show{display:block}
-.toast.success{background:var(--green)}
-.toast.error{background:var(--red)}
-
-.loader{
-  display:inline-block;
-  width:15px;
-  height:15px;
-  margin-inline-end:7px;
-  vertical-align:-2px;
-  border:2px solid #d8e2ee;
-  border-top-color:var(--blue);
-  border-radius:50%;
-  animation:spin .8s linear infinite;
-}
-
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px}
+.result{padding:13px;border:1px solid #e2eaf3;border-radius:12px;background:#fff;margin-bottom:10px}
+.result-top{display:flex;gap:10px;align-items:center}
+.avatar{display:grid;place-items:center;flex-shrink:0;width:43px;height:43px;border-radius:11px;background:#e9f3ff;font-size:22px}
+.result h3{font-size:14px;margin:0 0 4px}
+.muted{color:var(--muted);font-size:11px}
+.result-price{font-size:19px;font-weight:900;margin:10px 0 3px}
+.metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:11px}
+.metric{padding:9px;background:#f5f8fc;border-radius:8px;min-width:0}
+.metric small{display:block;color:var(--muted);font-size:10px}
+.metric b{display:block;font-size:12px;overflow-wrap:anywhere;margin-top:3px}
+.source-link{display:inline-block;margin-top:9px;color:#155cce;font-size:11px;font-weight:800}
+.status{font-size:12px;margin:10px 0;color:var(--muted)}
+.status.error{color:#b4232a}.status.success{color:#08764e}
+.empty{padding:20px;text-align:center;color:var(--muted);font-size:12px}
+.tools-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:9px}
+.tool{display:flex;align-items:center;gap:11px;text-align:start;border:1px solid var(--line);border-radius:12px;background:white;padding:14px;box-shadow:var(--shadow);font-weight:800;font-size:12px}
+.tool i{font-style:normal;font-size:22px}
+.market-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.market-card{overflow:hidden;border:1px solid var(--line);border-radius:12px;background:white;box-shadow:var(--shadow)}
+.market-art{display:grid;place-items:center;min-height:105px;background:linear-gradient(145deg,#dcecff,#eff8ff);font-size:36px}
+.market-card div:last-child{padding:11px}
+.market-card strong{font-size:12px}
+.coverage{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:18px}
+.coverage-card{border-radius:15px;padding:19px;background:linear-gradient(125deg,#0a2342,#104d7b);color:#fff}
+.coverage-card h2{margin:0 0 8px;font-size:19px}
+.coverage-card p{font-size:12px;line-height:1.8;color:#d1e4f8}
+.coverage-number{font-size:38px;font-weight:950;color:#50d9e8}
+.countrybox{padding:19px;background:white;border:1px solid var(--line);border-radius:15px}
+.countrybox select{width:100%;padding:11px;border:1px solid var(--line);border-radius:9px;background:white}
+.health-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.health-item{padding:13px;border:1px solid var(--line);border-radius:11px;background:white;font-size:12px}
+.connected{color:#08764e}.disconnected{color:#b4232a}
+.loading{display:inline-block;width:15px;height:15px;border:2px solid #dce8f5;border-top-color:#1769ff;border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
-
-@media(max-width:1050px){
-  .nav{display:none}
-  .nav.open{
-    display:flex;
-    position:absolute;
-    top:70px;
-    inset-inline:15px;
-    flex-direction:column;
-    padding:10px;
-    background:#0b1d35;
-    border-radius:12px;
-    box-shadow:0 12px 30px rgba(0,0,0,.25);
-  }
-  .mobile{display:block}
-  .hero-grid,.two,.coverage{grid-template-columns:1fr}
-  .categories{grid-template-columns:repeat(4,1fr)}
-  .cards{grid-template-columns:repeat(2,1fr)}
-  .tools-grid{grid-template-columns:repeat(3,1fr)}
-}
-
-@media(max-width:680px){
-  .wrap{width:min(100% - 20px,1240px)}
-  .head{min-height:64px}
-  .logo{font-size:23px}
-  .logo-mark{width:31px;height:31px}
-  .tools .primary{display:none}
-  .lang{max-width:110px}
-  .hero{padding:27px 19px}
-  .hero h1{font-size:35px}
-  .stats{grid-template-columns:repeat(2,1fr)}
-  .categories{grid-template-columns:repeat(2,1fr)}
-  .cards{grid-template-columns:1fr 1fr}
-  .grid{grid-template-columns:1fr}
-  .full{grid-column:auto}
-  .metrics{grid-template-columns:repeat(2,1fr)}
-  .tools-grid{grid-template-columns:1fr 1fr}
-  .health-grid{grid-template-columns:1fr 1fr}
-  .searchbox{flex-wrap:wrap}
-  .searchbox select{
-    width:100%;
-    border-inline-start:0;
-    border-top:1px solid #e1e7ef;
-    padding:9px;
-  }
-}
-
-@media(max-width:430px){
-  .cards{grid-template-columns:1fr}
-  .hero h1{font-size:31px}
-}
+.toast{display:none;position:fixed;z-index:300;bottom:20px;inset-inline-end:20px;max-width:min(420px,calc(100% - 40px));padding:13px 17px;border-radius:11px;background:#102b49;color:white;box-shadow:0 10px 30px #0003;font-size:13px}
+.toast.show{display:block}.toast.error{background:#b4232a}.toast.success{background:#08764e}
+.modal{display:none;position:fixed;inset:0;z-index:250;background:#041124a8;place-items:center;padding:16px}
+.modal.open{display:grid}
+.modal-card{width:min(680px,100%);max-height:85vh;overflow:auto;background:white;border-radius:16px;padding:20px}
+.modal-head{display:flex;justify-content:space-between;gap:12px;align-items:center}
+footer{margin-top:35px;padding:23px 0;border-top:1px solid var(--line);color:var(--muted);font-size:11px}
+@media(max-width:1180px){.nav{display:none}.nav.open{display:flex;position:absolute;top:68px;inset-inline:14px;flex-direction:column;align-items:stretch;background:#071a31;padding:12px;border-radius:13px;box-shadow:0 12px 30px #0004}.mobile{display:block}.workspace{grid-template-columns:1fr 1fr}.workspace .supplier-panel{grid-column:1/-1}.categories{grid-template-columns:repeat(4,minmax(0,1fr))}.tools-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:760px){.wrap{width:calc(100% - 18px)}.head{min-height:61px;gap:8px}.brand{font-size:21px;min-width:auto}.brand small{font-size:8px}.head-actions{margin-inline-start:auto}.head-actions .primary{display:none}.lang{max-width:94px}.hero{padding:21px;min-height:0}.hero-grid{grid-template-columns:1fr;gap:16px}.hero-copy{max-width:none}.globe{width:88%;left:6%;top:25%;opacity:.25}.hero h1{font-size:36px}.hero-copy>p{font-size:14px}.searchbox{flex-wrap:wrap}.searchbox input{flex-basis:65%}.searchbox select{max-width:none;flex:1;min-width:0;border-inline-start:0;border-top:1px solid #e2e8f0}.searchbox .btn{flex:0 0 auto}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.stat{padding:11px;gap:8px}.stat-icon{width:34px;height:34px;font-size:17px}.stat strong{font-size:19px}.categories{grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}.cat-art{min-height:53px;font-size:24px}.cat span{font-size:10px;padding:8px 6px}.workspace{grid-template-columns:1fr}.workspace .supplier-panel{grid-column:auto}.market-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.coverage{grid-template-columns:1fr}.tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.health-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.form-grid{grid-template-columns:1fr}.full{grid-column:auto}.section-head h2{font-size:17px}}
+@media(max-width:420px){.hero h1{font-size:31px}.ai-actions{grid-template-columns:1fr}.categories{grid-template-columns:repeat(2,minmax(0,1fr))}.brand small{display:none}.nav.open{top:61px}.head{gap:5px}.lang{max-width:84px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition:none!important}}
 </style>
 </head>
-
 <body>
-
 <header>
-<div class="wrap head">
-
-  <div class="logo">
-    <span class="logo-mark">N</span>
-    NOVA
+  <div class="wrap head">
+    <div class="brand"><span class="brand-mark">N</span><span>NOVA<small>GLOBAL PROCUREMENT AI</small></span></div>
+    <nav class="nav" id="nav">
+      <button data-page="home" data-i18n="home"></button>
+      <button data-page="search" data-i18n="suppliers"></button>
+      <button data-page="rfq" data-i18n="rfq"></button>
+      <button data-page="landed" data-i18n="landed"></button>
+      <button data-page="negotiation" data-i18n="negotiation"></button>
+      <button data-page="deals" data-i18n="deals"></button>
+      <button data-page="history" data-i18n="purchases"></button>
+      <button data-page="account" data-i18n="account"></button>
+    </nav>
+    <div class="head-actions">
+      <select id="language" class="lang" aria-label="Language">
+        <option value="ar">العربية</option><option value="en">English</option>
+      </select>
+      <button class="btn primary" onclick="go('search')" data-i18n="startBuying"></button>
+      <button class="mobile" onclick="toggleNav()" aria-label="Open menu">☰</button>
+    </div>
   </div>
-
-  <nav class="nav" id="nav">
-    <button data-page="home" data-i18n="home"></button>
-    <button data-page="search" data-i18n="suppliers"></button>
-    <button data-page="rfq" data-i18n="rfq"></button>
-    <button data-page="landed" data-i18n="landed"></button>
-    <button data-page="negotiation" data-i18n="negotiation"></button>
-    <button data-page="deals" data-i18n="deals"></button>
-    <button data-page="history" data-i18n="purchases"></button>
-    <button data-page="account" data-i18n="account"></button>
-  </nav>
-
-  <div class="tools">
-    <select id="language" class="lang" aria-label="Language"></select>
-
-    <button class="primary" data-i18n="startBuying"
-      onclick="go('search')"></button>
-
-    <button class="mobile"
-      aria-label="Menu"
-      onclick="toggleNav()">☰</button>
-  </div>
-
-</div>
 </header>
 
 <main class="wrap">
-
-<!-- HOME -->
 <section id="home" class="page active">
-
   <div class="hero">
+    <div class="globe" aria-hidden="true">
+      <svg viewBox="0 0 500 500" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient id="globeFill" cx="35%" cy="28%" r="78%">
+            <stop offset="0" stop-color="#a6f4ff" stop-opacity=".55"/>
+            <stop offset=".55" stop-color="#167ad8" stop-opacity=".2"/>
+            <stop offset="1" stop-color="#06152d" stop-opacity=".8"/>
+          </radialGradient>
+          <linearGradient id="globeStroke"><stop stop-color="#c1f8ff"/><stop offset="1" stop-color="#648cff"/></linearGradient>
+          <clipPath id="globeClip"><circle cx="250" cy="250" r="158"/></clipPath>
+        </defs>
+        <circle cx="250" cy="250" r="196" fill="none" stroke="#69dfff" stroke-opacity=".23"/>
+        <circle class="globe-spin" cx="250" cy="250" r="178" fill="none" stroke="#69dfff" stroke-opacity=".6" stroke-dasharray="3 10" stroke-width="2"/>
+        <circle cx="250" cy="250" r="158" fill="url(#globeFill)" stroke="url(#globeStroke)" stroke-width="2"/>
+        <g clip-path="url(#globeClip)" fill="none" stroke="#8cecff" stroke-opacity=".55">
+          <ellipse cx="250" cy="250" rx="64" ry="158"/>
+          <ellipse cx="250" cy="250" rx="119" ry="158"/>
+          <ellipse cx="250" cy="250" rx="158" ry="55"/>
+          <ellipse cx="250" cy="250" rx="158" ry="106"/>
+          <path d="M90 250H410M105 195H395M105 305H395M250 90V410"/>
+          <path d="M120 145L180 166 203 207 184 242 208 270 191 310 220 354"/>
+          <path d="M266 102L287 145 320 163 328 199 363 222 345 254 367 289 342 325 306 344 291 386"/>
+        </g>
+        <g fill="none" stroke="#70ddff" stroke-width="1.5">
+          <path d="M167 190Q250 110 326 204T300 316"/>
+          <path d="M167 190Q175 275 300 316"/>
+          <path d="M326 204Q230 250 211 335"/>
+          <ellipse cx="250" cy="250" rx="215" ry="74" transform="rotate(-28 250 250)"/>
+          <ellipse cx="250" cy="250" rx="215" ry="75" transform="rotate(46 250 250)" stroke-dasharray="4 8"/>
+        </g>
+        <g fill="#b8f5ff">
+          <circle cx="167" cy="190" r="6"/><circle cx="326" cy="204" r="6"/>
+          <circle cx="300" cy="316" r="6"/><circle cx="211" cy="335" r="5"/>
+        </g>
+      </svg>
+    </div>
     <div class="hero-grid">
-
-      <div>
-        <div class="eyebrow">
-          <span class="live-dot"></span>
-          <span data-i18n="verifiedFirst"></span>
-        </div>
-
-        <h1>
-          <span data-i18n="globalProcurement"></span><br>
-          <span data-i18n="poweredAI"></span>
-        </h1>
-
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="dot"></span><span data-i18n="verifiedFirst"></span></div>
+        <h1><span data-i18n="heroTitle"></span><span data-i18n="heroTitle2"></span></h1>
         <p data-i18n="heroText"></p>
-
         <div class="searchbox">
-          <input id="homeQuery"
-            data-placeholder="searchPlaceholder">
-
-          <select id="homeCountry"></select>
-
-          <button onclick="homeSearch()"
-            aria-label="Search">⌕</button>
+          <input id="homeQuery" data-placeholder="searchPlaceholder" aria-label="Product search">
+          <select id="homeCountry" aria-label="Country"></select>
+          <button class="btn primary" onclick="homeSearch()" aria-label="Search">⌕</button>
         </div>
-
         <div class="quick">
-          <button onclick="quickSearch('wheat bulk suppliers')">
-            🌾 <span data-i18n="wheat"></span>
-          </button>
-
-          <button onclick="quickSearch('fertilizer manufacturers')">
-            🧪 <span data-i18n="fertilizers"></span>
-          </button>
-
-          <button onclick="quickSearch('agricultural machinery manufacturers')">
-            🚜 <span data-i18n="machinery"></span>
-          </button>
-
-          <button onclick="quickSearch('solar panel manufacturers')">
-            ☀️ <span data-i18n="energy"></span>
-          </button>
-
-          <button onclick="quickSearch('vehicle manufacturers exporters')">
-            🚗 <span data-i18n="vehicles"></span>
-          </button>
+          <button onclick="quickSearch('wheat grain bulk suppliers')">🌾 <span data-i18n="wheat"></span></button>
+          <button onclick="quickSearch('food products manufacturers')">🥬 <span data-i18n="food"></span></button>
+          <button onclick="quickSearch('industrial materials manufacturers')">🏭 <span data-i18n="materials"></span></button>
+          <button onclick="quickSearch('agricultural machinery manufacturers')">🚜 <span data-i18n="machinery"></span></button>
+          <button onclick="quickSearch('vehicle manufacturers exporters')">🚗 <span data-i18n="vehicles"></span></button>
         </div>
       </div>
-
-      <div class="ai">
-        <h3>✦ NOVA AI</h3>
-
+      <aside class="ai-panel">
+        <div class="ai-head"><h2>✦ NOVA AI</h2><span class="online">● <span data-i18n="online"></span></span></div>
         <p data-i18n="aiAssistant"></p>
-
-        <div class="ai-box"
-          data-i18n="aiExample"></div>
-
-        <button onclick="go('search')">
-          🔎 <span data-i18n="findSuppliers"></span>
-        </button>
-
-        <button onclick="go('rfq')">
-          📄 <span data-i18n="createRFQ"></span>
-        </button>
-
-        <button onclick="go('negotiation')">
-          🤝 <span data-i18n="startNegotiation"></span>
-        </button>
-      </div>
-
+        <div class="ai-example" data-i18n="aiExample"></div>
+        <div class="ai-actions">
+          <button onclick="go('search')">🔎 <span data-i18n="findSuppliers"></span></button>
+          <button onclick="go('landed')">🧮 <span data-i18n="landed"></span></button>
+          <button onclick="go('rfq')">📄 <span data-i18n="createRFQ"></span></button>
+          <button onclick="go('negotiation')">🤝 <span data-i18n="startNegotiation"></span></button>
+        </div>
+      </aside>
     </div>
   </div>
 
   <div class="stats">
-
-    <div class="stat">
-      <small data-i18n="actualRecords"></small>
-      <b id="networkRecords">—</b>
-      <span class="muted" data-i18n="databaseRecords"></span>
-    </div>
-
-    <div class="stat">
-      <small data-i18n="globalMarkets"></small>
-      <b>195+</b>
-      <span class="muted" data-i18n="countriesMarkets"></span>
-    </div>
-
-    <div class="stat">
-      <small data-i18n="systemStatus"></small>
-      <b id="onlineState">—</b>
-      <span class="muted" id="healthSmall">—</span>
-    </div>
-
-    <div class="stat">
-      <small>NOVA AI</small>
-      <b id="aiState">—</b>
-      <span class="muted" data-i18n="negotiationAnalysis"></span>
-    </div>
-
+    <div class="stat"><span class="stat-icon">♙</span><div><small data-i18n="actualRecords"></small><strong id="networkRecords">—</strong><span class="sub" data-i18n="databaseRecords"></span></div></div>
+    <div class="stat"><span class="stat-icon">◎</span><div><small data-i18n="globalMarkets"></small><strong>195+</strong><span class="sub" data-i18n="countriesMarkets"></span></div></div>
+    <div class="stat"><span class="stat-icon">◉</span><div><small data-i18n="systemStatus"></small><strong id="onlineState">—</strong><span class="sub" id="healthSmall">—</span></div></div>
+    <div class="stat"><span class="stat-icon">✧</span><div><small>NOVA AI</small><strong id="aiState">—</strong><span class="sub" data-i18n="negotiationAnalysis"></span></div></div>
   </div>
 
   <div class="section">
-    <div class="section-head">
-      <div>
-        <h2 data-i18n="sectors"></h2>
-        <p data-i18n="chooseSector"></p>
-      </div>
-    </div>
-
+    <div class="section-head"><div><h2 data-i18n="sectors"></h2><p data-i18n="chooseSector"></p></div></div>
     <div class="categories" id="categories"></div>
   </div>
 
   <div class="section">
-    <div class="section-head">
-      <div>
-        <h2 data-i18n="globalOpportunities"></h2>
-      </div>
-
-      <button class="outline"
-        onclick="go('search')"
-        data-i18n="explore"></button>
-    </div>
-
-    <div class="cards">
-
-      <div class="product">
-        <div class="pic">🚜</div>
-        <div class="product-body">
-          <h3 data-i18n="agriculture"></h3>
-          <span class="muted" data-i18n="searchRealSources"></span>
-        </div>
-      </div>
-
-      <div class="product">
-        <div class="pic">🌾</div>
-        <div class="product-body">
-          <h3 data-i18n="crops"></h3>
-          <span class="muted" data-i18n="searchRealSources"></span>
-        </div>
-      </div>
-
-      <div class="product">
-        <div class="pic">🧪</div>
-        <div class="product-body">
-          <h3 data-i18n="fertilizers"></h3>
-          <span class="muted" data-i18n="searchRealSources"></span>
-        </div>
-      </div>
-
-      <div class="product">
-        <div class="pic">💻</div>
-        <div class="product-body">
-          <h3 data-i18n="electronics"></h3>
-          <span class="muted" data-i18n="searchRealSources"></span>
-        </div>
-      </div>
-
-      <div class="product">
-        <div class="pic">✈️</div>
-        <div class="product-body">
-          <h3 data-i18n="aviation"></h3>
-          <span class="muted" data-i18n="searchRealSources"></span>
-        </div>
-      </div>
-
-      <div class="product">
-        <div class="pic">🚢</div>
-        <div class="product-body">
-          <h3 data-i18n="marine"></h3>
-          <span class="muted" data-i18n="searchRealSources"></span>
-        </div>
-      </div>
-
-      <div class="product">
-        <div class="pic">🏗️</div>
-        <div class="product-body">
-          <h3 data-i18n="construction"></h3>
-          <span class="muted" data-i18n="searchRealSources"></span>
-        </div>
-      </div>
-
-      <div class="product">
-        <div class="pic">🚗</div>
-        <div class="product-body">
-          <h3 data-i18n="automotive"></h3>
-          <span class="muted" data-i18n="searchRealSources"></span>
-        </div>
-      </div>
-
+    <div class="section-head"><div><h2 data-i18n="globalOpportunities"></h2><p data-i18n="marketSubtitle"></p></div><button class="btn secondary" onclick="go('search')" data-i18n="explore"></button></div>
+    <div class="market-grid">
+      <article class="market-card"><div class="market-art">🌾</div><div><strong data-i18n="wheat"></strong><p class="muted" data-i18n="marketHint"></p></div></article>
+      <article class="market-card"><div class="market-art">🥬</div><div><strong data-i18n="food"></strong><p class="muted" data-i18n="marketHint"></p></div></article>
+      <article class="market-card"><div class="market-art">🏭</div><div><strong data-i18n="materials"></strong><p class="muted" data-i18n="marketHint"></p></div></article>
+      <article class="market-card"><div class="market-art">🚜</div><div><strong data-i18n="machinery"></strong><p class="muted" data-i18n="marketHint"></p></div></article>
+      <article class="market-card"><div class="market-art">🚗</div><div><strong data-i18n="vehicles"></strong><p class="muted" data-i18n="marketHint"></p></div></article>
+      <article class="market-card"><div class="market-art">⚙️</div><div><strong data-i18n="industry"></strong><p class="muted" data-i18n="marketHint"></p></div></article>
+      <article class="market-card"><div class="market-art">🏘️</div><div><strong data-i18n="realEstate"></strong><p class="muted" data-i18n="marketHint"></p></div></article>
+      <article class="market-card"><div class="market-art">🚢</div><div><strong data-i18n="logistics"></strong><p class="muted" data-i18n="marketHint"></p></div></article>
     </div>
   </div>
 
   <div class="coverage">
-
-    <div class="coverage-card">
-      <h2 data-i18n="globalCoverage"></h2>
-      <p data-i18n="coverageText"></p>
-
-      <div class="country-count">195+</div>
-
-      <p data-i18n="countriesMarkets"></p>
-    </div>
-
-    <div class="countrybox">
-      <h3 data-i18n="selectMarket"></h3>
-      <select id="countryExplorer"></select>
-
-      <p class="muted"
-        data-i18n="countryNotice"></p>
-    </div>
-
+    <div class="coverage-card"><h2 data-i18n="globalCoverage"></h2><p data-i18n="coverageText"></p><div class="coverage-number">195+</div><p data-i18n="countriesMarkets"></p></div>
+    <div class="countrybox"><h3 data-i18n="selectMarket"></h3><select id="countryExplorer"></select><p class="muted" data-i18n="countryNotice"></p></div>
   </div>
 
   <div class="section">
-    <div class="section-head">
-      <h2 data-i18n="tools"></h2>
-    </div>
-
+    <div class="section-head"><h2 data-i18n="tools"></h2></div>
     <div class="tools-grid">
-
-      <button class="tool" onclick="go('search')">
-        <i>🔎</i>
-        <b data-i18n="supplierSearch"></b>
-      </button>
-
-      <button class="tool" onclick="go('rfq')">
-        <i>📄</i>
-        <b data-i18n="createRFQ"></b>
-      </button>
-
-      <button class="tool" onclick="go('landed')">
-        <i>🧮</i>
-        <b data-i18n="landed"></b>
-      </button>
-
-      <button class="tool" onclick="go('negotiation')">
-        <i>🤝</i>
-        <b data-i18n="negotiation"></b>
-      </button>
-
-      <button class="tool" onclick="go('deals')">
-        <i>🔥</i>
-        <b data-i18n="deals"></b>
-      </button>
-
+      <button class="tool" onclick="go('search')"><i>🔎</i><span data-i18n="supplierSearch"></span></button>
+      <button class="tool" onclick="go('rfq')"><i>📄</i><span data-i18n="createRFQ"></span></button>
+      <button class="tool" onclick="go('landed')"><i>🧮</i><span data-i18n="landed"></span></button>
+      <button class="tool" onclick="go('negotiation')"><i>🤝</i><span data-i18n="negotiation"></span></button>
+      <button class="tool" onclick="go('deals')"><i>🔥</i><span data-i18n="deals"></span></button>
     </div>
   </div>
-
 </section>
 
-
-<!-- SEARCH -->
 <section id="search" class="page">
-
-  <div class="section-head">
-    <div>
-      <h2 data-i18n="supplierSearch"></h2>
-      <p data-i18n="searchDescription"></p>
+  <div class="section-head"><div><h2 data-i18n="supplierSearch"></h2><p data-i18n="searchDescription"></p></div></div>
+  <div class="panel"><div class="panel-body">
+    <div class="form-grid">
+      <div class="field full"><label data-i18n="productRequest"></label><input id="query" data-placeholder="searchPlaceholder"></div>
+      <div class="field"><label data-i18n="quantity"></label><input id="quantity" type="number" min="0" placeholder="500"></div>
+      <div class="field"><label data-i18n="destination"></label><select id="destination"></select></div>
     </div>
-  </div>
-
-  <div class="card">
-
-    <div class="grid">
-
-      <div class="field full">
-        <label data-i18n="productRequest"></label>
-        <input id="query"
-          data-placeholder="searchPlaceholder">
-      </div>
-
-      <div class="field">
-        <label data-i18n="quantity"></label>
-        <input id="quantity"
-          type="number"
-          min="0"
-          placeholder="500">
-      </div>
-
-      <div class="field">
-        <label data-i18n="destination"></label>
-        <select id="destination"></select>
-      </div>
-
-    </div>
-
-    <div class="actions">
-      <button id="searchBtn"
-        class="primary"
-        onclick="searchSuppliers()"
-        data-i18n="searchNow"></button>
-
-      <button class="outline"
-        onclick="clearSearch()"
-        data-i18n="clear"></button>
-    </div>
-
-  </div>
-
-  <div id="searchStatus" class="status"></div>
+    <div class="actions"><button id="searchBtn" class="btn primary" onclick="searchSuppliers()" data-i18n="searchNow"></button><button class="btn ghost" onclick="clearSearch()" data-i18n="clear"></button></div>
+  </div></div>
+  <div id="searchStatus" class="status" role="status"></div>
   <div id="results"></div>
-
 </section>
 
-
-<!-- RFQ -->
 <section id="rfq" class="page">
-
-  <div class="section-head">
-    <div>
-      <h2 data-i18n="createRFQ"></h2>
-      <p data-i18n="rfqDescription"></p>
+  <div class="section-head"><div><h2 data-i18n="createRFQ"></h2><p data-i18n="rfqDescription"></p></div></div>
+  <div class="panel"><div class="panel-body">
+    <div class="form-grid">
+      <div class="field full"><label data-i18n="product"></label><input id="rfqProduct"></div>
+      <div class="field"><label data-i18n="quantity"></label><input id="rfqQuantity" type="number" min="1"></div>
+      <div class="field"><label data-i18n="destination"></label><select id="rfqDestination"></select></div>
+      <div class="field"><label data-i18n="incoterm"></label><select id="rfqIncoterm"><option>FOB</option><option>CIF</option><option>EXW</option><option>DAP</option><option>DDP</option><option>FCA</option></select></div>
+      <div class="field full"><label data-i18n="requirements"></label><textarea id="rfqRequirements"></textarea></div>
     </div>
-  </div>
-
-  <div class="two">
-
-    <div class="card">
-
-      <div class="grid">
-
-        <div class="field">
-          <label data-i18n="product"></label>
-          <input id="rfqProduct">
-        </div>
-
-        <div class="field">
-          <label data-i18n="quantity"></label>
-          <input id="rfqQuantity"
-            type="number"
-            min="0">
-        </div>
-
-        <div class="field">
-          <label data-i18n="destination"></label>
-          <select id="rfqDestination"></select>
-        </div>
-
-        <div class="field">
-          <label>Incoterm</label>
-          <input id="rfqIncoterm"
-            placeholder="FOB / CIF / DDP">
-        </div>
-
-        <div class="field full">
-          <label data-i18n="requirements"></label>
-          <textarea id="rfqRequirements"></textarea>
-        </div>
-
-      </div>
-
-      <div class="actions">
-        <button id="rfqBtn"
-          class="primary"
-          onclick="createRFQ()"
-          data-i18n="generateRFQ"></button>
-
-        <button class="outline"
-          onclick="copyRFQ()"
-          data-i18n="copy"></button>
-      </div>
-
-      <div id="rfqStatus" class="status"></div>
-
-    </div>
-
-    <div class="card">
-      <h3 data-i18n="rfqPreview"></h3>
-      <div id="rfqOutput" class="empty">—</div>
-    </div>
-
-  </div>
-
+    <div class="actions"><button id="rfqBtn" class="btn primary" onclick="createRFQ()" data-i18n="submitRFQ"></button></div>
+    <div id="rfqStatus" class="status" role="status"></div><div id="rfqOutput"></div>
+  </div></div>
 </section>
 
-
-<!-- LANDED COST -->
 <section id="landed" class="page">
-
-  <div class="section-head">
-    <div>
-      <h2 data-i18n="landedCalculator"></h2>
-      <p data-i18n="landedDescription"></p>
+  <div class="section-head"><div><h2 data-i18n="landed"></h2><p data-i18n="landedDescription"></p></div></div>
+  <div class="panel"><div class="panel-body">
+    <div class="form-grid">
+      <div class="field"><label data-i18n="unitPrice"></label><input id="unitPrice" type="number" min="0" step="any" value="245"></div>
+      <div class="field"><label data-i18n="quantity"></label><input id="landedQuantity" type="number" min="1" value="500"></div>
+      <div class="field"><label data-i18n="shipping"></label><input id="shipping" type="number" min="0" value="35"></div>
+      <div class="field"><label data-i18n="insurance"></label><input id="insurance" type="number" min="0" value="2"></div>
+      <div class="field"><label data-i18n="duty"></label><input id="duty" type="number" min="0" value="5"></div>
+      <div class="field"><label data-i18n="tax"></label><input id="tax" type="number" min="0" value="0"></div>
+      <div class="field full"><label data-i18n="localDelivery"></label><input id="localDelivery" type="number" min="0" value="15"></div>
     </div>
-  </div>
-
-  <div class="two">
-
-    <div class="card">
-
-      <div class="grid">
-
-        <div class="field">
-          <label data-i18n="unitPrice"></label>
-          <input id="unitPrice"
-            type="number"
-            min="0"
-            step="any">
-        </div>
-
-        <div class="field">
-          <label data-i18n="quantity"></label>
-          <input id="landedQuantity"
-            type="number"
-            min="0"
-            step="any">
-        </div>
-
-        <div class="field">
-          <label data-i18n="shipping"></label>
-          <input id="shipping"
-            type="number"
-            min="0"
-            step="any">
-        </div>
-
-        <div class="field">
-          <label data-i18n="insurance"></label>
-          <input id="insurance"
-            type="number"
-            min="0"
-            step="any">
-        </div>
-
-        <div class="field">
-          <label data-i18n="duty"></label>
-          <input id="duty"
-            type="number"
-            min="0"
-            step="any">
-        </div>
-
-        <div class="field">
-          <label data-i18n="tax"></label>
-          <input id="tax"
-            type="number"
-            min="0"
-            step="any">
-        </div>
-
-        <div class="field full">
-          <label data-i18n="localDelivery"></label>
-          <input id="localDelivery"
-            type="number"
-            min="0"
-            step="any">
-        </div>
-
-      </div>
-
-      <button id="landedBtn"
-        class="primary"
-        onclick="calculateLanded()"
-        data-i18n="calculate"></button>
-
-    </div>
-
-    <div class="card">
-      <h3 data-i18n="costResult"></h3>
-      <div id="landedOutput" class="empty">—</div>
-    </div>
-
-  </div>
-
+    <div class="actions"><button id="landedBtn" class="btn primary" onclick="calculateLanded()" data-i18n="calculate"></button></div>
+    <div id="landedOutput" class="status" role="status"></div>
+  </div></div>
 </section>
 
-
-<!-- NEGOTIATION -->
 <section id="negotiation" class="page">
-
-  <div class="section-head">
-    <div>
-      <h2 data-i18n="aiNegotiation"></h2>
-      <p data-i18n="negotiationDescription"></p>
+  <div class="section-head"><div><h2 data-i18n="negotiation"></h2><p data-i18n="negotiationDescription"></p></div></div>
+  <div class="panel"><div class="panel-body">
+    <div class="form-grid">
+      <div class="field full"><label data-i18n="supplier"></label><input id="negSupplier"></div>
+      <div class="field"><label data-i18n="currentOffer"></label><input id="negOffer" type="number" min="0" step="any"></div>
+      <div class="field"><label data-i18n="buyerTarget"></label><input id="negTarget" type="number" min="0" step="any"></div>
+      <div class="field"><label data-i18n="quantity"></label><input id="negQuantity" type="number" min="1" value="500"></div>
+      <div class="field full"><label data-i18n="supplierReply"></label><textarea id="negReply"></textarea></div>
     </div>
-  </div>
-
-  <div class="two">
-
-    <div class="card">
-
-      <div class="grid">
-
-        <div class="field">
-          <label data-i18n="supplier"></label>
-          <input id="negSupplier">
-        </div>
-
-        <div class="field">
-          <label data-i18n="currentOffer"></label>
-          <input id="negOffer"
-            type="number"
-            min="0"
-            step="any">
-        </div>
-
-        <div class="field">
-          <label data-i18n="targetPrice"></label>
-          <input id="negTarget"
-            type="number"
-            min="0"
-            step="any">
-        </div>
-
-        <div class="field">
-          <label data-i18n="quantity"></label>
-          <input id="negQuantity"
-            type="number"
-            min="0"
-            step="any">
-        </div>
-
-        <div class="field full">
-          <label data-i18n="supplierReply"></label>
-          <textarea id="negReply"></textarea>
-        </div>
-
-      </div>
-
-      <button id="negBtn"
-        class="primary"
-        onclick="negotiate()"
-        data-i18n="analyzeNegotiate"></button>
-
-    </div>
-
-    <div class="card">
-      <h3 data-i18n="novaDecision"></h3>
-      <div id="negOutput" class="empty">—</div>
-    </div>
-
-  </div>
-
+    <div class="actions"><button id="negBtn" class="btn primary" onclick="negotiate()" data-i18n="analyzeNegotiation"></button></div>
+    <div id="negOutput" class="status" role="status"></div>
+  </div></div>
 </section>
 
+<section id="deals" class="page"><div class="section-head"><div><h2 data-i18n="deals"></h2><p data-i18n="dealsDescription"></p></div><button class="btn secondary" onclick="loadDeals()" data-i18n="refresh"></button></div><div id="dealsOutput" class="empty"></div></section>
+<section id="history" class="page"><div class="section-head"><div><h2 data-i18n="purchases"></h2><p data-i18n="historyDescription"></p></div><button class="btn secondary" onclick="loadPurchases()" data-i18n="refresh"></button></div><div id="historyOutput" class="empty"></div></section>
 
-<!-- DEALS -->
-<section id="deals" class="page">
-
-  <div class="section-head">
-    <div>
-      <h2 data-i18n="deals"></h2>
-      <p data-i18n="dealsDescription"></p>
-    </div>
-
-    <button class="primary"
-      onclick="loadDeals()"
-      data-i18n="refresh"></button>
-  </div>
-
-  <div id="dealsOutput" class="card empty">—</div>
-
-</section>
-
-
-<!-- HISTORY -->
-<section id="history" class="page">
-
-  <div class="section-head">
-    <div>
-      <h2 data-i18n="purchaseHistory"></h2>
-      <p data-i18n="historyDescription"></p>
-    </div>
-
-    <button class="primary"
-      onclick="loadPurchases()"
-      data-i18n="refresh"></button>
-  </div>
-
-  <div id="historyOutput" class="card empty">—</div>
-
-</section>
-
-
-<!-- ACCOUNT -->
 <section id="account" class="page">
-
-  <div class="section-head">
-    <div>
-      <h2 data-i18n="account"></h2>
-      <p data-i18n="accountDescription"></p>
+  <div class="section-head"><div><h2 data-i18n="account"></h2><p data-i18n="accountDescription"></p></div></div>
+  <div class="panel"><div class="panel-body">
+    <div class="form-grid">
+      <div class="field full"><label data-i18n="email"></label><input id="email" type="email" autocomplete="email"></div>
+      <div class="field full"><label data-i18n="password"></label><input id="password" type="password" autocomplete="current-password"></div>
     </div>
-  </div>
-
-  <div class="two">
-
-    <div class="card">
-
-      <div class="grid">
-
-        <div class="field">
-          <label data-i18n="email"></label>
-          <input id="email"
-            type="email"
-            autocomplete="email">
-        </div>
-
-        <div class="field">
-          <label data-i18n="password"></label>
-          <input id="password"
-            type="password"
-            autocomplete="current-password">
-        </div>
-
-      </div>
-
-      <div class="actions">
-
-        <button class="primary"
-          onclick="login()"
-          data-i18n="login"></button>
-
-        <button class="outline"
-          onclick="signup()"
-          data-i18n="signup"></button>
-
-        <button class="dark"
-          onclick="logout()"
-          data-i18n="logout"></button>
-
-        <button class="outline"
-          onclick="checkAccount()"
-          data-i18n="checkAccount"></button>
-
-      </div>
-
-      <div id="accountOutput" class="status"></div>
-
-    </div>
-
-    <div class="card">
-
-      <h3 data-i18n="systemConnections"></h3>
-
-      <div class="health-grid">
-
-        <div class="health-item">
-          <small>NOVA</small>
-          <b id="healthNova">—</b>
-        </div>
-
-        <div class="health-item">
-          <small data-i18n="database"></small>
-          <b id="healthDB">—</b>
-        </div>
-
-        <div class="health-item">
-          <small>AI</small>
-          <b id="healthAI">—</b>
-        </div>
-
-        <div class="health-item">
-          <small data-i18n="searchEngine"></small>
-          <b id="healthSearch">—</b>
-        </div>
-
-      </div>
-
-      <div class="notice"
-        style="margin-top:15px"
-        data-i18n="connectionNotice"></div>
-
-    </div>
-
-  </div>
-
+    <div class="actions"><button class="btn primary" onclick="login()" data-i18n="login"></button><button class="btn secondary" onclick="signup()" data-i18n="signup"></button><button class="btn ghost" onclick="logout()" data-i18n="logout"></button></div>
+    <div id="accountOutput" class="status" role="status"></div>
+    <div class="section"><h3 data-i18n="systemHealth"></h3><div class="health-grid">
+      <div class="health-item"><span data-i18n="platform"></span><br><strong id="healthNova">—</strong></div>
+      <div class="health-item"><span data-i18n="database"></span><br><strong id="healthDB">—</strong></div>
+      <div class="health-item"><span data-i18n="aiService"></span><br><strong id="healthAI">—</strong></div>
+      <div class="health-item"><span data-i18n="searchService"></span><br><strong id="healthSearch">—</strong></div>
+    </div></div>
+  </div></div>
 </section>
 
+<footer><div class="wrap"><strong>NOVA</strong> — <span data-i18n="footerText"></span><br><span data-i18n="footerNote"></span></div></footer>
 </main>
 
-
-<div id="modal"
-  class="modal"
-  onclick="if(event.target===this) closeModal()">
-
-  <div class="modal-card">
-
-    <div class="modal-head">
-      <h2 id="modalTitle">NOVA</h2>
-
-      <button class="close"
-        onclick="closeModal()">✕</button>
-    </div>
-
-    <div id="modalBody"></div>
-
-  </div>
-
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal-card"><div class="modal-head"><h2 id="modalTitle"></h2><button class="btn ghost" onclick="closeModal()" aria-label="Close">✕</button></div><div id="modalBody"></div></div>
 </div>
-
-<div id="toast" class="toast"></div>
-
+<div class="toast" id="toast" role="status"></div>
 <script>
-/* ===== الجزء الثاني يوضع هنا مباشرة ===== */const API = "";
+
+"use strict";
+
+const $ = id => document.getElementById(id);
+let currentLang = "ar";
 
 const TEXT = {
-ar:{
-home:"الرئيسية",
-suppliers:"الموردون",
-rfq:"طلب عرض سعر",
-landed:"التكلفة النهائية",
-negotiation:"التفاوض",
-deals:"العروض",
-purchases:"المشتريات",
-account:"الحساب",
-startBuying:"ابدأ الشراء",
-verifiedFirst:"المشتريات العالمية · البيانات الموثقة أولاً",
-globalProcurement:"المشتريات العالمية",
-poweredAI:"مدعومة بالذكاء الاصطناعي",
-heroText:"ابحث عن الموردين، تحقق من الأدلة، قارن العروض، أنشئ طلبات عروض الأسعار وحلل التفاوض من منصة NOVA واحدة.",
-searchPlaceholder:"ماذا تريد أن تشتري؟ مثال: 500 طن قمح",
-allCountries:"كل الدول والأسواق",
-wheat:"قمح",
-fertilizers:"الأسمدة",
-machinery:"المعدات",
-energy:"الطاقة",
-vehicles:"المركبات",
-aiAssistant:"مساعد مشتريات ذكي يعتمد على البيانات المتاحة ولا يخترع بيانات الموردين المفقودة.",
-aiExample:"أريد 500 طن قمح غذائي مع أفضل الموردين المتاحين والتسليم إلى العراق.",
-findSuppliers:"البحث عن الموردين",
-createRFQ:"إنشاء طلب عرض سعر",
-startNegotiation:"بدء التفاوض",
-actualRecords:"السجلات الفعلية",
-databaseRecords:"المحفوظة حاليًا في قاعدة NOVA",
-globalMarkets:"الدول والأسواق",
-countriesMarkets:"دولة وسوق حول العالم",
-systemStatus:"حالة النظام",
-online:"متصل",
-offline:"غير متصل",
-negotiationAnalysis:"تحليل المشتريات والتفاوض",
-sectors:"القطاعات الرئيسية",
-chooseSector:"اختر قطاعًا لبدء بحث حقيقي عن الموردين.",
-globalOpportunities:"القطاعات العالمية",
-explore:"استكشف السوق",
-agriculture:"المعدات الزراعية",
-crops:"المحاصيل الاستراتيجية",
-electronics:"الإلكترونيات",
-aviation:"الطيران",
-marine:"السفن والمعدات البحرية",
-construction:"البناء والمواد",
-automotive:"السيارات والمركبات",
-searchRealSources:"البحث عند الطلب من المصادر المتصلة",
-globalCoverage:"التغطية العالمية",
-coverageText:"يمكن اختيار أي دولة أو سوق من القائمة. نتائج الموردين الفعلية تعتمد على مصادر البحث المتصلة بالخادم.",
-selectMarket:"اختر الدولة أو السوق",
-countryNotice:"اختيار الدولة يحدد وجهة طلب الشراء ولا ينشئ بيانات أو موردين وهميين.",
-tools:"أدوات NOVA",
-supplierSearch:"البحث عن الموردين",
-searchDescription:"تعرض NOVA النتائج التي يعيدها الخادم فقط. الحقول غير الموجودة تبقى غير متوفرة.",
-productRequest:"المنتج أو طلب الشراء",
-quantity:"الكمية",
-destination:"الوجهة",
-searchNow:"البحث الآن",
-clear:"مسح",
-searching:"جارٍ البحث في المصادر المتصلة...",
-foundResults:"تم العثور على {n} نتيجة.",
-noResults:"لم تُرجع المصادر المتصلة أي نتائج لهذا البحث.",
-product:"المنتج",
-requirements:"المتطلبات",
-generateRFQ:"إنشاء RFQ بالذكاء الاصطناعي",
-rfqDescription:"أنشئ طلب عرض سعر احترافي اعتمادًا على المعلومات التي تدخلها فقط.",
-rfqPreview:"معاينة طلب عرض السعر",
-generating:"جارٍ الإنشاء...",
-rfqCreated:"تم إنشاء طلب عرض السعر.",
-copy:"نسخ",
-copied:"تم النسخ.",
-landedCalculator:"حاسبة التكلفة النهائية",
-landedDescription:"الحساب يتم على الخادم باستخدام الأرقام التي تدخلها. لا توجد أسعار أو رسوم مفترضة.",
-unitPrice:"سعر الوحدة بالدولار",
-shipping:"الشحن الدولي بالدولار",
-insurance:"التأمين بالدولار",
-duty:"الجمارك %",
-tax:"الضريبة %",
-localDelivery:"التوصيل المحلي بالدولار",
-calculate:"احسب التكلفة",
-costResult:"نتيجة التكلفة",
-goodsCost:"قيمة البضاعة",
-dutyCost:"الجمارك",
-taxCost:"الضرائب",
-totalCost:"الإجمالي",
-unitLanded:"التكلفة النهائية للوحدة",
-aiNegotiation:"وكيل التفاوض بالذكاء الاصطناعي",
-negotiationDescription:"يحلل العرض الحقيقي الذي تدخله ولا ينشئ سعر مورد من تلقاء نفسه.",
-supplier:"المورد",
-currentOffer:"عرض المورد",
-targetPrice:"السعر المستهدف",
-supplierReply:"رد المورد",
-analyzeNegotiate:"تحليل والتفاوض",
-novaDecision:"تحليل NOVA",
-dealsDescription:"تعرض فقط العروض المسجلة فعليًا في قاعدة البيانات.",
-refresh:"تحديث",
-noDeals:"لا توجد عروض مسجلة حاليًا.",
-purchaseHistory:"سجل المشتريات",
-historyDescription:"سجل المشتريات المحفوظ في حسابك.",
-noPurchases:"لا توجد مشتريات محفوظة.",
-accountDescription:"إدارة حساب NOVA والتحقق من الخدمات المتصلة.",
-email:"البريد الإلكتروني",
-password:"كلمة المرور",
-login:"تسجيل الدخول",
-signup:"إنشاء حساب",
-logout:"تسجيل الخروج",
-checkAccount:"فحص الحساب",
-loggedIn:"تم تسجيل الدخول",
-loggedOut:"تم تسجيل الخروج",
-notLoggedIn:"غير مسجل الدخول",
-systemConnections:"اتصالات النظام",
-database:"قاعدة البيانات",
-searchEngine:"محرك البحث",
-connected:"متصل",
-notConnected:"غير متصل",
-connectionNotice:"NOVA لا تعرض الخدمة على أنها متصلة إلا عندما يؤكد الخادم وجود الربط الحقيقي.",
-price:"السعر",
-moq:"الحد الأدنى للطلب",
-leadTime:"مدة التوريد",
-confidence:"الثقة",
-evidence:"الأدلة",
-verified:"موثق",
-notVerified:"غير متحقق",
-source:"المصدر",
-details:"التفاصيل",
-useRFQ:"استخدم في RFQ",
-unknown:"غير متوفر",
-requestFailed:"فشل الطلب",
-invalidInput:"أدخل البيانات المطلوبة أولاً.",
-sourceEvidence:"دليل من صفحة/نتيجة المصدر",
-realDataPolicy:"الحقول غير الموجودة في المصدر لا يتم تخمينها.",
-country:"الدولة",
-certifications:"الشهادات",
-incoterm:"شروط التسليم",
-oem:"OEM / ODM"
+ar: {
+home:"الرئيسية",suppliers:"الموردون",rfq:"طلب عرض سعر",landed:"حساب التكلفة النهائية",
+negotiation:"التفاوض الذكي",deals:"الصفقات",purchases:"المشتريات",account:"الحساب",
+startBuying:"ابدأ الشراء",verifiedFirst:"المشتريات العالمية · البيانات الموثقة أولاً",
+heroTitle:"المشتريات العالمية",heroTitle2:"مدعومة بالذكاء الاصطناعي",
+heroText:"ابحث عن الموردين، افحص المصادر، قارن العروض، وأنشئ طلبات الأسعار وحلّل التفاوض من منصة واحدة.",
+searchPlaceholder:"ماذا تريد شراءه؟ مثال: 500 طن من القمح",
+wheat:"المحاصيل الزراعية",food:"المنتجات الغذائية",materials:"المواد الصناعية",
+machinery:"المعدات والآليات",vehicles:"السيارات",industry:"الصناعة",
+realEstate:"العقارات",logistics:"الخدمات اللوجستية",aiAssistant:"مساعد مشتريات ذكي يعتمد على المصادر المتاحة ولا يختلق حقائق الموردين.",
+aiExample:"أحتاج إلى 500 طن من القمح الغذائي، مع التوصيل إلى العراق. ابحث عن عروض قابلة للتحقق.",
+findSuppliers:"البحث عن الموردين",createRFQ:"إنشاء طلب عرض سعر",startNegotiation:"بدء التفاوض",
+online:"متصل",actualRecords:"السجلات الفعلية",databaseRecords:"المحفوظة في قاعدة البيانات",
+globalMarkets:"الدول والأسواق",countriesMarkets:"دول وأسواق حول العالم",systemStatus:"حالة النظام",
+negotiationAnalysis:"تحليل المشتريات والتفاوض",sectors:"القطاعات الرئيسية",chooseSector:"اختر قطاعاً لبدء البحث",
+globalOpportunities:"استكشف الأسواق العالمية",marketSubtitle:"فئات تساعدك على الوصول إلى المنتجات المطلوبة",
+explore:"استكشف",marketHint:"ابدأ البحث عن الموردين والمصادر المتاحة",
+globalCoverage:"تغطية الأسواق العالمية",coverageText:"اختر سوق الوجهة لتحديد احتياج الشراء.",
+selectMarket:"اختر سوق الوجهة",countryNotice:"اختيار الدولة لا يضمن وجود موردين فيها؛ النتائج تعتمد على مصادر البحث المتاحة.",
+tools:"أدوات المشتريات",supplierSearch:"البحث عن الموردين",searchDescription:"ابحث عن الموردين باستخدام مصادر البحث المتاحة.",
+productRequest:"المنتج أو طلب الشراء",quantity:"الكمية",destination:"بلد الوجهة",
+searchNow:"ابحث الآن",clear:"مسح",loading:"جارٍ التحميل…",noResults:"لم يتم العثور على نتائج من المصدر المتاح.",
+noSource:"لا يوجد رابط مصدر متاح",unknown:"غير متوفر",price:"السعر",unitPrice:"سعر الوحدة",
+moq:"الحد الأدنى للطلب",country:"الدولة",supplier:"المورد",source:"فتح المصدر",
+rfqDescription:"أنشئ طلب عرض سعر بناءً على متطلباتك الفعلية.",
+product:"المنتج",incoterm:"شروط التسليم التجارية",requirements:"المواصفات والمتطلبات",
+submitRFQ:"إنشاء طلب عرض سعر",rfqSuccess:"تم إنشاء الطلب.",landedDescription:"احسب تقدير تكلفة الوصول وفق القيم التي تدخلها.",
+shipping:"الشحن",insurance:"التأمين",duty:"الرسوم الجمركية (%)",tax:"الضريبة (%)",
+localDelivery:"التوصيل المحلي",calculate:"احسب التكلفة",landedTotal:"إجمالي التكلفة التقديرية",
+unitLanded:"التكلفة النهائية للوحدة",goods:"قيمة البضاعة",notConnected:"غير متصل",
+negotiationDescription:"حلّل العرض وحدد هدفك التفاوضي قبل التواصل مع المورد.",
+currentOffer:"العرض الحالي للوحدة",buyerTarget:"السعر المستهدف للوحدة",
+supplierReply:"رد المورد (اختياري)",analyzeNegotiation:"تحليل التفاوض",
+dealsDescription:"الصفقات المنشورة المتاحة في النظام.",refresh:"تحديث",
+historyDescription:"سجل مشتريات الحساب المسجل.",accountDescription:"سجّل الدخول لحفظ طلباتك ومشترياتك.",
+email:"البريد الإلكتروني",password:"كلمة المرور",login:"تسجيل الدخول",signup:"إنشاء حساب",
+logout:"تسجيل الخروج",systemHealth:"حالة الخدمات",platform:"المنصة",database:"قاعدة البيانات",
+aiService:"خدمة الذكاء الاصطناعي",searchService:"خدمة البحث",footerText:"ذكاء المشتريات والتجارة العالمية",
+footerNote:"تحقق من المورد والأسعار والشروط قبل إتمام أي عملية شراء.",
+loginFirst:"سجّل الدخول أولاً.",invalidInput:"تحقق من البيانات المدخلة.",
+loggedIn:"تم تسجيل الدخول",loggedOut:"تم تسجيل الخروج",noDeals:"لا توجد صفقات متاحة حالياً.",
+noPurchases:"لا توجد مشتريات محفوظة لهذا الحساب.",connected:"متصل",offline:"غير متصل",
+error:"حدث خطأ",success:"نجاح",allCountries:"كل الدول والأسواق",selectCountry:"اختر الدولة",
+results:"نتائج البحث",details:"تفاصيل المورد",quantityRequired:"أدخل كمية صحيحة.",
+productRequired:"أدخل المنتج المطلوب.",networkError:"تعذر الاتصال بالخادم. تحقق من اتصالك وحاول مجدداً.",
+noPrice:"السعر غير متوفر",noCountry:"الدولة غير محددة",noDescription:"لا يوجد وصف متاح."
 },
-
-en:{
-home:"Home",
-suppliers:"Suppliers",
-rfq:"RFQ",
-landed:"Landed Cost",
-negotiation:"Negotiation",
-deals:"Deals",
-purchases:"Purchases",
-account:"Account",
-startBuying:"Start Buying",
-verifiedFirst:"Global procurement · verified data first",
-globalProcurement:"Global Procurement",
-poweredAI:"Powered by AI",
-heroText:"Search suppliers, inspect evidence, compare offers, create RFQs and analyze negotiations from one NOVA platform.",
+en: {
+home:"Home",suppliers:"Suppliers",rfq:"Request for Quote",landed:"Landed Cost",
+negotiation:"AI Negotiation",deals:"Deals",purchases:"Purchases",account:"Account",
+startBuying:"Start Buying",verifiedFirst:"GLOBAL PROCUREMENT · EVIDENCE FIRST",
+heroTitle:"Global Procurement",heroTitle2:"Powered by AI",
+heroText:"Search suppliers, inspect sources, compare offers, create RFQs and analyze negotiations from one platform.",
 searchPlaceholder:"What do you want to buy? Example: 500 tons of wheat",
-allCountries:"All countries & markets",
-wheat:"Wheat",
-fertilizers:"Fertilizers",
-machinery:"Machinery",
-energy:"Energy",
-vehicles:"Vehicles",
-aiAssistant:"An intelligent procurement assistant that uses available evidence and does not invent missing supplier facts.",
-aiExample:"I need 500 tons of food-grade wheat from the best available suppliers delivered to Iraq.",
-findSuppliers:"Find Suppliers",
-createRFQ:"Create RFQ",
-startNegotiation:"Start Negotiation",
-actualRecords:"Actual Records",
-databaseRecords:"currently stored in NOVA database",
-globalMarkets:"Countries & Markets",
-countriesMarkets:"countries and markets worldwide",
-systemStatus:"System Status",
-online:"Online",
-offline:"Offline",
-negotiationAnalysis:"Procurement and negotiation analysis",
-sectors:"Key Industries",
-chooseSector:"Choose an industry to start a real supplier search.",
-globalOpportunities:"Global Industries",
-explore:"Explore Market",
-agriculture:"Agricultural Machinery",
-crops:"Strategic Crops",
-electronics:"Electronics",
-aviation:"Aviation",
-marine:"Ships & Marine",
-construction:"Construction & Materials",
-automotive:"Automotive",
-searchRealSources:"Search on demand through connected sources",
-globalCoverage:"Global Coverage",
-coverageText:"Any country or market can be selected. Actual supplier results depend on the search sources connected to the server.",
-selectMarket:"Select Country or Market",
-countryNotice:"Selecting a country sets the procurement destination and never creates fake suppliers or data.",
-tools:"NOVA Tools",
-supplierSearch:"Supplier Search",
-searchDescription:"NOVA displays only results returned by the server. Missing fields remain unavailable.",
-productRequest:"Product or Procurement Request",
-quantity:"Quantity",
-destination:"Destination",
-searchNow:"Search Now",
-clear:"Clear",
-searching:"Searching connected sources...",
-foundResults:"Found {n} results.",
-noResults:"Connected sources returned no results for this search.",
-product:"Product",
-requirements:"Requirements",
-generateRFQ:"Generate AI RFQ",
-rfqDescription:"Generate a professional RFQ using only the information you provide.",
-rfqPreview:"RFQ Preview",
-generating:"Generating...",
-rfqCreated:"RFQ created.",
-copy:"Copy",
-copied:"Copied.",
-landedCalculator:"Landed Cost Calculator",
-landedDescription:"The server calculates using your numbers. No prices, duties or taxes are assumed.",
-unitPrice:"Unit Price USD",
-shipping:"International Shipping USD",
-insurance:"Insurance USD",
-duty:"Duty %",
-tax:"Tax %",
-localDelivery:"Local Delivery USD",
-calculate:"Calculate",
-costResult:"Cost Result",
-goodsCost:"Goods",
-dutyCost:"Duty",
-taxCost:"Tax",
-totalCost:"Total",
-unitLanded:"Unit Landed Cost",
-aiNegotiation:"AI Negotiation Agent",
-negotiationDescription:"Analyzes the real offer you enter and does not create a supplier price by itself.",
-supplier:"Supplier",
-currentOffer:"Supplier Offer",
-targetPrice:"Target Price",
-supplierReply:"Supplier Reply",
-analyzeNegotiate:"Analyze & Negotiate",
-novaDecision:"NOVA Analysis",
-dealsDescription:"Only deals actually stored in the database are displayed.",
-refresh:"Refresh",
-noDeals:"No submitted deals are currently available.",
-purchaseHistory:"Purchase History",
-historyDescription:"Purchases stored in your NOVA account.",
-noPurchases:"No purchases stored.",
-accountDescription:"Manage your NOVA account and verify connected services.",
-email:"Email",
-password:"Password",
-login:"Log In",
-signup:"Create Account",
-logout:"Log Out",
-checkAccount:"Check Account",
-loggedIn:"Logged in",
-loggedOut:"Logged out",
-notLoggedIn:"Not logged in",
-systemConnections:"System Connections",
-database:"Database",
-searchEngine:"Search Engine",
-connected:"Connected",
-notConnected:"Not Connected",
-connectionNotice:"NOVA shows a service as connected only when the server confirms the real integration.",
-price:"Price",
-moq:"MOQ",
-leadTime:"Lead Time",
-confidence:"Confidence",
-evidence:"Evidence",
-verified:"Verified",
-notVerified:"Not Verified",
-source:"Source",
-details:"Details",
-useRFQ:"Use in RFQ",
-unknown:"Unavailable",
-requestFailed:"Request failed",
-invalidInput:"Enter the required information first.",
-sourceEvidence:"Evidence from source page/result",
-realDataPolicy:"Fields missing from the source are never guessed.",
-country:"Country",
-certifications:"Certifications",
-incoterm:"Incoterm",
-oem:"OEM / ODM"
+wheat:"Agricultural crops",food:"Food products",materials:"Industrial materials",
+machinery:"Machinery",vehicles:"Vehicles",industry:"Industry",
+realEstate:"Real estate",logistics:"Logistics",aiAssistant:"An intelligent procurement assistant that uses available sources and does not invent supplier facts.",
+aiExample:"I need 500 tons of food-grade wheat delivered to Iraq. Find verifiable offers.",
+findSuppliers:"Find suppliers",createRFQ:"Create RFQ",startNegotiation:"Start negotiation",
+online:"Online",actualRecords:"Actual records",databaseRecords:"Stored in the database",
+globalMarkets:"Countries & markets",countriesMarkets:"Countries and markets worldwide",systemStatus:"System status",
+negotiationAnalysis:"Procurement and negotiation analysis",sectors:"Key industries",chooseSector:"Choose a sector to start searching",
+globalOpportunities:"Explore global markets",marketSubtitle:"Categories to help you find products",
+explore:"Explore",marketHint:"Search available suppliers and sources",
+globalCoverage:"Global market coverage",coverageText:"Select a destination market for your purchase.",
+selectMarket:"Choose destination market",countryNotice:"Selecting a country does not guarantee suppliers there; results depend on available search sources.",
+tools:"Procurement tools",supplierSearch:"Supplier search",searchDescription:"Search suppliers using available search sources.",
+productRequest:"Product or purchase request",quantity:"Quantity",destination:"Destination country",
+searchNow:"Search now",clear:"Clear",loading:"Loading…",noResults:"No results were found from the available source.",
+noSource:"No source link available",unknown:"Unavailable",price:"Price",unitPrice:"Unit price",
+moq:"Minimum order",country:"Country",supplier:"Supplier",source:"Open source",
+rfqDescription:"Create a request for quotation based on your actual requirements.",
+product:"Product",incoterm:"Incoterm",requirements:"Specifications and requirements",
+submitRFQ:"Create RFQ",rfqSuccess:"Request created.",landedDescription:"Estimate landed cost using the values you enter.",
+shipping:"Shipping",insurance:"Insurance",duty:"Customs duty (%)",tax:"Tax (%)",
+localDelivery:"Local delivery",calculate:"Calculate cost",landedTotal:"Estimated total landed cost",
+unitLanded:"Landed cost per unit",goods:"Goods value",notConnected:"Not connected",
+negotiationDescription:"Analyze an offer and set your target before contacting the supplier.",
+currentOffer:"Current unit offer",buyerTarget:"Target unit price",
+supplierReply:"Supplier reply (optional)",analyzeNegotiation:"Analyze negotiation",
+dealsDescription:"Published deals available in the system.",refresh:"Refresh",
+historyDescription:"Purchase history for the signed-in account.",accountDescription:"Sign in to save your requests and purchases.",
+email:"Email",password:"Password",login:"Log in",signup:"Create account",
+logout:"Log out",systemHealth:"Service health",platform:"Platform",database:"Database",
+aiService:"AI service",searchService:"Search service",footerText:"Global procurement and trade intelligence",
+footerNote:"Verify suppliers, prices and terms before making a purchase.",
+loginFirst:"Please sign in first.",invalidInput:"Check the entered information.",
+loggedIn:"Signed in",loggedOut:"Signed out",noDeals:"No deals are currently available.",
+noPurchases:"No purchases saved for this account.",connected:"Connected",offline:"Offline",
+error:"An error occurred",success:"Success",allCountries:"All countries and markets",selectCountry:"Select country",
+results:"Search results",details:"Supplier details",quantityRequired:"Enter a valid quantity.",
+productRequired:"Enter a product to search for.",networkError:"Could not reach the server. Check your connection and try again.",
+noPrice:"Price unavailable",noCountry:"Country not specified",noDescription:"No description available."
 }
 };
 
+const COUNTRY_CODES = (
+"AF AL DZ AD AO AG AR AM AU AT AZ BS BH BD BB BY BE BZ BJ BT BO BA BW BR BN BG BF BI KH CM CA CV CF TD CL CN CO KM CG CD CR CI HR CU CY CZ DK DJ DM DO EC EG SV GQ ER EE SZ ET FJ FI FR GA GM GE DE GH GR GD GT GN GW GY HT HN HU IS IN ID IR IQ IE IL IT JM JP JO KZ KE KI KP KR KW KG LA LV LB LS LR LY LI LT LU MG MW MY MV ML MT MH MR MU MX FM MD MC MN ME MA MZ MM NA NR NP NL NZ NI NE NG MK NO OM PK PW PA PG PY PE PH PL PT QA RO RU RW KN LC VC WS SM ST SA SN RS SC SL SG SK SI SB SO ZA SS ES LK SD SR SE CH SY TW TJ TZ TH TL TG TO TT TN TR TM TV UG UA AE GB US UY UZ VU VA VE VN YE ZM ZW"
+).split(" ");
 
-/* =========================================================
-   COUNTRIES — GLOBAL
-========================================================= */
+const countryNames = (() => {
+  try { return new Intl.DisplayNames([currentLang], {type:"region"}); }
+  catch { return null; }
+})();
 
-const COUNTRIES = [
-["AF","Afghanistan"],["AL","Albania"],["DZ","Algeria"],
-["AD","Andorra"],["AO","Angola"],["AG","Antigua and Barbuda"],
-["AR","Argentina"],["AM","Armenia"],["AU","Australia"],
-["AT","Austria"],["AZ","Azerbaijan"],["BS","Bahamas"],
-["BH","Bahrain"],["BD","Bangladesh"],["BB","Barbados"],
-["BY","Belarus"],["BE","Belgium"],["BZ","Belize"],
-["BJ","Benin"],["BT","Bhutan"],["BO","Bolivia"],
-["BA","Bosnia and Herzegovina"],["BW","Botswana"],
-["BR","Brazil"],["BN","Brunei"],["BG","Bulgaria"],
-["BF","Burkina Faso"],["BI","Burundi"],["CV","Cabo Verde"],
-["KH","Cambodia"],["CM","Cameroon"],["CA","Canada"],
-["CF","Central African Republic"],["TD","Chad"],["CL","Chile"],
-["CN","China"],["CO","Colombia"],["KM","Comoros"],
-["CG","Republic of the Congo"],
-["CD","Democratic Republic of the Congo"],
-["CR","Costa Rica"],["CI","Côte d’Ivoire"],["HR","Croatia"],
-["CU","Cuba"],["CY","Cyprus"],["CZ","Czechia"],
-["DK","Denmark"],["DJ","Djibouti"],["DM","Dominica"],
-["DO","Dominican Republic"],["EC","Ecuador"],["EG","Egypt"],
-["SV","El Salvador"],["GQ","Equatorial Guinea"],["ER","Eritrea"],
-["EE","Estonia"],["SZ","Eswatini"],["ET","Ethiopia"],
-["FJ","Fiji"],["FI","Finland"],["FR","France"],
-["GA","Gabon"],["GM","Gambia"],["GE","Georgia"],
-["DE","Germany"],["GH","Ghana"],["GR","Greece"],
-["GD","Grenada"],["GT","Guatemala"],["GN","Guinea"],
-["GW","Guinea-Bissau"],["GY","Guyana"],["HT","Haiti"],
-["HN","Honduras"],["HU","Hungary"],["IS","Iceland"],
-["IN","India"],["ID","Indonesia"],["IR","Iran"],
-["IQ","Iraq"],["IE","Ireland"],["IT","Italy"],
-["JM","Jamaica"],["JP","Japan"],["JO","Jordan"],
-["KZ","Kazakhstan"],["KE","Kenya"],["KI","Kiribati"],
-["KP","North Korea"],["KR","South Korea"],["KW","Kuwait"],
-["KG","Kyrgyzstan"],["LA","Laos"],["LV","Latvia"],
-["LB","Lebanon"],["LS","Lesotho"],["LR","Liberia"],
-["LY","Libya"],["LI","Liechtenstein"],["LT","Lithuania"],
-["LU","Luxembourg"],["MG","Madagascar"],["MW","Malawi"],
-["MY","Malaysia"],["MV","Maldives"],["ML","Mali"],
-["MT","Malta"],["MH","Marshall Islands"],["MR","Mauritania"],
-["MU","Mauritius"],["MX","Mexico"],["FM","Micronesia"],
-["MD","Moldova"],["MC","Monaco"],["MN","Mongolia"],
-["ME","Montenegro"],["MA","Morocco"],["MZ","Mozambique"],
-["MM","Myanmar"],["NA","Namibia"],["NR","Nauru"],
-["NP","Nepal"],["NL","Netherlands"],["NZ","New Zealand"],
-["NI","Nicaragua"],["NE","Niger"],["NG","Nigeria"],
-["MK","North Macedonia"],["NO","Norway"],["OM","Oman"],
-["PK","Pakistan"],["PW","Palau"],["PS","Palestine"],
-["PA","Panama"],["PG","Papua New Guinea"],["PY","Paraguay"],
-["PE","Peru"],["PH","Philippines"],["PL","Poland"],
-["PT","Portugal"],["QA","Qatar"],["RO","Romania"],
-["RU","Russia"],["RW","Rwanda"],["KN","Saint Kitts and Nevis"],
-["LC","Saint Lucia"],["VC","Saint Vincent and the Grenadines"],
-["WS","Samoa"],["SM","San Marino"],
-["ST","Sao Tome and Principe"],["SA","Saudi Arabia"],
-["SN","Senegal"],["RS","Serbia"],["SC","Seychelles"],
-["SL","Sierra Leone"],["SG","Singapore"],["SK","Slovakia"],
-["SI","Slovenia"],["SB","Solomon Islands"],["SO","Somalia"],
-["ZA","South Africa"],["SS","South Sudan"],["ES","Spain"],
-["LK","Sri Lanka"],["SD","Sudan"],["SR","Suriname"],
-["SE","Sweden"],["CH","Switzerland"],["SY","Syria"],
-["TJ","Tajikistan"],["TZ","Tanzania"],["TH","Thailand"],
-["TL","Timor-Leste"],["TG","Togo"],["TO","Tonga"],
-["TT","Trinidad and Tobago"],["TN","Tunisia"],["TR","Türkiye"],
-["TM","Turkmenistan"],["TV","Tuvalu"],["UG","Uganda"],
-["UA","Ukraine"],["AE","United Arab Emirates"],
-["GB","United Kingdom"],["US","United States"],
-["UY","Uruguay"],["UZ","Uzbekistan"],["VU","Vanuatu"],
-["VA","Vatican City"],["VE","Venezuela"],["VN","Vietnam"],
-["YE","Yemen"],["ZM","Zambia"],["ZW","Zimbabwe"],["XK","Kosovo"]
-];
-
-
-/* =========================================================
-   HELPERS
-========================================================= */
-
-const $ = id => document.getElementById(id);
-
-let currentLang =
-  localStorage.getItem("nova_language") || "ar";
-
-function tr(key, vars = {}) {
-  let value =
-    TEXT[currentLang]?.[key] ??
-    TEXT.en[key] ??
-    key;
-
-  for (const [k,v] of Object.entries(vars)) {
-    value = value.replaceAll(`{${k}}`, String(v));
-  }
-
-  return value;
+function tr(key) {
+  return (TEXT[currentLang] && TEXT[currentLang][key]) ||
+         TEXT.en[key] || key;
 }
-
 function esc(value) {
-  return String(value ?? "")
-    .replace(/[&<>"']/g, c => ({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#39;"
-    }[c]));
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+  })[c]);
 }
-
-function formatNumber(value, decimals = 2) {
-  const n = Number(value);
-
-  if (!Number.isFinite(n)) return tr("unknown");
-
-  return new Intl.NumberFormat(
-    currentLang === "ar" ? "ar-IQ" : "en-US",
-    {maximumFractionDigits:decimals}
-  ).format(n);
+function toast(message, type="") {
+  const el=$("toast");
+  el.textContent=message;
+  el.className="toast show "+type;
+  clearTimeout(toast.timer);
+  toast.timer=setTimeout(()=>el.className="toast",4000);
 }
-
-function money(value, currency = "USD") {
-  const n = Number(value);
-
-  if (!Number.isFinite(n)) return tr("unknown");
-
-  try {
-    return new Intl.NumberFormat(
-      currentLang === "ar" ? "ar-IQ" : "en-US",
-      {
-        style:"currency",
-        currency:currency || "USD",
-        maximumFractionDigits:2
-      }
-    ).format(n);
-  } catch {
-    return `${formatNumber(n)} ${currency || "USD"}`;
-  }
+function setStatus(id,message,type="") {
+  const el=$(id);
+  if(!el)return;
+  el.textContent=message||"";
+  el.className="status "+type;
 }
-
+function money(value,currency="USD") {
+  if(value===null||value===undefined||value==="") return tr("unknown");
+  const n=Number(value);
+  if(!Number.isFinite(n))return esc(value);
+  try{return new Intl.NumberFormat(currentLang==="ar"?"ar-IQ":"en-US",{style:"currency",currency,maximumFractionDigits:2}).format(n);}
+  catch{return `${n.toLocaleString()} ${currency}`;}
+}
+function fmt(value) {
+  if(value===null||value===undefined||value==="")return tr("unknown");
+  const n=Number(value);
+  return Number.isFinite(n)?new Intl.NumberFormat(currentLang==="ar"?"ar-IQ":"en-US",{maximumFractionDigits:2}).format(n):esc(value);
+}
 function countryName(code) {
-  if (!code) return tr("unknown");
-
+  if(!code)return tr("allCountries");
   try {
-    return new Intl.DisplayNames(
-      [currentLang === "ar" ? "ar" : "en"],
-      {type:"region"}
-    ).of(code) || code;
-  } catch {
-    return COUNTRIES.find(x => x[0] === code)?.[1] || code;
-  }
+    const names=new Intl.DisplayNames([currentLang==="ar"?"ar":"en"],{type:"region"});
+    return names.of(code)||code;
+  } catch {return code;}
 }
-
-function setBusy(button, busy) {
-  if (!button) return;
-
-  button.disabled = busy;
-
-  if (busy) {
-    button.dataset.original = button.innerHTML;
-    button.innerHTML = `<span class="loader"></span>${esc(tr("generating"))}`;
-  } else if (button.dataset.original) {
-    button.innerHTML = button.dataset.original;
-  }
+function populateCountries() {
+  const ids=["homeCountry","countryExplorer","destination","rfqDestination"];
+  const old={};
+  ids.forEach(id=>{if($(id))old[id]=$(id).value;});
+  const options=`<option value="">${esc(tr("allCountries"))}</option>`+
+    COUNTRY_CODES.map(code=>`<option value="${esc(code)}">${esc(countryName(code))}</option>`).join("");
+  ids.forEach(id=>{
+    const el=$(id);if(!el)return;
+    el.innerHTML=options;
+    if(old[id])el.value=old[id];
+  });
 }
-
-function toast(message, type = "") {
-  const el = $("toast");
-
-  el.textContent = message;
-  el.className =
-    `toast show ${type === "success" ? "success" :
-    type === "error" ? "error" : ""}`;
-
-  clearTimeout(window.__toastTimer);
-
-  window.__toastTimer = setTimeout(() => {
-    el.className = "toast";
-  }, 3500);
-}
-
-async function api(path, options = {}) {
-
-  const config = {
-    credentials:"include",
-    ...options,
-    headers:{
-      ...(options.body ? {"Content-Type":"application/json"} : {}),
-      ...(options.headers || {})
-    }
-  };
-
-  let response;
-
-  try {
-    response = await fetch(API + path, config);
-  } catch {
-    throw new Error(
-      currentLang === "ar"
-        ? "تعذر الاتصال بخادم NOVA."
-        : "Could not connect to NOVA server."
-    );
-  }
-
-  let data = null;
-
-  try {
-    data = await response.json();
-  } catch {
-    throw new Error(
-      currentLang === "ar"
-        ? `استجابة غير صالحة من الخادم (${response.status}).`
-        : `Invalid server response (${response.status}).`
-    );
-  }
-
-  if (!response.ok) {
-    throw new Error(
-      data?.error ||
-      data?.message ||
-      `${tr("requestFailed")} (${response.status})`
-    );
-  }
-
-  return data;
-}
-
-
-/* =========================================================
-   LANGUAGE
-========================================================= */
-
 function applyLanguage() {
-
-  document.documentElement.lang = currentLang;
-  document.documentElement.dir =
-    currentLang === "ar" ? "rtl" : "ltr";
-
-  document.querySelectorAll("[data-i18n]").forEach(el => {
-    el.textContent = tr(el.dataset.i18n);
-  });
-
-  document.querySelectorAll("[data-placeholder]").forEach(el => {
-    el.placeholder = tr(el.dataset.placeholder);
-  });
-
-  $("language").value = currentLang;
-
-  renderCountries();
+  document.documentElement.lang=currentLang;
+  document.documentElement.dir=currentLang==="ar"?"rtl":"ltr";
+  document.querySelectorAll("[data-i18n]").forEach(el=>el.textContent=tr(el.dataset.i18n));
+  document.querySelectorAll("[data-placeholder]").forEach(el=>el.placeholder=tr(el.dataset.placeholder));
+  $("language").value=currentLang;
+  populateCountries();
   renderCategories();
-
-  document.title =
-    currentLang === "ar"
-      ? "NOVA — المشتريات العالمية بالذكاء الاصطناعي"
-      : "NOVA — Global AI Procurement";
+  document.title=currentLang==="ar"?"NOVA — المشتريات العالمية بالذكاء الاصطناعي":"NOVA — Global Procurement AI";
 }
-
-function initLanguage() {
-
-  $("language").innerHTML = `
-    <option value="ar">العربية</option>
-    <option value="en">English</option>
-  `;
-
-  $("language").value = currentLang;
-
-  $("language").addEventListener("change", e => {
-    currentLang = e.target.value;
-    localStorage.setItem("nova_language", currentLang);
-    applyLanguage();
-  });
-
+$("language").addEventListener("change",e=>{
+  currentLang=e.target.value==="en"?"en":"ar";
+  try{localStorage.setItem("nova_language",currentLang);}catch{}
   applyLanguage();
-}
+});
+try {
+  const saved=localStorage.getItem("nova_language");
+  if(saved==="en"||saved==="ar")currentLang=saved;
+} catch {}
 
-
-/* =========================================================
-   COUNTRIES
-========================================================= */
-
-function renderCountries() {
-
-  const selected = {};
-
-  [
-    "homeCountry",
-    "countryExplorer",
-    "destination",
-    "rfqDestination"
-  ].forEach(id => {
-    if ($(id)) selected[id] = $(id).value;
-  });
-
-  const options =
-    `<option value="">${esc(tr("allCountries"))}</option>` +
-    COUNTRIES.map(([code]) =>
-      `<option value="${esc(code)}">${esc(countryName(code))}</option>`
-    ).join("");
-
-  [
-    "homeCountry",
-    "countryExplorer",
-    "destination",
-    "rfqDestination"
-  ].forEach(id => {
-
-    const el = $(id);
-
-    if (!el) return;
-
-    el.innerHTML = options;
-
-    if (selected[id]) {
-      el.value = selected[id];
-    }
-  });
-
-  $("countryExplorer").onchange = function() {
-
-    if (!this.value) return;
-
-    $("homeCountry").value = this.value;
-    $("destination").value = this.value;
-
-    go("search");
-  };
-}
-
-
-/* =========================================================
-   CATEGORIES
-========================================================= */
-
-const CATEGORIES = [
-  ["🌾","crops","wheat grain bulk manufacturer supplier"],
-  ["🚜","agriculture","agricultural machinery manufacturer"],
-  ["🧪","fertilizers","fertilizer manufacturer supplier"],
-  ["💻","electronics","electronics manufacturer OEM supplier"],
-  ["✈️","aviation","aircraft aviation parts manufacturer supplier"],
-  ["🚢","marine","marine equipment ship supplier manufacturer"],
-  ["🏗️","construction","construction materials manufacturer supplier"],
-  ["🚗","automotive","vehicle automotive manufacturer exporter"]
+const CATEGORIES=[
+  ["🌾","wheat","wheat grain bulk supplier"],
+  ["🥬","food","food products manufacturer supplier"],
+  ["🏭","materials","industrial materials manufacturer"],
+  ["🚜","machinery","agricultural machinery manufacturer"],
+  ["🚗","vehicles","vehicle manufacturer exporter"],
+  ["⚙️","industry","industrial equipment supplier"],
+  ["🏘️","realEstate","commercial real estate"],
+  ["🚢","logistics","international freight logistics"]
 ];
-
 function renderCategories() {
-
-  $("categories").innerHTML =
-    CATEGORIES.map(([icon,key,query]) => `
-      <button class="cat"
-        data-query="${esc(query)}">
-        <i>${icon}</i>
-        ${esc(tr(key))}
-      </button>
-    `).join("");
-
-  $("categories")
-    .querySelectorAll("[data-query]")
-    .forEach(button => {
-
-      button.onclick = () =>
-        quickSearch(button.dataset.query);
-    });
+  const el=$("categories");if(!el)return;
+  el.innerHTML=CATEGORIES.map(([icon,key,q])=>`
+    <button class="cat" data-query="${esc(q)}">
+      <div class="cat-art">${icon}</div><span>${esc(tr(key))}</span>
+    </button>`).join("");
+  el.querySelectorAll("[data-query]").forEach(b=>b.addEventListener("click",()=>quickSearch(b.dataset.query)));
 }
-
-
-/* =========================================================
-   NAVIGATION
-========================================================= */
 
 function go(page) {
-
-  document.querySelectorAll(".page")
-    .forEach(el => el.classList.remove("active"));
-
-  const target = $(page);
-
-  if (!target) return;
-
-  target.classList.add("active");
-
-  document.querySelectorAll("[data-page]")
-    .forEach(button => {
-      button.classList.toggle(
-        "active",
-        button.dataset.page === page
-      );
-    });
-
+  document.querySelectorAll(".page").forEach(p=>p.classList.toggle("active",p.id===page));
+  document.querySelectorAll("[data-page]").forEach(b=>b.classList.toggle("active",b.dataset.page===page));
   $("nav").classList.remove("open");
+  window.scrollTo({top:0,behavior:"smooth"});
+  if(page==="deals")loadDeals();
+  if(page==="history")loadPurchases();
+  if(page==="account")checkAccount();
+}
+document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.page)));
+function toggleNav(){$("nav").classList.toggle("open");}
 
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-
-  if (page === "deals") loadDeals();
-  if (page === "history") loadPurchases();
-  if (page === "account") {
-    checkAccount();
-    checkHealth();
+async function api(path,options={}) {
+  const opts={...options,credentials:"same-origin",headers:{
+    "Accept":"application/json",
+    ...(options.body?{"Content-Type":"application/json"}:{}),
+    ...(options.headers||{})
+  }};
+  let response;
+  try{response=await fetch(path,opts);}
+  catch{throw new Error(tr("networkError"));}
+  const raw=await response.text();
+  let data={};
+  try{data=raw?JSON.parse(raw):{};}catch{
+    if(!response.ok)throw new Error(`HTTP ${response.status}`);
+    throw new Error("Invalid server response");
   }
+  if(!response.ok||data.error)throw new Error(data.error||`HTTP ${response.status}`);
+  return data;
 }
-
-function toggleNav() {
-  $("nav").classList.toggle("open");
+function setBusy(id,busy) {
+  const el=$(id);if(!el)return;
+  el.disabled=busy;
+  if(busy){el.dataset.oldText=el.textContent;el.textContent=tr("loading");}
+  else if(el.dataset.oldText){el.textContent=el.dataset.oldText;delete el.dataset.oldText;}
 }
-
-document.querySelectorAll("[data-page]")
-  .forEach(button => {
-    button.onclick = () => go(button.dataset.page);
-  });
-
-
-/* =========================================================
-   HOME SEARCH
-========================================================= */
-
-function quickSearch(query) {
-
-  $("homeQuery").value = query;
-  $("query").value = query;
-
-  const country = $("homeCountry").value;
-
-  if (country) {
-    $("destination").value = country;
-  }
-
-  go("search");
-  searchSuppliers();
-}
-
 function homeSearch() {
-
-  const query = $("homeQuery").value.trim();
-
-  if (!query) {
-    toast(tr("invalidInput"), "error");
-    return;
-  }
-
-  $("query").value = query;
-
-  if ($("homeCountry").value) {
-    $("destination").value = $("homeCountry").value;
-  }
-
-  go("search");
-  searchSuppliers();
+  $("query").value=$("homeQuery").value.trim();
+  $("destination").value=$("homeCountry").value;
+  go("search");searchSuppliers();
 }
-
-$("homeQuery").addEventListener("keydown", e => {
-  if (e.key === "Enter") homeSearch();
-});
-
-$("query").addEventListener("keydown", e => {
-  if (e.key === "Enter") searchSuppliers();
-});
-
-
-/* =========================================================
-   REAL SUPPLIER SEARCH
-========================================================= */
-
-async function searchSuppliers() {
-
-  const request = $("query").value.trim();
-  const quantity = Number($("quantity").value || 0);
-  const destination = $("destination").value;
-
-  if (!request) {
-    toast(tr("invalidInput"), "error");
-    return;
-  }
-
-  const button = $("searchBtn");
-
-  button.disabled = true;
-
-  $("searchStatus").innerHTML =
-    `<span class="loader"></span>${esc(tr("searching"))}`;
-
-  $("results").innerHTML = "";
-
-  try {
-
-    const data = await api("/api/search", {
-      method:"POST",
-      body:JSON.stringify({
-        request,
-        quantity,
-        destination
-      })
-    });
-
-    const results =
-      Array.isArray(data.results)
-        ? data.results
-        : Array.isArray(data.suppliers)
-          ? data.suppliers
-          : [];
-
-    $("searchStatus").textContent =
-      tr("foundResults",{n:results.length});
-
-    if (!results.length) {
-
-      $("results").innerHTML =
-        `<div class="card empty">${esc(tr("noResults"))}</div>`;
-
-      return;
-    }
-
-    $("results").innerHTML =
-      results.map(renderSupplier).join("");
-
-  } catch (error) {
-
-    $("searchStatus").innerHTML =
-      `<span class="err">${esc(error.message)}</span>`;
-
-  } finally {
-    button.disabled = false;
-  }
+function quickSearch(query) {
+  $("homeQuery").value=query;
+  $("query").value=query;
+  $("destination").value=$("homeCountry").value;
+  go("search");searchSuppliers();
 }
-
-function renderSupplier(supplier) {
-
-  const name =
-    supplier.title ||
-    supplier.name ||
-    supplier.supplier ||
-    supplier.company ||
-    tr("unknown");
-
-  const verified = Boolean(supplier.verified);
-
-  const encoded =
-    encodeURIComponent(JSON.stringify(supplier));
-
-  const price =
-    supplier.price !== null &&
-    supplier.price !== undefined
-      ? money(
-          supplier.price,
-          supplier.currency || "USD"
-        )
-      : tr("unknown");
-
-  const moq =
-    supplier.moq !== null &&
-    supplier.moq !== undefined
-      ? formatNumber(supplier.moq)
-      : tr("unknown");
-
-  const lead =
-    supplier.leadTime ||
-    supplier.lead_time ||
-    tr("unknown");
-
-  const confidence =
-    supplier.confidence !== null &&
-    supplier.confidence !== undefined
-      ? `${formatNumber(supplier.confidence,0)}%`
-      : tr("unknown");
-
-  return `
-    <article class="result">
-
-      <div class="result-top">
-
-        <div class="avatar">🏭</div>
-
-        <div style="flex:1;min-width:0">
-
-          <span class="badge ${verified ? "" : "warn"}">
-            ${esc(
-              verified
-                ? tr("verified")
-                : tr("notVerified")
-            )}
-          </span>
-
-          <h3>${esc(name)}</h3>
-
-          <div class="muted">
-            ${esc(
-              supplier.country
-                ? countryName(supplier.country)
-                : tr("unknown")
-            )}
-          </div>
-
-        </div>
-
-      </div>
-
-      ${
-        supplier.snippet
-          ? `<p class="muted">${esc(supplier.snippet)}</p>`
-          : ""
-      }
-
-      <div class="metrics">
-
-        <div class="metric">
-          <small>${esc(tr("price"))}</small>
-          <b>${esc(price)}</b>
-        </div>
-
-        <div class="metric">
-          <small>${esc(tr("moq"))}</small>
-          <b>${esc(moq)}</b>
-        </div>
-
-        <div class="metric">
-          <small>${esc(tr("leadTime"))}</small>
-          <b>${esc(lead)}</b>
-        </div>
-
-        <div class="metric">
-          <small>${esc(tr("confidence"))}</small>
-          <b>${esc(confidence)}</b>
-        </div>
-
-      </div>
-
-      ${
-        supplier.url
-          ? `<a class="source-link"
-               href="${esc(supplier.url)}"
-               target="_blank"
-               rel="noopener noreferrer">
-               🔗 ${esc(tr("source"))}
-             </a>`
-          : ""
-      }
-
-      <div class="actions">
-
-        <button class="primary"
-          onclick="showSupplier('${encoded}')">
-          ${esc(tr("details"))}
-        </button>
-
-        <button class="outline"
-          onclick="supplierToRFQ('${encoded}')">
-          ${esc(tr("useRFQ"))}
-        </button>
-
-      </div>
-
-    </article>
-  `;
-}
-
-function decodeSupplier(encoded) {
-  try {
-    return JSON.parse(
-      decodeURIComponent(encoded)
-    );
-  } catch {
-    return {};
-  }
-}
-
-function showSupplier(encoded) {
-
-  const s = decodeSupplier(encoded);
-
-  const name =
-    s.title ||
-    s.name ||
-    s.supplier ||
-    s.company ||
-    "NOVA";
-
-  $("modalTitle").textContent = name;
-
-  $("modalBody").innerHTML = `
-
-    <div class="notice">
-      ${esc(tr("realDataPolicy"))}
-    </div>
-
-    <div class="metrics" style="margin-top:14px">
-
-      <div class="metric">
-        <small>${esc(tr("price"))}</small>
-        <b>${
-          s.price != null
-            ? esc(money(s.price,s.currency || "USD"))
-            : esc(tr("unknown"))
-        }</b>
-      </div>
-
-      <div class="metric">
-        <small>${esc(tr("moq"))}</small>
-        <b>${
-          s.moq != null
-            ? esc(formatNumber(s.moq))
-            : esc(tr("unknown"))
-        }</b>
-      </div>
-
-      <div class="metric">
-        <small>${esc(tr("leadTime"))}</small>
-        <b>${esc(s.leadTime || s.lead_time || tr("unknown"))}</b>
-      </div>
-
-      <div class="metric">
-        <small>${esc(tr("confidence"))}</small>
-        <b>${
-          s.confidence != null
-            ? esc(`${formatNumber(s.confidence,0)}%`)
-            : esc(tr("unknown"))
-        }</b>
-      </div>
-
-    </div>
-
-    <div class="copy" style="margin-top:14px">
-${esc(tr("country"))}: ${esc(s.country ? countryName(s.country) : tr("unknown"))}
-${esc(tr("incoterm"))}: ${esc(s.incoterm || tr("unknown"))}
-${esc(tr("certifications"))}: ${esc(s.certifications || tr("unknown"))}
-${esc(tr("oem"))}: ${esc(s.oem_odm || tr("unknown"))}
-${esc(tr("evidence"))}: ${esc(s.verification || tr("unknown"))}
-    </div>
-
-    ${
-      s.snippet
-        ? `<p>${esc(s.snippet)}</p>`
-        : ""
-    }
-
-    <div class="actions">
-
-      <button class="primary"
-        onclick="supplierToRFQ('${encoded}');closeModal()">
-        ${esc(tr("useRFQ"))}
-      </button>
-
-      ${
-        s.url
-          ? `<a class="outline"
-               style="text-decoration:none"
-               target="_blank"
-               rel="noopener noreferrer"
-               href="${esc(s.url)}">
-               ${esc(tr("source"))}
-             </a>`
-          : ""
-      }
-
-    </div>
-  `;
-
-  $("modal").classList.add("show");
-}
-
-function closeModal() {
-  $("modal").classList.remove("show");
-}
-
-function supplierToRFQ(encoded) {
-
-  const s = decodeSupplier(encoded);
-
-  $("rfqProduct").value =
-    $("query").value ||
-    s.product ||
-    "";
-
-  $("rfqQuantity").value =
-    $("quantity").value || "";
-
-  if ($("destination").value) {
-    $("rfqDestination").value =
-      $("destination").value;
-  }
-
-  const name =
-    s.title ||
-    s.name ||
-    s.supplier ||
-    s.company ||
-    "";
-
-  const lines = [];
-
-  if (name) {
-    lines.push(`${tr("supplier")}: ${name}`);
-  }
-
-  if (s.url) {
-    lines.push(`${tr("source")}: ${s.url}`);
-  }
-
-  if (s.price != null) {
-    lines.push(
-      `${tr("price")}: ${s.price} ${s.currency || "USD"}`
-    );
-  }
-
-  if (s.moq != null) {
-    lines.push(`${tr("moq")}: ${s.moq}`);
-  }
-
-  if (s.leadTime || s.lead_time) {
-    lines.push(
-      `${tr("leadTime")}: ${s.leadTime || s.lead_time}`
-    );
-  }
-
-  $("rfqRequirements").value =
-    lines.join("\n");
-
-  go("rfq");
-}
-
 function clearSearch() {
-  $("query").value = "";
-  $("quantity").value = "";
-  $("destination").value = "";
-  $("searchStatus").textContent = "";
-  $("results").innerHTML = "";
+  $("query").value="";$("quantity").value="";
+  $("destination").value="";$("results").innerHTML="";
+  setStatus("searchStatus","");
 }
-
-
-/* =========================================================
-   RFQ
-========================================================= */
-
+function extractResults(data) {
+  if(Array.isArray(data))return data;
+  for(const key of ["suppliers","results","items","organic","data","records"]) {
+    if(Array.isArray(data?.[key]))return data[key];
+  }
+  return [];
+}
+function supplierCard(s,i) {
+  const name=s.company||s.name||s.title||s.supplier||tr("unknown");
+  const url=s.url||s.link||s.source_url||s.website||"";
+  const country=s.country||s.location||"";
+  const price=s.price??s.unit_price??s.cost;
+  const description=s.description||s.snippet||s.summary||"";
+  const quantity=s.moq??s.minimum_order_quantity;
+  return `<article class="result">
+    <div class="result-top"><div class="avatar">${["🏭","🌾","⚙️","🚢"][i%4]}</div>
+      <div><h3>${esc(name)}</h3><div class="muted">${esc(country||tr("noCountry"))}</div>
+      ${url?`<span class="pill">● ${esc(tr("source"))}</span>`:""}</div>
+    </div>
+    ${description?`<p>${esc(description)}</p>`:`<p class="muted">${esc(tr("noDescription"))}</p>`}
+    <div class="metrics">
+      <div class="metric"><small>${esc(tr("price"))}</small><b>${price!==undefined&&price!==null?esc(typeof price==="number"?money(price,s.currency||"USD"):price):esc(tr("noPrice"))}</b></div>
+      <div class="metric"><small>${esc(tr("moq"))}</small><b>${esc(fmt(quantity))}</b></div>
+    </div>
+    ${url&&/^https?:\/\//i.test(url)?`<a class="source-link" href="${esc(url)}" target="_blank" rel="noopener noreferrer">↗ ${esc(tr("source"))}</a>`:""}
+    <div class="actions"><button class="btn secondary" data-rfq="${esc(name)}" data-product="${esc($("query").value)}">${esc(tr("createRFQ"))}</button>
+    <button class="btn ghost" data-negotiate="${esc(name)}" data-price="${esc(price??"")}">${esc(tr("startNegotiation"))}</button></div>
+  </article>`;
+}
+async function searchSuppliers() {
+  const request=$("query").value.trim();
+  const quantity=Number($("quantity").value)||0;
+  const destination=$("destination").value;
+  if(!request){toast(tr("productRequired"),"error");return;}
+  $("results").innerHTML=`<div class="empty"><span class="loading"></span> ${esc(tr("loading"))}</div>`;
+  setStatus("searchStatus","");
+  setBusy("searchBtn",true);
+  try {
+    const data=await api("/api/search",{method:"POST",body:JSON.stringify({request,quantity,destination})});
+    const results=extractResults(data);
+    if(!results.length){
+      $("results").innerHTML=`<div class="panel empty">${esc(tr("noResults"))}</div>`;
+      setStatus("searchStatus",data.message||tr("noResults"));
+      return;
+    }
+    $("results").innerHTML=`<div class="section-head"><h2>${esc(tr("results"))} (${results.length})</h2></div>`+
+      results.map(supplierCard).join("");
+    $("results").querySelectorAll("[data-rfq]").forEach(b=>b.addEventListener("click",()=>{
+      $("rfqProduct").value=b.dataset.product||request;
+      $("rfqQuantity").value=quantity||"";
+      $("rfqDestination").value=destination||"";
+      go("rfq");
+    }));
+    $("results").querySelectorAll("[data-negotiate]").forEach(b=>b.addEventListener("click",()=>{
+      $("negSupplier").value=b.dataset.negotiate;
+      $("negOffer").value=Number(b.dataset.price)||"";
+      $("negQuantity").value=quantity||500;
+      go("negotiation");
+    }));
+    setStatus("searchStatus",data.message||"", "success");
+  } catch(e) {
+    $("results").innerHTML=`<div class="panel empty">${esc(e.message)}</div>`;
+    setStatus("searchStatus",e.message,"error");
+  } finally {setBusy("searchBtn",false);}
+}
 async function createRFQ() {
-
-  const product = $("rfqProduct").value.trim();
-  const quantity = Number($("rfqQuantity").value || 0);
-  const destination = $("rfqDestination").value;
-  const requirements = $("rfqRequirements").value.trim();
-  const incoterm = $("rfqIncoterm").value.trim();
-
-  if (!product) {
-    toast(tr("invalidInput"),"error");
-    return;
-  }
-
-  const button = $("rfqBtn");
-
-  button.disabled = true;
-  $("rfqStatus").textContent = tr("generating");
-
+  const product=$("rfqProduct").value.trim();
+  const quantity=Number($("rfqQuantity").value);
+  if(!product){toast(tr("productRequired"),"error");return;}
+  if(!quantity||quantity<1){toast(tr("quantityRequired"),"error");return;}
+  setBusy("rfqBtn",true);setStatus("rfqStatus",tr("loading"));
+  $("rfqOutput").textContent="";
   try {
-
-    const data = await api("/api/rfq",{
-      method:"POST",
-      body:JSON.stringify({
-        product,
-        quantity,
-        destination,
-        requirements:
-          [
-            requirements,
-            incoterm
-              ? `Incoterm requested: ${incoterm}`
-              : ""
-          ].filter(Boolean).join("\n")
-      })
-    });
-
-    const message =
-      data.message ||
-      data.result ||
-      data.rfq;
-
-    if (!message) {
-      throw new Error(
-        currentLang === "ar"
-          ? "لم يُرجع الخادم نص RFQ."
-          : "Server returned no RFQ text."
-      );
-    }
-
-    $("rfqOutput").className = "copy";
-    $("rfqOutput").textContent = message;
-
-    $("rfqStatus").innerHTML =
-      `<span class="ok">${esc(tr("rfqCreated"))}</span>`;
-
-  } catch (error) {
-
-    $("rfqStatus").innerHTML =
-      `<span class="err">${esc(error.message)}</span>`;
-
-  } finally {
-    button.disabled = false;
-  }
+    const data=await api("/api/rfq",{method:"POST",body:JSON.stringify({
+      product,quantity,destination:$("rfqDestination").value,
+      incoterm:$("rfqIncoterm").value,requirements:$("rfqRequirements").value.trim()
+    })});
+    setStatus("rfqStatus",tr("rfqSuccess"),"success");
+    const content=data.rfq||data.result||data.text||data.message||data;
+    $("rfqOutput").textContent=typeof content==="string"?content:JSON.stringify(content,null,2);
+  } catch(e) {setStatus("rfqStatus",e.message,"error");}
+  finally{setBusy("rfqBtn",false);}
 }
-
-async function copyRFQ() {
-
-  const text = $("rfqOutput").textContent.trim();
-
-  if (!text || text === "—") return;
-
-  try {
-    await navigator.clipboard.writeText(text);
-    toast(tr("copied"),"success");
-  } catch {
-    toast(
-      currentLang === "ar"
-        ? "تعذر النسخ تلقائيًا."
-        : "Automatic copy failed.",
-      "error"
-    );
-  }
-}
-
-
-/* =========================================================
-   LANDED COST — SERVER ONLY
-========================================================= */
-
 async function calculateLanded() {
-
-  const body = {
-    unitPrice:Number($("unitPrice").value || 0),
-    quantity:Number($("landedQuantity").value || 0),
-    shipping:Number($("shipping").value || 0),
-    insurance:Number($("insurance").value || 0),
-    dutyPercent:Number($("duty").value || 0),
-    taxPercent:Number($("tax").value || 0),
-    localDelivery:Number($("localDelivery").value || 0)
+  const b={
+    unitPrice:Number($("unitPrice").value),
+    quantity:Number($("landedQuantity").value),
+    shipping:Number($("shipping").value)||0,
+    insurance:Number($("insurance").value)||0,
+    duty:Number($("duty").value)||0,
+    tax:Number($("tax").value)||0,
+    localDelivery:Number($("localDelivery").value)||0
   };
-
-  if (body.quantity <= 0 || body.unitPrice < 0) {
-    toast(tr("invalidInput"),"error");
-    return;
+  if(!Number.isFinite(b.unitPrice)||b.unitPrice<0||!b.quantity||b.quantity<1){
+    setStatus("landedOutput",tr("invalidInput"),"error");return;
   }
-
-  const button = $("landedBtn");
-  button.disabled = true;
-
-  $("landedOutput").className = "empty";
-  $("landedOutput").innerHTML =
-    `<span class="loader"></span>`;
-
+  setBusy("landedBtn",true);setStatus("landedOutput",tr("loading"));
   try {
-
-    const data = await api("/api/landed-cost",{
-      method:"POST",
-      body:JSON.stringify(body)
-    });
-
-    $("landedOutput").className = "";
-
-    $("landedOutput").innerHTML = `
-
-      <div class="metrics">
-
-        <div class="metric">
-          <small>${esc(tr("goodsCost"))}</small>
-          <b>${esc(money(data.goods))}</b>
-        </div>
-
-        <div class="metric">
-          <small>${esc(tr("shipping"))}</small>
-          <b>${esc(money(data.shipping))}</b>
-        </div>
-
-        <div class="metric">
-          <small>${esc(tr("dutyCost"))}</small>
-          <b>${esc(money(data.duty))}</b>
-        </div>
-
-        <div class="metric">
-          <small>${esc(tr("taxCost"))}</small>
-          <b>${esc(money(data.tax))}</b>
-        </div>
-
-      </div>
-
-      <div class="card" style="margin-top:13px">
-        <div class="muted">${esc(tr("totalCost"))}</div>
-        <div style="font-size:30px;font-weight:950">
-          ${esc(money(data.total))}
-        </div>
-
-        <div style="margin-top:8px">
-          ${esc(tr("unitLanded"))}:
-          <b>${esc(money(data.unitLanded))}</b>
-        </div>
-      </div>
-
-      ${
-        data.status
-          ? `<p class="muted">${esc(data.status)}</p>`
-          : ""
-      }
-    `;
-
-  } catch (error) {
-
-    /* لا يوجد حساب وهمي احتياطي */
-    $("landedOutput").className = "empty err";
-    $("landedOutput").textContent = error.message;
-
-  } finally {
-    button.disabled = false;
-  }
+    const d=await api("/api/landed-cost",{method:"POST",body:JSON.stringify(b)});
+    const v=d.result||d;
+    const fields=[
+      ["goods",v.goods??v.goodsValue],
+      ["shipping",v.shipping],
+      ["insurance",v.insurance],
+      ["duty",v.duty],
+      ["tax",v.tax],
+      ["localDelivery",v.localDelivery??v.local_delivery],
+      ["landedTotal",v.total??v.landedCost??v.landed_cost],
+      ["unitLanded",v.unitLanded??v.unit_landed]
+    ].filter(([,x])=>x!==undefined&&x!==null);
+    $("landedOutput").className="status";
+    $("landedOutput").innerHTML=`<div class="panel"><div class="panel-head"><h3>${esc(tr("landedTotal"))}</h3></div><div class="panel-body"><div class="metrics">${fields.map(([k,val])=>`<div class="metric"><small>${esc(tr(k)||k)}</small><b>${esc(money(val))}</b></div>`).join("")}</div></div></div>`;
+    if(!fields.length)$("landedOutput").textContent=JSON.stringify(d,null,2);
+  } catch(e) {setStatus("landedOutput",e.message,"error");}
+  finally{setBusy("landedBtn",false);}
 }
-
-
-/* =========================================================
-   NEGOTIATION
-   أسماء الحقول هنا مطابقة للـ worker.js الحالي:
-   supplier / offer / quantity / target / reply
-========================================================= */
-
 async function negotiate() {
-
-  const supplier = $("negSupplier").value.trim();
-  const offer = $("negOffer").value.trim();
-  const target = $("negTarget").value.trim();
-  const quantity = $("negQuantity").value.trim();
-  const reply = $("negReply").value.trim();
-
-  if (!supplier || !offer) {
-    toast(tr("invalidInput"),"error");
-    return;
-  }
-
-  const button = $("negBtn");
-
-  button.disabled = true;
-
-  $("negOutput").className = "empty";
-  $("negOutput").innerHTML =
-    `<span class="loader"></span>`;
-
+  const supplier=$("negSupplier").value.trim();
+  const offer=Number($("negOffer").value);
+  const target=Number($("negTarget").value)||0;
+  const quantity=Number($("negQuantity").value)||1;
+  const reply=$("negReply").value.trim();
+  if(!supplier||!offer||offer<0){toast(tr("invalidInput"),"error");return;}
+  setBusy("negBtn",true);setStatus("negOutput",tr("loading"));
   try {
-
-    const data = await api("/api/negotiate",{
-      method:"POST",
-      body:JSON.stringify({
-        supplier,
-        offer,
-        quantity,
-        target,
-        reply
-      })
-    });
-
-    const result = data.result;
-
-    if (!result) {
-      throw new Error(
-        currentLang === "ar"
-          ? "لم يُرجع الذكاء الاصطناعي تحليلاً."
-          : "AI returned no negotiation analysis."
-      );
-    }
-
-    $("negOutput").className = "copy";
-    $("negOutput").textContent =
-      typeof result === "string"
-        ? result
-        : JSON.stringify(result,null,2);
-
-  } catch (error) {
-
-    $("negOutput").className = "empty err";
-    $("negOutput").textContent = error.message;
-
-  } finally {
-    button.disabled = false;
-  }
+    const d=await api("/api/negotiate",{method:"POST",body:JSON.stringify({supplier,offer,target,quantity,reply})});
+    const result=d.result??d.analysis??d;
+    $("negOutput").className="status";
+    $("negOutput").textContent=typeof result==="string"?result:JSON.stringify(result,null,2);
+  } catch(e) {setStatus("negOutput",e.message,"error");}
+  finally{setBusy("negBtn",false);}
 }
-
-
-/* =========================================================
-   DEALS — DATABASE ONLY
-========================================================= */
-
 async function loadDeals() {
-
-  $("dealsOutput").className = "card empty";
-  $("dealsOutput").innerHTML =
-    `<span class="loader"></span>`;
-
+  $("dealsOutput").innerHTML=`<div class="empty"><span class="loading"></span> ${esc(tr("loading"))}</div>`;
   try {
-
-    const data = await api("/api/deals");
-
-    const deals =
-      Array.isArray(data.deals)
-        ? data.deals
-        : [];
-
-    if (!deals.length) {
-
-      $("dealsOutput").className = "card empty";
-      $("dealsOutput").textContent = tr("noDeals");
-      return;
-    }
-
-    $("dealsOutput").className = "";
-
-    $("dealsOutput").innerHTML =
-      deals.map(deal => `
-
-        <article class="result">
-
-          <div class="result-top">
-
-            <div class="avatar">🔥</div>
-
-            <div>
-              <span class="badge">
-                ${esc(deal.country || "GLOBAL")}
-              </span>
-
-              <h3>${esc(deal.product || tr("unknown"))}</h3>
-
-              <div class="muted">
-                ${esc(deal.company || tr("unknown"))}
-              </div>
-            </div>
-
-          </div>
-
-          ${
-            deal.description
-              ? `<p>${esc(deal.description)}</p>`
-              : ""
-          }
-
-          <div class="metrics">
-
-            <div class="metric">
-              <small>${esc(tr("price"))}</small>
-              <b>${
-                deal.price != null
-                  ? esc(money(deal.price,deal.currency || "USD"))
-                  : esc(tr("unknown"))
-              }</b>
-            </div>
-
-            <div class="metric">
-              <small>${esc(tr("quantity"))}</small>
-              <b>${esc(formatNumber(deal.quantity))}</b>
-            </div>
-
-            <div class="metric">
-              <small>${esc(tr("moq"))}</small>
-              <b>${esc(formatNumber(deal.moq))}</b>
-            </div>
-
-            <div class="metric">
-              <small>Expiry</small>
-              <b>${esc(deal.expires_at || tr("unknown"))}</b>
-            </div>
-
-          </div>
-
-          ${
-            deal.url
-              ? `<a class="source-link"
-                   href="${esc(deal.url)}"
-                   target="_blank"
-                   rel="noopener noreferrer">
-                   🔗 ${esc(tr("source"))}
-                 </a>`
-              : ""
-          }
-
-        </article>
-
-      `).join("");
-
-  } catch (error) {
-
-    $("dealsOutput").className = "card empty err";
-    $("dealsOutput").textContent = error.message;
-  }
+    const d=await api("/api/deals");
+    const deals=Array.isArray(d.deals)?d.deals:[];
+    if(!deals.length){$("dealsOutput").textContent=tr("noDeals");return;}
+    $("dealsOutput").innerHTML=deals.map(x=>`
+      <article class="result"><div class="result-top"><div class="avatar">🔥</div><div>
+      <h3>${esc(x.product||tr("unknown"))}</h3><div class="muted">${esc(x.company||tr("unknown"))} · ${esc(x.country||"")}</div></div></div>
+      <p>${esc(x.description||"")}</p><div class="metrics">
+      <div class="metric"><small>${esc(tr("price"))}</small><b>${esc(x.price!=null?money(x.price,x.currency||"USD"):tr("unknown"))}</b></div>
+      <div class="metric"><small>${esc(tr("moq"))}</small><b>${esc(fmt(x.moq))}</b></div></div>
+      ${x.url&&/^https?:\/\//i.test(x.url)?`<a class="source-link" href="${esc(x.url)}" target="_blank" rel="noopener noreferrer">↗ ${esc(tr("source"))}</a>`:""}</article>`).join("");
+  } catch(e){$("dealsOutput").textContent=e.message;}
 }
-
-
-/* =========================================================
-   PURCHASE HISTORY
-========================================================= */
-
 async function loadPurchases() {
-
-  $("historyOutput").className = "card empty";
-  $("historyOutput").innerHTML =
-    `<span class="loader"></span>`;
-
+  $("historyOutput").innerHTML=`<div class="empty"><span class="loading"></span> ${esc(tr("loading"))}</div>`;
   try {
-
-    const data = await api("/api/purchases");
-
-    const purchases =
-      Array.isArray(data.purchases)
-        ? data.purchases
-        : [];
-
-    if (!purchases.length) {
-
-      $("historyOutput").className = "card empty";
-      $("historyOutput").textContent =
-        tr("noPurchases");
-
-      return;
-    }
-
-    $("historyOutput").className = "";
-
-    $("historyOutput").innerHTML =
-      purchases.map(p => `
-
-        <article class="result">
-
-          <div class="result-top">
-
-            <div class="avatar">🧾</div>
-
-            <div>
-              <h3>${esc(p.product || tr("unknown"))}</h3>
-
-              <div class="muted">
-                ${esc(p.supplier || tr("unknown"))}
-              </div>
-            </div>
-
-          </div>
-
-          <div class="metrics">
-
-            <div class="metric">
-              <small>${esc(tr("quantity"))}</small>
-              <b>${esc(formatNumber(p.quantity))}</b>
-            </div>
-
-            <div class="metric">
-              <small>${esc(tr("unitPrice"))}</small>
-              <b>${esc(money(p.unit_price))}</b>
-            </div>
-
-            <div class="metric">
-              <small>${esc(tr("shipping"))}</small>
-              <b>${esc(money(p.shipping))}</b>
-            </div>
-
-            <div class="metric">
-              <small>${esc(tr("landed"))}</small>
-              <b>${esc(money(p.landed_cost))}</b>
-            </div>
-
-          </div>
-
-          ${
-            p.supplier_url
-              ? `<a class="source-link"
-                   href="${esc(p.supplier_url)}"
-                   target="_blank"
-                   rel="noopener noreferrer">
-                   🔗 ${esc(tr("source"))}
-                 </a>`
-              : ""
-          }
-
-        </article>
-
-      `).join("");
-
-  } catch (error) {
-
-    $("historyOutput").className =
-      "card empty err";
-
-    $("historyOutput").textContent =
-      error.message;
-  }
+    const d=await api("/api/purchases");
+    const rows=Array.isArray(d.purchases)?d.purchases:[];
+    if(!rows.length){$("historyOutput").textContent=tr("noPurchases");return;}
+    $("historyOutput").innerHTML=rows.map(x=>`
+      <article class="result"><div class="result-top"><div class="avatar">🧾</div><div>
+      <h3>${esc(x.product||tr("unknown"))}</h3><div class="muted">${esc(x.supplier||tr("unknown"))}</div></div></div>
+      <div class="metrics">
+      <div class="metric"><small>${esc(tr("quantity"))}</small><b>${esc(fmt(x.quantity))}</b></div>
+      <div class="metric"><small>${esc(tr("unitPrice"))}</small><b>${esc(money(x.unit_price))}</b></div>
+      <div class="metric"><small>${esc(tr("shipping"))}</small><b>${esc(money(x.shipping))}</b></div>
+      <div class="metric"><small>${esc(tr("landedTotal"))}</small><b>${esc(money(x.landed_cost))}</b></div>
+      </div></article>`).join("");
+  } catch(e){$("historyOutput").textContent=e.message;}
 }
-
-
-/* =========================================================
-   ACCOUNT
-========================================================= */
-
-function accountCredentials() {
-
-  return {
-    email:$("email").value.trim(),
-    password:$("password").value
-  };
-}
-
+function credentials(){return {email:$("email").value.trim(),password:$("password").value};}
 async function login() {
-
-  const credentials = accountCredentials();
-
-  if (!credentials.email || !credentials.password) {
-    toast(tr("invalidInput"),"error");
-    return;
-  }
-
-  try {
-
-    const data = await api("/api/login",{
-      method:"POST",
-      body:JSON.stringify(credentials)
-    });
-
-    $("accountOutput").innerHTML =
-      `<span class="ok">
-        ${esc(tr("loggedIn"))}: ${esc(data.email || credentials.email)}
-      </span>`;
-
-    $("password").value = "";
-
-    toast(tr("loggedIn"),"success");
-
-  } catch (error) {
-
-    $("accountOutput").innerHTML =
-      `<span class="err">${esc(error.message)}</span>`;
-  }
+  const b=credentials();
+  if(!b.email||!b.password){toast(tr("invalidInput"),"error");return;}
+  try{const d=await api("/api/login",{method:"POST",body:JSON.stringify(b)});
+    $("password").value="";setStatus("accountOutput",`${tr("loggedIn")}: ${d.email||b.email}`,"success");toast(tr("loggedIn"),"success");
+  }catch(e){setStatus("accountOutput",e.message,"error");}
 }
-
 async function signup() {
-
-  const credentials = accountCredentials();
-
-  if (
-    !credentials.email ||
-    credentials.password.length < 6
-  ) {
-    toast(
-      currentLang === "ar"
-        ? "أدخل بريدًا صحيحًا وكلمة مرور من 6 أحرف على الأقل."
-        : "Enter a valid email and a password of at least 6 characters.",
-      "error"
-    );
-    return;
-  }
-
-  try {
-
-    const data = await api("/api/signup",{
-      method:"POST",
-      body:JSON.stringify(credentials)
-    });
-
-    $("accountOutput").innerHTML =
-      `<span class="ok">
-        ${esc(tr("loggedIn"))}: ${esc(data.email || credentials.email)}
-      </span>`;
-
-    $("password").value = "";
-
-    toast(tr("loggedIn"),"success");
-
-  } catch (error) {
-
-    $("accountOutput").innerHTML =
-      `<span class="err">${esc(error.message)}</span>`;
-  }
+  const b=credentials();
+  if(!b.email||b.password.length<6){toast(tr("invalidInput"),"error");return;}
+  try{const d=await api("/api/signup",{method:"POST",body:JSON.stringify(b)});
+    $("password").value="";setStatus("accountOutput",`${tr("loggedIn")}: ${d.email||b.email}`,"success");toast(tr("loggedIn"),"success");
+  }catch(e){setStatus("accountOutput",e.message,"error");}
 }
-
 async function logout() {
-
-  try {
-
-    await api("/api/logout",{
-      method:"POST"
-    });
-
-    $("accountOutput").innerHTML =
-      `<span>${esc(tr("loggedOut"))}</span>`;
-
-    toast(tr("loggedOut"),"success");
-
-  } catch (error) {
-
-    $("accountOutput").innerHTML =
-      `<span class="err">${esc(error.message)}</span>`;
-  }
+  try{await api("/api/logout",{method:"POST"});setStatus("accountOutput",tr("loggedOut"),"success");}
+  catch(e){setStatus("accountOutput",e.message,"error");}
 }
-
 async function checkAccount() {
-
-  try {
-
-    const data = await api("/api/me");
-
-    if (data.loggedIn && data.user) {
-
-      $("accountOutput").innerHTML =
-        `<span class="ok">
-          ${esc(tr("loggedIn"))}: ${esc(data.user.email || "")}
-        </span>`;
-
-    } else {
-
-      $("accountOutput").textContent =
-        tr("notLoggedIn");
-    }
-
-  } catch (error) {
-
-    $("accountOutput").innerHTML =
-      `<span class="err">${esc(error.message)}</span>`;
-  }
+  try{const d=await api("/api/me");
+    if(d.loggedIn&&d.user)setStatus("accountOutput",`${tr("loggedIn")}: ${d.user.email||""}`,"success");
+    else setStatus("accountOutput",tr("loginFirst"));
+  }catch(e){setStatus("accountOutput",e.message,"error");}
 }
-
-
-/* =========================================================
-   HEALTH
-========================================================= */
-
-function healthValue(element,value) {
-
-  element.textContent =
-    value
-      ? tr("connected")
-      : tr("notConnected");
-
-  element.className =
-    value
-      ? "connected"
-      : "disconnected";
+function healthValue(id,value) {
+  $(id).textContent=value?tr("connected"):tr("notConnected");
+  $(id).className=value?"connected":"disconnected";
 }
-
 async function checkHealth() {
-
   try {
-
-    const data = await api("/api/health");
-
-    healthValue(
-      $("healthNova"),
-      Boolean(data.ok)
-    );
-
-    healthValue(
-      $("healthDB"),
-      Boolean(data.database)
-    );
-
-    healthValue(
-      $("healthAI"),
-      Boolean(data.ai)
-    );
-
-    healthValue(
-      $("healthSearch"),
-      Boolean(data.yep)
-    );
-
-    $("onlineState").textContent =
-      data.ok
-        ? tr("online")
-        : tr("offline");
-
-    $("onlineState").className =
-      data.ok
-        ? "connected"
-        : "disconnected";
-
-    $("aiState").textContent =
-      data.ai
-        ? tr("online")
-        : tr("offline");
-
-    $("aiState").className =
-      data.ai
-        ? "connected"
-        : "disconnected";
-
-    $("healthSmall").textContent =
-      data.database
-        ? tr("connected")
-        : tr("notConnected");
-
+    const d=await api("/api/health");
+    healthValue("healthNova",Boolean(d.ok));
+    healthValue("healthDB",Boolean(d.database));
+    healthValue("healthAI",Boolean(d.ai));
+    healthValue("healthSearch",Boolean(d.yep));
+    $("onlineState").textContent=d.ok?tr("online"):tr("offline");
+    $("onlineState").className=d.ok?"connected":"disconnected";
+    $("aiState").textContent=d.ai?tr("online"):tr("offline");
+    $("aiState").className=d.ai?"connected":"disconnected";
+    $("healthSmall").textContent=d.database?tr("connected"):tr("notConnected");
   } catch {
-
-    ["healthNova","healthDB","healthAI","healthSearch"]
-      .forEach(id => {
-        healthValue($(id),false);
-      });
-
-    $("onlineState").textContent =
-      tr("offline");
-
-    $("onlineState").className =
-      "disconnected";
-
-    $("aiState").textContent =
-      tr("offline");
-
-    $("aiState").className =
-      "disconnected";
-
-    $("healthSmall").textContent =
-      tr("notConnected");
+    ["healthNova","healthDB","healthAI","healthSearch"].forEach(id=>healthValue(id,false));
+    $("onlineState").textContent=tr("offline");$("onlineState").className="disconnected";
+    $("aiState").textContent=tr("offline");$("aiState").className="disconnected";
+    $("healthSmall").textContent=tr("notConnected");
   }
 }
-
-
-/* =========================================================
-   REAL NETWORK COUNT
-========================================================= */
-
 async function loadNetwork() {
-
   try {
-
-    const data = await api("/api/network");
-
-    $("networkRecords").textContent =
-      formatNumber(
-        Number(data.actualRecords || 0),
-        0
-      );
-
-  } catch {
-
-    $("networkRecords").textContent = "—";
-  }
+    const d=await api("/api/network");
+    $("networkRecords").textContent=fmt(Number(d.actualRecords||0));
+  } catch {$("networkRecords").textContent="—";}
 }
-
-
-/* =========================================================
-   INIT
-========================================================= */
+function closeModal(){$("modal").classList.remove("open");}
+$("modal").addEventListener("click",e=>{if(e.target===$("modal"))closeModal();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
 
 async function initNOVA() {
-
-  initLanguage();
-
-  await Promise.allSettled([
-    checkHealth(),
-    loadNetwork()
-  ]);
+  applyLanguage();
+  await Promise.allSettled([checkHealth(),loadNetwork()]);
 }
-
 initNOVA();
-
 </script>
 </body>
 </html>
