@@ -4,188 +4,236 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>NOVA | العالم بين يديك</title>
+<meta name="theme-color" content="#ffffff">
+<title>NOVA — العالم بين يديك</title>
 <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
-:root{--blue:#0866f5;--navy:#0c2e63;--ink:#162e50;--muted:#73849e;--line:#e3ebf5;--bg:#f4f8fd;--green:#12966c}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Cairo,Arial,sans-serif;color:var(--ink)}button,input,select,textarea{font:inherit}button{cursor:pointer}img{max-width:100%}
-header{height:68px;background:white;display:flex;align-items:center;gap:14px;padding:0 18px;position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line)}
-.logo{font:bold 32px Arial;color:var(--blue);min-width:130px}.logo small{display:block;font:700 9px Cairo;color:var(--navy)}
-.search{display:flex;flex:1;max-width:700px;height:42px;border:1px solid var(--line);border-radius:10px;overflow:hidden}.search input{flex:1;min-width:0;border:0;padding:0 12px;outline:0}.search select{border:0;background:#f8fbff}.search button,.btn.primary{background:var(--blue);color:white;border:0;padding:9px 16px}
-header select{padding:8px;border:1px solid var(--line);border-radius:8px}
-.layout{display:grid;grid-template-columns:minmax(0,1fr) 220px;max-width:1700px;margin:auto}
-main{padding:15px;min-width:0}
-aside{background:white;border-right:1px solid var(--line);padding:15px;position:sticky;top:68px;height:calc(100vh - 68px);overflow:auto}
-.nav{width:100%;display:flex;gap:10px;align-items:center;text-align:right;padding:10px;border:0;border-radius:10px;background:white;color:#405a7d;font-weight:700;margin-bottom:3px}
-.nav:hover,.nav.active{background:#eaf2ff;color:var(--blue)}
-.nav i{width:22px;text-align:center}
-.hero{min-height:310px;border-radius:18px;overflow:hidden;position:relative;display:flex;align-items:center;padding:28px;background:#dcecff url('assets/nova-world-hero.jpg') center/cover no-repeat;box-shadow:0 8px 25px #173a6512}
-.hero:before{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.03),rgba(255,255,255,.12) 35%,rgba(255,255,255,.93) 68%)}
-.hero-content{position:relative;margin-right:auto;max-width:55%;z-index:1}
-.tag{display:inline-block;background:#e6f1ff;color:var(--blue);border-radius:20px;padding:5px 12px;font-size:11px;font-weight:800}
-.hero h1{font-size:clamp(30px,3.5vw,48px);line-height:1.3;color:var(--navy);margin:12px 0}.hero h1 span{color:var(--blue)}
-.hero p{line-height:1.9;color:#435d80;font-weight:600}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 13px;border-radius:9px;border:1px solid #d5e5fa;background:white;color:var(--blue);font-weight:800;font-size:11px}
+:root{--blue:#0875e8;--navy:#102f58;--ink:#1b3454;--muted:#71839c;--line:#e0e9f4;--bg:#f4f8fd;--green:#12805c;--shadow:0 8px 28px #173b6610}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Cairo,Arial,sans-serif}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+img{max-width:100%}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.topbar{height:72px;background:#fff;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:18px;padding:0 22px;position:sticky;top:0;z-index:100;width:100%}
+.brand{display:inline-flex;align-items:center;gap:2px;text-decoration:none;font-family:Arial,sans-serif;font-size:32px;font-weight:900;letter-spacing:-2px;color:var(--blue);white-space:nowrap}
+.brand small{display:block;font:700 9px Cairo,sans-serif;letter-spacing:0;color:var(--muted)}
+.brand-o{width:27px;height:27px;display:inline-block;position:relative;border:3px solid #0875e8;border-radius:50%;margin:0 2px;background:linear-gradient(135deg,#2ba9ff,#0755b8);box-shadow:inset -3px -2px 5px #052f75aa,0 0 0 2px #bde2ff;vertical-align:1px}
+.brand-o:before{content:"";position:absolute;inset:2px 5px;border:1.5px solid #d8f2ff;border-radius:50%}
+.brand-o:after{content:"";position:absolute;left:1px;right:1px;top:8px;height:7px;border-top:1.5px solid #d8f2ff;border-bottom:1.5px solid #d8f2ff;border-radius:50%}
+.top-search{display:flex;flex:1;max-width:760px;min-width:100px;height:43px;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:#fff}
+.top-search input{border:0;outline:0;min-width:0;flex:1;padding:0 13px}
+.top-search select{border:0;border-inline-start:1px solid var(--line);background:#f8fbff;padding:0 7px;max-width:130px}
+.top-search button{background:var(--blue);color:#fff;border:0;padding:0 18px}
+.topbar select.lang{border:1px solid var(--line);border-radius:9px;padding:8px;background:white;max-width:145px}
+.icon-btn{border:1px solid var(--line);border-radius:10px;background:white;color:var(--blue);padding:10px}
+.shell{display:grid;grid-template-columns:minmax(0,1fr) 235px;grid-template-areas:"content sidebar";width:100%;max-width:none;margin:0;align-items:start}
+main{grid-area:content;padding:17px;min-width:0;width:100%}
+.sidebar{grid-area:sidebar;background:#fff;border-inline-start:1px solid var(--line);position:sticky;top:72px;height:calc(100vh - 72px);overflow-y:auto;padding:15px 12px}
+.side-brand{padding:7px 9px 18px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.nav{display:flex;align-items:center;gap:11px;width:100%;text-align:start;padding:11px 10px;border:0;background:white;border-radius:10px;color:#526984;font-size:12px;font-weight:700;margin:3px 0}
+.nav i{width:21px;text-align:center;color:#6b8db8}
+.nav:hover,.nav.active{background:#eaf3ff;color:var(--blue)}
+.nav.active i{color:var(--blue)}
+.nav-group{font-size:10px;font-weight:900;color:#9aabc0;padding:13px 10px 4px}
+.joinbox{background:linear-gradient(135deg,#0b4fa5,#087de9);border-radius:13px;color:white;padding:14px;margin-top:17px}
+.joinbox p{font-size:10px;line-height:1.9}
+.page{display:none;min-width:0;width:100%}
+.page.active{display:block}
+.hero{position:relative;isolation:isolate;overflow:hidden;display:flex;align-items:center;width:100%;min-height:335px;padding:30px;border-radius:18px;background:#dcecff url('assets/nova-world-hero.jpg') center/cover no-repeat;box-shadow:var(--shadow)}
+.hero:before{content:"";position:absolute;z-index:-1;inset:0;background:linear-gradient(90deg,rgba(255,255,255,.05) 0%,rgba(255,255,255,.10) 30%,rgba(255,255,255,.68) 60%,rgba(255,255,255,.91) 100%)}
+.hero-content{max-width:57%;margin-inline-start:auto;position:relative}
+.tag{display:inline-flex;align-items:center;gap:7px;border-radius:30px;background:#e5f2ff;color:var(--blue);font-size:11px;font-weight:800;padding:6px 12px}
+.hero h1{font-size:clamp(32px,4vw,51px);line-height:1.35;color:var(--navy);margin:12px 0}
+.hero h1 span{color:var(--blue)}
+.hero p{font-size:13px;line-height:2;color:#405b7d;font-weight:600}
+.actions,.filters,.button-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid #d6e4f5;border-radius:9px;background:#fff;color:var(--blue);font-weight:800;font-size:11px;padding:10px 13px}
 .btn.primary{background:var(--blue);color:white;border-color:var(--blue)}
-.btn.soft{background:#eaf3ff;color:var(--blue)}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
-.categories{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:13px 0}
-.category{padding:0;border:1px solid var(--line);border-radius:13px;overflow:hidden;background:white;text-align:right;color:inherit;min-width:0}
-.category img{width:100%;height:90px;object-fit:cover;display:block}
-.category div{padding:9px}.category b{display:block;font-size:11px}.category small{font-size:9px;color:var(--muted)}
-.panel{background:white;border:1px solid var(--line);border-radius:15px;padding:14px;margin-bottom:13px;min-width:0}
-.panelhead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}.panelhead h2{font-size:16px;margin:0}.panelhead p{font-size:10px;color:var(--muted);margin:3px 0}
-.products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
-.product{border:1px solid var(--line);border-radius:12px;overflow:hidden;min-width:0}
-.product img{width:100%;height:110px;object-fit:cover;display:block}
-.product .body{padding:9px}.product h3{font-size:11px;margin:0 0 5px;line-height:1.7}
-.meta{font-size:9px;color:var(--muted)}.price{font-weight:900;color:#e34348;margin:7px 0;font-size:12px}
-.card-actions{display:flex;gap:5px;margin-top:8px}.card-actions .btn{flex:1;padding:7px 3px;font-size:9px}
-.columns{display:grid;grid-template-columns:1fr 1fr;gap:13px}
-.propertygrid,.dealgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
-.property,.deal{border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.property img,.deal img{width:100%;height:105px;object-fit:cover;display:block}
-.property div,.deal div{padding:9px}.property b,.deal b{font-size:11px}.property p,.deal p{font-size:10px;color:var(--muted)}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}.filters input,.filters select,.field input,.field select,.field textarea{padding:9px;border:1px solid var(--line);border-radius:9px;min-width:0;max-width:100%;background:white}
+.btn.soft{background:#eaf3ff;border-color:#eaf3ff}
+.btn.dark{background:var(--navy);color:white}
+.categories{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:11px;margin:14px 0}
+.category{display:block;padding:0;overflow:hidden;text-align:start;border:1px solid var(--line);border-radius:13px;background:white;color:inherit;min-width:0;transition:transform .2s,box-shadow .2s}
+.category:hover{transform:translateY(-3px);box-shadow:var(--shadow)}
+.category img{width:100%;height:105px;object-fit:cover;display:block}
+.category .catbody{padding:10px}
+.category b{display:block;font-size:11px;line-height:1.7}
+.category small{display:block;color:var(--muted);font-size:9px;line-height:1.8}
+.panel{background:white;border:1px solid var(--line);border-radius:15px;padding:15px;margin-bottom:14px;min-width:0;box-shadow:0 3px 15px #193c6505}
+.panelhead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:13px}
+.panelhead h2{font-size:16px;margin:0}
+.panelhead p{font-size:10px;color:var(--muted);margin:4px 0 0}
+.products{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.product,.property,.deal,.supplier{border:1px solid var(--line);border-radius:12px;overflow:hidden;min-width:0;background:#fff}
+.product img,.property img,.deal img,.supplier img{width:100%;height:125px;object-fit:cover;display:block}
+.cardbody{padding:10px}
+.cardbody h3,.cardbody b{font-size:11px;line-height:1.8;margin:0}
+.meta{font-size:9px;line-height:1.9;color:var(--muted)}
+.price{font-size:12px;color:#12805c;font-weight:900;margin:7px 0}
+.card-actions{display:flex;gap:5px;margin-top:9px;flex-wrap:wrap}
+.card-actions .btn{flex:1;padding:7px 5px;font-size:9px}
+.columns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.propertygrid,.dealgrid,.suppliergrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.title{display:flex;align-items:center;gap:12px;margin:5px 0 15px;flex-wrap:wrap}
+.title .symbol{width:48px;height:48px;flex:none;border-radius:13px;background:#e7f2ff;color:var(--blue);display:grid;place-items:center;font-size:21px}
+.title h1{font-size:22px;margin:0}.title p{font-size:11px;color:var(--muted);margin:3px 0}
+.filters{margin-bottom:13px}
+.filters input,.filters select,.field input,.field select,.field textarea{padding:10px;border:1px solid var(--line);border-radius:9px;min-width:0;max-width:100%;background:white;color:var(--ink)}
 .filters input{flex:1;min-width:130px}
-.map{height:300px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
-.page{display:none}.page.active{display:block}
-.title{display:flex;align-items:center;gap:12px;margin:5px 0 14px}.title .symbol{width:48px;height:48px;border-radius:13px;background:#e8f2ff;color:var(--blue);display:grid;place-items:center;font-size:22px}.title h1{font-size:22px;margin:0}.title p{font-size:11px;color:var(--muted);margin:3px 0}
-.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.field{display:grid;gap:5px;font-size:11px;font-weight:800}.field.full{grid-column:1/-1}.field textarea{min-height:80px}
-.empty{padding:22px;border:1px dashed #cad9ee;border-radius:12px;text-align:center;color:var(--muted)}.empty i{font-size:27px;color:#91add8}
-.toast{position:fixed;bottom:20px;left:20px;background:#123866;color:white;padding:12px 16px;border-radius:10px;z-index:99;display:none;max-width:90vw}.toast.show{display:block}
-@media(max-width:1100px){.categories{grid-template-columns:repeat(3,minmax(0,1fr))}.products{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:minmax(0,1fr) 190px}.hero-content{max-width:68%}}
-@media(max-width:750px){header{gap:7px;padding:0 8px}.logo{font-size:24px;min-width:auto}.logo small{display:none}.layout{display:flex;flex-direction:column}aside{position:static;height:auto;display:flex;gap:5px;overflow:auto;padding:8px}aside .nav{width:auto;white-space:nowrap}.hero{min-height:260px;padding:18px}.hero-content{max-width:100%;background:#ffffffd9;border-radius:12px;padding:12px}.categories{grid-template-columns:repeat(2,minmax(0,1fr))}.products{grid-template-columns:repeat(2,minmax(0,1fr))}.columns{grid-template-columns:1fr}.search select{max-width:88px}.search button{padding:8px}.main{padding:9px}}
+.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.field{display:grid;gap:5px;font-size:11px;font-weight:800;min-width:0}
+.field input,.field select,.field textarea{width:100%}
+.field.full{grid-column:1/-1}
+.field textarea{min-height:86px;resize:vertical}
+.map{height:300px;width:100%;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#e8f1fa}
+.empty{padding:22px;border:1px dashed #cad9ee;border-radius:12px;text-align:center;color:var(--muted);line-height:2}
+.empty i{font-size:28px;color:#83a9da}
+.small-note{font-size:10px;color:var(--muted);line-height:1.9}
+.toast{display:none;position:fixed;bottom:22px;left:22px;z-index:999;max-width:90vw;background:#10345f;color:#fff;border-radius:11px;padding:13px 17px;box-shadow:var(--shadow);font-size:12px}
+.toast.show{display:block}
+[dir="ltr"] .hero:before{background:linear-gradient(270deg,rgba(255,255,255,.05),rgba(255,255,255,.15) 30%,rgba(255,255,255,.7) 65%,rgba(255,255,255,.91))}
+@media(min-width:1500px){main{padding:22px}.hero{min-height:380px}.category img{height:125px}.product img{height:145px}}
+@media(max-width:1100px){.shell{grid-template-columns:minmax(0,1fr) 205px}.categories{grid-template-columns:repeat(3,minmax(0,1fr))}.products{grid-template-columns:repeat(3,minmax(0,1fr))}.hero-content{max-width:70%}}
+@media(max-width:760px){.topbar{height:auto;min-height:65px;padding:9px;gap:8px;flex-wrap:wrap}.brand{font-size:27px}.brand-o{width:23px;height:23px}.top-search{order:3;flex-basis:100%;max-width:none}.topbar select.lang{margin-inline-start:auto;max-width:120px}.shell{display:flex;flex-direction:column}.sidebar{position:static;height:auto;width:100%;display:flex;overflow-x:auto;gap:5px;padding:8px;border-inline-start:0;border-bottom:1px solid var(--line)}.side-brand,.nav-group,.joinbox{display:none}.nav{width:auto;flex:none;white-space:nowrap;margin:0;padding:9px}.nav i{width:auto}.nav span{font-size:10px}main{padding:10px}.hero{min-height:290px;padding:14px;background-position:center}.hero-content{max-width:100%;background:#ffffffdc;border-radius:13px;padding:13px}.hero h1{font-size:32px}.hero p{font-size:11px}.categories{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.category img{height:100px}.products{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.columns{grid-template-columns:1fr}.propertygrid,.dealgrid,.suppliergrid{grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:11px}.panelhead h2{font-size:14px}.title h1{font-size:19px}.map{height:260px}}
+@media(max-width:390px){.products{grid-template-columns:1fr 1fr}.propertygrid,.dealgrid{grid-template-columns:1fr}.hero h1{font-size:28px}}
 </style>
 </head>
 <body>
-<header>
- <a class="logo" href="#" onclick="go('home');return false">NOVA<small>منصة التجارة العالمية</small></a>
- <form class="search" onsubmit="searchAll(event)">
-  <input id="globalSearch" placeholder="ابحث عن منتجات، موردين، مصانع، عقارات أو شحن...">
-  <select id="searchType"><option value="all">الكل</option><option value="product">المنتجات</option><option value="supplier">الموردون</option><option value="property">العقارات</option><option value="shipping">الشحن</option></select>
+<header class="topbar">
+ <a class="brand" href="#" onclick="go('home');return false" aria-label="NOVA">
+  N<span class="brand-o" aria-label="كرة أرضية"></span>VA
+  <small>NOVA · GLOBAL TRADE</small>
+ </a>
+ <form class="top-search" onsubmit="searchAll(event)">
+  <input id="globalSearch" placeholder="ابحث عن منتجات أو مصانع أو عقارات أو شحن...">
+  <select id="searchType" aria-label="نوع البحث">
+   <option value="all">كل الأقسام</option><option value="product">المنتجات</option><option value="supplier">الموردون</option><option value="property">العقارات</option><option value="shipping">الشحن</option>
+  </select>
   <button aria-label="بحث"><i class="fa-solid fa-magnifying-glass"></i></button>
  </form>
- <select id="language" onchange="changeLanguage(this.value)" aria-label="اللغة">
+ <select id="language" class="lang" aria-label="اللغة" onchange="changeLanguage(this.value)">
   <option value="ar">العربية</option><option value="en">English</option><option value="fr">Français</option><option value="es">Español</option><option value="de">Deutsch</option><option value="it">Italiano</option><option value="tr">Türkçe</option><option value="zh">中文</option><option value="ja">日本語</option><option value="ko">한국어</option><option value="ru">Русский</option><option value="hi">हिन्दी</option><option value="pt">Português</option><option value="pl">Polski</option>
  </select>
- <button class="btn" onclick="toastMsg('يلزم ربط حساب المستخدم لإظهار الرسائل.')"><i class="fa-regular fa-comments"></i></button>
+ <button class="icon-btn" onclick="toastMsg('يلزم ربط حسابك لإتاحة الرسائل الخاصة.')" aria-label="الرسائل"><i class="fa-regular fa-comments"></i></button>
 </header>
-<div class="layout">
+
+<div class="shell">
 <main>
 <section class="page active" id="page-home">
  <div class="hero">
   <div class="hero-content">
-   <span class="tag" data-i18n="eyebrow">منصة التجارة والأعمال العالمية</span>
-   <h1 data-i18n="headline">العالم بين يديك</h1>
+   <span class="tag" data-i18n="eyebrow"><i class="fa-solid fa-earth-americas"></i> منصة التجارة والأعمال العالمية</span>
+   <h1><span data-i18n="headline">العالم بين يديك</span></h1>
    <p data-i18n="slogan">تجارة وصناعة وزراعة ونقل، وكل ما تحتاجه بأقل جهد.</p>
    <p data-i18n="subline">منصة تجمع المصانع والموردين والمشترين والشركات والخدمات اللوجستية والعقارات التجارية في مكان واحد.</p>
    <div class="actions"><button class="btn primary" onclick="go('listings')" data-i18n="listBusiness">اعرض نشاطك التجاري</button><button class="btn" onclick="go('market')" data-i18n="explore">اكتشف العالم</button></div>
   </div>
  </div>
  <div class="categories">
-  <button class="category" onclick="go('industry')"><img src="https://images.unsplash.com/photo-1567789884554-0b844b597180?auto=format&fit=crop&w=700&q=80" alt="الصناعة"><div><b data-i18n="industry">الصناعة والمصانع</b><small>معدات وخطوط إنتاج وحلول صناعية</small></div></button>
-  <button class="category" onclick="go('agriculture')"><img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=700&q=80" alt="الزراعة"><div><b data-i18n="agriculture">الزراعة والمواد الخام</b><small>محاصيل ومواد خام ومستلزمات</small></div></button>
-  <button class="category" onclick="go('market')"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=700&q=80" alt="المنتجات"><div><b data-i18n="products">المنتجات والموردون</b><small>منتجات ومصانع وموردون</small></div></button>
-  <button class="category" onclick="go('shipping')"><img src="https://images.unsplash.com/photo-1494412519320-aa613dfb7738?auto=format&fit=crop&w=700&q=80" alt="الشحن"><div><b data-i18n="shipping">النقل والشحن</b><small>بحري وجوي وبري وسكك حديد</small></div></button>
-  <button class="category" onclick="go('realestate')"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=700&q=80" alt="العقارات"><div><b data-i18n="realestate">العقارات التجارية</b><small>مكاتب ومستودعات وأراضٍ</small></div></button>
-  <button class="category" onclick="go('deals')"><img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=700&q=80" alt="الفرص"><div><b data-i18n="deals">الصفقات والفرص</b><small>خدمات وعروض وفرص تجارية</small></div></button>
+  <button class="category" onclick="go('industry')"><img src="https://images.unsplash.com/photo-1567789884554-0b844b597180?auto=format&fit=crop&w=700&q=80" alt="الصناعة" loading="lazy"><div class="catbody"><b data-i18n="industry">الصناعة والمصانع</b><small>معدات وخطوط إنتاج وحلول صناعية</small></div></button>
+  <button class="category" onclick="go('agriculture')"><img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=700&q=80" alt="الزراعة" loading="lazy"><div class="catbody"><b data-i18n="agriculture">الزراعة والمواد الخام</b><small>محاصيل وبذور ومستلزمات</small></div></button>
+  <button class="category" onclick="go('market')"><img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=700&q=80" alt="المنتجات" loading="lazy"><div class="catbody"><b data-i18n="products">المنتجات والموردون</b><small>منتجات ومصانع وموردون</small></div></button>
+  <button class="category" onclick="go('shipping')"><img src="https://images.unsplash.com/photo-1494412519320-aa613dfb7738?auto=format&fit=crop&w=700&q=80" alt="الشحن" loading="lazy"><div class="catbody"><b data-i18n="shipping">النقل والشحن</b><small>بحري وجوي وبري وسكك حديد</small></div></button>
+  <button class="category" onclick="go('realestate')"><img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=700&q=80" alt="العقارات" loading="lazy"><div class="catbody"><b data-i18n="realestate">العقارات التجارية</b><small>مكاتب ومستودعات وأراضٍ</small></div></button>
+  <button class="category" onclick="go('deals')"><img src="https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=700&q=80" alt="الفرص" loading="lazy"><div class="catbody"><b data-i18n="deals">الصفقات والفرص</b><small>عروض وخدمات تجارية</small></div></button>
  </div>
- <section class="panel"><div class="panelhead"><div><h2 data-i18n="featured">منتجات وموردون مختارون</h2><p>أمثلة عرض توضيحية حتى ربط بيانات الموردين الفعلية</p></div><button class="btn soft" onclick="go('market')">عرض الكل ←</button></div><div class="products" id="homeProducts"></div></section>
+ <section class="panel"><div class="panelhead"><div><h2 data-i18n="featured">منتجات وموردون مختارون</h2><p>عروض توضيحية إلى حين ربط بيانات الموردين الفعلية</p></div><button class="btn soft" onclick="go('market')">عرض الكل ←</button></div><div class="products" id="homeProducts"></div></section>
  <div class="columns">
   <section class="panel"><div class="panelhead"><h2 data-i18n="properties">العقارات التجارية المميزة</h2><button class="btn soft" onclick="go('realestate')">عرض الكل</button></div><div class="propertygrid" id="homeProperties"></div></section>
-  <section class="panel"><div class="panelhead"><h2 data-i18n="deals">آخر الفرص والصفقات</h2><button class="btn soft" onclick="go('deals')">عرض الكل</button></div><div class="dealgrid" id="homeDeals"></div></section>
+  <section class="panel"><div class="panelhead"><h2 data-i18n="deals">الصفقات والعروض</h2><button class="btn soft" onclick="go('deals')">عرض الكل</button></div><div class="dealgrid" id="homeDeals"></div></section>
  </div>
- <section class="panel"><div class="panelhead"><h2>استكشف خريطة العالم</h2><span class="meta">خريطة تفاعلية للمواقع</span></div><div id="homeMap" class="map"></div></section>
+ <section class="panel"><div class="panelhead"><h2>خريطة العالم</h2><span class="meta">خريطة تفاعلية للمواقع</span></div><div id="homeMap" class="map"></div></section>
 </section>
 
-<aside>
- <div class="logo">NOVA<small>Global Trade Intelligence</small></div>
+<aside class="sidebar">
+ <div class="side-brand"><a class="brand" href="#" onclick="go('home');return false">N<span class="brand-o"></span>VA</a><small style="display:block;color:var(--muted);font-size:9px">Global Trade Platform</small></div>
  <button class="nav active" data-page="home" onclick="go('home')"><i class="fa-solid fa-house"></i><span data-i18n="home">الرئيسية</span></button>
+ <div class="nav-group">التجارة والأعمال</div>
  <button class="nav" data-page="market" onclick="go('market')"><i class="fa-solid fa-earth-americas"></i><span data-i18n="market">السوق العالمي</span></button>
  <button class="nav" data-page="industry" onclick="go('industry')"><i class="fa-solid fa-industry"></i><span data-i18n="industry">الصناعة والمصانع</span></button>
  <button class="nav" data-page="agriculture" onclick="go('agriculture')"><i class="fa-solid fa-seedling"></i><span data-i18n="agriculture">الزراعة والمواد الخام</span></button>
  <button class="nav" data-page="procurement" onclick="go('procurement')"><i class="fa-solid fa-cart-shopping"></i><span data-i18n="procurement">المشتريات الذكية</span></button>
  <button class="nav" data-page="suppliers" onclick="go('suppliers')"><i class="fa-solid fa-boxes-stacked"></i><span data-i18n="suppliers">الموردون والمصانع</span></button>
+ <div class="nav-group">العقارات واللوجستيات</div>
  <button class="nav" data-page="shipping" onclick="go('shipping')"><i class="fa-solid fa-truck-fast"></i><span data-i18n="shipping">النقل والشحن</span></button>
  <button class="nav" data-page="tracking" onclick="go('tracking')"><i class="fa-solid fa-location-dot"></i><span data-i18n="tracking">تتبع الشحنات</span></button>
  <button class="nav" data-page="realestate" onclick="go('realestate')"><i class="fa-solid fa-building"></i><span data-i18n="realestate">العقارات التجارية</span></button>
  <button class="nav" data-page="deals" onclick="go('deals')"><i class="fa-solid fa-tags"></i><span data-i18n="deals">الصفقات والعروض</span></button>
+ <div class="nav-group">أدوات NOVA</div>
  <button class="nav" data-page="assistant" onclick="go('assistant')"><i class="fa-solid fa-wand-magic-sparkles"></i><span data-i18n="assistant">مساعد NOVA الذكي</span></button>
  <button class="nav" data-page="listings" onclick="go('listings')"><i class="fa-solid fa-store"></i><span data-i18n="listBusiness">اعرض نشاطك التجاري</span></button>
  <button class="nav" data-page="analytics" onclick="go('analytics')"><i class="fa-solid fa-chart-line"></i><span data-i18n="analytics">تحليلات السوق</span></button>
- <div class="panel" style="background:#0c3c88;color:white;margin-top:16px">
-  <b>انضم إلى NOVA</b><p style="font-size:10px;line-height:1.8">اعرض منتجاتك وخدماتك واستقبل استفسارات تجارية من أسواق جديدة.</p>
-  <button class="btn" style="width:100%" onclick="go('listings')">ابدأ الآن مجاناً</button>
- </div>
+ <div class="joinbox"><b>انضم إلى NOVA</b><p>اعرض منتجاتك وخدماتك واستقبل استفسارات تجارية من أسواق جديدة.</p><button class="btn" style="width:100%" onclick="go('listings')">ابدأ الآن</button></div>
 </aside>
 
 <section class="page" id="page-market">
- <div class="title"><div class="symbol"><i class="fa-solid fa-earth-americas"></i></div><div><h1 data-i18n="market">السوق العالمي</h1><p>ابحث في المنتجات والموردين والمصانع والخدمات.</p></div></div>
+ <div class="title"><div class="symbol"><i class="fa-solid fa-earth-americas"></i></div><div><h1 data-i18n="market">السوق العالمي</h1><p>منتجات وموردون ومصانع من قطاعات متعددة.</p></div></div>
  <div class="panel"><div class="filters"><input id="marketQuery" placeholder="اسم المنتج أو المورد"><select id="marketCategory"><option value="">كل الفئات</option><option>معدات صناعية</option><option>طاقة شمسية</option><option>معادن</option><option>زراعة</option><option>تغليف</option></select><select id="marketCountry"><option value="">كل الدول</option><option>الصين</option><option>تركيا</option><option>ألمانيا</option><option>الهند</option><option>الإمارات</option></select><button class="btn primary" onclick="filterProducts()">بحث</button><button class="btn" onclick="go('listings')">أضف منتجاتك</button></div><div class="products" id="marketProducts"></div></div>
 </section>
 
 <section class="page" id="page-industry">
- <div class="title"><div class="symbol"><i class="fa-solid fa-industry"></i></div><div><h1>الصناعة والمصانع</h1><p>معدات إنتاج، مواد صناعية، مصانع ومعامل وخدمات صيانة.</p></div></div>
- <div class="panel"><div class="filters"><input id="industryQuery" placeholder="ابحث عن مصنع أو معدّة"><select id="industryType"><option value="">كل الأنواع</option><option>معدات صناعية</option><option>مولدات</option><option>مواد معدنية</option></select><button class="btn primary" onclick="filterIndustry()">بحث</button><button class="btn" onclick="go('listings')">أدرج مصنعك</button></div><div class="products" id="industryProducts"></div></div>
+ <div class="title"><div class="symbol"><i class="fa-solid fa-industry"></i></div><div><h1>الصناعة والمصانع</h1><p>معدات وخطوط إنتاج ومواد صناعية ومصانع ومعامل.</p></div><button class="btn primary" onclick="go('listings','مصنع أو شركة')">أدرج مصنعك</button></div>
+ <div class="panel"><div class="filters"><input id="industryQuery" placeholder="ابحث عن مصنع أو معدّة"><select id="industryType"><option value="">كل الأنواع</option><option>معدات صناعية</option><option>مولدات</option><option>مواد معدنية</option></select><button class="btn primary" onclick="filterIndustry()">بحث</button></div><div class="products" id="industryProducts"></div></div>
 </section>
 
 <section class="page" id="page-agriculture">
- <div class="title"><div class="symbol"><i class="fa-solid fa-seedling"></i></div><div><h1>الزراعة والمواد الخام</h1><p>محاصيل وأسمدة وبذور ومواد أولية ومعدات زراعية.</p></div></div>
- <div class="panel"><div class="filters"><input id="agriQuery" placeholder="ابحث عن محصول أو مورد"><button class="btn primary" onclick="filterAgriculture()">بحث</button><button class="btn" onclick="go('listings')">اعرض منتجاتك الزراعية</button></div><div class="products" id="agriProducts"></div></div>
+ <div class="title"><div class="symbol"><i class="fa-solid fa-seedling"></i></div><div><h1>الزراعة والمواد الخام</h1><p>محاصيل وأسمدة وبذور ومواد أولية ومعدات زراعية.</p></div><button class="btn primary" onclick="go('listings')">اعرض منتجاتك الزراعية</button></div>
+ <div class="panel"><div class="filters"><input id="agriQuery" placeholder="ابحث عن محصول أو مورد"><button class="btn primary" onclick="filterAgriculture()">بحث</button></div><div class="products" id="agriProducts"></div></div>
 </section>
 
 <section class="page" id="page-procurement">
- <div class="title"><div class="symbol"><i class="fa-solid fa-cart-shopping"></i></div><div><h1>المشتريات الذكية</h1><p>أنشئ طلب شراء وأعده لاستقبال عروض الموردين.</p></div></div>
- <div class="columns"><div class="panel"><h2>إنشاء طلب عرض سعر RFQ</h2><form id="rfqForm" class="formgrid" onsubmit="saveRFQ(event)"><label class="field full">المنتج والمواصفات<input name="product" required placeholder="مثال: ألواح طاقة شمسية 550W"></label><label class="field">الكمية<input name="quantity" required placeholder="500 قطعة"></label><label class="field">بلد التسليم<select name="destination"><option>العراق</option><option>السعودية</option><option>الإمارات</option><option>تركيا</option><option>ألمانيا</option></select></label><label class="field">الميزانية<input name="budget" placeholder="اختياري"></label><label class="field">موعد التوريد<select name="delivery"><option>بأقرب وقت</option><option>خلال 30 يوماً</option><option>خلال 60 يوماً</option></select></label><label class="field full">تفاصيل إضافية<textarea name="details" placeholder="الشهادات والجودة وشروط الدفع..."></textarea></label><button class="btn primary field full">حفظ مسودة الطلب</button></form><p class="meta">المسودة محلية في هذا المتصفح حتى ربط الخادم.</p></div><div class="panel"><h2>قارن العروض</h2><div class="empty"><i class="fa-solid fa-scale-balanced"></i><p>تظهر المقارنة عند استلام عروض موردين فعلية.</p></div></div></div>
+ <div class="title"><div class="symbol"><i class="fa-solid fa-cart-shopping"></i></div><div><h1>المشتريات الذكية</h1><p>إنشاء طلبات شراء واستقبال عروض الموردين بعد ربط الخدمة.</p></div></div>
+ <div class="columns"><div class="panel"><h2>إنشاء طلب عرض سعر RFQ</h2><form id="rfqForm" class="formgrid" onsubmit="saveRFQ(event)"><label class="field full">المنتج والمواصفات<input name="product" required placeholder="مثال: ألواح طاقة شمسية 550W"></label><label class="field">الكمية<input name="quantity" required placeholder="500 قطعة"></label><label class="field">بلد التسليم<select name="destination"><option>العراق</option><option>السعودية</option><option>الإمارات</option><option>تركيا</option><option>ألمانيا</option></select></label><label class="field">الميزانية<input name="budget" placeholder="اختياري"></label><label class="field">موعد التوريد<select name="delivery"><option>بأقرب وقت</option><option>خلال 30 يوماً</option><option>خلال 60 يوماً</option></select></label><label class="field full">تفاصيل إضافية<textarea name="details" placeholder="الجودة والشهادات وشروط الدفع..."></textarea></label><button class="btn primary field full">حفظ مسودة الطلب</button></form><p class="small-note">الحفظ محلي في المتصفح؛ لم يُرسل الطلب إلى الموردين.</p></div><div class="panel"><h2>مقارنة العروض</h2><div class="empty"><i class="fa-solid fa-scale-balanced"></i><p>تظهر المقارنة بعد ربط عروض الموردين الفعلية.</p></div></div></div>
 </section>
 
 <section class="page" id="page-suppliers">
- <div class="title"><div class="symbol"><i class="fa-solid fa-boxes-stacked"></i></div><div><h1>الموردون والمصانع</h1><p>مصانع ومعامل وموردون وموزعون وشركات خدمات.</p></div></div>
- <div class="panel"><div class="filters"><input id="supplierQuery" placeholder="اسم الشركة أو تخصصها"><select id="supplierType"><option value="">كل الأنواع</option><option>مصنع</option><option>معمل</option><option>مورد</option><option>موزع</option><option>شركة خدمات</option></select><button class="btn primary" onclick="filterSuppliers()">بحث</button><button class="btn" onclick="go('listings')">سجّل شركتك</button></div><div class="products" id="supplierProducts"></div></div>
+ <div class="title"><div class="symbol"><i class="fa-solid fa-boxes-stacked"></i></div><div><h1>الموردون والمصانع</h1><p>مصانع ومعامل وموردون وموزعون وشركات خدمات.</p></div><button class="btn primary" onclick="go('listings')">سجّل شركتك</button></div>
+ <div class="panel"><div class="filters"><input id="supplierQuery" placeholder="اسم الشركة أو تخصصها"><select id="supplierType"><option value="">كل الأنواع</option><option>مصنع</option><option>معمل</option><option>مورد</option><option>موزع</option><option>شركة خدمات</option></select><button class="btn primary" onclick="filterSuppliers()">بحث</button></div><div class="products" id="supplierProducts"></div></div>
 </section>
 
 <section class="page" id="page-shipping">
- <div class="title"><div class="symbol"><i class="fa-solid fa-truck-fast"></i></div><div><h1>النقل والشحن</h1><p>شحن بحري وجوي وبري وسكك حديد، وطلبات عروض للشركات الناقلة.</p></div></div>
- <div class="panel"><div class="filters"><select id="transportMode"><option>بحري</option><option>جوي</option><option>بري</option><option>سكك حديد</option></select><input id="origin" placeholder="مدينة أو ميناء الانطلاق"><input id="destination" placeholder="مدينة أو ميناء الوصول"><select id="loadType"><option>حاوية كاملة FCL</option><option>شحن جزئي LCL</option><option>طرود</option><option>بضائع سائبة</option></select><button class="btn primary" onclick="requestShipping()">جهّز طلب شحن</button></div><div id="shippingOutput" class="empty"><i class="fa-solid fa-ship"></i><p>الأسعار والحجوزات الفعلية تحتاج إلى ربط شركات النقل.</p></div><div class="panelhead"><h2>هل أنت شركة نقل؟</h2><button class="btn primary" onclick="go('listings')">أدرج خدمات النقل</button></div></div>
+ <div class="title"><div class="symbol"><i class="fa-solid fa-truck-fast"></i></div><div><h1>النقل والشحن</h1><p>بحري وجوي وبري وسكك حديد؛ اطلب عرضاً من شركات النقل.</p></div></div>
+ <div class="panel"><div class="filters"><select id="transportMode"><option>بحري</option><option>جوي</option><option>بري</option><option>سكك حديد</option></select><input id="origin" placeholder="مدينة أو ميناء الانطلاق"><input id="destination" placeholder="مدينة أو ميناء الوصول"><select id="loadType"><option>حاوية كاملة FCL</option><option>شحن جزئي LCL</option><option>طرود</option><option>بضائع سائبة</option></select><button class="btn primary" onclick="requestShipping()">جهّز طلب شحن</button></div><div id="shippingOutput" class="empty"><i class="fa-solid fa-ship"></i><p>الأسعار والحجوزات تحتاج إلى ربط شركات النقل.</p></div><div class="panelhead" style="margin-top:15px"><h2>هل أنت شركة نقل؟</h2><button class="btn primary" onclick="go('listings','خدمة نقل')">أدرج خدمات النقل</button></div></div>
 </section>
 
 <section class="page" id="page-tracking">
- <div class="title"><div class="symbol"><i class="fa-solid fa-location-dot"></i></div><div><h1>تتبع الشحنات</h1><p>استعلام عبر مزود التتبع بعد الربط.</p></div></div>
- <div class="panel"><form class="filters" onsubmit="track(event)"><input id="trackingNumber" required placeholder="أدخل رقم التتبع"><button class="btn primary">تتبع الشحنة</button></form><div id="trackingOutput" class="empty"><i class="fa-solid fa-box-open"></i><p>لن تظهر حالة حقيقية دون اتصال بمزود تتبع.</p></div><button class="btn" onclick="go('listings')">شركة تتبع أو نقل؟ أضف خدمتك</button></div>
+ <div class="title"><div class="symbol"><i class="fa-solid fa-location-dot"></i></div><div><h1>تتبع الشحنات</h1><p>استعلام عن الشحنات بعد ربط مزود التتبع.</p></div></div>
+ <div class="panel"><form class="filters" onsubmit="track(event)"><input id="trackingNumber" required placeholder="أدخل رقم التتبع"><button class="btn primary">تتبع الشحنة</button></form><div id="trackingOutput" class="empty"><i class="fa-solid fa-box-open"></i><p>حالة الشحنة الحقيقية تتطلب اتصالاً بمزود التتبع.</p></div><button class="btn" onclick="go('listings','خدمة نقل')">شركة تتبع أو نقل؟ أضف خدمتك</button></div>
 </section>
 
 <section class="page" id="page-realestate">
  <div class="title"><div class="symbol"><i class="fa-solid fa-building"></i></div><div><h1>العقارات التجارية</h1><p>بيع وإيجار مصانع ومستودعات ومكاتب وأراضٍ تجارية.</p></div><button class="btn primary" onclick="go('listings','عقار')">أضف عقارك</button></div>
- <div class="panel"><div class="filters"><input id="propertyCity" placeholder="المدينة أو القرية"><select id="propertyKind"><option value="">كل الأنواع</option><option>مستودع</option><option>مصنع</option><option>مكتب</option><option>محل تجاري</option><option>أرض صناعية</option></select><select id="propertyDeal"><option value="">بيع وإيجار</option><option>بيع</option><option>إيجار</option></select><input id="propertyMin" type="number" placeholder="السعر من"><input id="propertyMax" type="number" placeholder="السعر إلى"><button class="btn primary" onclick="filterProperties()">تطبيق الفلاتر</button></div><div class="columns"><div class="propertygrid" id="properties"></div><div><div id="propertyMap" class="map"></div><p class="meta">المواقع التجريبية ليست إعلانات حقيقية.</p></div></div><p>مالك أو وسيط عقاري؟ <button class="btn primary" onclick="go('listings','عقار')">اعرض عقارك</button></p></div>
+ <div class="panel"><div class="filters"><input id="propertyCity" placeholder="المدينة أو القرية"><select id="propertyKind"><option value="">كل الأنواع</option><option>مستودع</option><option>مصنع</option><option>مكتب</option><option>محل تجاري</option><option>أرض صناعية</option></select><select id="propertyDeal"><option value="">بيع وإيجار</option><option>بيع</option><option>إيجار</option></select><input id="propertyMin" type="number" placeholder="السعر من"><input id="propertyMax" type="number" placeholder="السعر إلى"><button class="btn primary" onclick="filterProperties()">تطبيق الفلاتر</button></div><div class="columns"><div class="propertygrid" id="properties"></div><div><div id="propertyMap" class="map"></div><p class="small-note">المواقع المعروضة تجريبية وليست إعلانات عقارية حقيقية.</p></div></div><p>مالك أو وسيط عقاري؟ <button class="btn primary" onclick="go('listings','عقار')">اعرض عقارك</button></p></div>
 </section>
 
 <section class="page" id="page-deals">
- <div class="title"><div class="symbol"><i class="fa-solid fa-tags"></i></div><div><h1>الصفقات والعروض</h1><p>عروض تجارية يضيفها الموردون والشركات وملاك العقارات.</p></div><button class="btn primary" onclick="go('listings','عرض خاص')">أضف عرضاً</button></div>
+ <div class="title"><div class="symbol"><i class="fa-solid fa-tags"></i></div><div><h1>الصفقات والعروض</h1><p>عروض يضيفها الموردون والشركات وملاك العقارات.</p></div><button class="btn primary" onclick="go('listings','عرض خاص')">أضف عرضاً</button></div>
  <div class="panel"><div class="filters"><input id="dealQuery" placeholder="ابحث في العروض"><button class="btn primary" onclick="filterDeals()">بحث</button></div><div class="dealgrid" id="deals"></div></div>
 </section>
 
 <section class="page" id="page-assistant">
  <div class="title"><div class="symbol"><i class="fa-solid fa-wand-magic-sparkles"></i></div><div><h1>مساعد NOVA الذكي</h1><p>إرشادات أولية للشراء والمقارنة والتكلفة الواصلة.</p></div></div>
- <div class="panel"><form id="assistantForm" onsubmit="assistant(event)"><label class="field">اكتب طلبك أو تفاصيل الصفقة<textarea id="assistantText" required placeholder="أحتاج 500 لوح شمسي والتسليم إلى بغداد..."></textarea></label><button class="btn primary" style="margin-top:10px">حلل الطلب</button></form><div id="assistantOutput" class="empty" style="margin-top:12px">التحليل الآلي الحقيقي يتطلب ربط خدمة الذكاء الاصطناعي بالخادم.</div></div>
+ <div class="panel"><form id="assistantForm" onsubmit="assistant(event)"><label class="field">اكتب طلبك أو تفاصيل الصفقة<textarea id="assistantText" required placeholder="أحتاج 500 لوح شمسي والتسليم إلى بغداد..."></textarea></label><button class="btn primary" style="margin-top:10px">حلل الطلب</button></form><div id="assistantOutput" class="empty" style="margin-top:12px">التحليل الآلي الحقيقي يتطلب ربط الذكاء الاصطناعي بالخادم.</div></div>
 </section>
 
 <section class="page" id="page-listings">
  <div class="title"><div class="symbol"><i class="fa-solid fa-store"></i></div><div><h1>اعرض منتجاتك وخدماتك</h1><p>للمصانع والمعامل والموردين وشركات النقل وملاك العقارات.</p></div></div>
- <div class="columns"><div class="panel"><h2>إنشاء مسودة عرض</h2><form id="listingForm" class="formgrid" onsubmit="saveListing(event)"><label class="field">نوع العرض<select id="listingType" name="type"><option>منتج</option><option>خدمة</option><option>مصنع أو شركة</option><option>عقار</option><option>خدمة نقل</option><option>عرض خاص</option></select></label><label class="field">صفة المعلن<select name="sellerType"><option>مصنع</option><option>معمل</option><option>مورد</option><option>موزع</option><option>شركة خدمات</option><option>شركة نقل</option><option>مالك عقار</option><option>وسيط عقاري</option></select></label><label class="field full">اسم العرض أو الشركة<input name="title" required></label><label class="field">الدولة<input name="country"></label><label class="field">المدينة أو المنطقة<input name="city"></label><label class="field">السعر والعملة<input name="price" placeholder="حسب الطلب أو السعر"></label><label class="field">الحد الأدنى أو المساحة<input name="minimum"></label><label class="field full">الوصف والمواصفات<textarea name="description" required></textarea></label><label class="field full">رابط صورة أو كتالوج<input name="image" type="url" placeholder="https://..."></label><button class="btn primary field full">حفظ المسودة</button></form><p class="meta">الحفظ محلي فقط ولا ينشر الإعلان للعامة.</p></div><div class="panel"><h2>مسوداتك المحفوظة</h2><div id="savedListings"></div></div></div>
+ <div class="columns"><div class="panel"><h2>إنشاء مسودة عرض</h2><form id="listingForm" class="formgrid" onsubmit="saveListing(event)"><label class="field">نوع العرض<select id="listingType" name="type"><option>منتج</option><option>خدمة</option><option>مصنع أو شركة</option><option>عقار</option><option>خدمة نقل</option><option>عرض خاص</option></select></label><label class="field">صفة المعلن<select name="sellerType"><option>مصنع</option><option>معمل</option><option>مورد</option><option>موزع</option><option>شركة خدمات</option><option>شركة نقل</option><option>مالك عقار</option><option>وسيط عقاري</option></select></label><label class="field full">اسم العرض أو الشركة<input name="title" required></label><label class="field">الدولة<input name="country"></label><label class="field">المدينة أو المنطقة<input name="city"></label><label class="field">السعر والعملة<input name="price" placeholder="حسب الطلب أو السعر"></label><label class="field">الحد الأدنى أو المساحة<input name="minimum"></label><label class="field full">الوصف والمواصفات<textarea name="description" required></textarea></label><label class="field full">رابط صورة أو كتالوج<input name="image" type="url" placeholder="https://..."></label><button class="btn primary field full">حفظ المسودة</button></form><p class="small-note">الحفظ محلي ولا ينشر الإعلان للعامة.</p></div><div class="panel"><h2>مسوداتك المحفوظة</h2><div id="savedListings"></div></div></div>
 </section>
 
 <section class="page" id="page-analytics">
- <div class="title"><div class="symbol"><i class="fa-solid fa-chart-line"></i></div><div><h1>تحليلات السوق</h1><p>لن تُعرض أرقام أعمال فعلية قبل ربط قاعدة البيانات والصلاحيات.</p></div></div>
- <div class="panel"><div class="empty"><i class="fa-solid fa-chart-simple"></i><p>ستعرض هذه المساحة مؤشرات الطلب والعروض والشحن بعد ربط مصادر موثوقة.</p></div></div>
+ <div class="title"><div class="symbol"><i class="fa-solid fa-chart-line"></i></div><div><h1>تحليلات السوق</h1><p>لن تظهر أرقام أعمال فعلية قبل ربط قاعدة البيانات والصلاحيات.</p></div></div>
+ <div class="panel"><div class="empty"><i class="fa-solid fa-chart-simple"></i><p>ستظهر مؤشرات الطلب والعروض والشحن بعد ربط مصادر موثوقة.</p></div></div>
 </section>
 </main>
 </div>
+
 <div class="toast" id="toast"></div>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<!-- ألصق الجزء الثاني هنا مباشرة -->
+<!-- ضع الجزء الثاني هنا مباشرة -->
 </body>
 </html>
 
@@ -198,7 +246,7 @@ const products=[
 {title:"معدات تعبئة وتغليف",seller:"Packwell",country:"الهند",cat:"تغليف",price:"حسب الطلب",img:"https://images.unsplash.com/photo-1607166452427-7e4477079cb9?auto=format&fit=crop&w=700&q=80"},
 {title:"خطوط إنتاج صناعية",seller:"IndusMach",country:"الهند",cat:"معدات صناعية",price:"اطلب عرض سعر",img:"https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=700&q=80"},
 {title:"محاصيل زراعية",seller:"AgroHub",country:"تركيا",cat:"زراعة",price:"حسب الكمية",img:"https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=700&q=80"},
-{title:"مستودعات وخدمات تخزين",seller:"Global Warehouse",country:"ألمانيا",cat:"خدمات",price:"حسب المواصفات",img:"https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=700&q=80"}
+{title:"حلول التخزين والتوزيع",seller:"Global Warehouse",country:"ألمانيا",cat:"خدمات",price:"حسب المواصفات",img:"https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=700&q=80"}
 ];
 const properties=[
 {title:"مستودع تجاري",city:"بغداد",kind:"مستودع",deal:"إيجار",price:450000,label:"$450,000",area:"2,000 م²",coords:[33.3152,44.3661],img:"https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=700&q=80"},
@@ -212,37 +260,49 @@ const deals=[
 {title:"معدات المصانع",desc:"طلبات أسعار للمشتريات بالجملة",img:"https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=700&q=80"},
 {title:"مواد التغليف",desc:"حلول للمصانع والموردين",img:"https://images.unsplash.com/photo-1607166452427-7e4477079cb9?auto=format&fit=crop&w=700&q=80"}
 ];
-const dictionaries={
+const dict={
 ar:{headline:"العالم بين يديك",slogan:"تجارة وصناعة وزراعة ونقل، وكل ما تحتاجه بأقل جهد.",subline:"منصة تجمع المصانع والموردين والمشترين والشركات والخدمات اللوجستية والعقارات التجارية في مكان واحد.",eyebrow:"منصة التجارة والأعمال العالمية",listBusiness:"اعرض نشاطك التجاري",explore:"اكتشف العالم",industry:"الصناعة والمصانع",agriculture:"الزراعة والمواد الخام",products:"المنتجات والموردون",shipping:"النقل والشحن",realestate:"العقارات التجارية",deals:"الصفقات والعروض",featured:"منتجات وموردون مختارون",properties:"العقارات التجارية المميزة",home:"الرئيسية",market:"السوق العالمي",procurement:"المشتريات الذكية",suppliers:"الموردون والمصانع",tracking:"تتبع الشحنات",assistant:"مساعد NOVA الذكي",analytics:"تحليلات السوق"},
 en:{headline:"The world at your fingertips",slogan:"Trade, industry, agriculture and transport — everything you need with less effort.",subline:"One platform connecting factories, suppliers, buyers, logistics services and commercial real estate.",eyebrow:"Global Trade & Business Platform",listBusiness:"List your business",explore:"Explore the world",industry:"Industry & Factories",agriculture:"Agriculture & Raw Materials",products:"Products & Suppliers",shipping:"Transport & Shipping",realestate:"Commercial Real Estate",deals:"Deals & Opportunities",featured:"Featured Products & Suppliers",properties:"Featured Commercial Properties",home:"Home",market:"Global Marketplace",procurement:"Smart Procurement",suppliers:"Suppliers & Factories",tracking:"Shipment Tracking",assistant:"NOVA AI Assistant",analytics:"Market Analytics"},
-fr:{headline:"Le monde à portée de main",slogan:"Commerce, industrie, agriculture et transport — tout ce qu'il vous faut, plus simplement.",subline:"Une plateforme reliant usines, fournisseurs, acheteurs, logistique et immobilier commercial.",eyebrow:"Plateforme mondiale du commerce",listBusiness:"Présentez votre entreprise",explore:"Explorer le monde",industry:"Industrie et usines",agriculture:"Agriculture et matières premières",products:"Produits et fournisseurs",shipping:"Transport et expédition",realestate:"Immobilier commercial",deals:"Offres et opportunités",featured:"Produits et fournisseurs en vedette",properties:"Immobilier commercial en vedette",home:"Accueil",market:"Marché mondial",procurement:"Achats intelligents",suppliers:"Fournisseurs et usines",tracking:"Suivi des expéditions",assistant:"Assistant NOVA",analytics:"Analyses du marché"},
+fr:{headline:"Le monde à portée de main",slogan:"Commerce, industrie, agriculture et transport : tout ce qu'il vous faut, plus simplement.",subline:"Une plateforme reliant usines, fournisseurs, acheteurs, logistique et immobilier commercial.",eyebrow:"Plateforme mondiale du commerce",listBusiness:"Présentez votre entreprise",explore:"Explorer le monde",industry:"Industrie et usines",agriculture:"Agriculture et matières premières",products:"Produits et fournisseurs",shipping:"Transport et expédition",realestate:"Immobilier commercial",deals:"Offres et opportunités",featured:"Produits et fournisseurs en vedette",properties:"Immobilier commercial en vedette",home:"Accueil",market:"Marché mondial",procurement:"Achats intelligents",suppliers:"Fournisseurs et usines",tracking:"Suivi des expéditions",assistant:"Assistant NOVA",analytics:"Analyses du marché"},
 es:{headline:"El mundo en tus manos",slogan:"Comercio, industria, agricultura y transporte: todo lo que necesitas con menos esfuerzo.",subline:"Una plataforma que conecta fábricas, proveedores, compradores, logística e inmuebles comerciales.",eyebrow:"Plataforma mundial de comercio",listBusiness:"Publica tu negocio",explore:"Explorar el mundo",industry:"Industria y fábricas",agriculture:"Agricultura y materias primas",products:"Productos y proveedores",shipping:"Transporte y envíos",realestate:"Inmuebles comerciales",deals:"Ofertas y oportunidades",featured:"Productos y proveedores destacados",properties:"Inmuebles comerciales destacados",home:"Inicio",market:"Mercado mundial",procurement:"Compras inteligentes",suppliers:"Proveedores y fábricas",tracking:"Seguimiento de envíos",assistant:"Asistente NOVA",analytics:"Análisis de mercado"}
 };
-let lang="ar",propertyMap=null,homeMap=null;
+const moreLang={
+de:{headline:"Die Welt in Ihren Händen",slogan:"Handel, Industrie, Landwirtschaft und Transport – alles mit weniger Aufwand.",home:"Startseite",market:"Weltmarkt",industry:"Industrie und Fabriken",agriculture:"Landwirtschaft und Rohstoffe",products:"Produkte und Lieferanten",shipping:"Transport und Versand",realestate:"Gewerbeimmobilien",deals:"Angebote und Chancen",procurement:"Intelligente Beschaffung",suppliers:"Lieferanten und Fabriken",tracking:"Sendungsverfolgung",assistant:"NOVA KI-Assistent",analytics:"Marktanalysen",listBusiness:"Unternehmen präsentieren",explore:"Welt entdecken",featured:"Ausgewählte Produkte und Lieferanten",properties:"Ausgewählte Gewerbeimmobilien",eyebrow:"Globale Handelsplattform",subline:"Eine Plattform für Fabriken, Lieferanten, Käufer, Logistik und Gewerbeimmobilien."},
+it:{headline:"Il mondo a portata di mano",slogan:"Commercio, industria, agricoltura e trasporti con meno sforzo.",home:"Home",market:"Mercato globale",industry:"Industria e fabbriche",agriculture:"Agricoltura e materie prime",products:"Prodotti e fornitori",shipping:"Trasporto e spedizioni",realestate:"Immobili commerciali",deals:"Offerte e opportunità",procurement:"Acquisti intelligenti",suppliers:"Fornitori e fabbriche",tracking:"Tracciamento spedizioni",assistant:"Assistente NOVA",analytics:"Analisi di mercato",listBusiness:"Pubblica la tua attività",explore:"Esplora il mondo",featured:"Prodotti e fornitori in evidenza",properties:"Immobili commerciali in evidenza",eyebrow:"Piattaforma globale di commercio",subline:"Una piattaforma che collega fabbriche, fornitori, acquirenti, logistica e immobili commerciali."},
+tr:{headline:"Dünya parmaklarınızın ucunda",slogan:"Ticaret, sanayi, tarım ve taşımacılık; ihtiyacınız olan her şey.",home:"Ana sayfa",market:"Küresel pazar",industry:"Sanayi ve fabrikalar",agriculture:"Tarım ve hammaddeler",products:"Ürünler ve tedarikçiler",shipping:"Taşımacılık ve nakliye",realestate:"Ticari gayrimenkul",deals:"Fırsatlar ve teklifler",procurement:"Akıllı satın alma",suppliers:"Tedarikçiler ve fabrikalar",tracking:"Gönderi takibi",assistant:"NOVA akıllı asistan",analytics:"Pazar analizi",listBusiness:"İşletmeni listele",explore:"Dünyayı keşfet",featured:"Öne çıkan ürünler ve tedarikçiler",properties:"Öne çıkan ticari gayrimenkuller",eyebrow:"Küresel ticaret platformu",subline:"Fabrikaları, tedarikçileri, alıcıları, lojistiği ve ticari gayrimenkulleri bir araya getirir."},
+zh:{headline:"世界尽在掌握",slogan:"贸易、工业、农业与运输，轻松满足您的需求。",home:"首页",market:"全球市场",industry:"工业与工厂",agriculture:"农业与原材料",products:"产品与供应商",shipping:"运输与物流",realestate:"商业房地产",deals:"交易与商机",procurement:"智能采购",suppliers:"供应商与工厂",tracking:"货物追踪",assistant:"NOVA智能助手",analytics:"市场分析",listBusiness:"展示您的业务",explore:"探索世界",featured:"精选产品与供应商",properties:"精选商业地产",eyebrow:"全球贸易平台",subline:"连接工厂、供应商、买家、物流服务与商业房地产。"},
+ja:{headline:"世界をあなたの手に",slogan:"貿易、工業、農業、輸送。必要なものをより簡単に。",home:"ホーム",market:"グローバル市場",industry:"産業・工場",agriculture:"農業・原材料",products:"製品・サプライヤー",shipping:"輸送・配送",realestate:"商業不動産",deals:"取引・チャンス",procurement:"スマート調達",suppliers:"サプライヤー・工場",tracking:"貨物追跡",assistant:"NOVA AIアシスタント",analytics:"市場分析",listBusiness:"事業を掲載",explore:"世界を探索",featured:"注目の製品とサプライヤー",properties:"注目の商業不動産",eyebrow:"グローバル貿易プラットフォーム",subline:"工場、供給業者、購入者、物流、商業不動産をつなぐプラットフォーム。"},
+ko:{headline:"세상을 손안에",slogan:"무역, 산업, 농업, 운송까지 필요한 모든 것을 더 쉽게.",home:"홈",market:"글로벌 시장",industry:"산업 및 공장",agriculture:"농업 및 원자재",products:"제품 및 공급업체",shipping:"운송 및 배송",realestate:"상업용 부동산",deals:"거래 및 기회",procurement:"스마트 조달",suppliers:"공급업체 및 공장",tracking:"배송 추적",assistant:"NOVA AI 도우미",analytics:"시장 분석",listBusiness:"사업 등록",explore:"세계 탐색",featured:"추천 제품 및 공급업체",properties:"추천 상업용 부동산",eyebrow:"글로벌 무역 플랫폼",subline:"공장, 공급업체, 구매자, 물류 및 상업용 부동산을 연결합니다."},
+ru:{headline:"Весь мир у вас под рукой",slogan:"Торговля, промышленность, сельское хозяйство и транспорт — проще и удобнее.",home:"Главная",market:"Мировой рынок",industry:"Промышленность и заводы",agriculture:"Сельское хозяйство и сырьё",products:"Товары и поставщики",shipping:"Транспорт и доставка",realestate:"Коммерческая недвижимость",deals:"Сделки и возможности",procurement:"Умные закупки",suppliers:"Поставщики и заводы",tracking:"Отслеживание грузов",assistant:"ИИ-помощник NOVA",analytics:"Аналитика рынка",listBusiness:"Разместить бизнес",explore:"Исследовать мир",featured:"Рекомендуемые товары и поставщики",properties:"Рекомендуемая коммерческая недвижимость",eyebrow:"Глобальная торговая платформа",subline:"Платформа объединяет заводы, поставщиков, покупателей, логистику и коммерческую недвижимость."},
+hi:{headline:"दुनिया आपके हाथों में",slogan:"व्यापार, उद्योग, कृषि और परिवहन — आपकी ज़रूरतें आसानी से।",home:"होम",market:"वैश्विक बाज़ार",industry:"उद्योग और कारखाने",agriculture:"कृषि और कच्चा माल",products:"उत्पाद और आपूर्तिकर्ता",shipping:"परिवहन और शिपिंग",realestate:"वाणिज्यिक संपत्ति",deals:"सौदे और अवसर",procurement:"स्मार्ट खरीद",suppliers:"आपूर्तिकर्ता और कारखाने",tracking:"शिपमेंट ट्रैकिंग",assistant:"NOVA AI सहायक",analytics:"बाज़ार विश्लेषण",listBusiness:"अपना व्यवसाय सूचीबद्ध करें",explore:"दुनिया देखें",featured:"चुनिंदा उत्पाद और आपूर्तिकर्ता",properties:"चुनिंदा वाणिज्यिक संपत्तियाँ",eyebrow:"वैश्विक व्यापार मंच",subline:"कारखानों, आपूर्तिकर्ताओं, खरीदारों, लॉजिस्टिक्स और वाणिज्यिक संपत्तियों को जोड़ने वाला मंच।"},
+pt:{headline:"O mundo nas suas mãos",slogan:"Comércio, indústria, agricultura e transporte com menos esforço.",home:"Início",market:"Mercado global",industry:"Indústria e fábricas",agriculture:"Agricultura e matérias-primas",products:"Produtos e fornecedores",shipping:"Transporte e envio",realestate:"Imóveis comerciais",deals:"Ofertas e oportunidades",procurement:"Compras inteligentes",suppliers:"Fornecedores e fábricas",tracking:"Rastreamento de remessas",assistant:"Assistente NOVA",analytics:"Análise de mercado",listBusiness:"Anuncie seu negócio",explore:"Explore o mundo",featured:"Produtos e fornecedores em destaque",properties:"Imóveis comerciais em destaque",eyebrow:"Plataforma global de comércio",subline:"Uma plataforma que conecta fábricas, fornecedores, compradores, logística e imóveis comerciais."},
+pl:{headline:"Świat na wyciągnięcie ręki",slogan:"Handel, przemysł, rolnictwo i transport — wszystko łatwiej.",home:"Strona główna",market:"Rynek globalny",industry:"Przemysł i fabryki",agriculture:"Rolnictwo i surowce",products:"Produkty i dostawcy",shipping:"Transport i wysyłka",realestate:"Nieruchomości komercyjne",deals:"Oferty i okazje",procurement:"Inteligentne zakupy",suppliers:"Dostawcy i fabryki",tracking:"Śledzenie przesyłek",assistant:"Asystent NOVA AI",analytics:"Analizy rynku",listBusiness:"Dodaj swoją firmę",explore:"Odkrywaj świat",featured:"Polecane produkty i dostawcy",properties:"Polecane nieruchomości komercyjne",eyebrow:"Globalna platforma handlowa",subline:"Platforma łącząca fabryki, dostawców, kupujących, logistykę i nieruchomości komercyjne."}
+};
+let propertyMap=null,homeMap=null;
 function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
-function toastMsg(s){let t=document.getElementById("toast");t.textContent=s;t.classList.add("show");clearTimeout(window._toastTimer);window._toastTimer=setTimeout(()=>t.classList.remove("show"),3500)}
-function go(page,type){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));document.getElementById("page-"+page)?.classList.add("active");document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("active",n.dataset.page===page));if(page==="listings"&&type)document.getElementById("listingType").value=type;if(page==="realestate")setTimeout(initMaps,150);if(page==="home")setTimeout(initMaps,150);if(page==="listings")renderSaved();window.scrollTo({top:0,behavior:"smooth"})}
-function changeLanguage(code){lang=code;const dict=dictionaries[code]||dictionaries.en;document.documentElement.lang=code;document.documentElement.dir=["ar"].includes(code)?"rtl":"ltr";document.querySelectorAll("[data-i18n]").forEach(el=>{const k=el.dataset.i18n;if(dict[k])el.textContent=dict[k]});toastMsg(code==="ar"?"تم اختيار العربية":code==="en"?"Language changed to English":"Language changed");}
-function productCard(p){return `<article class="product"><img src="${esc(p.img)}" alt="${esc(p.title)}" loading="lazy"><div class="body"><h3>${esc(p.title)}</h3><div class="meta">${esc(p.country)} · ${esc(p.seller)}</div><div class="price">${esc(p.price)}</div><div class="card-actions"><button class="btn" onclick="startNegotiation('${esc(p.title)}')">طلب عرض سعر</button><button class="btn primary" onclick="toastMsg('تفاصيل المورد تحتاج إلى ربط قاعدة البيانات.')">التفاصيل</button></div></div></article>`}
+function toastMsg(s){const t=document.getElementById("toast");t.textContent=s;t.classList.add("show");clearTimeout(window.novaToast);window.novaToast=setTimeout(()=>t.classList.remove("show"),3600)}
+function go(page,type){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));const target=document.getElementById("page-"+page);if(target)target.classList.add("active");document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("active",n.dataset.page===page));if(page==="listings"&&type)document.getElementById("listingType").value=type;if(page==="realestate"||page==="home")setTimeout(initMaps,180);if(page==="listings")renderSaved();window.scrollTo({top:0,behavior:"smooth"})}
+function changeLanguage(code){const d={...(dict[code]||{}),...(moreLang[code]||{})};document.documentElement.lang=code;document.documentElement.dir=code==="ar"?"rtl":"ltr";document.querySelectorAll("[data-i18n]").forEach(el=>{const k=el.dataset.i18n;if(d[k])el.textContent=d[k]});const search=document.getElementById("globalSearch");if(search)search.placeholder=code==="ar"?"ابحث عن منتجات أو مصانع أو عقارات أو شحن...":"Search products, factories, property or shipping...";toastMsg(code==="ar"?"تم اختيار العربية":code==="en"?"Language changed to English":"Language changed. Some detailed form fields remain in Arabic.")}
+function productCard(p){return `<article class="product"><img src="${esc(p.img)}" alt="${esc(p.title)}" loading="lazy"><div class="cardbody"><h3>${esc(p.title)}</h3><div class="meta">${esc(p.country)} · ${esc(p.seller)}</div><div class="price">${esc(p.price)}</div><div class="card-actions"><button class="btn" onclick="startNegotiation('${esc(p.title)}')">طلب عرض سعر</button><button class="btn primary" onclick="toastMsg('تفاصيل المورد تحتاج إلى ربط قاعدة البيانات.')">التفاصيل</button></div></div></article>`}
+function propertyCard(p){return `<article class="property"><img src="${esc(p.img)}" alt="${esc(p.title)}" loading="lazy"><div class="cardbody"><b>${esc(p.title)}</b><p class="meta">${esc(p.city)} · ${esc(p.area)} · ${esc(p.deal)}</p><strong class="price">${esc(p.label)}</strong><div class="card-actions"><button class="btn" onclick="startNegotiation('${esc(p.title)}')">تفاوض</button><button class="btn primary" onclick="focusProperty('${esc(p.title)}')">الخريطة</button></div></div></article>`}
+function dealCard(d){return `<article class="deal"><img src="${esc(d.img)}" alt="${esc(d.title)}" loading="lazy"><div class="cardbody"><b>${esc(d.title)}</b><p class="meta">${esc(d.desc)}</p><button class="btn primary" onclick="startNegotiation('${esc(d.title)}')">استفسر</button></div></article>`}
 function renderProducts(list,id){const el=document.getElementById(id);if(el)el.innerHTML=list.length?list.map(productCard).join(""):`<div class="empty">لا توجد نتائج مطابقة. <button class="btn" onclick="go('listings')">أضف عرضك</button></div>`}
-function propertyCard(p){return `<article class="property"><img src="${esc(p.img)}" alt="${esc(p.title)}" loading="lazy"><div><b>${esc(p.title)}</b><p>${esc(p.city)} · ${esc(p.area)} · ${esc(p.deal)}</p><strong style="color:#12966c">${esc(p.label)}</strong><div class="card-actions"><button class="btn" onclick="startNegotiation('${esc(p.title)}')">تفاوض</button><button class="btn primary" onclick="focusProperty('${esc(p.title)}')">الخريطة</button></div></div></article>`}
-function dealCard(d){return `<article class="deal"><img src="${esc(d.img)}" alt="${esc(d.title)}" loading="lazy"><div><b>${esc(d.title)}</b><p>${esc(d.desc)}</p><button class="btn primary" onclick="startNegotiation('${esc(d.title)}')">استفسر</button></div></article>`}
-function filterProducts(){let q=document.getElementById("marketQuery").value.toLowerCase(),cat=document.getElementById("marketCategory").value,country=document.getElementById("marketCountry").value;renderProducts(products.filter(p=>(!q||(p.title+" "+p.seller).toLowerCase().includes(q))&&(!cat||p.cat===cat)&&(!country||p.country===country)),"marketProducts")}
-function filterIndustry(){let q=document.getElementById("industryQuery").value.toLowerCase(),cat=document.getElementById("industryType").value;renderProducts(products.filter(p=>(!q||(p.title+" "+p.seller).toLowerCase().includes(q))&&(!cat||p.cat===cat)),"industryProducts")}
-function filterAgriculture(){let q=document.getElementById("agriQuery").value.toLowerCase();renderProducts(products.filter(p=>["زراعة","طاقة شمسية"].includes(p.cat)&&(!q||(p.title+" "+p.seller).toLowerCase().includes(q))),"agriProducts")}
-function filterSuppliers(){let q=document.getElementById("supplierQuery").value.toLowerCase(),type=document.getElementById("supplierType").value;renderProducts(products.filter(p=>(!q||(p.seller+" "+p.title).toLowerCase().includes(q))&&(!type||type==="مصنع"||type==="مورد")),"supplierProducts")}
-function filterProperties(){let city=document.getElementById("propertyCity").value.toLowerCase(),kind=document.getElementById("propertyKind").value,deal=document.getElementById("propertyDeal").value,min=Number(document.getElementById("propertyMin").value)||0,max=Number(document.getElementById("propertyMax").value)||Infinity;let list=properties.filter(p=>(!city||p.city.toLowerCase().includes(city))&&(!kind||p.kind===kind)&&(!deal||p.deal===deal)&&p.price>=min&&p.price<=max);document.getElementById("properties").innerHTML=list.length?list.map(propertyCard).join(""):'<div class="empty">لا توجد عقارات مطابقة.</div>';if(propertyMap){propertyMap.eachLayer(l=>{if(l instanceof L.Marker)propertyMap.removeLayer(l)});list.forEach(p=>L.marker(p.coords).addTo(propertyMap).bindPopup(esc(p.title)+" — "+esc(p.city)))}}
-function filterDeals(){let q=document.getElementById("dealQuery").value.toLowerCase();document.getElementById("deals").innerHTML=deals.filter(d=>(d.title+" "+d.desc).toLowerCase().includes(q)).map(dealCard).join("")}
-function searchAll(e){e.preventDefault();let q=document.getElementById("globalSearch").value.trim(),type=document.getElementById("searchType").value;if(!q){toastMsg("اكتب كلمة البحث أولاً.");return}if(type==="property"){go("realestate");document.getElementById("propertyCity").value=q;filterProperties()}else if(type==="shipping"){go("shipping");document.getElementById("origin").value=q}else{go("market");document.getElementById("marketQuery").value=q;filterProducts()}}
-function saveRFQ(e){e.preventDefault();let arr=JSON.parse(localStorage.getItem("nova-rfqs")||"[]");arr.unshift(Object.fromEntries(new FormData(e.target).entries()));localStorage.setItem("nova-rfqs",JSON.stringify(arr));e.target.reset();toastMsg("حُفظ طلب السعر محلياً فقط؛ لم يُرسل للموردين.")}
-function requestShipping(){let mode=document.getElementById("transportMode").value,origin=document.getElementById("origin").value,dest=document.getElementById("destination").value,load=document.getElementById("loadType").value;if(!origin||!dest){toastMsg("أدخل مدينة الانطلاق والوصول.");return}document.getElementById("shippingOutput").innerHTML=`<b>طلب شحن ${esc(mode)}</b><p>${esc(origin)} ← ${esc(dest)}</p><p>${esc(load)}</p><p>تم إعداد ملخص الطلب؛ التسعير والحجز يتطلبان ربط شركة نقل.</p><button class="btn primary" onclick="go('listings','خدمة نقل')">شركة نقل؟ أدرج خدمتك</button>`}
-function track(e){e.preventDefault();let n=document.getElementById("trackingNumber").value;document.getElementById("trackingOutput").innerHTML=`<i class="fa-solid fa-box-open"></i><p>رقم التتبع: ${esc(n)}</p><p>لم يتم الاستعلام من شركة النقل؛ يلزم ربط API حقيقي.</p>`}
-function assistant(e){e.preventDefault();let q=document.getElementById("assistantText").value;document.getElementById("assistantOutput").innerHTML=`<b>إرشادات أولية</b><p>طلبك: ${esc(q)}</p><p>تحقق من مواصفات المنتج والمورد، وقارن السعر والكمية والشحن والرسوم ومدة التسليم وشروط الدفع. التحليل الآلي يحتاج إلى ربط خدمة AI بالخادم.</p>`}
-function startNegotiation(title){let offer=prompt("اكتب السعر المقترح أو استفسارك عن: "+title);if(offer!==null&&offer.trim()){let a=JSON.parse(localStorage.getItem("nova-negotiations")||"[]");a.unshift({title,offer,created:new Date().toISOString()});localStorage.setItem("nova-negotiations",JSON.stringify(a));toastMsg("حُفظت مسودة التفاوض محلياً؛ لم تُرسل إلى البائع.")}}
-function saveListing(e){e.preventDefault();let a=JSON.parse(localStorage.getItem("nova-listings")||"[]");a.unshift(Object.fromEntries(new FormData(e.target).entries()));localStorage.setItem("nova-listings",JSON.stringify(a));e.target.reset();renderSaved();toastMsg("حُفظت المسودة في هذا المتصفح فقط.")}
-function renderSaved(){let el=document.getElementById("savedListings");if(!el)return;let a=JSON.parse(localStorage.getItem("nova-listings")||"[]");el.innerHTML=a.length?a.map(x=>`<div class="panel"><b>${esc(x.title)}</b><p>${esc(x.type)} · ${esc(x.sellerType)} · ${esc(x.city||x.country||"")}</p><small>${esc(x.price||"حسب الطلب")}</small></div>`).join(""):'<div class="empty">لا توجد مسودات محفوظة بعد.</div>'}
-function focusProperty(title){go("realestate");setTimeout(()=>{initMaps();let p=properties.find(x=>x.title===title);if(p&&propertyMap)propertyMap.setView(p.coords,11)},200)}
-function initMaps(){if(!window.L)return;if(!homeMap&&document.getElementById("homeMap")){homeMap=L.map("homeMap").setView([28,40],3);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"&copy; OpenStreetMap"}).addTo(homeMap);properties.forEach(p=>L.marker(p.coords).addTo(homeMap).bindPopup(esc(p.title)+" — "+esc(p.city)))}if(!propertyMap&&document.getElementById("propertyMap")){propertyMap=L.map("propertyMap").setView([34.4,43.2],5);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"&copy; OpenStreetMap"}).addTo(propertyMap);properties.forEach(p=>L.marker(p.coords).addTo(propertyMap).bindPopup(esc(p.title)+" — "+esc(p.city)))}setTimeout(()=>{homeMap?.invalidateSize();propertyMap?.invalidateSize()},100)}
+function filterProducts(){const q=document.getElementById("marketQuery").value.toLowerCase(),cat=document.getElementById("marketCategory").value,country=document.getElementById("marketCountry").value;renderProducts(products.filter(p=>(!q||(p.title+" "+p.seller).toLowerCase().includes(q))&&(!cat||p.cat===cat)&&(!country||p.country===country)),"marketProducts")}
+function filterIndustry(){const q=document.getElementById("industryQuery").value.toLowerCase(),cat=document.getElementById("industryType").value;renderProducts(products.filter(p=>(!q||(p.title+" "+p.seller).toLowerCase().includes(q))&&(!cat||p.cat===cat)),"industryProducts")}
+function filterAgriculture(){const q=document.getElementById("agriQuery").value.toLowerCase();renderProducts(products.filter(p=>["زراعة","طاقة شمسية"].includes(p.cat)&&(!q||(p.title+" "+p.seller).toLowerCase().includes(q))),"agriProducts")}
+function filterSuppliers(){const q=document.getElementById("supplierQuery").value.toLowerCase(),type=document.getElementById("supplierType").value;renderProducts(products.filter(p=>(!q||(p.seller+" "+p.title).toLowerCase().includes(q))&&(!type||["مصنع","معمل","مورد","موزع","شركة خدمات"].includes(type))),"supplierProducts")}
+function filterProperties(){const city=document.getElementById("propertyCity").value.toLowerCase(),kind=document.getElementById("propertyKind").value,deal=document.getElementById("propertyDeal").value,min=Number(document.getElementById("propertyMin").value)||0,max=Number(document.getElementById("propertyMax").value)||Infinity;const list=properties.filter(p=>(!city||p.city.toLowerCase().includes(city))&&(!kind||p.kind===kind)&&(!deal||p.deal===deal)&&p.price>=min&&p.price<=max);document.getElementById("properties").innerHTML=list.length?list.map(propertyCard).join(""):'<div class="empty">لا توجد عقارات مطابقة.</div>';if(propertyMap){propertyMap.eachLayer(l=>{if(l instanceof L.Marker)propertyMap.removeLayer(l)});list.forEach(p=>L.marker(p.coords).addTo(propertyMap).bindPopup(esc(p.title)+" — "+esc(p.city)))}}
+function filterDeals(){const q=document.getElementById("dealQuery").value.toLowerCase();document.getElementById("deals").innerHTML=deals.filter(d=>(d.title+" "+d.desc).toLowerCase().includes(q)).map(dealCard).join("")}
+function searchAll(e){e.preventDefault();const q=document.getElementById("globalSearch").value.trim(),type=document.getElementById("searchType").value;if(!q){toastMsg("اكتب كلمة البحث أولاً.");return}if(type==="property"){go("realestate");document.getElementById("propertyCity").value=q;filterProperties()}else if(type==="shipping"){go("shipping");document.getElementById("origin").value=q}else if(type==="supplier"){go("suppliers");document.getElementById("supplierQuery").value=q;filterSuppliers()}else{go("market");document.getElementById("marketQuery").value=q;filterProducts()}}
+function saveRFQ(e){e.preventDefault();const a=JSON.parse(localStorage.getItem("nova-rfqs")||"[]");a.unshift(Object.fromEntries(new FormData(e.target).entries()));localStorage.setItem("nova-rfqs",JSON.stringify(a));e.target.reset();toastMsg("حُفظ طلب السعر محلياً فقط؛ لم يُرسل إلى الموردين.")}
+function requestShipping(){const mode=document.getElementById("transportMode").value,origin=document.getElementById("origin").value,dest=document.getElementById("destination").value,load=document.getElementById("loadType").value;if(!origin||!dest){toastMsg("أدخل مدينة الانطلاق والوصول.");return}document.getElementById("shippingOutput").innerHTML=`<b>طلب شحن ${esc(mode)}</b><p>${esc(origin)} ← ${esc(dest)}</p><p>${esc(load)}</p><p>تم إعداد ملخص الطلب؛ التسعير والحجز يحتاجان إلى ربط شركة نقل.</p><button class="btn primary" onclick="go('listings','خدمة نقل')">شركة نقل؟ أدرج خدمتك</button>`}
+function track(e){e.preventDefault();const n=document.getElementById("trackingNumber").value;document.getElementById("trackingOutput").innerHTML=`<i class="fa-solid fa-box-open"></i><p>رقم التتبع: ${esc(n)}</p><p>لم يتم الاستعلام من شركة النقل؛ يلزم ربط API حقيقي.</p>`}
+function assistant(e){e.preventDefault();const q=document.getElementById("assistantText").value;document.getElementById("assistantOutput").innerHTML=`<b>إرشادات أولية</b><p>طلبك: ${esc(q)}</p><p>قارن المواصفات والسعر والكمية والشحن والرسوم ومدة التسليم وشروط الدفع. التحليل الآلي يتطلب ربط خدمة AI بالخادم.</p>`}
+function startNegotiation(title){const offer=prompt("اكتب السعر المقترح أو استفسارك عن: "+title);if(offer!==null&&offer.trim()){const a=JSON.parse(localStorage.getItem("nova-negotiations")||"[]");a.unshift({title,offer,created:new Date().toISOString()});localStorage.setItem("nova-negotiations",JSON.stringify(a));toastMsg("حُفظت مسودة التفاوض محلياً؛ لم تُرسل إلى البائع.")}}
+function saveListing(e){e.preventDefault();const a=JSON.parse(localStorage.getItem("nova-listings")||"[]");a.unshift(Object.fromEntries(new FormData(e.target).entries()));localStorage.setItem("nova-listings",JSON.stringify(a));e.target.reset();renderSaved();toastMsg("حُفظت المسودة في هذا المتصفح فقط.")}
+function renderSaved(){const el=document.getElementById("savedListings");if(!el)return;const a=JSON.parse(localStorage.getItem("nova-listings")||"[]");el.innerHTML=a.length?a.map(x=>`<div class="panel"><b>${esc(x.title)}</b><p class="meta">${esc(x.type)} · ${esc(x.sellerType)} · ${esc(x.city||x.country||"")}</p><small>${esc(x.price||"حسب الطلب")}</small></div>`).join(""):'<div class="empty">لا توجد مسودات محفوظة بعد.</div>'}
+function focusProperty(title){go("realestate");setTimeout(()=>{initMaps();const p=properties.find(x=>x.title===title);if(p&&propertyMap)propertyMap.setView(p.coords,11)},250)}
+function initMaps(){if(!window.L)return;if(!homeMap&&document.getElementById("homeMap")){homeMap=L.map("homeMap").setView([28,40],3);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"&copy; OpenStreetMap"}).addTo(homeMap);properties.forEach(p=>L.marker(p.coords).addTo(homeMap).bindPopup(esc(p.title)+" — "+esc(p.city)))}if(!propertyMap&&document.getElementById("propertyMap")){propertyMap=L.map("propertyMap").setView([34.4,43.2],5);L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{attribution:"&copy; OpenStreetMap"}).addTo(propertyMap);properties.forEach(p=>L.marker(p.coords).addTo(propertyMap).bindPopup(esc(p.title)+" — "+esc(p.city)))}setTimeout(()=>{homeMap?.invalidateSize();propertyMap?.invalidateSize()},150)}
 function render(){renderProducts(products.slice(0,4),"homeProducts");renderProducts(products,"marketProducts");renderProducts(products.filter(p=>p.cat==="معدات صناعية"||p.cat==="معادن"),"industryProducts");renderProducts(products.filter(p=>p.cat==="زراعة"||p.cat==="طاقة شمسية"),"agriProducts");renderProducts(products,"supplierProducts");document.getElementById("homeProperties").innerHTML=properties.slice(0,2).map(propertyCard).join("");document.getElementById("properties").innerHTML=properties.map(propertyCard).join("");document.getElementById("homeDeals").innerHTML=deals.slice(0,2).map(dealCard).join("");document.getElementById("deals").innerHTML=deals.map(dealCard).join("");renderSaved()}
 document.addEventListener("DOMContentLoaded",()=>{render();setTimeout(initMaps,250)});
 </script>
