@@ -1,208 +1,193 @@
-
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#103d31">
 <title>روافد العراق | السوق العراقي الشامل</title>
-<meta name="description" content="روافد العراق، منصة تجمع الأسواق والعقارات والمصانع والآليات والخدمات في تجربة واحدة سهلة وراقية.">
+<meta name="description" content="روافد العراق: سوق يجمع المنتجات والعقارات والمصانع والآليات والخدمات في منصة واحدة.">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
 <style>
 :root{
- --green:#103d31;--green2:#185747;--gold:#c6a15b;--gold2:#ead5a4;
+ --g:#103d31;--g2:#185747;--gold:#c6a15b;--gold2:#ead5a4;
  --ink:#18251f;--muted:#77817b;--bg:#f6f7f4;--white:#fff;
- --line:#e8ebe6;--radius:20px;--shadow:0 12px 36px #16392b0b;
+ --line:#e4e9e3;--radius:18px;--shadow:0 10px 30px #16392b0d;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:Tahoma,Arial,sans-serif;line-height:1.7}
+body{margin:0;background:var(--bg);color:var(--ink);
+ font-family:Tahoma,Arial,sans-serif;line-height:1.7}
 button,input,select,textarea{font:inherit}
-button,a{ -webkit-tap-highlight-color:transparent}
-a{color:inherit;text-decoration:none}
+button,a{-webkit-tap-highlight-color:transparent}
 button{cursor:pointer}
-img{display:block;max-width:100%}
-.container{width:min(1240px,calc(100% - 36px));margin:auto}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+.container{width:min(1240px,calc(100% - 32px));margin:auto}
 .topbar{background:#0b2c24;color:#e8eee9;font-size:12px}
-.topbar .container{display:flex;justify-content:space-between;gap:12px;padding:8px 0;flex-wrap:wrap}
+.topbar .container{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:8px 0}
 .topbar a{color:var(--gold2)}
-header{background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:50}
-.nav{display:flex;align-items:center;gap:22px;min-height:82px}
-.brand{display:flex;align-items:center;gap:11px;flex-shrink:0}
-.logo{width:49px;height:49px;border-radius:15px;background:var(--green);display:grid;place-items:center;color:var(--gold2)}
-.logo svg{width:37px;height:37px}
-.brand-name{font-size:22px;font-weight:900;color:var(--green);line-height:1.3}
-.brand-sub{font-size:10px;letter-spacing:2px;color:#9a7940}
-.navlinks{display:flex;align-items:center;gap:19px;margin-inline-start:auto;font-size:13px;color:#47544c}
-.navlinks a:hover{color:var(--green)}
-.nav-actions{display:flex;gap:9px;align-items:center}
-.btn{border:1px solid transparent;border-radius:12px;padding:11px 17px;font-weight:700;font-size:13px;display:inline-flex;justify-content:center;align-items:center;gap:7px;transition:.2s}
-.btn-primary{background:var(--green);color:#fff}
-.btn-primary:hover{background:var(--green2);transform:translateY(-1px)}
-.btn-outline{border-color:#dce4dd;background:#fff;color:var(--green)}
+header{position:sticky;top:0;z-index:50;background:white;border-bottom:1px solid var(--line)}
+.nav{min-height:76px;display:flex;align-items:center;gap:20px}
+.brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.logo{width:46px;height:46px;border-radius:14px;background:var(--g);
+ display:grid;place-items:center;color:var(--gold2);font-size:24px}
+.brand-name{font-size:21px;font-weight:900;color:var(--g);line-height:1.3}
+.brand-sub{display:block;font-size:9px;letter-spacing:2px;color:#9a7940}
+.navlinks{display:flex;gap:18px;margin-inline-start:auto;font-size:13px;color:#47544c}
+.nav-actions{display:flex;gap:8px;align-items:center}
+.btn{border:1px solid transparent;border-radius:11px;padding:10px 15px;
+ font-size:13px;font-weight:800;display:inline-flex;align-items:center;
+ justify-content:center;gap:7px}
+.btn-primary{background:var(--g);color:white}
+.btn-primary:hover{background:var(--g2)}
+.btn-outline{border-color:#dce4dd;background:white;color:var(--g)}
 .btn-gold{background:var(--gold);color:#1d281f}
-.btn-small{padding:8px 12px;font-size:12px}
-.mobile-menu{display:none}
-.hero{background:radial-gradient(ellipse at 10% 10%,#2b6650 0,transparent 44%),linear-gradient(120deg,#0b2c24,#154637 58%,#1b503e);color:white;overflow:hidden;position:relative}
-.hero:after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.12;background-image:radial-gradient(#e6d2a6 1px,transparent 1px);background-size:24px 24px}
-.hero-inner{position:relative;z-index:1;display:grid;grid-template-columns:1.12fr .88fr;gap:36px;align-items:center;min-height:425px;padding:50px 0}
-.eyebrow{display:inline-flex;align-items:center;gap:8px;color:var(--gold2);font-size:12px;font-weight:700;border:1px solid #ffffff25;padding:7px 12px;border-radius:99px;background:#ffffff08}
-.eyebrow i{width:7px;height:7px;border-radius:50%;background:var(--gold)}
-.hero h1{font-size:clamp(30px,4vw,49px);line-height:1.4;letter-spacing:-1px;margin:19px 0 12px}
+.btn-small{padding:7px 10px;font-size:11px}
+.hero{background:radial-gradient(ellipse at 10% 10%,#2b6650,transparent 45%),
+ linear-gradient(120deg,#0b2c24,#154637 60%,#1b503e);color:white}
+.hero-inner{display:grid;grid-template-columns:1.15fr .85fr;gap:30px;
+ align-items:center;min-height:390px;padding:44px 0}
+.eyebrow{display:inline-block;color:var(--gold2);font-size:12px;
+ border:1px solid #ffffff35;border-radius:30px;padding:6px 12px}
+.hero h1{font-size:clamp(30px,4vw,47px);line-height:1.4;margin:17px 0 10px}
 .hero h1 span{color:var(--gold2)}
-.hero-copy{max-width:560px;color:#d8e3dc;font-size:15px;margin:0 0 24px}
-.searchbox{display:flex;align-items:center;background:white;padding:7px;border-radius:16px;gap:8px;box-shadow:0 14px 35px #00170f2e;max-width:690px}
-.search-icon{color:var(--green);padding:0 10px;font-size:22px}
-.searchbox input{border:0;outline:0;min-width:0;flex:1;padding:10px 2px;color:var(--ink);background:transparent}
-.searchbox select{border:0;border-inline-start:1px solid var(--line);outline:0;padding:10px 8px;background:#fff;color:#58645c;max-width:145px}
-.searchbox button{border:0;border-radius:11px;background:var(--gold);color:#19271f;font-weight:800;padding:13px 20px}
-.hero-note{font-size:11px;color:#d5e2da;margin-top:12px}
-.hero-art{position:relative;min-height:295px;display:grid;place-items:center}
-.art-panel{width:min(100%,420px);height:290px;border:1px solid #ffffff2b;border-radius:30px;background:linear-gradient(145deg,#ffffff1c,#ffffff06);backdrop-filter:blur(4px);padding:15px;transform:rotate(-2deg)}
-.art-photo{width:100%;height:100%;border-radius:21px;object-fit:cover;opacity:.88}
-.float-card{position:absolute;bottom:15px;right:-3px;background:#fff;color:var(--ink);border:1px solid #ffffff90;box-shadow:var(--shadow);border-radius:16px;padding:13px 16px;display:flex;align-items:center;gap:12px}
-.float-icon{width:42px;height:42px;background:#edf4ec;border-radius:12px;display:grid;place-items:center;font-size:21px}
-.float-card b{display:block;font-size:13px}.float-card small{color:var(--muted);font-size:11px}
-.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:26px;max-width:480px}
-.stat{border-inline-start:1px solid #ffffff30;padding-inline-start:13px}
-.stat strong{display:block;color:var(--gold2);font-size:19px}.stat span{font-size:11px;color:#d8e3dc}
-.section{padding:58px 0}
-.section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:24px}
-.section-kicker{color:#9a7940;font-size:11px;font-weight:800;letter-spacing:1px}
-.section h2{font-size:clamp(23px,3vw,31px);line-height:1.45;margin:5px 0;color:var(--green)}
-.section-desc{font-size:13px;color:var(--muted);margin:0;max-width:620px}
-.text-link{font-size:12px;color:var(--green);font-weight:800;white-space:nowrap}
-.category-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:17px}
-.category-card{position:relative;min-height:215px;overflow:hidden;border-radius:19px;background:#dce6dd;isolation:isolate;cursor:pointer;border:1px solid #e4e8e2;box-shadow:var(--shadow);transition:.25s}
-.category-card:hover{transform:translateY(-4px);box-shadow:0 18px 40px #16392b15}
-.category-card img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s;z-index:-2}
-.category-card:hover img{transform:scale(1.06)}
-.category-card:after{content:"";position:absolute;inset:0;z-index:-1;background:linear-gradient(0deg,#071f18e8 0%,#071f1830 65%,#071f1805)}
-.cat-content{position:absolute;bottom:0;right:0;left:0;padding:17px;color:white}
-.cat-icon{display:inline-grid;place-items:center;width:35px;height:35px;background:#ffffff24;border:1px solid #ffffff50;border-radius:11px;font-size:18px;margin-bottom:8px}
-.cat-content h3{font-size:17px;margin:0 0 3px}.cat-content p{font-size:11px;color:#e1e9e3;margin:0}
-.cat-arrow{position:absolute;left:14px;bottom:18px;width:29px;height:29px;border-radius:50%;background:#ffffff25;display:grid;place-items:center}
-.quick-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:25px}
-.quick-item{background:white;border:1px solid var(--line);border-radius:15px;padding:15px;display:flex;align-items:center;gap:12px}
-.quick-icon{width:43px;height:43px;flex-shrink:0;display:grid;place-items:center;border-radius:13px;background:#edf4ed;font-size:21px}
-.quick-item b{display:block;font-size:13px}.quick-item span{display:block;font-size:11px;color:var(--muted)}
-.soft-section{background:#fff;border-block:1px solid var(--line)}
-.toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-bottom:20px}
-.toolbar select,.field input,.field select,.field textarea,.filter-input{width:100%;border:1px solid #dfe5de;border-radius:11px;padding:11px 12px;background:white;outline:none;color:var(--ink);font-size:13px}
-.toolbar select{width:auto;min-width:155px}
-.toolbar select:focus,.field input:focus,.field select:focus,.field textarea:focus,.filter-input:focus{border-color:#719582;box-shadow:0 0 0 3px #18574712}
-.listings-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
-.listing-card{border:1px solid var(--line);background:#fff;border-radius:17px;overflow:hidden;min-width:0}
-.listing-photo{height:170px;background:#edf0eb;display:grid;place-items:center;color:#839087;font-size:34px;position:relative}
+.hero-copy{color:#d8e3dc;font-size:14px;max-width:580px}
+.searchbox{display:flex;gap:8px;align-items:center;background:white;
+ padding:7px;border-radius:14px;max-width:700px}
+.searchbox input{flex:1;min-width:80px;border:0;outline:0;padding:10px;color:var(--ink)}
+.searchbox select{max-width:155px;border:0;border-inline-start:1px solid var(--line);
+ padding:10px;background:white;color:var(--ink)}
+.searchbox button{border:0;border-radius:10px;background:var(--gold);
+ padding:12px 17px;font-weight:900}
+.hero-note{font-size:11px;color:#d5e2da;margin-top:10px}
+.hero-art{border:1px solid #ffffff30;background:#ffffff10;border-radius:24px;
+ padding:12px;min-height:245px;display:grid;place-items:center}
+.hero-art img{width:100%;height:260px;object-fit:cover;border-radius:17px}
+.section{padding:48px 0}
+.section-head{display:flex;justify-content:space-between;align-items:end;
+ gap:15px;margin-bottom:22px}
+.section-kicker{color:#9a7940;font-size:11px;font-weight:900}
+h2{color:var(--g);line-height:1.4}
+.section h2{font-size:clamp(22px,3vw,30px);margin:5px 0}
+.section-desc{font-size:12px;color:var(--muted);margin:0}
+.category-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.category-card{position:relative;min-height:190px;border-radius:17px;overflow:hidden;
+ background:#dce6dd;cursor:pointer;border:2px solid transparent;isolation:isolate}
+.category-card img{position:absolute;inset:0;width:100%;height:100%;
+ object-fit:cover;z-index:-2;transition:.3s}
+.category-card:after{content:"";position:absolute;inset:0;z-index:-1;
+ background:linear-gradient(0deg,#071f18ed,#071f1820 80%)}
+.category-card:hover{border-color:var(--gold)}
+.category-card:hover img{transform:scale(1.04)}
+.cat-content{position:absolute;bottom:0;right:0;left:0;padding:14px;color:white}
+.cat-content h3{font-size:15px;margin:5px 0}
+.cat-content p{font-size:10px;color:#e1e9e3;margin:0}
+.cat-icon{font-size:22px}
+.subcategory-panel,.panel{background:white;border:1px solid var(--line);
+ border-radius:17px;padding:18px;margin-top:18px}
+.chip-list{display:flex;gap:8px;flex-wrap:wrap}
+.chip{border:1px solid #dfe6de;background:white;border-radius:30px;
+ padding:8px 12px;font-size:11px;color:#425248}
+.chip:hover,.chip.active{background:var(--g);border-color:var(--g);color:white}
+.filterbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.filterbar select,.field input,.field select,.field textarea,
+.filterbar input{width:100%;border:1px solid #dfe5de;border-radius:10px;
+ padding:10px 12px;background:white;outline:none;color:var(--ink);font-size:12px}
+.filterbar select{width:auto;min-width:145px}
+.listings-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+.listing-card{background:white;border:1px solid var(--line);border-radius:15px;overflow:hidden}
+.listing-photo{height:155px;background:#edf0eb;display:grid;place-items:center;overflow:hidden}
 .listing-photo img{width:100%;height:100%;object-fit:cover}
-.listing-tag{position:absolute;top:10px;right:10px;background:#fff;border-radius:7px;padding:4px 8px;font-size:10px;font-weight:800;color:var(--green)}
-.listing-body{padding:14px}
-.listing-body h3{font-size:14px;margin:0 0 8px;line-height:1.6}
-.listing-price{font-size:17px;font-weight:900;color:var(--green);margin-bottom:8px}
-.listing-meta{font-size:11px;color:var(--muted);display:flex;flex-wrap:wrap;gap:9px}
-.listing-bottom{border-top:1px solid var(--line);margin-top:13px;padding-top:12px;display:flex;justify-content:space-between;align-items:center;gap:7px}
-.empty-state{background:white;border:1px dashed #cdd8cf;border-radius:20px;text-align:center;padding:40px 18px;grid-column:1/-1}
-.empty-state .empty-icon{font-size:35px}.empty-state h3{margin:9px 0 4px;color:var(--green);font-size:17px}.empty-state p{margin:0 auto 15px;color:var(--muted);font-size:12px;max-width:430px}
-.split-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.feature-panel{border-radius:22px;overflow:hidden;min-height:260px;position:relative;background:var(--green);color:white;padding:30px;isolation:isolate}
-.feature-panel img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:-2;opacity:.3}
-.feature-panel:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#0b2c24d9,#0b2c2440);z-index:-1}
-.feature-panel h3{font-size:24px;max-width:380px;line-height:1.5;margin:8px 0}
-.feature-panel p{font-size:12px;color:#d9e4dd;max-width:410px}
-.feature-panel .btn{margin-top:12px}
-.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.how-card{padding:21px;background:#fff;border:1px solid var(--line);border-radius:17px}
-.how-num{width:38px;height:38px;border-radius:12px;background:#edf3ed;color:var(--green);display:grid;place-items:center;font-weight:900}
-.how-card h3{font-size:15px;margin:13px 0 4px}.how-card p{font-size:12px;color:var(--muted);margin:0}
-footer{background:#0b2c24;color:#eaf0eb;padding:43px 0 18px}
-.footer-grid{display:grid;grid-template-columns:1.3fr 1fr 1fr 1fr;gap:28px}
-footer .brand-name{color:white}footer .brand-sub{color:var(--gold2)}
-footer p,footer a{font-size:12px;color:#bfcec4}
-footer h4{font-size:13px;color:var(--gold2);margin:0 0 12px}
-.footer-links{display:grid;gap:7px}
-.footer-bottom{border-top:1px solid #ffffff1c;margin-top:28px;padding-top:16px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:11px;color:#aebfb4}
-.modal-backdrop{position:fixed;inset:0;background:#071c16a8;z-index:100;display:none;align-items:center;justify-content:center;padding:16px;overflow:auto}
+.listing-body{padding:13px}
+.listing-body h3{font-size:13px;margin:0 0 8px}
+.listing-price{font-size:16px;font-weight:900;color:var(--g)}
+.listing-meta{font-size:10px;color:var(--muted);margin-top:7px}
+.listing-bottom{display:flex;justify-content:space-between;align-items:center;
+ gap:6px;border-top:1px solid var(--line);padding-top:10px;margin-top:11px}
+.empty-state{grid-column:1/-1;background:white;border:1px dashed #cdd8cf;
+ border-radius:18px;text-align:center;padding:35px 16px}
+.empty-state h3{font-size:16px;color:var(--g);margin:8px 0}
+.empty-state p{font-size:12px;color:var(--muted)}
+.promo-banner{display:flex;justify-content:space-between;align-items:center;
+ gap:16px;flex-wrap:wrap;background:#103d31;color:white;border-radius:18px;padding:23px}
+.promo-banner h3{margin:0 0 4px}.promo-banner p{font-size:12px;color:#d8e3dc;margin:0}
+footer{background:#0b2c24;color:#eaf0eb;padding:30px 0;margin-top:35px}
+footer p{font-size:11px;color:#bfcec4}
+.modal-backdrop{display:none;position:fixed;inset:0;background:#071c16b5;
+ z-index:100;align-items:center;justify-content:center;padding:12px;overflow:auto}
 .modal-backdrop.open{display:flex}
-.modal{background:white;width:min(760px,100%);max-height:92vh;overflow:auto;border-radius:22px;padding:23px;box-shadow:0 30px 90px #0004}
-.modal-head{display:flex;justify-content:space-between;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding-bottom:13px;margin-bottom:18px}
-.modal-head h2{font-size:21px;color:var(--green);margin:0}
-.close-btn{border:0;background:#f0f3ef;border-radius:10px;width:37px;height:37px;font-size:22px;color:var(--green)}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.field{display:grid;gap:6px}.field label{font-size:12px;font-weight:800;color:#425248}
+.modal{background:white;width:min(800px,100%);max-height:94vh;overflow:auto;
+ border-radius:20px;padding:20px;box-shadow:0 30px 90px #0004}
+.modal-head{display:flex;justify-content:space-between;align-items:center;
+ border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:16px;gap:10px}
+.modal-head h2{font-size:20px;margin:0}
+.close-btn{border:0;background:#f0f3ef;border-radius:9px;width:36px;height:36px;font-size:22px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.field{display:grid;gap:6px;min-width:0}
+.field label{font-size:12px;font-weight:800;color:#425248}
 .field textarea{min-height:90px;resize:vertical}
 .field.full{grid-column:1/-1}
-.form-note{font-size:11px;color:var(--muted);margin:13px 0}
-.form-result{display:none;border-radius:12px;padding:12px;background:#eef5ed;color:#20533c;font-size:12px;margin-top:12px}
+.form-note{font-size:11px;color:var(--muted)}
+.form-result{display:none;border-radius:10px;padding:12px;background:#eef5ed;
+ color:#20533c;font-size:12px;margin-top:12px}
 .form-result.show{display:block}
-.subcategory-panel{background:#fff;border:1px solid var(--line);border-radius:17px;padding:18px;margin-top:18px}
-.chip-list{display:flex;flex-wrap:wrap;gap:8px}
-.chip{border:1px solid #dfe6de;background:#fff;border-radius:999px;padding:8px 12px;font-size:11px;color:#425248}
-.chip:hover,.chip.active{background:var(--green);border-color:var(--green);color:#fff}
-@media(max-width:1000px){
- .navlinks{gap:12px}.navlinks a:nth-child(n+4){display:none}
- .category-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
- .listings-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
- .quick-strip{grid-template-columns:repeat(2,1fr)}
+#map{height:310px;border:1px solid var(--line);border-radius:13px;z-index:1}
+.map-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.pin-box{border:1px solid #e7d4a5;background:#fffaf0;border-radius:13px;padding:13px}
+.pin-box label{display:flex;align-items:flex-start;gap:9px;font-weight:800}
+.pin-box input{width:18px;height:18px;margin-top:4px}
+.pin-price{color:#805d18;font-size:18px;font-weight:900}
+.category-fields{display:none;grid-column:1/-1;background:#f8faf7;
+ border:1px solid var(--line);border-radius:13px;padding:13px}
+.category-fields.show{display:block}
+.policy-copy{font-size:13px;line-height:1.9}
+@media(max-width:950px){
+ .category-grid,.listings-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+ .navlinks{gap:10px}.navlinks a:nth-child(n+3){display:none}
 }
-@media(max-width:720px){
- .container{width:min(100% - 24px,600px)}
- .topbar .container{font-size:10px}
- .nav{min-height:68px;gap:10px}.brand-name{font-size:18px}.brand-sub{font-size:8px}
- .logo{width:42px;height:42px}.navlinks{display:none}
- .nav-actions .btn-outline{display:none}.nav-actions .btn{padding:9px 11px;font-size:11px}
- .mobile-menu{display:inline-flex;border:1px solid var(--line);background:white;color:var(--green);border-radius:10px;padding:8px}
- .hero-inner{grid-template-columns:1fr;gap:10px;padding:35px 0 28px;min-height:unset}
- .hero h1{font-size:32px}.hero-copy{font-size:13px}
- .hero-art{min-height:205px}.art-panel{height:195px;width:86%}.float-card{bottom:0;right:0}
- .searchbox{flex-wrap:wrap;gap:4px}.search-icon{padding:0 6px}
- .searchbox input{width:calc(100% - 60px);flex:auto}
- .searchbox select{max-width:unset;flex:1;border-inline-start:0;border-top:1px solid var(--line)}
- .searchbox button{flex:1;padding:11px}
- .section{padding:40px 0}.section-head{align-items:start}
- .category-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
- .category-card{min-height:170px}.cat-content{padding:12px}.cat-content h3{font-size:14px}.cat-content p{font-size:10px}
- .quick-strip{gap:8px}.quick-item{padding:11px;gap:8px}.quick-icon{width:36px;height:36px}
- .listings-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
- .listing-photo{height:125px}.listing-body{padding:10px}.listing-body h3{font-size:12px}
- .listing-price{font-size:14px}.listing-bottom{flex-wrap:wrap}
- .split-grid,.how-grid{grid-template-columns:1fr}
- .feature-panel{min-height:235px;padding:23px}
- .footer-grid{grid-template-columns:1fr 1fr;gap:23px}
- .form-grid{grid-template-columns:1fr}.field.full{grid-column:auto}
- .section-desc{font-size:12px}.section-head .text-link{font-size:11px}
-}
-@media(max-width:380px){
- .brand-sub{letter-spacing:1px}.brand-name{font-size:16px}
- .category-card{min-height:150px}.cat-content h3{font-size:12px}
- .quick-item span{font-size:10px}
+@media(max-width:680px){
+ .container{width:calc(100% - 22px)}
+ .nav{min-height:65px;gap:8px}.brand-name{font-size:17px}.brand-sub{font-size:8px}
+ .logo{width:39px;height:39px}.navlinks{display:none}
+ .nav-actions .btn-outline{display:none}.nav-actions .btn{padding:8px 10px;font-size:11px}
+ .hero-inner{grid-template-columns:1fr;padding:32px 0;gap:20px}
+ .hero h1{font-size:31px}.hero-art img{height:190px}
+ .searchbox{flex-wrap:wrap}.searchbox input{width:50%;flex:1}
+ .searchbox select{max-width:none;flex:1}
+ .searchbox button{flex:1}
+ .section{padding:35px 0}.category-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .category-card{min-height:155px}.cat-content{padding:10px}
+ .cat-content h3{font-size:12px}.cat-content p{font-size:9px}
+ .listings-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+ .listing-photo{height:120px}.listing-body{padding:10px}
+ .listing-price{font-size:13px}.form-grid{grid-template-columns:1fr}
+ .field.full{grid-column:auto}.category-fields{grid-column:auto}
+ .modal{padding:14px}.section-head{align-items:start}
+ .promo-banner{padding:17px}
 }
 </style>
 </head>
 <body>
 <div class="topbar">
  <div class="container">
-  <span>منصة عراقية تجمع الأسواق والأعمال في مكان واحد</span>
-  <span>تواصل معنا: <a href="https://wa.me/9647506760090" target="_blank" rel="noopener">واتساب</a></span>
+  <span>روافد العراق — كل أسواق العراق في منصة واحدة</span>
+  <span>تواصل: <a href="https://wa.me/9647506760090" target="_blank" rel="noopener">واتساب</a></span>
  </div>
 </div>
+
 <header>
  <div class="container nav">
-  <a class="brand" href="#home" aria-label="روافد العراق - الرئيسية">
-   <span class="logo">
-    <svg viewBox="0 0 64 64" fill="none" aria-label="رمز خريطة العراق">
-     <path d="M18 7 29 10 36 7 44 14 42 22 51 28 46 36 48 45 39 49 34 58 26 52 20 43 12 39 15 29 9 21Z" stroke="#ead5a4" stroke-width="2.5" stroke-linejoin="round"/>
-     <path d="M21 23h7v7h-7zM34 30h7v7h-7zM25 41h8v6h-8z" stroke="#ead5a4" stroke-width="1.5"/>
-     <path d="M24 26h1m12 7h1m-9 11h1" stroke="#ead5a4" stroke-width="3" stroke-linecap="round"/>
-    </svg>
-   </span>
-   <span><span class="brand-name">روافد العراق</span><span class="brand-sub" style="display:block">RAWAFID IRAQ</span></span>
+  <a class="brand" href="#home">
+   <span class="logo">⌂</span>
+   <span><span class="brand-name">روافد العراق</span><span class="brand-sub">RAWAFID IRAQ</span></span>
   </a>
-  <nav class="navlinks" aria-label="التنقل الرئيسي">
-   <a href="#categories">الأقسام</a><a href="#listings">الإعلانات</a><a href="#business">للشركات</a><a href="#how">كيف تعمل</a>
+  <nav class="navlinks">
+   <a href="#categories">الأقسام</a><a href="#listings">الإعلانات</a>
+   <a href="#mapSection">الخريطة</a>
   </nav>
   <div class="nav-actions">
    <button class="btn btn-outline" onclick="openPublish()">＋ أضف إعلانك</button>
    <button class="btn btn-primary" onclick="openPublish()">ابدأ الآن</button>
-   <button class="mobile-menu" onclick="document.getElementById('categories').scrollIntoView({behavior:'smooth'})" aria-label="عرض الأقسام">☰</button>
   </div>
  </div>
 </header>
@@ -211,27 +196,18 @@ footer h4{font-size:13px;color:var(--gold2);margin:0 0 12px}
 <section class="hero">
  <div class="container hero-inner">
   <div>
-   <span class="eyebrow"><i></i> سوق واحد. فرص بلا حدود.</span>
+   <span class="eyebrow">سوق واحد. فرص بلا حدود.</span>
    <h1>كل ما تبحث عنه في العراق،<br><span>أقرب مما تتخيّل.</span></h1>
-   <p class="hero-copy">من احتياجات بيتك إلى العقارات والمصانع والمشاريع والآليات الثقيلة. اكتشف السوق، تواصل مباشرة، وابحث بطريقتك.</p>
+   <p class="hero-copy">من المنتجات اليومية إلى العقارات والمصانع والآليات الثقيلة والخدمات. اختر القسم المناسب، حدّد المواصفات، وتواصل مباشرة مع المعلن.</p>
    <form class="searchbox" id="searchForm">
-    <span class="search-icon">⌕</span>
-    <input id="mainSearch" type="search" placeholder="ماذا تبحث عنه اليوم؟" aria-label="ابحث في روافد العراق">
-    <select id="mainCategory" aria-label="اختر القسم"><option value="">كل الأقسام</option></select>
+    <input id="mainSearch" type="search" placeholder="ماذا تبحث عنه اليوم؟" aria-label="كلمات البحث">
+    <select id="mainCategory" aria-label="القسم"><option value="">كل الأقسام</option></select>
     <button type="submit">ابحث الآن ←</button>
    </form>
-   <div class="hero-note">ابحث عن منتج، عقار، مورد، معدّة، خدمة أو فرصة عمل.</div>
-   <div class="stats">
-    <div class="stat"><strong>18</strong><span>محافظة عراقية</span></div>
-    <div class="stat"><strong>متعدد</strong><span>مجالات السوق</span></div>
-    <div class="stat"><strong>مباشر</strong><span>تواصل مع المعلن</span></div>
-   </div>
+   <div class="hero-note">التصفّح مفتوح لجميع المحافظات العراقية الـ18.</div>
   </div>
   <div class="hero-art">
-   <div class="art-panel">
-    <img class="art-photo" src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=85" alt="مبانٍ وأعمال تجارية">
-   </div>
-   <div class="float-card"><div class="float-icon">✦</div><div><b>سوقك في مكان واحد</b><small>من الفرد إلى أكبر الشركات</small></div></div>
+   <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1000&q=85" alt="مبانٍ تجارية" loading="lazy">
   </div>
  </div>
 </section>
@@ -239,368 +215,760 @@ footer h4{font-size:13px;color:var(--gold2);margin:0 0 12px}
 <section class="section" id="categories">
  <div class="container">
   <div class="section-head">
-   <div><div class="section-kicker">اكتشف روافد</div><h2>كل سوق له مكانه</h2><p class="section-desc">تصنيفات واضحة ومتخصصة، لتصل إلى ما تريد من دون تشتّت.</p></div>
-   <a class="text-link" href="#allCategories">استكشف جميع الأقسام ←</a>
+   <div><div class="section-kicker">اكتشف روافد</div>
+   <h2>كل سوق له مكانه</h2>
+   <p class="section-desc">اضغط على القسم لتظهر تخصصاته وفلاتره الخاصة هنا.</p></div>
   </div>
   <div class="category-grid" id="categoryGrid"></div>
-  <div id="allCategories" class="subcategory-panel">
-   <div class="section-head" style="margin-bottom:13px">
-    <div><h2 style="font-size:19px;margin:0">تصفّح حسب احتياجك</h2><p class="section-desc">اختر مجالًا لعرض تخصصاته الفرعية.</p></div>
+  <div class="subcategory-panel" id="categoryDetail">
+   <h2 id="selectedCategoryTitle" style="font-size:19px;margin-top:0">اختر قسمًا للبدء</h2>
+   <p id="selectedCategoryDesc" class="section-desc">ستظهر التخصصات والخيارات الخاصة بالقسم هنا، من دون فتح نموذج النشر تلقائيًا.</p>
+   <div id="categoryChips" class="chip-list" style="margin-top:14px"></div>
+   <div id="categoryFilters" class="form-grid" style="margin-top:16px"></div>
+   <div style="display:flex;gap:9px;flex-wrap:wrap;margin-top:15px">
+    <button class="btn btn-primary" onclick="applyCategoryFilters()">عرض إعلانات هذا القسم</button>
+    <button class="btn btn-outline" onclick="openPublish(selectedCategory)">أضف إعلانًا في هذا القسم</button>
    </div>
-   <div class="chip-list" id="categoryChips"></div>
-   <div id="subcategoryContent" style="margin-top:16px"></div>
-  </div>
-  <div class="quick-strip">
-   <div class="quick-item"><div class="quick-icon">🏭</div><div><b>من المصنّع مباشرة</b><span>ابحث عن المصانع والمورّدين</span></div></div>
-   <div class="quick-item"><div class="quick-icon">📍</div><div><b>قريب منك</b><span>تصفّح بحسب المحافظة والمنطقة</span></div></div>
-   <div class="quick-item"><div class="quick-icon">🤝</div><div><b>اطلب عرض سعر</b><span>حدّد احتياجك ومواصفاتك</span></div></div>
-   <div class="quick-item"><div class="quick-icon">🏗️</div><div><b>بيع أو تأجير</b><span>للعقارات والآليات والمعدّات</span></div></div>
   </div>
  </div>
 </section>
 
-<section class="section soft-section" id="listings">
+<section class="section" id="listings" style="background:#fff;border-block:1px solid var(--line)">
  <div class="container">
   <div class="section-head">
-   <div><div class="section-kicker">اكتشف الفرص</div><h2>الإعلانات في السوق</h2><p class="section-desc">ستظهر هنا الإعلانات الفعلية بعد ربط قاعدة البيانات. لا نعرض منتجات أو أسعارًا وهمية.</p></div>
-   <button class="btn btn-primary" onclick="openPublish()">＋ انشر إعلانًا</button>
+   <div><div class="section-kicker">السوق العراقي</div><h2>الإعلانات</h2>
+   <p class="section-desc">تظهر الإعلانات الحقيقية بعد ربط قاعدة بيانات المنصة.</p></div>
+   <button class="btn btn-primary" onclick="openPublish()">＋ أضف إعلانًا</button>
   </div>
-  <div class="toolbar">
-   <select id="listingCategory" aria-label="تصفية حسب القسم"><option value="">جميع الأقسام</option></select>
-   <select id="listingGovernorate" aria-label="تصفية حسب المحافظة"><option value="">كل المحافظات</option></select>
-   <select id="listingType" aria-label="نوع الإعلان">
-    <option value="">كل أنواع الإعلانات</option><option value="بيع">للبيع</option><option value="إيجار">للإيجار</option><option value="طلب">طلب شراء أو توريد</option><option value="خدمة">خدمة</option><option value="وظيفة">وظيفة</option>
+  <div class="filterbar">
+   <select id="listingCategory"><option value="">جميع الأقسام</option></select>
+   <select id="listingGovernorate"><option value="">كل المحافظات</option></select>
+   <select id="listingType">
+    <option value="">بيع أو طلب أو إيجار</option>
+    <option value="بيع">بيع</option><option value="إيجار">إيجار</option>
+    <option value="طلب">طلب</option><option value="خدمة">خدمة</option>
+    <option value="وظيفة">وظيفة</option>
    </select>
-   <button class="btn btn-outline btn-small" id="clearFilters">إلغاء الفلاتر</button>
+   <button class="btn btn-outline" id="clearFilters">مسح الفلاتر</button>
   </div>
-  <div class="listings-grid" id="listingsGrid">
-   <div class="empty-state"><div class="empty-icon">⌕</div><h3>مساحتك لاكتشاف إعلانات السوق</h3><p>لم يتم ربط قاعدة بيانات الإعلانات بعد. عند ربط الخادم ستظهر الإعلانات الحقيقية وصورها وأسعارها ومواقعها هنا.</p><button class="btn btn-primary" onclick="openPublish()">جهّز إعلانك</button></div>
+  <div id="listingsGrid" class="listings-grid"></div>
+ </div>
+</section>
+
+<section class="section" id="mapSection">
+ <div class="container">
+  <div class="section-head">
+   <div><div class="section-kicker">اكتشف حسب الموقع</div><h2>الخريطة التفاعلية</h2>
+   <p class="section-desc">يمكن استعراض الخريطة وتحديد موقع الإعلان من نموذج النشر. لا تُعرض مواقع إعلانات غير موجودة.</p></div>
+  </div>
+  <div class="panel">
+   <div id="marketMap" style="height:370px;border-radius:13px;overflow:hidden"></div>
+   <p class="form-note">الخريطة تستخدم OpenStreetMap عبر Leaflet. قد تتطلب الخريطة اتصالًا بالإنترنت؛ وتحديد الموقع لا يعني أن الإعلان نُشر أو تم تثبيته مدفوعًا.</p>
+  </div>
+  <div class="promo-banner" style="margin-top:18px">
+   <div><h3>ثبّت إعلانك على الخريطة</h3>
+   <p>خيار ترويجي مدفوع بعد تأكيد الدفع وموافقة الإدارة.</p></div>
+   <div><span class="pin-price" style="color:var(--gold2)">2,000 د.ع / شهر</span>
+   <button class="btn btn-gold" onclick="openPublish()">أضف إعلانًا واطلب التثبيت</button></div>
+  </div>
+ </div>
+</section>
+
+<section class="section" id="how">
+ <div class="container">
+  <div class="section-head"><div><div class="section-kicker">ببساطة</div>
+   <h2>كيف تعمل روافد؟</h2></div></div>
+  <div class="form-grid">
+   <div class="panel"><strong>١. اختر القسم</strong><p class="section-desc">اعثر على التخصص والحقول المناسبة لاحتياجك.</p></div>
+   <div class="panel"><strong>٢. أضف التفاصيل</strong><p class="section-desc">أدخل المواصفات والموقع ووسيلة التواصل.</p></div>
+   <div class="panel"><strong>٣. تتم المراجعة</strong><p class="section-desc">لا يُفترض نشر الإعلان أو تفعيل الخدمات المدفوعة قبل ربط الخادم ومراجعة الإدارة.</p></div>
+   <div class="panel"><strong>٤. تواصل مباشرة</strong><p class="section-desc">بعد نشر الإعلان الحقيقي، يستطيع المهتم التواصل مع المعلن.</p></div>
   </div>
  </div>
 </section>
 </main>
-<!-- ألحق الجزء الثاني هنا مباشرة -->
-</body>
-</html>
 
-<section class="section" id="business">
- <div class="container">
-  <div class="section-head">
-   <div><div class="section-kicker">للأعمال والتجارة</div><h2>من السوق المحلي إلى فرص التوريد</h2><p class="section-desc">مساحة للمصانع والشركات والمقاولين وأصحاب المتاجر للوصول إلى عملاء وشركاء جدد.</p></div>
-  </div>
-  <div class="split-grid">
-   <div class="feature-panel">
-    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?auto=format&fit=crop&w=1000&q=80" alt="منشأة صناعية">
-    <span class="eyebrow">للمصانع والمورّدين</span>
-    <h3>اعرض منتجاتك وقدراتك الإنتاجية</h3>
-    <p>أنشئ إعلانًا للمصنع أو الوكالة أو نشاط الاستيراد والتوزيع، واستقبل استفسارات العملاء وطلبات التوريد.</p>
-    <button class="btn btn-gold" onclick="openPublish('factories')">اعرض نشاطك ←</button>
-   </div>
-   <div class="feature-panel">
-    <img src="https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1000&q=80" alt="مشاريع البناء">
-    <span class="eyebrow">للمقاولين وأصحاب المشاريع</span>
-    <h3>حوّل احتياج مشروعك إلى طلب واضح</h3>
-    <p>حدّد المواد والكميات والمواصفات والموقع المطلوب لتسهيل التواصل مع الموردين ومقدمي الخدمات.</p>
-    <button class="btn btn-gold" onclick="openPublish('construction')">اطلب عرض سعر ←</button>
-   </div>
-  </div>
- </div>
-</section>
+<footer><div class="container">
+ <div class="brand"><span class="logo">⌂</span><span><span class="brand-name" style="color:white">روافد العراق</span><span class="brand-sub">RAWAFID IRAQ</span></span></div>
+ <p>منصة للإعلانات والتواصل بين المشترين والمعلنين. يجب التحقق من بيانات الإعلان والأطراف قبل أي اتفاق.</p>
+ <p>© <span id="year"></span> روافد العراق</p>
+ <button class="btn btn-outline btn-small" onclick="showPolicy('terms')">الشروط والأحكام</button>
+ <button class="btn btn-outline btn-small" onclick="showPolicy('privacy')">الخصوصية</button>
+</div></footer>
 
-<section class="section soft-section" id="how">
- <div class="container">
-  <div class="section-head">
-   <div><div class="section-kicker">تجربة أبسط</div><h2>كيف تستخدم روافد؟</h2><p class="section-desc">خطوات واضحة للمشتري والبائع وصاحب النشاط التجاري.</p></div>
-  </div>
-  <div class="how-grid">
-   <div class="how-card"><div class="how-num">01</div><h3>اختر السوق المناسب</h3><p>تصفّح التصنيفات أو ابحث بالكلمات والمحافظة ونوع الإعلان.</p></div>
-   <div class="how-card"><div class="how-num">02</div><h3>حدّد المواصفات</h3><p>استخدم خصائص المجال لتوضيح النوع والمقاس والحالة والكمية أو الميزانية.</p></div>
-   <div class="how-card"><div class="how-num">03</div><h3>تواصل مباشرة</h3><p>تواصل مع المعلن عبر بيانات الاتصال المتاحة واتفق معه مباشرة على التفاصيل.</p></div>
-  </div>
- </div>
-</section>
-
-<footer>
- <div class="container">
-  <div class="footer-grid">
-   <div>
-    <a class="brand" href="#home">
-     <span class="logo">
-      <svg viewBox="0 0 64 64" fill="none" aria-label="خريطة العراق">
-       <path d="M18 7 29 10 36 7 44 14 42 22 51 28 46 36 48 45 39 49 34 58 26 52 20 43 12 39 15 29 9 21Z" stroke="#ead5a4" stroke-width="2.5" stroke-linejoin="round"/>
-       <path d="M21 23h7v7h-7zM34 30h7v7h-7zM25 41h8v6h-8z" stroke="#ead5a4" stroke-width="1.5"/>
-      </svg>
-     </span>
-     <span><span class="brand-name">روافد العراق</span><span class="brand-sub" style="display:block">RAWAFID IRAQ</span></span>
-    </a>
-    <p>سوق عراقي شامل يجمع الأفراد والأعمال والعقارات والتجارة والتوريد في تجربة رقمية واحدة.</p>
-   </div>
-   <div><h4>تصفّح السوق</h4><div class="footer-links"><a href="#categories">جميع الأقسام</a><a href="#listings">الإعلانات</a><a href="#business">الشركات والمصانع</a><a href="#how">كيف تعمل المنصة؟</a></div></div>
-   <div><h4>للمستخدمين</h4><div class="footer-links"><a href="#" onclick="openPublish();return false">نشر إعلان</a><a href="#" onclick="openPublish('realestate');return false">إعلان عقاري</a><a href="#" onclick="openPublish('vehicles');return false">إعلان مركبة</a><a href="#" onclick="openPublish('request');return false">طلب شراء أو توريد</a></div></div>
-   <div><h4>التواصل والسياسات</h4><div class="footer-links"><a href="https://wa.me/9647506760090" target="_blank" rel="noopener">التواصل عبر واتساب</a><a href="#terms" onclick="showPolicy('terms');return false">الشروط والأحكام</a><a href="#privacy" onclick="showPolicy('privacy');return false">سياسة الخصوصية</a><a href="mailto:Nova.procurement.ai@gmail.com">البريد الإلكتروني</a></div></div>
-  </div>
-  <div class="footer-bottom"><span>© <span id="year"></span> روافد العراق. جميع الحقوق محفوظة.</span><span>منصة إعلانات وتواصل مباشر بين الأطراف.</span></div>
- </div>
-</footer>
-
-<div class="modal-backdrop" id="publishModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+<div class="modal-backdrop" id="publishModal" role="dialog" aria-modal="true" aria-labelledby="publishTitle">
  <div class="modal">
-  <div class="modal-head"><h2 id="modalTitle">أضف إعلانك إلى روافد</h2><button class="close-btn" onclick="closePublish()" aria-label="إغلاق">×</button></div>
+  <div class="modal-head"><h2 id="publishTitle">إضافة إعلان جديد</h2>
+   <button class="close-btn" onclick="closePublish()" aria-label="إغلاق">×</button></div>
   <form id="publishForm">
    <div class="form-grid">
-    <div class="field"><label for="adTitle">عنوان الإعلان *</label><input id="adTitle" required maxlength="120" placeholder="مثال: شقة سكنية أو معدّة للبيع"></div>
-    <div class="field"><label for="adCategory">القسم الرئيسي *</label><select id="adCategory" required></select></div>
-    <div class="field"><label for="adSubcategory">القسم الفرعي *</label><select id="adSubcategory" required></select></div>
-    <div class="field"><label for="adType">نوع الإعلان *</label><select id="adType" required>
-     <option value="بيع">للبيع</option><option value="إيجار">للإيجار</option><option value="طلب">طلب شراء أو توريد</option><option value="خدمة">خدمة</option><option value="وظيفة">وظيفة</option><option value="فرصة">فرصة تجارية</option>
-    </select></div>
-    <div class="field"><label for="adPrice">السعر بالدينار العراقي</label><input id="adPrice" type="number" min="0" step="1" placeholder="اتركه فارغًا إذا كان السعر عند الطلب"></div>
-    <div class="field"><label for="adGovernorate">المحافظة *</label><select id="adGovernorate" required></select></div>
-    <div class="field"><label for="adArea">المدينة أو المنطقة</label><input id="adArea" maxlength="100" placeholder="المنطقة أو الحي"></div>
-    <div class="field"><label for="adCondition">الحالة</label><select id="adCondition"><option value="">غير محدد</option><option>جديد</option><option>مستعمل</option><option>تحت الإنشاء</option><option>متاح حسب الطلب</option></select></div>
-    <div class="field"><label for="adName">اسم المعلن *</label><input id="adName" required maxlength="100"></div>
-    <div class="field"><label for="adPhone">رقم الهاتف *</label><input id="adPhone" required type="tel" maxlength="25" placeholder="رقم يمكن التواصل معه"></div>
-    <div class="field full"><label for="adDescription">الوصف والمواصفات *</label><textarea id="adDescription" required maxlength="4000" placeholder="اكتب المواصفات والكميات والمقاسات وشروط البيع أو التأجير..."></textarea></div>
-    <div class="field full"><label for="adImage">صور الإعلان (اختياري في هذه الواجهة)</label><input id="adImage" type="file" accept="image/jpeg,image/png,image/webp" multiple><small style="color:var(--muted);font-size:11px">اختيار الصور هنا لا يرفعها إلى خادم؛ يلزم ربط خدمة تخزين الصور قبل النشر الفعلي.</small></div>
+    <div class="field full"><label for="adTitle">عنوان الإعلان *</label>
+     <input id="adTitle" maxlength="120" required placeholder="مثال: شقة للبيع أو معدات مطعم"></div>
+    <div class="field"><label for="adCategory">القسم الرئيسي *</label>
+     <select id="adCategory" required><option value="">اختر القسم</option></select></div>
+    <div class="field"><label for="adSubcategory">التخصص الفرعي *</label>
+     <select id="adSubcategory" required><option value="">اختر التخصص</option></select></div>
+    <div class="field"><label for="adType">نوع الإعلان *</label>
+     <select id="adType" required>
+      <option value="بيع">بيع</option><option value="إيجار">إيجار</option>
+      <option value="طلب">طلب شراء أو توريد</option><option value="خدمة">خدمة</option>
+      <option value="وظيفة">وظيفة</option>
+     </select></div>
+    <div class="field"><label for="adCondition">الحالة</label>
+     <select id="adCondition"><option value="غير محدد">غير محدد</option>
+      <option value="جديد">جديد</option><option value="مستعمل">مستعمل</option></select></div>
+    <div class="field"><label for="adPrice">السعر بالدينار العراقي</label>
+     <input id="adPrice" type="number" min="0" step="1" placeholder="اتركه فارغًا عند الطلب"></div>
+    <div class="field"><label for="adGovernorate">المحافظة *</label>
+     <select id="adGovernorate" required><option value="">اختر المحافظة</option></select></div>
+    <div class="field"><label for="adArea">المنطقة أو الحي</label>
+     <input id="adArea" maxlength="100" placeholder="اسم المنطقة"></div>
+    <div class="field"><label for="adPhone">رقم التواصل *</label>
+     <input id="adPhone" type="tel" maxlength="25" required placeholder="رقم هاتف المعلن"></div>
+    <div class="field"><label for="adName">اسم المؤسسة أو الشركة (اختياري)</label>
+     <input id="adName" maxlength="100" placeholder="اختياري — اتركه فارغًا إن رغبت"></div>
+
+    <div id="specificFields" class="category-fields">
+     <strong>مواصفات القسم</strong>
+     <div id="specificFieldsInner" class="form-grid" style="margin-top:10px"></div>
+    </div>
+
+    <div class="field full"><label for="adDescription">وصف الإعلان *</label>
+     <textarea id="adDescription" maxlength="4000" required placeholder="اكتب المواصفات والتفاصيل المهمة"></textarea></div>
+    <div class="field full"><label for="adImages">صور الإعلان</label>
+     <input id="adImages" type="file" accept="image/*" multiple>
+     <span class="form-note">اختيار الصور هنا محلي فقط؛ يلزم ربط رفع آمن إلى الخادم قبل نشرها.</span></div>
+
+    <div class="field full">
+     <div class="map-toolbar"><label>حدد موقع الإعلان على الخريطة</label>
+      <button type="button" class="btn btn-outline btn-small" id="locateMe">استخدم موقعي</button></div>
+     <div id="adMap"></div>
+     <p class="form-note">اضغط على الخريطة لتحديد دبوس الموقع أو اسحبه. يمكنك اختيار الموقع يدويًا دون مشاركة موقع جهازك.</p>
+     <div class="form-grid">
+      <div class="field"><label for="adLatitude">خط العرض</label><input id="adLatitude" readonly placeholder="لم يتم تحديد الموقع"></div>
+      <div class="field"><label for="adLongitude">خط الطول</label><input id="adLongitude" readonly placeholder="لم يتم تحديد الموقع"></div>
+     </div>
+    </div>
+
+    <div class="field full">
+     <div class="pin-box">
+      <label for="adMapPromo">
+       <input type="checkbox" id="adMapPromo">
+       <span>أطلب تثبيت الإعلان على الخريطة لمدة شهر<br>
+        <span class="pin-price">2,000 دينار عراقي / شهر</span></span>
+      </label>
+      <p class="form-note">هذا طلب تثبيت فقط، وليس دفعًا أو تفعيلًا تلقائيًا. لا يُفعّل التثبيت إلا بعد تأكيد الدفع وموافقة الإدارة.</p>
+     </div>
+    </div>
    </div>
-   <p class="form-note">هذه واجهة أمامية فقط. لن يُرسل الإعلان إلى الإدارة أو يُنشر للعامة حتى يتم ربط الخادم ونظام المراجعة والتحقق.</p>
-   <button class="btn btn-primary" type="submit" style="width:100%">تحقق من البيانات وجهّز الإعلان</button>
-   <div class="form-result" id="formResult" role="status"></div>
+   <p class="form-note">* الحقول الإلزامية. اسم المؤسسة أو الشركة غير إلزامي. إرسال هذا النموذج حاليًا لا ينشر الإعلان على الإنترنت لأن واجهة الخادم لم تُربط بعد.</p>
+   <button class="btn btn-primary" type="submit" style="width:100%">تحقق من بيانات الإعلان</button>
+   <div id="formResult" class="form-result" role="status" aria-live="polite"></div>
   </form>
  </div>
 </div>
 
 <div class="modal-backdrop" id="policyModal" role="dialog" aria-modal="true">
  <div class="modal">
-  <div class="modal-head"><h2 id="policyTitle">سياسات روافد العراق</h2><button class="close-btn" onclick="closePolicy()" aria-label="إغلاق">×</button></div>
-  <div id="policyContent" style="font-size:13px;color:#48564d;line-height:2"></div>
+  <div class="modal-head"><h2 id="policyTitle">معلومات المنصة</h2>
+   <button class="close-btn" onclick="closePolicy()">×</button></div>
+  <div id="policyContent" class="policy-copy"></div>
  </div>
 </div>
 
-<script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script>
 "use strict";
 
-/* تصنيفات رئيسية وفرعية؛ يمكن توسيعها لاحقًا دون تغيير بنية الصفحة. */
+/* =====================================================
+   روافد العراق — الأقسام والتخصصات
+   لا توجد إعلانات تجريبية أو مواقع إعلانات وهمية.
+===================================================== */
 const CATEGORIES = [
- {id:"fashion",name:"الأزياء والملابس",icon:"👔",desc:"ملابس وأحذية وإكسسوارات",img:"https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&w=800&q=80",subs:["ملابس رجالية","ملابس نسائية","ملابس أطفال","أحذية","حقائب ومحافظ","أقمشة ومنسوجات","ساعات وإكسسوارات","ملابس بالجملة","أزياء ومستلزمات مناسبات"]},
- {id:"home",name:"المنزل والأثاث",icon:"🛋️",desc:"أثاث وأجهزة ومستلزمات البيت",img:"https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=800&q=80",subs:["أثاث غرف النوم","كنب ومجالس","مطابخ وأدوات منزلية","أجهزة كهربائية","ستائر وسجاد","إنارة وديكور","أدوات تنظيف","مستلزمات الفنادق","أثاث مكتبي"]},
- {id:"vehicles",name:"السيارات والمركبات",icon:"🚘",desc:"بيع وتأجير وطلبات المركبات",img:"https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=800&q=80",subs:["سيارات جديدة","سيارات مستعملة","دراجات نارية","شاحنات وحافلات","قوارب ومركبات بحرية","قطع غيار","إطارات وبطاريات","إكسسوارات سيارات","تأجير سيارات","مركبات تجارية","طلب مركبة بمواصفات"]},
- {id:"machinery",name:"الآليات والمعدات الثقيلة",icon:"🏗️",desc:"معدات للبيع أو التأجير",img:"https://images.unsplash.com/photo-1580901368919-7738efb0f87e?auto=format&fit=crop&w=800&q=80",subs:["حفارات","بلدوزرات وجرافات","رافعات وأوناش","مولدات كهرباء","رافعات شوكية","معدات طرق","معدات زراعية","معدات صناعية","معدات للبيع","تأجير بالساعة أو اليوم","طلب معدّة بمواصفات"]},
- {id:"construction",name:"مواد البناء والمقاولات",icon:"🧱",desc:"مواد ومشاريع ومقاولون",img:"https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=800&q=80",subs:["سمنت وحديد تسليح","طابوق ورمل وحصى","سيراميك ومرمر","ألمنيوم وزجاج","أنابيب ومواد صحية","كهربائيات ودهانات","عزل ومواد بناء","شركات مقاولات","تشطيب وإكساء","تصميم هندسي","طلبات عروض أسعار","مناقصات ومشاريع"]},
- {id:"restaurants",name:"المطاعم وتجهيزاتها",icon:"🍽️",desc:"معدات مطابخ ومستلزمات غذائية",img:"https://images.unsplash.com/photo-1556911220-bff31c812dba?auto=format&fit=crop&w=800&q=80",subs:["أفران وقلايات","ثلاجات وفريزرات تجارية","شوايات ومعدات مطاعم","خطوط إنتاج غذائي","طاولات وكراسي","معدات مقاهي","أوانٍ وأدوات تقديم","مواد تغليف","تجهيز مطعم كامل","معدات جديدة ومستعملة","تأجير معدات مطاعم"]},
- {id:"factories",name:"المصانع والمورّدون",icon:"🏭",desc:"تصنيع واستيراد وتوريد",img:"https://images.unsplash.com/photo-1567789884554-0b844b597180?auto=format&fit=crop&w=800&q=80",subs:["مصانع الأغذية","مصانع البلاستيك","مصانع الأثاث","مصانع النسيج والملابس","الصناعات المعدنية","مواد البناء","التغليف والعبوات","المستوردون والوكلاء","موزعون وتجار جملة","تصنيع حسب الطلب","طلب توريد تجاري","معدات وخطوط إنتاج"]},
- {id:"electronics",name:"الهواتف والإلكترونيات",icon:"📱",desc:"أجهزة جديدة ومستعملة",img:"https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=800&q=80",subs:["هواتف ذكية","أجهزة لوحية","حاسبات ولابتوبات","شاشات وتلفزيونات","ألعاب وأجهزة ألعاب","كاميرات","شبكات واتصالات","أجهزة منزلية إلكترونية","إكسسوارات","قطع غيار وصيانة"]},
- {id:"shops",name:"المتاجر والمواد الاستهلاكية",icon:"🛒",desc:"تجهيز متاجر واحتياجات يومية",img:"https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=80",subs:["مواد غذائية","مشروبات","منظفات","عناية شخصية","مستلزمات بقالات","تجهيز سوبرماركت","مخازن جملة","مستلزمات تغليف","توريد دوري للمتاجر","تجهيز محل كامل"]},
- {id:"realestate",name:"العقارات والأراضي",icon:"🏡",desc:"بيع وإيجار واستثمار",img:"https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80",subs:["بيوت سكنية","شقق","أراضٍ سكنية","أراضٍ زراعية","محلات تجارية","مكاتب","مخازن ومستودعات","مطاعم وفنادق","مباني تجارية","ورش ومصانع","عقارات للبيع","إيجار يومي أو شهري أو سنوي","طلب شراء عقار","طلب استئجار","استثمار وشراكة عقارية"]},
- {id:"services",name:"الخدمات المهنية",icon:"🧰",desc:"خدمات منزلية وتجارية",img:"https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=800&q=80",subs:["كهرباء وسباكة","صيانة أجهزة","تنظيف ومكافحة آفات","نقل وشحن","تصميم وهندسة","برمجة وتقنية","تسويق وإعلان","تصوير ومونتاج","ضيافة وتموين","خدمات شركات","خدمات قانونية ومحاسبية"]},
- {id:"jobs",name:"الوظائف والتوظيف",icon:"💼",desc:"فرص عمل وتوظيف",img:"https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=800&q=80",subs:["وظائف بدوام كامل","وظائف بدوام جزئي","عمل يومي","عمل عن بُعد","مطاعم وفنادق","مبيعات وتسويق","هندسة وتقنية","سائقون وتوصيل","عمال وفنيون","تدريب وتطوير","باحثون عن عمل","خدمات إعداد السيرة الذاتية"]},
- {id:"agriculture",name:"الزراعة والثروة الحيوانية",icon:"🌾",desc:"محاصيل ومزارع ومستلزمات",img:"https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80",subs:["مزارع وأراضٍ زراعية","تمور ومحاصيل","خضراوات وفواكه","حبوب وبذور","أسمدة ومبيدات","معدات زراعية","ري ومضخات","دواجن وطيور","مواشٍ وحيوانات","أعلاف","بيوت بلاستيكية","توريد منتجات زراعية"]},
- {id:"baby",name:"الأطفال والأمومة",icon:"🧸",desc:"مستلزمات الأسرة والطفل",img:"https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=800&q=80",subs:["ملابس أطفال","عربات ومقاعد أطفال","ألعاب تعليمية","مستلزمات الرضع","أثاث غرف الأطفال","مستلزمات الأمومة","أدوات مدرسية للأطفال"]},
- {id:"beauty",name:"الصحة والجمال",icon:"✨",desc:"عناية شخصية ومستلزمات",img:"https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=800&q=80",subs:["عناية بالبشرة","العناية بالشعر","عطور وتجميل","صالونات وتجهيزاتها","معدات رياضية منزلية","مستلزمات العناية الشخصية","أجهزة العناية والجمال"]},
- {id:"sports",name:"الرياضة والهوايات",icon:"⚽",desc:"رياضة وترفيه ومقتنيات",img:"https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=800&q=80",subs:["أجهزة لياقة","ملابس رياضية","كرة القدم","دراجات وهوائيات","ألعاب أطفال","موسيقى وآلات","هوايات ومقتنيات","معدات رحلات وتخييم"]},
- {id:"books",name:"الكتب والتعليم",icon:"📚",desc:"كتب وقرطاسية وتدريب",img:"https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=800&q=80",subs:["كتب ورقية","كتب إلكترونية","قرطاسية","مستلزمات المدارس","مستلزمات الجامعات","دورات وتدريب","تعليم لغات","معدات مكتبية"]},
- {id:"travel",name:"السفر والحيوانات والهدايا",icon:"🎁",desc:"احتياجات متنوعة للحياة",img:"https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=800&q=80",subs:["مستلزمات السفر","حقائب سفر","هدايا ومناسبات","حيوانات أليفة ومستلزماتها","معدات هوايات","منتجات يدوية","تحف ومقتنيات","منتجات متنوعة"]}
+ {id:"fashion",name:"الملابس والأزياء",icon:"👔",desc:"ملابس وأحذية وحقائب",
+  img:"https://images.unsplash.com/photo-1445205170230-053b83016050?auto=format&fit=crop&w=700&q=80",
+  subs:["ملابس رجالية","ملابس نسائية","ملابس أطفال","أحذية","حقائب","أقمشة","إكسسوارات","جملة","مفرق"]},
+ {id:"home",name:"المنزل والأثاث",icon:"🛋️",desc:"أثاث وأجهزة وتجهيزات",
+  img:"https://images.unsplash.com/photo-1616486338812-3dadae4b4ace?auto=format&fit=crop&w=700&q=80",
+  subs:["أثاث","غرف نوم","كنب ومجالس","مطابخ","أجهزة منزلية","ستائر وسجاد","أدوات مطبخ","إنارة","جملة","مفرق"]},
+ {id:"vehicles",name:"السيارات والمركبات",icon:"🚘",desc:"بيع وإيجار وقطع غيار",
+  img:"https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=700&q=80",
+  subs:["سيارات","دراجات نارية","شاحنات","حافلات","قوارب","قطع غيار","إكسسوارات","سيارات للإيجار","طلب مركبة"]},
+ {id:"machinery",name:"الآليات والمعدات الثقيلة",icon:"🏗️",desc:"معدات صناعية وإنشائية",
+  img:"https://images.unsplash.com/photo-1580901368919-7738efb0f87e?auto=format&fit=crop&w=700&q=80",
+  subs:["حفارات","بلدوزرات","رافعات","مولدات","معدات زراعية","معدات صناعية","معدات للبيع","تأجير بالساعة","تأجير يومي","تأجير شهري","طلب معدات"]},
+ {id:"construction",name:"مواد البناء",icon:"🧱",desc:"مواد وتجهيزات المشاريع",
+  img:"https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=700&q=80",
+  subs:["سمنت","حديد تسليح","طابوق","رمل وحصى","سيراميك","مرمر","ألمنيوم وزجاج","أنابيب","دهانات","مواد كهربائية","مواد صحية","توريد مشاريع"]},
+ {id:"contractors",name:"المقاولات والإنشاءات",icon:"🏢",desc:"شركات ومقاولون ومشاريع",
+  img:"https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=700&q=80",
+  subs:["مقاولات عامة","بناء متكامل","تشطيبات","كهرباء وميكانيك","تصميم هندسي","صيانة","حفر وتسوية","عمال وفنيون","مناقصات","طلب عرض سعر"]},
+ {id:"restaurants",name:"المطاعم وتجهيزاتها",icon:"🍽️",desc:"معدات المطابخ والمقاهي",
+  img:"https://images.unsplash.com/photo-1556911220-e15b29be8c8f?auto=format&fit=crop&w=700&q=80",
+  subs:["أفران","قلايات وشوايات","ثلاجات تجارية","معدات مطابخ","معدات مقاهي","أوانٍ وأدوات تقديم","مواد تغليف","تجهيز مطعم كامل","معدات جديدة ومستعملة","تأجير معدات"]},
+ {id:"factories",name:"المصانع والمورّدون",icon:"🏭",desc:"تصنيع واستيراد وتوريد",
+  img:"https://images.unsplash.com/photo-1567789884554-0b844b597180?auto=format&fit=crop&w=700&q=80",
+  subs:["مصانع الأغذية","مصانع البلاستيك","مصانع الأثاث","مصانع النسيج","الصناعات المعدنية","مصانع مواد البناء","التغليف والعبوات","المستوردون والوكلاء","موزعون وتجار جملة","تصنيع حسب الطلب","طلب توريد","خطوط إنتاج"]},
+ {id:"electronics",name:"الهواتف والإلكترونيات",icon:"📱",desc:"أجهزة وإكسسوارات",
+  img:"https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=700&q=80",
+  subs:["هواتف ذكية","أجهزة لوحية","حاسبات ولابتوبات","شاشات وتلفزيونات","ألعاب إلكترونية","كاميرات","شبكات واتصالات","أجهزة منزلية","إكسسوارات","قطع غيار وصيانة"]},
+ {id:"shops",name:"المتاجر والمواد الاستهلاكية",icon:"🛒",desc:"مواد غذائية وتجهيز متاجر",
+  img:"https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=700&q=80",
+  subs:["مواد غذائية","مشروبات","منظفات","عناية شخصية","مستلزمات بقالات","تجهيز سوبرماركت","مخازن جملة","تغليف","توريد دوري","تجهيز محل كامل"]},
+ {id:"realestate",name:"العقارات والأراضي",icon:"🏡",desc:"بيع وإيجار واستثمار",
+  img:"https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=700&q=80",
+  subs:["بيوت سكنية","شقق","أراضٍ سكنية","أراضٍ زراعية","محلات تجارية","مكاتب","مخازن ومستودعات","مطاعم وفنادق","مبانٍ تجارية","ورش ومصانع","عقار للبيع","إيجار يومي أو شهري أو سنوي","طلب شراء عقار","طلب استئجار","استثمار وشراكة"]},
+ {id:"services",name:"الخدمات المهنية",icon:"🧰",desc:"خدمات منزلية وتجارية",
+  img:"https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=700&q=80",
+  subs:["كهرباء وسباكة","صيانة أجهزة","تنظيف","نقل وشحن","تصميم وهندسة","برمجة وتقنية","تسويق وإعلان","تصوير ومونتاج","ضيافة وتموين","خدمات شركات","محاسبة واستشارات"]},
+ {id:"jobs",name:"الوظائف والتوظيف",icon:"💼",desc:"فرص عمل ومهارات",
+  img:"https://images.unsplash.com/photo-1521737711867-e3b97375f902?auto=format&fit=crop&w=700&q=80",
+  subs:["دوام كامل","دوام جزئي","عمل يومي","عمل عن بعد","مطاعم وفنادق","مبيعات وتسويق","هندسة وتقنية","سائقون وتوصيل","عمال وفنيون","تدريب","باحثون عن عمل","سيرة ذاتية"]},
+ {id:"agriculture",name:"الزراعة والثروة الحيوانية",icon:"🌾",desc:"محاصيل ومزارع ومستلزمات",
+  img:"https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=700&q=80",
+  subs:["مزارع وأراضٍ زراعية","تمور ومحاصيل","خضراوات وفواكه","حبوب وبذور","أسمدة","معدات زراعية","ري ومضخات","دواجن","مواشٍ","أعلاف","بيوت بلاستيكية","توريد منتجات زراعية"]},
+ {id:"baby",name:"الأطفال والأمومة",icon:"🧸",desc:"مستلزمات الأسرة والطفل",
+  img:"https://images.unsplash.com/photo-1519689680058-324335c77eba?auto=format&fit=crop&w=700&q=80",
+  subs:["ملابس أطفال","عربات ومقاعد","ألعاب تعليمية","مستلزمات الرضع","أثاث أطفال","مستلزمات الأمومة","أدوات مدرسية"]},
+ {id:"beauty",name:"الصحة والجمال",icon:"✨",desc:"عناية شخصية ومستلزمات",
+  img:"https://images.unsplash.com/photo-1608248543803-ba4f8c70ae0b?auto=format&fit=crop&w=700&q=80",
+  subs:["العناية بالبشرة","العناية بالشعر","عطور وتجميل","صالونات وتجهيزاتها","معدات رياضية منزلية","عناية شخصية","أجهزة الجمال"]},
+ {id:"sports",name:"الرياضة والهوايات",icon:"⚽",desc:"رياضة وترفيه ومقتنيات",
+  img:"https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=700&q=80",
+  subs:["أجهزة لياقة","ملابس رياضية","كرة القدم","دراجات","ألعاب","آلات موسيقية","هوايات ومقتنيات","رحلات وتخييم"]},
+ {id:"books",name:"الكتب والتعليم",icon:"📚",desc:"كتب وقرطاسية وتدريب",
+  img:"https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&w=700&q=80",
+  subs:["كتب ورقية","كتب إلكترونية","قرطاسية","مستلزمات المدارس","مستلزمات الجامعات","دورات وتدريب","تعليم لغات","معدات مكتبية"]},
+ {id:"travel",name:"السفر والهدايا والحيوانات",icon:"🎁",desc:"مستلزمات واحتياجات متنوعة",
+  img:"https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=700&q=80",
+  subs:["مستلزمات السفر","حقائب سفر","هدايا ومناسبات","حيوانات أليفة ومستلزماتها","منتجات يدوية","تحف ومقتنيات","منتجات متنوعة"]}
 ];
 
 const GOVERNORATES = [
  "بغداد","البصرة","نينوى","أربيل","النجف","كربلاء","الأنبار","ديالى",
- "كركوك","السليمانية","دهوك","ذي قار","بابل","واسط","ميسان","المثنى","القادسية","صلاح الدين"
+ "كركوك","السليمانية","دهوك","ذي قار","بابل","واسط","ميسان","المثنى",
+ "القادسية","صلاح الدين"
 ];
+
+/* مراكز تقريبية للمحافظات لا تمثل موقع أي إعلان بعينه. */
+const GOV_COORDS = {
+ "بغداد":[33.3152,44.3661],"البصرة":[30.5085,47.7804],
+ "نينوى":[36.34,43.13],"أربيل":[36.19,44.01],
+ "النجف":[32.00,44.33],"كربلاء":[32.61,44.02],
+ "الأنبار":[33.42,43.30],"ديالى":[33.75,44.64],
+ "كركوك":[35.47,44.39],"السليمانية":[35.56,45.44],
+ "دهوك":[36.87,42.95],"ذي قار":[31.05,46.26],
+ "بابل":[32.48,44.43],"واسط":[32.50,45.82],
+ "ميسان":[31.84,47.14],"المثنى":[29.99,45.05],
+ "القادسية":[31.99,44.92],"صلاح الدين":[34.61,43.68]
+};
 
 const $ = id => document.getElementById(id);
 const categoryById = id => CATEGORIES.find(c => c.id === id);
 let selectedCategory = "";
-let realListings = []; // تُملأ لاحقًا من API موثوق، لا توجد إعلانات تجريبية افتراضية.
+let selectedSubcategory = "";
+let realListings = []; // بيانات حقيقية فقط بعد ربط API.
+let adMap, marketMap, adMarker;
+let adMapReady = false;
 
-function escapeHTML(value){
- return String(value ?? "").replace(/[&<>"']/g, c => ({
+function esc(value){
+ return String(value ?? "").replace(/[&<>"']/g, ch => ({
   "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
- }[c]));
+ }[ch]));
 }
-function fillSelect(id,items,firstLabel){
- const el=$(id); if(!el)return;
- el.innerHTML=`<option value="">${escapeHTML(firstLabel)}</option>`+
-  items.map(x=>`<option value="${escapeHTML(x.value ?? x)}">${escapeHTML(x.label ?? x)}</option>`).join("");
+
+function fillSelect(id, items, firstLabel){
+ const el = $(id);
+ if(!el) return;
+ el.innerHTML = `<option value="">${esc(firstLabel)}</option>` +
+  items.map(item => {
+   const value = typeof item === "string" ? item : item.value;
+   const label = typeof item === "string" ? item : item.label;
+   return `<option value="${esc(value)}">${esc(label)}</option>`;
+  }).join("");
 }
-function categoryOptions(){
- return CATEGORIES.map(c=>({value:c.id,label:c.name}));
-}
+
 function initCategories(){
- $("categoryGrid").innerHTML=CATEGORIES.map(c=>`
-  <article class="category-card" role="button" tabindex="0" data-cat="${c.id}" aria-label="تصفح ${escapeHTML(c.name)}">
-   <img src="${c.img}" alt="${escapeHTML(c.name)}" loading="lazy">
-   <div class="cat-content"><span class="cat-icon">${c.icon}</span><h3>${escapeHTML(c.name)}</h3><p>${escapeHTML(c.desc)}</p></div>
-   <span class="cat-arrow">←</span>
+ $("categoryGrid").innerHTML = CATEGORIES.map(c => `
+  <article class="category-card" tabindex="0" role="button"
+   data-category="${c.id}" aria-label="عرض ${esc(c.name)}">
+   <img src="${c.img}" alt="${esc(c.name)}" loading="lazy">
+   <div class="cat-content">
+    <span class="cat-icon">${c.icon}</span>
+    <h3>${esc(c.name)}</h3><p>${esc(c.desc)}</p>
+   </div>
   </article>`).join("");
 
- $("categoryChips").innerHTML=CATEGORIES.map(c=>`
-  <button type="button" class="chip" data-chip="${c.id}">${c.icon} ${escapeHTML(c.name)}</button>`).join("");
+ const options = CATEGORIES.map(c => ({value:c.id,label:c.name}));
+ ["mainCategory","listingCategory","adCategory"].forEach(id =>
+  fillSelect(id, options, id === "mainCategory" ? "كل الأقسام" :
+   id === "listingCategory" ? "جميع الأقسام" : "اختر القسم"));
+ fillSelect("listingGovernorate", GOVERNORATES, "كل المحافظات");
+ fillSelect("adGovernorate", GOVERNORATES, "اختر المحافظة");
 
- fillSelect("mainCategory",categoryOptions(),"كل الأقسام");
- fillSelect("listingCategory",categoryOptions(),"جميع الأقسام");
- fillSelect("adCategory",categoryOptions(),"اختر القسم");
- fillSelect("listingGovernorate",GOVERNORATES,"كل المحافظات");
- fillSelect("adGovernorate",GOVERNORATES,"اختر المحافظة");
-
- $("categoryGrid").addEventListener("click",e=>{
-  const card=e.target.closest("[data-cat]");if(card)selectCategory(card.dataset.cat,true);
+ $("categoryGrid").addEventListener("click", e => {
+  const card = e.target.closest("[data-category]");
+  if(card) selectCategory(card.dataset.category);
  });
- $("categoryGrid").addEventListener("keydown",e=>{
-  if((e.key==="Enter"||e.key===" ")&&e.target.matches("[data-cat]")){
-   e.preventDefault();selectCategory(e.target.dataset.cat,true);
+ $("categoryGrid").addEventListener("keydown", e => {
+  if((e.key === "Enter" || e.key === " ") &&
+     e.target.matches("[data-category]")){
+   e.preventDefault();
+   selectCategory(e.target.dataset.category);
   }
  });
- $("categoryChips").addEventListener("click",e=>{
-  const chip=e.target.closest("[data-chip]");if(chip)selectCategory(chip.dataset.chip,false);
+
+ $("categoryChips").addEventListener("click", e => {
+  const chip = e.target.closest("[data-subcategory]");
+  if(!chip) return;
+  selectedSubcategory = chip.dataset.subcategory;
+  $("categoryChips").querySelectorAll(".chip").forEach(el =>
+   el.classList.toggle("active", el === chip));
+  renderCategoryFilters();
  });
- $("adCategory").addEventListener("change",()=>updateSubcategories("adSubcategory",$("adCategory").value));
- $("mainCategory").addEventListener("change",()=>{});
- $("listingCategory").addEventListener("change",renderListings);
- $("listingGovernorate").addEventListener("change",renderListings);
- $("listingType").addEventListener("change",renderListings);
- $("clearFilters").addEventListener("click",()=>{
-  $("listingCategory").value="";$("listingGovernorate").value="";$("listingType").value="";
-  $("mainSearch").value="";$("mainCategory").value="";renderListings();
+
+ $("adCategory").addEventListener("change", () => {
+  updateAdSubcategories();
+  renderSpecificFields();
  });
- $("searchForm").addEventListener("submit",e=>{
+ $("listingCategory").addEventListener("change", renderListings);
+ $("listingGovernorate").addEventListener("change", renderListings);
+ $("listingType").addEventListener("change", renderListings);
+
+ $("clearFilters").addEventListener("click", () => {
+  $("listingCategory").value = "";
+  $("listingGovernorate").value = "";
+  $("listingType").value = "";
+  $("mainCategory").value = "";
+  $("mainSearch").value = "";
+  selectedCategory = "";
+  selectedSubcategory = "";
+  renderListings();
+ });
+
+ $("mainCategory").addEventListener("change", () => {
+  const id = $("mainCategory").value;
+  if(id) selectCategory(id);
+ });
+
+ $("searchForm").addEventListener("submit", e => {
   e.preventDefault();
-  $("listingCategory").value=$("mainCategory").value;
+  $("listingCategory").value = $("mainCategory").value;
   renderListings($("mainSearch").value);
   $("listings").scrollIntoView({behavior:"smooth"});
  });
- $("publishForm").addEventListener("submit",handlePublish);
- updateSubcategories("adSubcategory","");
- renderSubcategories("");
-}
-function selectCategory(id,goListings){
- selectedCategory=id;
- const c=categoryById(id);if(!c)return;
- $("mainCategory").value=id;$("listingCategory").value=id;
- document.querySelectorAll("[data-chip]").forEach(ch=>ch.classList.toggle("active",ch.dataset.chip===id));
- $("subcategoryContent").innerHTML=`
-  <strong style="font-size:13px;color:var(--green)">${escapeHTML(c.name)}:</strong>
-  <div class="chip-list" style="margin-top:10px">${c.subs.map(s=>`
-   <button class="chip" type="button" data-sub="${escapeHTML(s)}" data-parent="${id}">${escapeHTML(s)}</button>`).join("")}</div>`;
- $("subcategoryContent").querySelectorAll("[data-sub]").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-   $("mainSearch").value=btn.dataset.sub;
-   $("mainCategory").value=id;$("listingCategory").value=id;
-   renderListings(btn.dataset.sub);$("listings").scrollIntoView({behavior:"smooth"});
-  });
+
+ $("publishForm").addEventListener("submit", handlePublish);
+ $("adGovernorate").addEventListener("change", centerMapOnGovernorate);
+ $("adMapPromo").addEventListener("change", () => {
+  if($("adMapPromo").checked && !hasPin()){
+   showResult("حدد موقع الإعلان على الخريطة أولًا قبل طلب التثبيت.", true);
+  }
  });
- if(goListings){renderListings();$("listings").scrollIntoView({behavior:"smooth"});}
+
+ updateAdSubcategories();
+ renderListings();
 }
-function renderSubcategories(id){
- const c=categoryById(id);
- $("subcategoryContent").innerHTML=c
-  ?`<div class="chip-list">${c.subs.map(s=>`<span class="chip">${escapeHTML(s)}</span>`).join("")}</div>`
-  :"اختر أحد الأقسام أعلاه لعرض تخصصاته الفرعية.";
+
+function selectCategory(id){
+ const c = categoryById(id);
+ if(!c) return;
+ selectedCategory = id;
+ selectedSubcategory = "";
+ $("mainCategory").value = id;
+ $("listingCategory").value = id;
+ $("selectedCategoryTitle").textContent = c.icon + " " + c.name;
+ $("selectedCategoryDesc").textContent = c.desc +
+  " — اختر تخصصًا لعرض الإعلانات المطابقة أو لإظهار خيارات القسم.";
+
+ $("categoryChips").innerHTML = c.subs.map(s =>
+  `<button type="button" class="chip" data-subcategory="${esc(s)}">${esc(s)}</button>`
+ ).join("");
+
+ $("categoryGrid").querySelectorAll("[data-category]").forEach(card => {
+  card.style.borderColor = card.dataset.category === id ? "var(--gold)" : "transparent";
+ });
+
+ renderCategoryFilters();
+ $("categoryDetail").scrollIntoView({behavior:"smooth",block:"nearest"});
 }
-function updateSubcategories(selectId,categoryId){
- const el=$(selectId),c=categoryById(categoryId);
- el.innerHTML='<option value="">اختر التخصص الفرعي</option>'+
-  (c?c.subs:[]).map(s=>`<option value="${escapeHTML(s)}">${escapeHTML(s)}</option>`).join("");
+
+function renderCategoryFilters(){
+ const c = categoryById(selectedCategory);
+ if(!c) return;
+ const sub = selectedSubcategory;
+ const fields = [];
+
+ fields.push(`
+  <div class="field"><label for="catSubFilter">التخصص الفرعي</label>
+   <select id="catSubFilter">
+    <option value="">كل تخصصات القسم</option>
+    ${c.subs.map(s => `<option ${s===sub?"selected":""} value="${esc(s)}">${esc(s)}</option>`).join("")}
+   </select>
+  </div>`);
+
+ if(selectedCategory === "vehicles"){
+  fields.push(`<div class="field"><label for="catBrand">ماركة المركبة</label>
+   <input id="catBrand" placeholder="مثال: تويوتا"></div>
+   <div class="field"><label for="catYear">سنة الصنع</label>
+   <input id="catYear" type="number" min="1900" max="2100" placeholder="سنة الصنع"></div>
+   <div class="field"><label for="catFuel">نوع الوقود</label><select id="catFuel">
+   <option value="">الكل</option><option>بنزين</option><option>ديزل</option><option>كهرباء</option><option>هجين</option><option>غاز</option></select></div>`);
+ }else if(selectedCategory === "realestate"){
+  fields.push(`<div class="field"><label for="catPropertyType">نوع العقار</label>
+   <select id="catPropertyType"><option value="">كل الأنواع</option>
+   <option>بيت</option><option>شقة</option><option>أرض</option><option>محل</option>
+   <option>مكتب</option><option>مخزن</option><option>مصنع</option><option>مطعم</option></select></div>
+   <div class="field"><label for="catArea">المساحة بالمتر المربع</label>
+   <input id="catArea" type="number" min="0" placeholder="المساحة"></div>`);
+ }else if(selectedCategory === "machinery"){
+  fields.push(`<div class="field"><label for="catRental">طريقة الاستخدام</label>
+   <select id="catRental"><option value="">الكل</option><option>شراء</option>
+   <option>تأجير بالساعة</option><option>تأجير يومي</option><option>تأجير شهري</option></select></div>
+   <div class="field"><label for="catCapacity">القدرة أو السعة</label>
+   <input id="catCapacity" placeholder="مثال: 100 KVA أو 20 طن"></div>`);
+ }else if(selectedCategory === "factories"){
+  fields.push(`<div class="field"><label for="catSupplierType">نوع النشاط</label>
+   <select id="catSupplierType"><option value="">الكل</option><option>مصنّع</option>
+   <option>مستورد</option><option>وكيل</option><option>موزع</option>
+   <option>تاجر جملة</option></select></div>
+   <div class="field"><label for="catSupply">الحد الأدنى للطلب</label>
+   <input id="catSupply" placeholder="الكمية أو حجم التوريد"></div>`);
+ }else if(selectedCategory === "construction"){
+  fields.push(`<div class="field"><label for="catQuantity">الكمية المطلوبة</label>
+   <input id="catQuantity" placeholder="مثال: 20 طن"></div>
+   <div class="field"><label for="catWholesale">التوريد</label>
+   <select id="catWholesale"><option value="">الكل</option><option>جملة</option>
+   <option>مفرق</option><option>توريد مشروع</option></select></div>`);
+ }
+
+ $("categoryFilters").innerHTML = fields.join("");
 }
-function renderListings(query=""){
- const cat=$("listingCategory").value;
- const gov=$("listingGovernorate").value;
- const type=$("listingType").value;
- const q=String(query||"").trim().toLowerCase();
- const filtered=realListings.filter(ad=>
-  (!cat||ad.category===cat)&&(!gov||ad.governorate===gov)&&(!type||ad.type===type)&&
-  (!q||[ad.title,ad.description,ad.subcategory,ad.governorate,ad.area].join(" ").toLowerCase().includes(q))
- );
- if(!filtered.length){
-  $("listingsGrid").innerHTML=`<div class="empty-state"><div class="empty-icon">⌕</div>
-   <h3>${q||cat||gov||type?"لا توجد إعلانات مطابقة":"بانتظار ربط إعلانات السوق"}</h3>
-   <p>${realListings.length?"جرّب تعديل كلمات البحث أو تغيير الفلاتر.":"ستُعرض هنا الإعلانات الحقيقية بعد ربط الخادم. هذه الواجهة لا تنشئ أسعارًا أو إعلانات وهمية."}</p>
-   <button class="btn btn-primary" onclick="openPublish()">أضف إعلانًا جديدًا</button></div>`;
+
+function applyCategoryFilters(){
+ if(!selectedCategory) return;
+ $("listingCategory").value = selectedCategory;
+ const sub = $("catSubFilter")?.value || "";
+ selectedSubcategory = sub;
+ renderListings($("mainSearch").value);
+ $("listings").scrollIntoView({behavior:"smooth"});
+}
+
+function updateAdSubcategories(){
+ const c = categoryById($("adCategory").value);
+ $("adSubcategory").innerHTML = '<option value="">اختر التخصص الفرعي</option>' +
+  (c ? c.subs : []).map(s => `<option value="${esc(s)}">${esc(s)}</option>`).join("");
+ renderSpecificFields();
+}
+
+function renderSpecificFields(){
+ const id = $("adCategory").value;
+ const host = $("specificFieldsInner");
+ const box = $("specificFields");
+ let html = "";
+
+ const field = (label,id,type="text",placeholder="") =>
+  `<div class="field"><label for="${id}">${label}</label>
+   <input id="${id}" type="${type}" placeholder="${placeholder}" maxlength="120"></div>`;
+
+ if(id === "vehicles"){
+  html = field("ماركة المركبة","specBrand") +
+   field("الموديل","specModel") +
+   field("سنة الصنع","specYear","number","مثال: 2022") +
+   field("المسافة المقطوعة (كم)","specMileage","number") +
+   `<div class="field"><label for="specFuel">نوع الوقود</label><select id="specFuel">
+    <option value="">غير محدد</option><option>بنزين</option><option>ديزل</option>
+    <option>كهرباء</option><option>هجين</option></select></div>`;
+ }else if(id === "realestate"){
+  html = `<div class="field"><label for="specProperty">نوع العقار</label><select id="specProperty">
+   <option value="">اختر النوع</option><option>بيت</option><option>شقة</option>
+   <option>أرض سكنية</option><option>أرض زراعية</option><option>محل</option>
+   <option>مكتب</option><option>مخزن</option><option>مصنع</option><option>مطعم</option></select></div>` +
+   field("المساحة (م²)","specArea","number") +
+   field("عدد الغرف","specRooms","number") +
+   `<div class="field"><label for="specTitleDeed">نوع سند الملكية (اختياري)</label><select id="specTitleDeed">
+    <option value="">غير محدد</option><option>طابو</option><option>عقد</option>
+    <option>نوع آخر</option></select></div>`;
+ }else if(id === "machinery"){
+  html = field("الشركة المصنعة","specMaker") +
+   field("الموديل","specModel") +
+   field("القدرة أو السعة","specCapacity") +
+   `<div class="field"><label for="specRental">طريقة العرض</label><select id="specRental">
+    <option value="">اختر</option><option>بيع</option><option>تأجير بالساعة</option>
+    <option>تأجير يومي</option><option>تأجير شهري</option><option>طلب معدات</option></select></div>`;
+ }else if(id === "factories"){
+  html = `<div class="field"><label for="specBusinessType">نوع النشاط التجاري</label><select id="specBusinessType">
+   <option value="">اختر</option><option>مصنّع</option><option>مصنع</option>
+   <option>مستورد</option><option>وكيل</option><option>موزع</option><option>تاجر جملة</option></select></div>` +
+   field("المنتج أو المجال الصناعي","specIndustry") +
+   field("الحد الأدنى للطلب","specMOQ") +
+   field("القدرة الإنتاجية","specCapacity");
+ }else if(id === "construction"){
+  html = field("نوع مادة البناء","specMaterial") +
+   field("الكمية المتاحة أو المطلوبة","specQuantity") +
+   field("بلد المنشأ","specOrigin");
+ }else if(id === "jobs"){
+  html = field("المسمى الوظيفي","specJobTitle") +
+   field("الراتب (اختياري)","specSalary") +
+   `<div class="field"><label for="specWorkType">نوع الدوام</label><select id="specWorkType">
+   <option value="">غير محدد</option><option>كامل</option><option>جزئي</option>
+   <option>يومي</option><option>عن بُعد</option></select></div>`;
+ }else if(id === "agriculture"){
+  html = field("نوع المحصول أو المنتج","specCrop") +
+   field("الكمية","specQuantity") +
+   field("موسم الإنتاج","specSeason");
+ }else if(id === "restaurants"){
+  html = field("نوع المعدات","specEquipment") +
+   field("الشركة المصنعة","specMaker") +
+   `<div class="field"><label for="specEquipmentCondition">حالة المعدات</label><select id="specEquipmentCondition">
+   <option value="">غير محدد</option><option>جديدة</option><option>مستعملة</option></select></div>`;
+ }else if(id === "contractors"){
+  html = field("نوع المشروع","specProject") +
+   field("المساحة أو حجم المشروع","specProjectSize") +
+   field("مدة التنفيذ المقدرة","specDuration");
+ }
+
+ host.innerHTML = html;
+ box.classList.toggle("show", !!html);
+}
+
+function initMaps(){
+ if(typeof L === "undefined"){
+  $("marketMap").innerHTML = "تعذّر تحميل الخريطة. تحقق من اتصال الإنترنت.";
+  $("adMap").innerHTML = "تعذّر تحميل الخريطة.";
   return;
  }
- $("listingsGrid").innerHTML=filtered.map(ad=>`
+
+ marketMap = L.map("marketMap").setView([33.1,44.3],6);
+ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+  maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+ }).addTo(marketMap);
+
+ adMap = L.map("adMap").setView([33.1,44.3],6);
+ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",{
+  maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+ }).addTo(adMap);
+
+ adMap.on("click", e => setAdPin(e.latlng.lat,e.latlng.lng));
+
+ $("locateMe").addEventListener("click", () => {
+  if(!navigator.geolocation){
+   showResult("المتصفح لا يدعم تحديد الموقع. اضغط على الخريطة لتحديده يدويًا.",true);
+   return;
+  }
+  navigator.geolocation.getCurrentPosition(
+   pos => {
+    const lat = pos.coords.latitude, lng = pos.coords.longitude;
+    adMap.setView([lat,lng],15);
+    setAdPin(lat,lng);
+   },
+   () => showResult("تعذر تحديد موقعك. يمكنك تحديد الموقع بالضغط على الخريطة.",true),
+   {enableHighAccuracy:true,timeout:10000,maximumAge:60000}
+  );
+ });
+
+ adMapReady = true;
+ setTimeout(() => {marketMap.invalidateSize();adMap.invalidateSize();},300);
+}
+
+function setAdPin(lat,lng){
+ if(!Number.isFinite(lat)||!Number.isFinite(lng)) return;
+ $("adLatitude").value = lat.toFixed(6);
+ $("adLongitude").value = lng.toFixed(6);
+ if(adMarker) adMarker.setLatLng([lat,lng]);
+ else{
+  adMarker = L.marker([lat,lng],{draggable:true}).addTo(adMap);
+  adMarker.on("dragend", e => {
+   const p = e.target.getLatLng();
+   $("adLatitude").value = p.lat.toFixed(6);
+   $("adLongitude").value = p.lng.toFixed(6);
+  });
+ }
+}
+
+function centerMapOnGovernorate(){
+ const coords = GOV_COORDS[$("adGovernorate").value];
+ if(coords && adMapReady) adMap.setView(coords,10);
+}
+
+function hasPin(){
+ const lat = Number($("adLatitude").value);
+ const lng = Number($("adLongitude").value);
+ return $("adLatitude").value !== "" && $("adLongitude").value !== "" &&
+  Number.isFinite(lat) && Number.isFinite(lng) &&
+  lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+}
+
+function renderListings(query=""){
+ const cat = $("listingCategory").value;
+ const gov = $("listingGovernorate").value;
+ const type = $("listingType").value;
+ const q = String(query || "").trim().toLowerCase();
+ const sub = selectedCategory === cat ? selectedSubcategory : "";
+
+ const filtered = realListings.filter(ad =>
+  (!cat || ad.category === cat) &&
+  (!gov || ad.governorate === gov) &&
+  (!type || ad.type === type) &&
+  (!sub || ad.subcategory === sub) &&
+  (!q || [ad.title,ad.description,ad.subcategory,ad.governorate,ad.area]
+   .join(" ").toLowerCase().includes(q))
+ );
+
+ if(!filtered.length){
+  $("listingsGrid").innerHTML = `
+   <div class="empty-state">
+    <div style="font-size:30px">⌕</div>
+    <h3>${q||cat||gov||type ? "لا توجد إعلانات مطابقة" : "لا توجد إعلانات منشورة حاليًا"}</h3>
+    <p>لن نعرض إعلانات أو أسعارًا وهمية. يلزم ربط قاعدة البيانات وواجهة API لعرض الإعلانات الحقيقية.</p>
+    <button class="btn btn-primary" onclick="openPublish()">أضف إعلانًا جديدًا</button>
+   </div>`;
+  return;
+ }
+
+ $("listingsGrid").innerHTML = filtered.map(ad => `
   <article class="listing-card">
-   <div class="listing-photo">${ad.image?`<img src="${escapeHTML(ad.image)}" alt="${escapeHTML(ad.title)}" loading="lazy">`:"⌂"}
-    <span class="listing-tag">${escapeHTML(ad.type||"إعلان")}</span></div>
-   <div class="listing-body"><h3>${escapeHTML(ad.title)}</h3>
-    <div class="listing-price">${ad.price?Number(ad.price).toLocaleString("en-US")+" د.ع":"السعر عند الطلب"}</div>
-    <div class="listing-meta"><span>⌖ ${escapeHTML([ad.governorate,ad.area].filter(Boolean).join("، ")||"الموقع غير محدد")}</span><span>${escapeHTML(ad.subcategory||categoryById(ad.category)?.name||"")}</span></div>
-    <div class="listing-bottom"><span style="font-size:11px;color:var(--muted)">${escapeHTML(ad.name||"معلن")}</span>
-    ${ad.phone?`<a class="btn btn-outline btn-small" href="tel:${encodeURIComponent(ad.phone)}">اتصل بالمعلن</a>`:""}</div>
+   <div class="listing-photo">
+    ${ad.image ? `<img src="${esc(ad.image)}" alt="${esc(ad.title)}" loading="lazy">` : "⌂"}
+   </div>
+   <div class="listing-body">
+    <h3>${esc(ad.title)}</h3>
+    <div class="listing-price">${ad.price ? Number(ad.price).toLocaleString("en-US")+" د.ع" : "السعر عند الطلب"}</div>
+    <div class="listing-meta">${esc([ad.governorate,ad.area].filter(Boolean).join("، "))}</div>
+    <div class="listing-meta">${esc(ad.subcategory || categoryById(ad.category)?.name || "")}</div>
+    <div class="listing-bottom">
+     <span style="font-size:10px;color:var(--muted)">${esc(ad.name || "المعلن")}</span>
+     ${ad.phone ? `<a class="btn btn-outline btn-small" href="tel:${esc(ad.phone)}">اتصال</a>` : ""}
+    </div>
    </div>
   </article>`).join("");
 }
 
-/* نموذج تجهيز محلي فقط؛ لا يوحي بأن الإعلان نُشر بالفعل. */
 function openPublish(categoryId=""){
  $("publishModal").classList.add("open");
  $("formResult").classList.remove("show");
- $("formResult").textContent="";
- if(categoryId==="request"){$("adType").value="طلب";}
- if(categoryId==="factories"||categoryId==="construction"||categoryId==="realestate"||categoryId==="vehicles"){
-  $("adCategory").value=categoryId;updateSubcategories("adSubcategory",categoryId);
+ $("formResult").textContent = "";
+
+ if(categoryById(categoryId)){
+  $("adCategory").value = categoryId;
+  updateAdSubcategories();
  }
+ if(adMapReady) setTimeout(() => adMap.invalidateSize(),250);
 }
-function closePublish(){$("publishModal").classList.remove("open");}
+
+function closePublish(){
+ $("publishModal").classList.remove("open");
+}
+
+function showResult(message,isError=false){
+ const result = $("formResult");
+ result.textContent = message;
+ result.style.background = isError ? "#fff0ee" : "#eef5ed";
+ result.style.color = isError ? "#8b3027" : "#20533c";
+ result.classList.add("show");
+}
+
 function handlePublish(e){
  e.preventDefault();
- const title=$("adTitle").value.trim();
- const category=$("adCategory").value;
- const subcategory=$("adSubcategory").value;
- const governorate=$("adGovernorate").value;
- const name=$("adName").value.trim();
- const phone=$("adPhone").value.trim();
- const description=$("adDescription").value.trim();
- const result=$("formResult");
- if(!title||!category||!subcategory||!governorate||!name||!phone||!description){
-  result.textContent="يرجى إكمال الحقول الإلزامية قبل المتابعة.";result.classList.add("show");return;
+
+ const title = $("adTitle").value.trim();
+ const category = $("adCategory").value;
+ const subcategory = $("adSubcategory").value;
+ const governorate = $("adGovernorate").value;
+ const phone = $("adPhone").value.trim();
+ const description = $("adDescription").value.trim();
+ const wantsPin = $("adMapPromo").checked;
+
+ if(!title || !category || !subcategory || !governorate || !phone || !description){
+  showResult("يرجى إكمال الحقول الإلزامية. اسم المؤسسة أو الشركة اختياري.",true);
+  return;
  }
- const draft={
-  title,category,subcategory,type:$("adType").value,
-  price:$("adPrice").value||"",governorate,area:$("adArea").value.trim(),
-  condition:$("adCondition").value,name,phone,description
+
+ if(wantsPin && !hasPin()){
+  showResult("لإرسال طلب التثبيت، حدد موقع الإعلان على الخريطة أولًا.",true);
+  return;
+ }
+
+ const specs = {};
+ $("specificFieldsInner").querySelectorAll("input,select,textarea").forEach(el => {
+  if(el.value.trim()) specs[el.id] = el.value.trim();
+ });
+
+ const draft = {
+  title,
+  category,
+  subcategory,
+  type:$("adType").value,
+  condition:$("adCondition").value,
+  price:$("adPrice").value || "",
+  governorate,
+  area:$("adArea").value.trim(),
+  phone,
+  organizationName:$("adName").value.trim() || "",
+  description,
+  latitude:hasPin() ? Number($("adLatitude").value) : null,
+  longitude:hasPin() ? Number($("adLongitude").value) : null,
+  requestMapPin:wantsPin,
+  mapPinPriceIQD:wantsPin ? 2000 : 0,
+  mapPinPeriodMonths:wantsPin ? 1 : 0,
+  categorySpecifications:specs,
+  status:"draft_pending_backend",
+  createdAt:new Date().toISOString()
  };
- result.textContent="تم التحقق من الحقول وتجهيز بيانات الإعلان داخل هذه الصفحة فقط. لم يُنشر الإعلان ولم يُرسل إلى الإدارة؛ يلزم ربط API آمن، وتخزين الصور، ونظام مراجعة الإعلانات أولًا.";
- result.classList.add("show");
- console.info("Rawafid listing draft (local only):",draft);
+
+ /*
+  * مهم:
+  * هذا الكود يجهز البيانات داخل المتصفح فقط.
+  * لا يدّعي أنه أرسل الإعلان إلى الخادم أو إلى البريد.
+  * لا يُفعّل التثبيت ولا يؤكد دفع زين كاش.
+  * عند ربط API، يجب التحقق من البيانات والدفع وموافقة
+  * الإدارة على الخادم، لا بالاعتماد على المتصفح.
+  */
+ console.info("Rawafid listing draft — local only:",draft);
+
+ const msg = wantsPin
+  ? "تم التحقق من البيانات وتجهيز مسودة الإعلان وطلب تثبيت بسعر 2,000 د.ع لشهر. لم يُنشر الإعلان ولم يُفعّل التثبيت ولم يُسجّل دفع. يلزم ربط الخادم والتحقق من الدفع وموافقة الإدارة."
+  : "تم التحقق من البيانات وتجهيز مسودة الإعلان داخل الصفحة فقط. لم يُنشر الإعلان ولم يُرسل إلى الإدارة لأن واجهة الخادم لم تُربط بعد.";
+
+ showResult(msg,false);
 }
+
 function showPolicy(which){
  $("policyModal").classList.add("open");
- if(which==="terms"){
-  $("policyTitle").textContent="الشروط والأحكام";
-  $("policyContent").innerHTML=`
-   <p>روافد العراق منصة لعرض الإعلانات وتسهيل التواصل بين المستخدمين. يلتزم المعلن بتقديم معلومات دقيقة وحديثة، وبامتلاك الحق في عرض المنتج أو العقار أو الخدمة.</p>
-   <p>على المستخدم التحقق من هوية الطرف الآخر والمواصفات والأسعار والوثائق قبل الدفع أو توقيع أي اتفاق. لا تضمن المنصة بذاتها صحة كل إعلان أو إتمام الصفقة، ولا تتولى البيع أو التسليم نيابة عن الأطراف ما لم يُعلن صراحة عن خدمة مستقلة بذلك.</p>
-   <p>يجوز للمنصة مراجعة الإعلانات أو رفضها أو إزالتها عند الاشتباه بالتضليل أو الاحتيال أو مخالفة القانون. لا تلغي هذه الشروط أي حقوق أو التزامات يفرضها القانون العراقي.</p>
-   <p><strong>تنبيه:</strong> هذه صياغة أولية للواجهة وليست مراجعة قانونية نهائية؛ ينبغي مراجعتها قانونيًا قبل إطلاق الخدمة.</p>`;
+ if(which === "terms"){
+  $("policyTitle").textContent = "الشروط والأحكام";
+  $("policyContent").innerHTML = `
+   <p>روافد العراق منصة للإعلانات والتواصل بين المستخدمين. يلتزم المعلن بصحة المعلومات التي ينشرها وبامتلاكه الحق في عرض المنتج أو العقار أو الخدمة.</p>
+   <p>ينبغي للمستخدم التحقق من هوية الطرف الآخر والأسعار والمواصفات والوثائق قبل أي دفع أو اتفاق. لا تعني إتاحة الإعلان ضمان صحته أو إتمام الصفقة.</p>
+   <p>يجوز مراجعة الإعلانات أو رفضها أو إزالتها وفق سياسة المنصة والقانون العراقي.</p>
+   <p>هذه صياغة أولية ويجب مراجعتها قانونيًا قبل الإطلاق.</p>`;
  }else{
-  $("policyTitle").textContent="سياسة الخصوصية";
-  $("policyContent").innerHTML=`
-   <p>ينبغي أن تجمع المنصة البيانات اللازمة فقط لتشغيل الحسابات والإعلانات والتواصل والأمان، وأن توضح للمستخدم سبب جمعها وكيفية استخدامها والجهات التي قد تصل إليها.</p>
-   <p>قد تتضمن بيانات الإعلان الاسم ورقم الهاتف ومعلومات الموقع والصور والوصف. لا تضع بيانات شخصية حساسة في الإعلان. يجب تأمين البيانات وتحديد صلاحيات الوصول وفترات الاحتفاظ بها قبل إطلاق الخدمة.</p>
-   <p>هذه الصفحة نموذج أولي فقط. لا تصبح سياسة نافذة بمجرد عرضها؛ يجب استكمال تفاصيل مزودي الخدمة والكوكيز وطلبات حذف البيانات وآليات الحماية ومراجعتها قانونيًا.</p>`;
+  $("policyTitle").textContent = "سياسة الخصوصية";
+  $("policyContent").innerHTML = `
+   <p>يجب جمع البيانات الضرورية لتشغيل الحسابات والإعلانات والتواصل والأمان فقط، وتوضيح طريقة استخدامها والجهات التي يمكنها الوصول إليها.</p>
+   <p>قد تشمل بيانات الإعلان رقم الهاتف والصور والوصف والموقع. ينبغي تأمين البيانات وتحديد صلاحيات الوصول وفترات الاحتفاظ بها.</p>
+   <p>هذه صياغة أولية للواجهة وليست سياسة خصوصية نهائية. يجب استكمالها ومراجعتها قبل الإطلاق.</p>`;
  }
 }
-function closePolicy(){$("policyModal").classList.remove("open");}
-document.querySelectorAll(".modal-backdrop").forEach(modal=>{
- modal.addEventListener("click",e=>{if(e.target===modal)modal.classList.remove("open");});
-});
-document.addEventListener("keydown",e=>{
- if(e.key==="Escape"){closePublish();closePolicy();}
-});
-$("year").textContent=new Date().getFullYear();
-initCategories();
-renderListings();
+function closePolicy(){
+ $("policyModal").classList.remove("open");
+}
 
-/*
-الربط الخلفي المطلوب قبل الإطلاق:
-1) API للإعلانات والبحث والتصفية والمراجعة.
-2) تسجيل دخول آمن والتحقق من رقم الهاتف عند الحاجة.
-3) رفع صور إلى تخزين آمن مع فحص النوع والحجم ومعدلات الطلب.
-4) لوحة إدارة محمية لموافقة الإعلانات وطلبات الترويج.
-5) مزود بريد موثوق لإشعارات الإدارة.
-6) تأكيد الدفع من جهة موثوقة قبل تفعيل الخدمات المدفوعة.
-7) قاعدة بيانات للمواقع والإحداثيات؛ لا تُنشأ مواقع افتراضية.
-*/
+document.querySelectorAll(".modal-backdrop").forEach(modal => {
+ modal.addEventListener("click",e => {
+  if(e.target === modal) modal.classList.remove("open");
+ });
+});
+document.addEventListener("keydown",e => {
+ if(e.key === "Escape"){
+  closePublish();
+  closePolicy();
+ }
+});
+
+$("year").textContent = new Date().getFullYear();
+initCategories();
+initMaps();
+renderListings();
 </script>
 </body>
 </html>
